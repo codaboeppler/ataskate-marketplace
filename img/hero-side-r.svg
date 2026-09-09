@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 388" width="200" height="388">
+  <!-- RIGHT scenery strip: the artwork's right edge sits higher and lighter than
+       its left — sky #ebe7fd down to 50%, foliage #cdb6fd lightening to #dfcefd,
+       white ground from 78%. Drawn to the same tiling rules as hero-side.svg
+       (identical vertical edges); the element is mirrored in CSS, so x=200 is the
+       column that touches the artwork. -->
+  <rect width="200" height="388" fill="#ebe7fd"/>
+  <path d="M0 176c20-14 36-12 54-2s28 6 46-4 32-8 50 2 28 12 50 4v26H0Z" fill="#e5ddfd"/>
+
+  <!-- a taller conifer pair, like the artwork's own right-hand trees -->
+  <g fill="#c9b1fd">
+    <rect x="52" y="150" width="6" height="150" rx="3"/>
+    <path d="M55 96l26 62H29Z"/><path d="M55 130l30 60H25Z"/>
+    <rect x="146" y="196" width="5" height="104" rx="2.5"/>
+    <path d="M148.5 150l20 48h-40Z"/><path d="M148.5 178l23 46h-46Z"/>
+  </g>
+
+  <!-- foliage band starts at 50% (y=194), where the artwork's right edge does -->
+  <rect y="194" width="200" height="110" fill="#cdb6fd"/>
+  <g fill="#cdb6fd">
+    <circle cx="18" cy="192" r="14"/><circle cx="46" cy="186" r="20"/>
+    <circle cx="76" cy="190" r="16"/><circle cx="104" cy="184" r="22"/>
+    <circle cx="132" cy="189" r="17"/><circle cx="164" cy="187" r="20"/>
+    <circle cx="190" cy="192" r="14"/>
+  </g>
+  <!-- the artwork's right edge steps to a lighter plane at 58% rather than
+       fading, so this matches it with a hard edge, blobby away from the seam -->
+  <rect y="225" width="200" height="79" fill="#dfcefd"/>
+  <g fill="#dfcefd">
+    <circle cx="34" cy="224" r="12"/><circle cx="72" cy="221" r="15"/>
+    <circle cx="112" cy="223" r="13"/><circle cx="152" cy="220" r="14"/>
+  </g>
+
+  <!-- white ground from y=303 (78%) -->
+  <g fill="#fefefe">
+    <circle cx="0" cy="307" r="13"/><circle cx="200" cy="307" r="13"/>
+    <circle cx="24" cy="301" r="13"/><circle cx="176" cy="301" r="13"/>
+    <circle cx="52" cy="305" r="10"/><circle cx="148" cy="305" r="10"/>
+    <circle cx="96" cy="300" r="13"/><circle cx="118" cy="304" r="9"/>
+    <rect y="303" width="200" height="85"/>
+  </g>
+  <g fill="#e4d6fd" opacity=".8">
+    <ellipse cx="70" cy="322" rx="24" ry="5"/>
+    <ellipse cx="150" cy="336" rx="20" ry="4"/>
+  </g>
+</svg>
