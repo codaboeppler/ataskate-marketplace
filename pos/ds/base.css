@@ -1,0 +1,65 @@
+/* ============================================================
+   BASE / RESET — minimal reset + typography scale
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
+  color: var(--text-primary);
+  background: var(--surface-background);
+  transition: background-color var(--duration-normal) var(--easing-standard),
+              color var(--duration-normal) var(--easing-standard);
+}
+h1, h2, h3, h4, h5, h6, p { margin: 0; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { background: none; border: none; cursor: pointer; padding: 0; }
+a { color: var(--text-link); text-decoration: none; }
+a:hover { color: var(--text-link-hover); }
+
+::selection {
+  background: var(--selection-background-strong);
+  color: var(--color-base-white);
+}
+
+/* ============================================================
+   TYPOGRAPHY UTILITY CLASSES
+   ============================================================ */
+.ds-display-1 { font: var(--font-weight-bold) var(--font-size-7xl)/var(--line-height-tight) var(--font-family-display); letter-spacing: var(--letter-spacing-tight); }
+.ds-display-2 { font: var(--font-weight-bold) var(--font-size-6xl)/var(--line-height-tight) var(--font-family-display); letter-spacing: var(--letter-spacing-tight); }
+.ds-display-3 { font: var(--font-weight-bold) var(--font-size-5xl)/var(--line-height-tight) var(--font-family-display); letter-spacing: var(--letter-spacing-tight); }
+.ds-h1       { font: var(--font-weight-bold)     var(--font-size-4xl)/var(--line-height-tight)  var(--font-family-sans); }
+.ds-h2       { font: var(--font-weight-bold)     var(--font-size-3xl)/var(--line-height-tight)  var(--font-family-sans); }
+.ds-h3       { font: var(--font-weight-semibold) var(--font-size-2xl)/var(--line-height-snug)   var(--font-family-sans); }
+.ds-h4       { font: var(--font-weight-semibold) var(--font-size-xl)/var(--line-height-snug)    var(--font-family-sans); }
+.ds-h5       { font: var(--font-weight-semibold) var(--font-size-lg)/var(--line-height-snug)    var(--font-family-sans); }
+.ds-h6       { font: var(--font-weight-semibold) var(--font-size-md)/var(--line-height-snug)    var(--font-family-sans); }
+.ds-body-lg  { font: var(--font-weight-regular)  var(--font-size-lg)/var(--line-height-normal)  var(--font-family-sans); }
+.ds-body     { font: var(--font-weight-regular)  var(--font-size-md)/var(--line-height-normal)  var(--font-family-sans); }
+.ds-body-sm  { font: var(--font-weight-regular)  var(--font-size-sm)/var(--line-height-normal)  var(--font-family-sans); }
+.ds-caption  { font: var(--font-weight-regular)  var(--font-size-xs)/var(--line-height-normal)  var(--font-family-sans); }
+.ds-overline { font: var(--font-weight-semibold) var(--font-size-xs)/var(--line-height-normal)  var(--font-family-sans); text-transform: uppercase; letter-spacing: var(--letter-spacing-wider); }
+.ds-code     { font: var(--font-weight-regular)  var(--font-size-sm)/var(--line-height-normal)  var(--font-family-mono); }
+
+/* ============================================================
+   ATASKATE TYPE RAMP — 12 scales that match products 1:1
+============================================================ */
+.ats-h1       { font: var(--ats-h1-weight)       var(--ats-h1-size)/var(--ats-h1-lh)             var(--font-family-sans); }
+.ats-h2       { font: var(--ats-h2-weight)       var(--ats-h2-size)/var(--ats-h2-lh)             var(--font-family-sans); }
+.ats-subtitle { font: var(--ats-subtitle-weight) var(--ats-subtitle-size)/var(--ats-subtitle-lh) var(--font-family-sans); }
+.ats-body1    { font: var(--ats-body1-weight)    var(--ats-body1-size)/var(--ats-body1-lh)       var(--font-family-sans); }
+.ats-body2    { font: var(--ats-body2-weight)    var(--ats-body2-size)/var(--ats-body2-lh)       var(--font-family-sans); }
+.ats-body3    { font: var(--ats-body3-weight)    var(--ats-body3-size)/var(--ats-body3-lh)       var(--font-family-sans); }
+.ats-body4    { font: var(--ats-body4-weight)    var(--ats-body4-size)/var(--ats-body4-lh)       var(--font-family-sans); }
+.ats-label-bold    { font: var(--ats-label-bold-weight) var(--ats-label-bold-size)/var(--ats-label-bold-lh) var(--font-family-sans); text-transform: uppercase; }
+.ats-label-regular { font: var(--ats-label-reg-weight)  var(--ats-label-reg-size)/var(--ats-label-reg-lh)   var(--font-family-sans); }
+.ats-hyperlink     { font: var(--ats-hyperlink-weight)  var(--ats-hyperlink-size)/var(--ats-hyperlink-lh)   var(--font-family-sans); text-decoration: underline; color: var(--ats-primary-300); }
+.ats-btn-lg        { font: var(--ats-btn-lg-weight)     var(--ats-btn-lg-size)/var(--ats-btn-lg-lh)         var(--font-family-sans); }
+.ats-btn-md        { font: var(--ats-btn-md-weight)     var(--ats-btn-md-size)/var(--ats-btn-md-lh)         var(--font-family-sans); }

@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ataskate POS — Detalles de artículo</title>
+<meta name="description" content="Ataskate POS (Operativo): detalle de un artículo del inventario con apartado por plazos." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="ds/primitives.css" />
+<link rel="stylesheet" href="ds/semantic.css" />
+<link rel="stylesheet" href="ds/elevation.css" />
+<link rel="stylesheet" href="ds/base.css" />
+<link rel="stylesheet" href="ds/components.css" />
+<link rel="stylesheet" href="pos.css?v=figma4" />
+</head>
+<body class="pos">
+
+<header class="pos-header">
+  <div class="pos-header__menu">
+    <button class="ds-btn ds-btn--tertiary ds-btn--icon-md pos-menu" type="button" aria-label="Menú">
+      <img class="pos-ico" src="assets/menu.svg" alt="" />
+    </button>
+    <a class="pos-brand" href="./" aria-label="Ataskate · Operativo">
+      <img class="pos-brand__logo" src="assets/logo-ataskate.svg" alt="ataskate" />
+      <span class="pos-brand__role">Operativo</span>
+    </a>
+  </div>
+
+  <form class="pos-search" role="search" onsubmit="return false">
+    <label class="ds-field-wrap">
+      <input class="ds-input" type="search" placeholder="Buscar" aria-label="Buscar en el inventario" />
+      <span class="ds-field-addon ds-field-addon--right"><img class="pos-ico" src="assets/search.svg" alt="" /></span>
+    </label>
+  </form>
+
+  <div class="pos-header__ctas">
+    <button class="ds-btn ds-btn--icon-md pos-hide-sm" type="button" aria-label="Notificaciones">
+      <img class="pos-ico" src="assets/notification.svg" alt="" />
+    </button>
+    <button class="ds-btn ds-btn--icon-md pos-hide-sm" type="button" aria-label="Caja abierta · Sucursal Centro">
+      <img class="pos-ico" src="assets/pos-terminal.svg" alt="" />
+      <span class="ds-status ds-status--online" aria-hidden="true"></span>
+    </button>
+    <button class="ds-btn ds-btn--icon-md pos-hide-sm" type="button" aria-label="Configuración">
+      <img class="pos-ico" src="assets/settings.svg" alt="" />
+    </button>
+    <button class="ds-btn ds-btn--icon-md pos-hbtn--count" type="button" id="posCart" aria-label="Carrito, 0 artículos">
+      <img class="pos-ico" src="assets/cart.svg" alt="" />
+      <b id="posCartN">0</b>
+    </button>
+    <button class="ds-btn ds-btn--tertiary pos-profile" type="button" aria-label="Rosa Pérez · Cambiar de sucursal">
+      <span class="ds-avatar ds-avatar--sm">RP</span>
+      <img class="pos-ico" src="assets/sync.svg" alt="" />
+    </button>
+  </div>
+</header>
+
+<main class="pos-main">
+  <nav aria-label="Breadcrumb" class="ds-breadcrumb">
+    <span class="pos-crumb"><a href="#" class="ds-breadcrumb__link">Home</a></span>
+    <span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="assets/arrow-forward.svg" alt="" /></span>
+    <span class="pos-crumb"><a href="#" class="ds-breadcrumb__link">Inventario</a></span>
+    <span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="assets/arrow-forward.svg" alt="" /></span>
+    <span class="ds-breadcrumb__current" aria-current="page">Detalles de artículo</span>
+  </nav>
+
+  <section class="pos-detail">
+    <div class="pos-gallery">
+      <div class="pos-stage" id="posStage">
+        <img class="pos-stage__img" id="posStageImg" src="assets/iphone16-negro.png" alt="iPhone 16 512GB Negro" />
+        <div class="pos-dots" id="posDots" aria-hidden="true"></div>
+      </div>
+      <div class="pos-thumbs-wrap" id="posThumbsWrap">
+        <button class="ds-btn ds-btn--tertiary ds-btn--icon-sm pos-thumbs-nav pos-thumbs-nav--prev" type="button" id="posThumbsPrev" aria-label="Ver miniaturas anteriores" hidden><img class="pos-ico--20" src="assets/chevron-right-md.svg" alt="" /></button>
+        <div class="pos-thumbs" id="posThumbs"></div>
+        <button class="ds-btn ds-btn--tertiary ds-btn--icon-sm pos-thumbs-nav pos-thumbs-nav--next" type="button" id="posThumbsNext" aria-label="Ver más miniaturas" hidden><img class="pos-ico--20" src="assets/chevron-right-md.svg" alt="" /></button>
+      </div>
+    </div>
+
+    <div class="pos-info">
+      <div class="pos-block">
+        <div class="pos-headline">
+          <div class="pos-headline__top">
+            <div class="pos-tags">
+              <span class="ds-tag ds-tag--verde">Excelente</span>
+              <span class="ds-tag ds-tag--blanco">Publicado 01-02-2026</span>
+              <span class="ds-tag ds-tag--blanco">Días para depositaría: 32</span>
+            </div>
+            <div class="pos-title-actions">
+              <button class="ds-btn ds-btn--icon-md" type="button" id="posShare" aria-label="Compartir artículo"><img class="pos-ico" src="assets/share.svg" alt="" /></button>
+              <button class="ds-btn ds-btn--icon-md" type="button" aria-label="Más acciones del artículo"><img class="pos-ico" src="assets/more-vert.svg" alt="" /></button>
+            </div>
+          </div>
+          <h1 class="pos-title">iPhone 16 512GB Negro · 5G</h1>
+        </div>
+
+        <div class="pos-color">
+          <p class="pos-color__label">Color: Negro</p>
+          <span class="pos-swatch" role="img" aria-label="Negro"></span>
+        </div>
+
+        <div class="pos-price">
+          <span class="pos-price__now">$17,969</span>
+          <span class="pos-price__was">$22,000</span>
+          <span class="ds-tag ds-tag--amarillo pos-chip-ico"><img src="assets/cash-withdraw.svg" alt="" />Ahorra -18%</span>
+        </div>
+
+        <div class="pos-actions">
+          <div class="pos-buy">
+            <button class="ds-btn ds-btn--secondary" type="button" id="posAdd">Agregar al carrito</button>
+            <button class="ds-btn ds-btn--primary" type="button" id="posBuy">Comprar ahora</button>
+          </div>
+          <div class="pos-apartado" id="posApartado">
+            <span class="pos-apartado__lead">Por $3,255 aparta con <img class="pos-apartado__logo" src="assets/logo-apartados-2.svg" alt="ataskate apartados" /></span>
+            <button class="ds-btn ds-btn--icon-md pos-apartado__go" type="button" id="posPlazosOpen" aria-haspopup="dialog" aria-label="Ver planes de apartado">
+              <img class="pos-ico" src="assets/chevron-right-md.svg" alt="" />
+            </button>
+          </div>
+          <ul class="pos-delivery" aria-label="Formas de entrega">
+            <li class="pos-delivery__opt">
+              <span class="pos-delivery__ico"><img class="pos-ico--20" src="assets/local-shipping.svg" alt="" /></span>
+              <span class="pos-delivery__txt"><b>Envíos nacionales</b><span>A todo México</span></span>
+            </li>
+            <li class="pos-delivery__opt">
+              <span class="pos-delivery__ico"><img class="pos-ico--20" src="assets/storefront.svg" alt="" /></span>
+              <span class="pos-delivery__txt"><b>Recoger en Sucursal</b><span>Sucursal Centro Histórico</span></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ds-tabs">
+        <div role="tablist" class="ds-tabs__list" aria-label="Información del artículo">
+          <button role="tab" class="ds-tabs__tab" aria-selected="true" aria-controls="posTabSpecs" id="posTabSpecsBtn">Especificaciones</button>
+          <button role="tab" class="ds-tabs__tab" aria-selected="false" aria-controls="posTabNotas" id="posTabNotasBtn">Notas</button>
+          <button role="tab" class="ds-tabs__tab" aria-selected="false" aria-controls="posTabUbic" id="posTabUbicBtn">Ubicación</button>
+        </div>
+        <div role="tabpanel" class="ds-tabs__panel" id="posTabSpecs" aria-labelledby="posTabSpecsBtn">
+          <dl class="pos-specs">
+            <div class="pos-spec"><dt>Almacenamiento</dt><dd>512GB</dd></div>
+            <div class="pos-spec"><dt>Cargador</dt><dd>Original</dd></div>
+            <div class="pos-spec"><dt>Color</dt><dd>Negro</dd></div>
+            <div class="pos-spec"><dt>Operador</dt><dd>Sin operador</dd></div>
+            <div class="pos-spec"><dt>Número de Modelo</dt><dd>A2160</dd></div>
+          </dl>
+        </div>
+        <div role="tabpanel" class="ds-tabs__panel" id="posTabNotas" aria-labelledby="posTabNotasBtn" hidden>
+          <p class="pos-note">Artículo valuado en sucursal. Incluye cargador original y caja.</p>
+        </div>
+        <div role="tabpanel" class="ds-tabs__panel" id="posTabUbic" aria-labelledby="posTabUbicBtn" hidden>
+          <p class="pos-note"><b>Sucursal Centro Histórico</b> · Bodega 2 · Anaquel B-14</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pos-related" aria-labelledby="posRelTitle">
+    <div class="pos-related__head">
+      <div class="pos-related__title">
+        <h2 id="posRelTitle">Productos relacionados</h2>
+        <span>24 Artículos</span>
+      </div>
+      <button class="ds-btn ds-btn--link" type="button"><img class="pos-ico--20" src="assets/sort.svg" alt="" />Organizar por</button>
+    </div>
+    <div class="pos-grid" id="posGrid"></div>
+    <button class="ds-btn ds-btn--secondary pos-more" type="button" id="posMore">
+      Ver más artículos <img class="pos-ico--20" src="assets/chevron-right-sm.svg" alt="" />
+    </button>
+  </section>
+</main>
+
+<!-- Modal "Selecciona el plazo" (ds-modal) -->
+<div class="ds-modal-overlay" id="posPlazos" hidden>
+  <div class="ds-modal pos-plazos" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="posPlazosTitle">
+    <div class="ds-modal__header">
+      <h2 class="ds-modal__title" id="posPlazosTitle">Selecciona el plazo</h2>
+      <p class="pos-plazos__sub">Selecciona el método de plazo que mejor te convenga</p>
+    </div>
+    <div class="ds-modal__body" id="posPlanes" role="radiogroup" aria-label="Planes de apartado"></div>
+    <div class="ds-modal__footer">
+      <button class="ds-btn ds-btn--tertiary ds-btn--md" type="button" id="posPlazosCancel">Cancelar</button>
+      <button class="ds-btn ds-btn--primary ds-btn--md" type="button" id="posPlazosOk" disabled>Agrega al carrito</button>
+    </div>
+  </div>
+</div>
+
+<div class="ds-toast-region" id="posToasts" role="region" aria-live="polite"></div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+
+  // ---------- galería ----------
+  const FOTOS = [
+    { src: 'assets/iphone16-negro.png', recorte: true, alt: 'iPhone 16 512GB Negro, frente y reverso' },
+    { src: 'assets/iphone16-foto2.jpg', alt: 'Foto del reverso del artículo' },
+    { src: 'assets/iphone16-foto3.jpg', alt: 'Foto del artículo en mano' },
+  ];
+  let foto = 0;
+  const pintarGaleria = () => {
+    const f = FOTOS[foto];
+    const img = $('posStageImg');
+    img.src = f.src;
+    img.alt = f.alt;
+    img.className = f.recorte ? 'pos-stage__img' : 'pos-stage__img pos-stage__img--foto';
+    $('posDots').innerHTML = FOTOS.map((_, i) =>
+      '<button type="button" tabindex="-1" aria-current="' + (i === foto) + '" data-i="' + i + '"></button>').join('');
+    const tira = $('posThumbs');
+    const x0 = tira.scrollLeft;
+    tira.innerHTML = FOTOS.map((x, i) =>
+      '<button type="button" class="pos-thumb" aria-label="Ver foto ' + (i + 1) + '" aria-current="' + (i === foto) + '" data-i="' + i + '">'
+      + '<img src="' + x.src + '" alt=""' + (x.recorte ? ' class="pos-thumb__cut"' : '') + ' /></button>').join('')
+      + '<span class="pos-thumb pos-thumb--vacia" aria-hidden="true"></span>'.repeat(Math.max(0, 5 - FOTOS.length));
+    tira.scrollLeft = x0;
+    const activa = tira.querySelector('[aria-current="true"]');
+    if (activa) activa.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    flechasTira();
+  };
+  // flechas de la tira de miniaturas: solo aparecen si hay más miniaturas de ese lado
+  const flechasTira = () => {
+    const tira = $('posThumbs');
+    const antes = tira.scrollLeft > 1;
+    const despues = tira.scrollLeft + tira.clientWidth < tira.scrollWidth - 1;
+    $('posThumbsPrev').hidden = !antes;
+    $('posThumbsNext').hidden = !despues;
+    $('posThumbsWrap').classList.toggle('hay-antes', antes);
+    $('posThumbsWrap').classList.toggle('hay-despues', despues);
+  };
+  const moverTira = (dir) => {
+    const tira = $('posThumbs');
+    const paso = (tira.firstElementChild ? tira.firstElementChild.getBoundingClientRect().width : 126) + 12;
+    tira.scrollBy({ left: dir * paso * 2, behavior: 'smooth' });
+  };
+  const irA = (e) => {
+    const b = e.target.closest('[data-i]');
+    if (!b) return;
+    const conFoco = b.contains(document.activeElement) || b === document.activeElement;
+    foto = Number(b.dataset.i);
+    pintarGaleria();
+    if (conFoco) { const t = $('posThumbs').querySelector('[data-i="' + foto + '"]'); if (t) t.focus(); }
+  };
+  $('posDots').addEventListener('click', irA);
+  $('posThumbs').addEventListener('click', irA);
+  $('posThumbs').addEventListener('scroll', flechasTira, { passive: true });
+  $('posThumbsPrev').addEventListener('click', () => moverTira(-1));
+  $('posThumbsNext').addEventListener('click', () => moverTira(1));
+  addEventListener('resize', flechasTira);
+  pintarGaleria();
+
+  // ---------- tabs (ds-tabs) ----------
+  const tabs = [...document.querySelectorAll('.pos-info .ds-tabs__tab')];
+  tabs.forEach((t) => t.addEventListener('click', () => {
+    tabs.forEach((x) => {
+      const on = x === t;
+      x.setAttribute('aria-selected', on);
+      $(x.getAttribute('aria-controls')).hidden = !on;
+    });
+  }));
+
+  // ---------- carrito + toast (ds-toast) ----------
+  let enCarrito = 0;
+  const toast = (titulo, texto) => {
+    const t = document.createElement('div');
+    t.className = 'ds-toast ds-toast--success';
+    t.setAttribute('role', 'status');
+    t.innerHTML = '<span class="ds-toast__icon" aria-hidden="true">✓</span>'
+      + '<div class="ds-toast__body-wrap"><div class="ds-toast__title"></div><div class="ds-toast__body"></div></div>'
+      + '<div class="ds-toast__actions"><button type="button" class="ds-toast__close" aria-label="Cerrar">×</button></div>';
+    t.querySelector('.ds-toast__title').textContent = titulo;
+    t.querySelector('.ds-toast__body').textContent = texto;
+    t.querySelector('.ds-toast__close').addEventListener('click', () => t.remove());
+    $('posToasts').appendChild(t);
+    setTimeout(() => t.remove(), 4500);
+  };
+  const agregar = (detalle) => {
+    enCarrito += 1;
+    $('posCartN').textContent = enCarrito;
+    $('posCart').setAttribute('aria-label', 'Carrito, ' + enCarrito + (enCarrito === 1 ? ' artículo' : ' artículos'));
+    toast('Agregado al carrito', detalle);
+  };
+  $('posAdd').addEventListener('click', () => agregar('iPhone 16 512GB Negro · $17,969'));
+  $('posBuy').addEventListener('click', () => toast('Listo para cobrar', 'iPhone 16 512GB Negro pasó a caja · $17,969'));
+  $('posShare').addEventListener('click', () => {
+    if (navigator.share) navigator.share({ title: 'iPhone 16 512GB Negro · 5G', url: location.href }).catch(() => {});
+    else navigator.clipboard && navigator.clipboard.writeText(location.href).then(() => toast('Enlace copiado', 'Ya puedes compartir este artículo'));
+  });
+
+  // ---------- productos relacionados ----------
+  const REL = [
+    ['-25%', '10-01-2026', '$11,499', '$15,332'], ['-35%', '15-03-2026', '$10,049', '$15,460'],
+    ['-20%', '20-01-2026', '$13,599', '$16,999'], ['-15%', '05-04-2026', '$14,449', '$16,999'],
+    ['-40%', '10-02-2026', '$9,599', '$15,998'], ['-10%', '28-03-2026', '$15,299', '$16,999'],
+    ['-45%', '12-01-2026', '$8,799', '$15,998'], ['-18%', '22-02-2026', '$13,119', '$15,999'],
+    ['-28%', '08-05-2026', '$11,519', '$15,999'], ['-33%', '30-04-2026', '$10,719', '$15,999'],
+  ];
+  const TOTAL = 24;
+  let mostrados = 0;
+  const tarjeta = ([off, pub, now, was]) =>
+    '<article class="pos-card">'
+    + '<div class="pos-card__media"><img src="assets/iphone15-pro.png" alt="Apple iPhone 15 Pro Max (512GB) Negro" loading="lazy" />'
+    + '<span class="ds-tag ds-tag--rosa pos-card__off">' + off + '</span>'
+    + '<span class="ds-tag ds-tag--blanco pos-card__pub">Publicado ' + pub + '</span>'
+    + '<span class="ds-tag ds-tag--blanco pos-card__more-img">+6</span></div>'
+    + '<div class="pos-card__body"><p class="pos-card__name">Apple iPhone 15 Pro Max (512GB) Negro</p>'
+    + '<div class="pos-card__row"><div class="pos-card__prices"><span class="pos-card__now">' + now + '</span><span class="pos-card__was">' + was + '</span></div>'
+    + '<button class="ds-btn ds-btn--tertiary ds-btn--icon-sm" type="button" aria-label="Más acciones: Apple iPhone 15 Pro Max (512GB) Negro, ' + now + '"><img class="pos-ico--20" src="assets/more-vert-card.svg" alt="" /></button></div></div>'
+    + '</article>';
+  const mostrar = (n) => {
+    const desde = mostrados;
+    let html = '';
+    for (let i = 0; i < n && mostrados < TOTAL; i++, mostrados++) html += tarjeta(REL[mostrados % REL.length]);
+    $('posGrid').insertAdjacentHTML('beforeend', html);
+    const teniaFoco = document.activeElement === $('posMore');
+    $('posMore').hidden = mostrados >= TOTAL;
+    if (teniaFoco && $('posMore').hidden) {
+      const nueva = $('posGrid').children[desde];
+      if (nueva) nueva.querySelector('button').focus();
+    }
+  };
+  mostrar(10);
+  $('posMore').addEventListener('click', () => mostrar(5));
+
+  // ---------- modal "Selecciona el plazo" ----------
+  // iconos de la librería del design system (Figma), en currentColor para tomar el color del chip
+  const ICON = {
+    'fire': '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.3 2.60001C13.9 5.60001 12.9 7.40001 11.5 8.90001C11 8.00001 10.3 7.30001 9.39999 6.70001C9.59999 8.70001 8.39999 10 7.39999 11.4C6.4312 12.7387 5.90658 14.3475 5.89999 16C5.89999 17.8035 6.61642 19.5331 7.89167 20.8083C9.16692 22.0836 10.8965 22.8 12.7 22.8C14.5035 22.8 16.2331 22.0836 17.5083 20.8083C18.7836 19.5331 19.5 17.8035 19.5 16C19.5 10.4 15.3 7.50001 13.3 2.60001Z"/></svg>',
+    'trend-down': '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 18V16H18.6L13.4 10.85L9.4 14.85L2 7.4L3.4 6L9.4 12L13.4 8L20 14.6V12H22V18H16Z"/></svg>',
+    'calendar-today': '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 22C4.45 22 3.979 21.8043 3.587 21.413C3.19567 21.021 3 20.55 3 20V6C3 5.45 3.19567 4.97933 3.587 4.588C3.979 4.196 4.45 4 5 4H6V2H8V4H16V2H18V4H19C19.55 4 20.021 4.196 20.413 4.588C20.8043 4.97933 21 5.45 21 6V20C21 20.55 20.8043 21.021 20.413 21.413C20.021 21.8043 19.55 22 19 22H5ZM5 20H19V10H5V20ZM5 8H19V6H5V8Z"/></svg>',
+    'label-sale': '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.85 22C12.5667 22 12.3 21.9457 12.05 21.837C11.8 21.729 11.5833 21.5833 11.4 21.4L2.6 12.6C2.41667 12.4167 2.271 12.2 2.163 11.95C2.05433 11.7 2 11.4333 2 11.15V4C2 3.45 2.196 2.979 2.588 2.587C2.97933 2.19567 3.45 2 4 2H11.15C11.4333 2 11.7 2.054 11.95 2.162C12.2 2.27067 12.4167 2.41667 12.6 2.6L21.4 11.425C21.7833 11.8083 21.975 12.279 21.975 12.837C21.975 13.3957 21.7833 13.8667 21.4 14.25L14.25 21.4C14.0667 21.5833 13.8543 21.729 13.613 21.837C13.371 21.9457 13.1167 22 12.85 22ZM12.825 20L19.975 12.85L11.15 4H4V11.15L12.825 20ZM6.5 8C6.91667 8 7.27067 7.854 7.562 7.562C7.854 7.27067 8 6.91667 8 6.5C8 6.08333 7.854 5.72933 7.562 5.438C7.27067 5.146 6.91667 5 6.5 5C6.08333 5 5.72933 5.146 5.438 5.438C5.146 5.72933 5 6.08333 5 6.5C5 6.91667 5.146 7.27067 5.438 7.562C5.72933 7.854 6.08333 8 6.5 8Z"/></svg>',
+    'timer': '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 20H16V17C16 15.9 15.6083 14.9583 14.825 14.175C14.0417 13.3917 13.1 13 12 13C10.9 13 9.95833 13.3917 9.175 14.175C8.39167 14.9583 8 15.9 8 17V20ZM12 11C13.1 11 14.0417 10.6083 14.825 9.825C15.6083 9.04167 16 8.1 16 7V4H8V7C8 8.1 8.39167 9.04167 9.175 9.825C9.95833 10.6083 10.9 11 12 11ZM4 22V20H6V17C6 15.9833 6.2375 15.0292 6.7125 14.1375C7.1875 13.2458 7.85 12.5333 8.7 12C7.85 11.4667 7.1875 10.7542 6.7125 9.8625C6.2375 8.97083 6 8.01667 6 7V4H4V2H20V4H18V7C18 8.01667 17.7625 8.97083 17.2875 9.8625C16.8125 10.7542 16.15 11.4667 15.3 12C16.15 12.5333 16.8125 13.2458 17.2875 14.1375C17.7625 15.0292 18 15.9833 18 17V20H20V22H4Z"/></svg>',
+    'product-reserve': '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 8V19H19V8H16V16L12 14L8 16V8H5ZM5 21C4.45 21 3.97917 20.8042 3.5875 20.4125C3.19583 20.0208 3 19.55 3 19V6.525C3 6.29167 3.0375 6.06667 3.1125 5.85C3.1875 5.63333 3.3 5.43333 3.45 5.25L4.7 3.725C4.88333 3.49167 5.1125 3.3125 5.3875 3.1875C5.6625 3.0625 5.95 3 6.25 3H17.75C18.05 3 18.3375 3.0625 18.6125 3.1875C18.8875 3.3125 19.1167 3.49167 19.3 3.725L20.55 5.25C20.7 5.43333 20.8125 5.63333 20.8875 5.85C20.9625 6.06667 21 6.29167 21 6.525V19C21 19.55 20.8042 20.0208 20.4125 20.4125C20.0208 20.8042 19.55 21 19 21H5ZM5.4 6H18.6L17.75 5H6.25L5.4 6ZM10 8V12.75L12 11.75L14 12.75V8H10Z"/></svg>',
+  };
+  const PRECIO = 17969;
+  // cada apartado: enganche hoy + cargos del día + n pagos (con cargo por pago opcional)
+  const PLANES = [
+    {
+      nombre: 'Apartado Plus',
+      tags: [['product-reserve', 'Limite de apartado: 4', 'verde'], ['fire', 'Muy elegido esta semana', 'amarillo']],
+      enganche: 3255, hoy: [['Apertura', 50], ['Almacenaje', 110], ['Seguro', 371]],
+      n: 4, cada: 'quincena', frecuencia: 'Quincenales', duracion: '2 Meses', extra: null, mora: '2%',
+    },
+    {
+      nombre: 'Apartado no plus',
+      tags: [['trend-down', 'Enganche desde 10%', 'verde'], ['calendar-today', 'Plazo nuevo', 'morado']],
+      enganche: 1799, hoy: [['Apertura', 50]],
+      n: 3, cada: 'mes', frecuencia: 'Mensuales', duracion: '3 Meses', extra: ['Almacenaje', 60], mora: '3%',
+    },
+    {
+      nombre: 'Apartado Semanal',
+      tags: [['label-sale', 'Sin comisión de apertura', 'verde'], ['timer', 'El más rápido', 'azul']],
+      enganche: 2693, hoy: [],
+      n: 6, cada: 'semana', frecuencia: 'Semanales', duracion: '6 Semanas', extra: ['Almacenaje', 15], mora: '1.5%',
+    },
+  ];
+  const mxn = (v, dec) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  const fecha = (d) => String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear();
+  const cargoTxt = (c) => ' + <i>' + mxn(c[1], 0) + ' ' + c[0] + '</i>';
+  // el primer cargo del día va en línea; los demás viven en el tooltip del DS detrás de un chip "+N"
+  const cargosHoy = (lista) => {
+    if (lista.length < 2) return lista.map(cargoTxt).join('');
+    const resto = lista.slice(1);
+    const detalle = resto.map((x) => mxn(x[1], 0) + ' ' + x[0]).join(', ');
+    return cargoTxt(lista[0]) + ' <span class="ds-tooltip pos-cargos">'
+      + '<button class="ds-tag ds-tag--morado pos-cargos__mas" type="button" aria-label="' + resto.length + ' cargos más: ' + detalle + '">+' + resto.length + '</button>'
+      + '<span class="ds-tooltip__content pos-cargos__tip" role="tooltip"><small>Otros cargos de hoy</small>'
+      + resto.map((x) => '<span><b>' + mxn(x[1], 0) + '</b> ' + x[0] + '</span>').join('') + '</span></span>';
+  };
+  // calendario de pagos con el saldo que queda después de cada pago (en centavos para cerrar exacto en 0)
+  const calendario = (p) => {
+    const base = new Date();
+    base.setHours(12, 0, 0, 0);
+    const c = (v) => Math.round(v * 100);
+    const hoyCargos = p.hoy.reduce((t, x) => t + c(x[1]), 0);
+    const extra = p.extra ? c(p.extra[1]) : 0;
+    const total = c(PRECIO) + hoyCargos + extra * p.n;
+    const cuota = (c(PRECIO) - c(p.enganche)) / p.n;
+    let saldo = total - c(p.enganche) - hoyCargos;
+    const filas = [[fecha(base) + ' · Hoy', mxn(p.enganche, 2) + cargosHoy(p.hoy), saldo / 100]];
+    for (let k = 1; k <= p.n; k++) {
+      const d = new Date(base);
+      if (p.cada === 'mes') {
+        d.setDate(1);
+        d.setMonth(d.getMonth() + k);
+        d.setDate(Math.min(base.getDate(), new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()));
+      }
+      else d.setDate(d.getDate() + k * (p.cada === 'semana' ? 7 : 15));
+      saldo -= Math.round(cuota) + extra;
+      if (k === p.n) saldo = 0;
+      filas.push([fecha(d), mxn(cuota / 100, 2) + (p.extra ? cargoTxt(p.extra) : ''), saldo / 100]);
+    }
+    return { filas, total: total / 100, nCargos: p.hoy.length + (p.extra ? 1 : 0) };
+  };
+  PLANES.forEach((p) => Object.assign(p, calendario(p)));
+
+  let abierto = 0;
+  let elegido = null;
+  const pintarPlanes = () => {
+    $('posPlanes').innerHTML = PLANES.map((p, i) => {
+      const open = i === abierto;
+      const stats = [
+        [p.nCargos + (p.nCargos === 1 ? ' Cargo' : ' Cargos'), p.nCargos === 1 ? 'Adicional' : 'Adicionales'],
+        [p.n + ' Pagos', p.frecuencia],
+        [p.duracion, 'Duración'],
+      ];
+      return '<div class="pos-plan' + (open ? ' is-open' : '') + '" data-plan="' + i + '">'
+        + '<div class="pos-plan__row">'
+        + '<label class="ds-radio" aria-label="' + p.nombre + ', total ' + mxn(p.total, 0) + '"><input type="radio" name="posPlan" value="' + i + '"' + (elegido === i ? ' checked' : '') + ' />'
+        + '<span class="ds-radio__wrap"><span class="ds-radio__dot"></span></span></label>'
+        + '<div class="pos-plan__name"><b>' + p.nombre + '</b><span class="pos-plan__tags">'
+        + p.tags.map((t) => '<span class="ds-tag ds-tag--' + t[2] + ' pos-chip-ico">' + ICON[t[0]] + t[1] + '</span>').join('')
+        + '</span></div>'
+        + stats.map((st) => '<div class="pos-stat"><b>' + st[0] + '</b><span>' + st[1] + '</span></div>').join('')
+        + '<div class="pos-stat pos-stat--hi"><b>' + mxn(p.total, 0) + '</b><span>Total a pagar</span></div>'
+        + '<button class="ds-btn ds-btn--tertiary ds-btn--icon-md pos-plan__toggle" type="button" aria-expanded="' + open + '" aria-label="' + (open ? 'Ocultar' : 'Ver') + ' calendario de pagos de ' + p.nombre + '">'
+        + '<img class="pos-ico" src="assets/chevron-' + (open ? 'up' : 'down') + '.svg" alt="" /></button>'
+        + '</div>'
+        + '<div class="pos-plan__table"><table class="ds-table"><thead><tr><th>Fecha</th><th>Pagos</th><th class="pos-saldo">Saldo restante</th></tr></thead><tbody>'
+        + p.filas.map((r) => '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td><td class="pos-saldo">'
+          + (r[2] === 0 ? '<span class="ds-tag ds-tag--verde">Liquidado</span> ' : '') + mxn(r[2], 2) + '</td></tr>').join('')
+        + '<tr class="pos-plan__total"><td>Total a pagar</td><td>' + mxn(p.total, 2) + '</td><td></td></tr>'
+        + '</tbody></table></div></div>'
+        + (open ? '<p class="pos-plan__note">Este apartado tiene un ' + p.mora + ' de mora por pagos atemporaneos</p>' : '');
+    }).join('');
+    $('posPlazosOk').disabled = elegido === null;
+  };
+  $('posPlanes').addEventListener('change', (e) => {
+    if (e.target.name !== 'posPlan') return;
+    elegido = Number(e.target.value);
+    abierto = elegido;
+    pintarPlanes();
+    const r = $('posPlanes').querySelector('input[value="' + elegido + '"]');
+    if (r) r.focus();
+  });
+  $('posPlanes').addEventListener('click', (e) => {
+    if (e.target.closest('.ds-radio')) return;
+    const plan = e.target.closest('.pos-plan');
+    if (!plan || !e.target.closest('.pos-plan__row')) return;
+    const i = Number(plan.dataset.plan);
+    const conFoco = !!e.target.closest('.pos-plan__toggle');
+    abierto = abierto === i ? -1 : i;
+    pintarPlanes();
+    if (conFoco) $('posPlanes').querySelector('.pos-plan[data-plan="' + i + '"] .pos-plan__toggle').focus();
+  });
+
+  const modal = $('posPlazos');
+  const FONDO = [document.querySelector('.pos-header'), document.querySelector('.pos-main')];
+  let volverA = null;
+  let presionEnFondo = false;
+  const abrir = () => {
+    volverA = document.activeElement;
+    pintarPlanes();
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    FONDO.forEach((el) => { el.inert = true; });
+    modal.querySelector('.ds-modal').focus();
+  };
+  const cerrar = () => {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+    FONDO.forEach((el) => { el.inert = false; });
+    if (volverA) volverA.focus();
+  };
+  $('posPlazosOpen').addEventListener('click', abrir);
+  $('posApartado').addEventListener('click', (e) => { if (!e.target.closest('#posPlazosOpen')) abrir(); });
+  if (location.hash === '#plazos') abrir();
+  $('posPlazosCancel').addEventListener('click', cerrar);
+  modal.addEventListener('mousedown', (e) => { presionEnFondo = e.target === modal; });
+  modal.addEventListener('click', (e) => { if (e.target === modal && presionEnFondo) cerrar(); });
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) cerrar(); });
+  $('posPlazosOk').addEventListener('click', () => {
+    if (elegido === null) return;
+    const p = PLANES[elegido];
+    cerrar();
+    agregar('iPhone 16 512GB Negro · ' + p.nombre + ' · Total ' + mxn(p.total, 0));
+  });
+})();
+</script>
+</body>
+</html>

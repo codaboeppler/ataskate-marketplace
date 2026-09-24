@@ -1,0 +1,1210 @@
+/* ============================================================
+   COMPONENT STYLES — all primitives consumed via design tokens
+   ============================================================ */
+
+/* ---------------- Button (pill, Nunito Bold — matches Figma "Button") ---------------- */
+.ds-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-bold);       /* Nunito Bold */
+  font-size: 14px;
+  line-height: 20px;
+  border-radius: var(--radius-full);          /* pill — 100px */
+  border: var(--border-width-1) solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  letter-spacing: 0;
+  transition: background-color var(--duration-fast) var(--easing-standard),
+              border-color   var(--duration-fast) var(--easing-standard),
+              color          var(--duration-fast) var(--easing-standard),
+              box-shadow     var(--duration-fast) var(--easing-standard),
+              transform      var(--duration-fast) var(--easing-standard);
+}
+.ds-btn:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+.ds-btn:disabled { cursor: not-allowed; opacity: var(--opacity-60); }
+.ds-btn:active:not(:disabled) { transform: translateY(1px); }
+
+/* Sizes — padding follows Figma (8px vertical, 16px horizontal for Medium) */
+.ds-btn--sm { padding: 6px var(--spacing-3); font-size: 12px; line-height: 16px; }
+.ds-btn--md { padding: 8px var(--spacing-4); }                    /* 8/16 */
+.ds-btn--lg { padding: 12px var(--spacing-5); font-size: 16px; line-height: 24px; }
+.ds-btn--xl { padding: 16px var(--spacing-6); font-size: 16px; line-height: 24px; }
+.ds-btn--icon-sm { padding: 6px; width: 32px; height: 32px; }
+.ds-btn--icon-md { padding: 10px; width: 40px; height: 40px; }
+.ds-btn--icon-lg { padding: 12px; width: 48px; height: 48px; }
+
+/* PRIMARY — filled purple */
+.ds-btn--primary {
+  background: var(--action-primary-default);
+  color: var(--color-base-white);
+}
+.ds-btn--primary:hover:not(:disabled),
+.ds-btn--primary:active:not(:disabled)  { background: var(--color-purple-900); }   /* buttons/actions/link */
+.ds-btn--primary:disabled { background: var(--color-purple-200); color: var(--color-base-white); opacity: 1; }
+
+/* SECONDARY — white bg, purple border, purple text */
+.ds-btn--secondary {
+  background: var(--surface-foreground);
+  color: var(--action-primary-default);
+  border-color: var(--action-primary-default);
+}
+.ds-btn--secondary:hover:not(:disabled),
+.ds-btn--secondary:active:not(:disabled) {
+  background: var(--color-purple-50);
+  border-color: var(--action-primary-default);
+  color: var(--action-primary-default);
+}
+.ds-btn--secondary:disabled {
+  background: var(--surface-foreground);
+  border-color: var(--color-purple-200);
+  color: var(--color-purple-200);
+  opacity: 1;
+}
+
+/* TERTIARY / LINK — transparent bg, purple text */
+.ds-btn--tertiary,
+.ds-btn--link {
+  background: transparent;
+  color: var(--action-primary-default);
+  border-color: transparent;
+}
+.ds-btn--tertiary:hover:not(:disabled),
+.ds-btn--link:hover:not(:disabled),
+.ds-btn--tertiary:active:not(:disabled),
+.ds-btn--link:active:not(:disabled) {
+  background: var(--color-purple-50);
+  color: var(--action-primary-default);
+}
+.ds-btn--tertiary:disabled,
+.ds-btn--link:disabled { color: var(--color-purple-200); opacity: 1; }
+
+/* DESTRUCTIVE — filled dark red */
+.ds-btn--destructive {
+  background: var(--action-destructive-default);   /* #a82424 */
+  color: var(--color-base-white);
+}
+.ds-btn--destructive:hover:not(:disabled),
+.ds-btn--destructive:active:not(:disabled) { background: var(--color-red-900); }   /* feedback/error/title */
+.ds-btn--destructive:disabled { background: #bf5f5f; color: var(--color-base-white); opacity: 1; }
+
+/* SUCCESS (extra variant) — filled green */
+.ds-btn--success {
+  background: var(--action-success-default);
+  color: var(--color-base-white);
+}
+.ds-btn--success:hover:not(:disabled),
+.ds-btn--success:active:not(:disabled) { background: var(--color-green-800); }
+
+/* Dark-mode tweaks so secondary/tertiary read correctly */
+[data-theme='dark'] .ds-btn--primary:hover:not(:disabled),
+[data-theme='dark'] .ds-btn--primary:active:not(:disabled) { background: var(--color-purple-300); }
+[data-theme='dark'] .ds-btn--primary:disabled { background: var(--color-neutral-800); color: var(--color-neutral-600); }
+[data-theme='dark'] .ds-btn--secondary {
+  background: var(--surface-foreground);
+  color: var(--color-purple-300);
+  border-color: var(--color-purple-300);
+}
+[data-theme='dark'] .ds-btn--secondary:hover:not(:disabled),
+[data-theme='dark'] .ds-btn--secondary:active:not(:disabled) { background: var(--color-purple-950); }
+[data-theme='dark'] .ds-btn--tertiary,
+[data-theme='dark'] .ds-btn--link { color: var(--color-purple-300); }
+[data-theme='dark'] .ds-btn--tertiary:hover:not(:disabled),
+[data-theme='dark'] .ds-btn--link:hover:not(:disabled) { background: var(--color-purple-950); }
+[data-theme='dark'] .ds-btn--destructive:hover:not(:disabled),
+[data-theme='dark'] .ds-btn--destructive:active:not(:disabled) { background: var(--color-red-700); }
+
+/* ============================================================
+   Input / Textarea / Select — Ataskate Figma "Text input V2" spec
+   Pill shape (radius 100px), 40px height, padding 8/16, border
+   color shifts by state:
+     Default → #e8e9ea   Hover → #5a5aff
+     Active  → #0d166b   Error → #a82424
+   Supports leftAdornment + rightAdornment slots via .ds-field-wrap
+============================================================ */
+.ds-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--font-family-sans);
+}
+.ds-label {
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  line-height: 1.2;
+  letter-spacing: 0.2px;
+  padding: 0;
+}
+.ds-label__optional {
+  color: var(--ats-neutral-500);
+  font-weight: var(--font-weight-regular);
+  margin-left: 4px;
+}
+
+/* The pill-shaped border wrapper around the actual input */
+.ds-field-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  height: 44px;                            /* match standalone bumped height */
+  padding: 10px 20px;                      /* match standalone padding */
+  border: 1px solid var(--ats-neutral-300);/* default stroke */
+  border-radius: 100px;                    /* pill */
+  background: var(--surface-foreground);
+  transition: border-color var(--duration-fast) var(--easing-standard),
+              box-shadow   var(--duration-fast) var(--easing-standard),
+              background   var(--duration-fast) var(--easing-standard);
+}
+.ds-field-wrap:hover:not(.ds-field-wrap--disabled):not(.ds-field-wrap--error) {
+  border-color: var(--ats-primary-300);    /* #5a5aff */
+}
+.ds-field-wrap:focus-within:not(.ds-field-wrap--error) {
+  border-color: var(--ats-primary-400);    /* #0d166b */
+}
+.ds-field-wrap--error {
+  border-color: var(--ats-error-red-200);  /* #a82424 */
+}
+.ds-field-wrap--disabled {
+  background: var(--ats-neutral-100);
+  border-color: var(--ats-neutral-300);
+  color: var(--ats-neutral-400);
+  cursor: not-allowed;
+}
+.ds-field-wrap--readonly { background: var(--ats-neutral-50); border-color: var(--ats-neutral-300); }
+
+[data-theme='dark'] .ds-field-wrap {
+  background: var(--surface-foreground);
+  border-color: var(--color-neutral-700);
+}
+[data-theme='dark'] .ds-field-wrap:hover:not(.ds-field-wrap--disabled):not(.ds-field-wrap--error) { border-color: var(--color-purple-400); }
+[data-theme='dark'] .ds-field-wrap:focus-within:not(.ds-field-wrap--error) { border-color: var(--color-purple-200); }
+
+/* Adornments (left icon / right help-icon) */
+.ds-field-addon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  gap: 4px;
+}
+.ds-field-addon--left  { margin-left: -4px; }
+.ds-field-addon--right { margin-right: -4px; color: var(--text-tertiary); }
+
+/* Bare input — no border/padding; the wrapper owns the shell */
+.ds-input, .ds-select {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-family-sans);
+  font-size: 14px;
+  line-height: 20px;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.ds-input::placeholder, .ds-textarea::placeholder { color: var(--ats-neutral-400); }
+.ds-input:disabled, .ds-select:disabled, .ds-textarea:disabled { cursor: not-allowed; color: var(--ats-neutral-400); }
+
+/* Legacy / standalone input (no wrapper) — keep pill style.
+   Full-width inside its container (Field, form column, state cell)
+   and a slightly stronger default border so the pill reads as an
+   actionable control, not empty space. */
+.ds-input--standalone,
+.ds-select--standalone {
+  width: 100%;
+  box-sizing: border-box;
+  height: 44px;                               /* bumped from 40 → 44 for more visual weight */
+  padding: 10px 20px;                         /* more generous breathing room */
+  border: 1px solid var(--ats-neutral-300);
+  border-radius: 100px;
+  background: var(--surface-foreground);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--text-primary);
+  transition: border-color var(--duration-fast) var(--easing-standard),
+              box-shadow   var(--duration-fast) var(--easing-standard),
+              background   var(--duration-fast) var(--easing-standard);
+}
+.ds-input--standalone:hover:not(:disabled),
+.ds-select--standalone:hover:not(:disabled) {
+  border-color: var(--ats-primary-300);
+  background: color-mix(in srgb, var(--ats-primary-50) 40%, var(--surface-foreground));
+}
+.ds-input--standalone:focus-visible,
+.ds-select--standalone:focus-visible {
+  border-color: var(--ats-primary-400);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(90, 90, 255, 0.18);
+  background: var(--surface-foreground);
+}
+.ds-input--standalone:disabled,
+.ds-select--standalone:disabled {
+  background: var(--ats-neutral-100);
+  border-color: var(--ats-neutral-300);
+  color: var(--ats-neutral-400);
+  cursor: not-allowed;
+}
+.ds-input--error { border-color: var(--ats-error-red-200) !important; }
+.ds-input--error:focus-visible { box-shadow: 0 0 0 3px rgba(168, 36, 36, 0.18) !important; }
+
+/* Textarea — pill shape doesn't apply, use radius-sm */
+.ds-textarea {
+  width: 100%;
+  min-height: 96px;
+  padding: 10px 16px;
+  border: 1px solid #e8e9ea;
+  border-radius: var(--radius-md);
+  background: var(--surface-foreground);
+  color: var(--text-primary);
+  font-family: var(--font-family-sans);
+  font-size: 14px;
+  line-height: 20px;
+  resize: vertical;
+  outline: none;
+  transition: border-color var(--duration-fast) var(--easing-standard);
+}
+.ds-textarea:hover:not(:disabled) { border-color: var(--ats-primary-300); }
+.ds-textarea:focus-visible { border-color: var(--ats-primary-400); }
+.ds-textarea--error { border-color: var(--ats-error-red-200); }
+
+/* Helper / error text (below the field) */
+.ds-helper {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.ds-helper--error { color: var(--ats-error-red-200); font-weight: var(--font-weight-medium); }
+.ds-helper--error::before { content: '\2715'; font-weight: var(--font-weight-bold); }  /* × */
+
+/* ============================================================
+   Checkbox & Radio — exact Figma atom match
+   All 7 states each, pulled from the Figma "Radio button" and
+   "Checkbox" component sets:
+     1. Default unchecked        — gray ring #a1a5aa, white bg
+     2. Hover unchecked          — purple ring #5a5aff + purple-50 inner
+     3. Error unchecked          — red ring #a82424
+     4. Default checked          — light purple-200 ring, navy purple-900 dot
+     5. Hover checked            — purple-500 ring + navy dot
+     6. Disabled unchecked       — purple-50 bg + purple-50 ring + purple-100 inner
+     7. Disabled checked         — navy dot at 50% opacity
+   Text: Nunito Regular 14px / line-height 1.2, color text/body.
+   Gap text<->box: 4px. Box wrapper: 24×24 via 2px pad around 20×20.
+============================================================ */
+.ds-check, .ds-radio {
+  display: inline-flex;
+  align-items: center;       /* vertically center label with the dot */
+  gap: var(--spacing-1);
+  cursor: pointer;
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-regular);
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--text-body);
+  user-select: none;
+  position: relative;
+}
+.ds-check input, .ds-radio input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px; height: 1px;
+  margin: -1px;
+}
+.ds-check__wrap, .ds-radio__wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;                          /* → outer 24×24 */
+  border-radius: var(--radius-xs);
+  flex-shrink: 0;
+}
+.ds-check__box, .ds-radio__dot {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  background: var(--color-base-white);
+  border: var(--border-width-1) solid var(--color-neutral-400);   /* #a1a5aa */
+  box-sizing: border-box;
+  transition: border-color var(--duration-fast) var(--easing-standard),
+              background   var(--duration-fast) var(--easing-standard),
+              opacity      var(--duration-fast) var(--easing-standard);
+}
+.ds-check__box { border-radius: var(--radius-xs); }  /* 4px rounded square */
+.ds-radio__dot { border-radius: var(--radius-full); }
+
+/* ---------- RADIO ---------- */
+
+/* 2. Hover (unchecked) — purple ring + purple-50 inner fill */
+.ds-radio:hover input:not(:checked):not(:disabled) + .ds-radio__wrap .ds-radio__dot {
+  border-color: var(--color-purple-500);
+}
+.ds-radio:hover input:not(:checked):not(:disabled) + .ds-radio__wrap .ds-radio__dot::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px; height: 14px;
+  border-radius: var(--radius-full);
+  background: var(--color-purple-50);
+}
+
+/* 4. Checked (default) — light purple-200 ring + navy dot */
+.ds-radio input:checked + .ds-radio__wrap .ds-radio__dot {
+  border-color: var(--color-purple-200);
+}
+.ds-radio input:checked + .ds-radio__wrap .ds-radio__dot::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px; height: 12px;
+  border-radius: var(--radius-full);
+  background: var(--color-purple-900);  /* #0d166b */
+}
+
+/* 5. Checked hover — purple-500 ring */
+.ds-radio:hover input:checked:not(:disabled) + .ds-radio__wrap .ds-radio__dot {
+  border-color: var(--color-purple-500);
+}
+
+/* 6. Disabled unchecked — purple-50 fill/ring + purple-100 inner */
+.ds-radio input:disabled + .ds-radio__wrap .ds-radio__dot {
+  background: var(--color-purple-50);
+  border-color: var(--color-purple-50);
+  cursor: not-allowed;
+}
+.ds-radio input:disabled:not(:checked) + .ds-radio__wrap .ds-radio__dot::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px; height: 14px;
+  border-radius: var(--radius-full);
+  background: var(--color-purple-100);
+}
+
+/* 7. Disabled checked — keep ring+dot but at 50% opacity */
+.ds-radio input:disabled:checked + .ds-radio__wrap .ds-radio__dot {
+  background: var(--color-base-white);
+  border-color: var(--color-purple-200);
+  opacity: 0.5;
+}
+.ds-radio input:disabled ~ * { color: var(--color-neutral-300); cursor: not-allowed; }
+
+/* 3. Error */
+.ds-radio--error .ds-radio__dot,
+.ds-radio--error:hover input:not(:checked) + .ds-radio__wrap .ds-radio__dot {
+  border-color: var(--color-red-700);       /* #a82424 */
+}
+.ds-radio--error input:checked + .ds-radio__wrap .ds-radio__dot { border-color: var(--color-red-700); }
+.ds-radio--error input:checked + .ds-radio__wrap .ds-radio__dot::after { background: var(--color-red-700); }
+
+/* Focus */
+.ds-radio input:focus-visible + .ds-radio__wrap,
+.ds-check input:focus-visible + .ds-check__wrap { box-shadow: var(--shadow-focus); border-radius: var(--radius-xs); }
+
+/* ---------- CHECKBOX ---------- */
+
+/* 2. Hover unchecked — purple ring + purple-50 inner fill */
+.ds-check:hover input:not(:checked):not(:disabled) + .ds-check__wrap .ds-check__box {
+  border-color: var(--color-purple-500);
+  background: var(--color-purple-50);
+}
+
+/* 4. Checked — filled navy with white check */
+.ds-check input:checked + .ds-check__wrap .ds-check__box {
+  background: var(--color-purple-900);         /* navy filled */
+  border-color: var(--color-purple-900);
+}
+.ds-check input:checked + .ds-check__wrap .ds-check__box::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 10px; height: 5px;
+  border-left: 2px solid var(--color-base-white);
+  border-bottom: 2px solid var(--color-base-white);
+  transform: translate(-50%, -70%) rotate(-45deg);
+}
+
+/* 5. Checked hover — slight lift via purple-500 */
+.ds-check:hover input:checked:not(:disabled) + .ds-check__wrap .ds-check__box {
+  background: var(--color-purple-700);
+  border-color: var(--color-purple-700);
+}
+
+/* 6. Disabled unchecked */
+.ds-check input:disabled + .ds-check__wrap .ds-check__box {
+  background: var(--color-purple-50);
+  border-color: var(--color-purple-50);
+  cursor: not-allowed;
+}
+/* 7. Disabled checked */
+.ds-check input:disabled:checked + .ds-check__wrap .ds-check__box {
+  background: var(--color-purple-200);
+  border-color: var(--color-purple-200);
+  opacity: 0.6;
+}
+.ds-check input:disabled ~ * { color: var(--color-neutral-300); cursor: not-allowed; }
+
+/* 3. Error */
+.ds-check--error .ds-check__box { border-color: var(--color-red-700); }
+.ds-check--error input:checked + .ds-check__wrap .ds-check__box {
+  background: var(--color-red-700);
+  border-color: var(--color-red-700);
+}
+
+/* Dark mode adjustments (keep navy dot visible; invert bg) */
+[data-theme='dark'] .ds-check__box,
+[data-theme='dark'] .ds-radio__dot {
+  background: var(--color-neutral-900);
+  border-color: var(--color-neutral-500);
+}
+[data-theme='dark'] .ds-radio:hover input:not(:checked):not(:disabled) + .ds-radio__wrap .ds-radio__dot {
+  border-color: var(--color-purple-300);
+}
+[data-theme='dark'] .ds-radio input:checked + .ds-radio__wrap .ds-radio__dot {
+  border-color: var(--color-purple-400);
+}
+[data-theme='dark'] .ds-radio input:checked + .ds-radio__wrap .ds-radio__dot::after { background: var(--color-purple-200); }
+[data-theme='dark'] .ds-check input:checked + .ds-check__wrap .ds-check__box {
+  background: var(--color-purple-300);
+  border-color: var(--color-purple-300);
+}
+[data-theme='dark'] .ds-check input:checked + .ds-check__wrap .ds-check__box::after {
+  border-color: var(--color-purple-950);
+}
+
+/* ---------------- Switch (Toggle — matches Figma "Toggle (Switch)") ----------------
+   Outer track 48×24, radius 100px, 2px padding.
+   Off: track bg surface/surface-page (#fafafa), thumb text/captions (#54575c).
+   On:  track bg color/purple/100 (#e5e5ff), thumb surface/border-active (#0d166b).
+   Thumb is 20×20 with a soft halo shadow.
+--------------------------------------------------------------- */
+.ds-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  cursor: pointer;
+  font-family: var(--font-family-sans);
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--text-body);
+  user-select: none;
+}
+.ds-switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px; height: 1px;
+  margin: -1px;
+}
+.ds-switch__track {
+  position: relative;
+  width: 48px;
+  height: 24px;
+  padding: 2px;
+  box-sizing: border-box;
+  background: var(--surface-page);                     /* #fafafa off */
+  border-radius: var(--radius-full);
+  transition: background var(--duration-fast) var(--easing-standard);
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
+}
+.ds-switch__thumb {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 20px;
+  height: 20px;
+  background: var(--text-captions);                    /* #54575c off */
+  border-radius: var(--radius-full);
+  box-shadow: 1px 1px 4px 0 rgba(212,214,216,0.88);
+  transition: transform var(--duration-fast) var(--easing-standard),
+              background var(--duration-fast) var(--easing-standard),
+              box-shadow var(--duration-fast) var(--easing-standard);
+}
+.ds-switch input:checked ~ .ds-switch__track {
+  background: var(--color-purple-100);                 /* #e5e5ff on */
+}
+.ds-switch input:checked ~ .ds-switch__track .ds-switch__thumb {
+  transform: translateX(24px);
+  background: var(--color-purple-900);                 /* #0d166b on — surface/border-active */
+  box-shadow: 1px 1px 4px 0 rgba(172,172,255,0.88);
+}
+.ds-switch input:disabled ~ .ds-switch__track { opacity: 0.5; cursor: not-allowed; }
+.ds-switch input:focus-visible ~ .ds-switch__track { box-shadow: inset 0 0 4px rgba(0,0,0,0.1), var(--shadow-focus); }
+
+[data-theme='dark'] .ds-switch__track  { background: var(--color-neutral-800); }
+[data-theme='dark'] .ds-switch__thumb  { background: var(--color-neutral-400); }
+[data-theme='dark'] .ds-switch input:checked ~ .ds-switch__track          { background: var(--color-purple-950); }
+[data-theme='dark'] .ds-switch input:checked ~ .ds-switch__track .ds-switch__thumb { background: var(--color-purple-300); }
+
+/* ---------------- Card ---------------- */
+.ds-card {
+  background: var(--surface-foreground);
+  border: var(--border-width-1) solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--duration-normal) var(--easing-standard),
+              transform  var(--duration-normal) var(--easing-standard);
+}
+.ds-card--elevated   { box-shadow: var(--shadow-lg); }
+.ds-card--flat       { box-shadow: none; }
+.ds-card--interactive { cursor: pointer; }
+.ds-card--interactive:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+
+/* ---------------- Badge ---------------- */
+.ds-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--spacing-1);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-full);
+  background: var(--badge-default-bg);
+  color: var(--badge-default-text);
+  line-height: 1;
+}
+.ds-badge--dot { width: 8px; min-width: 8px; height: 8px; padding: 0; }
+.ds-badge--brand { background: var(--badge-brand-bg); color: var(--badge-brand-text); }
+
+/* ---------------- Chip / Tag ---------------- */
+.ds-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  height: var(--sizing-xs);
+  padding: 0 var(--spacing-2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  background: var(--tag-neutral-bg);
+  color: var(--tag-neutral-text);
+}
+.ds-chip--brand   { background: var(--tag-brand-bg);   color: var(--tag-brand-text); }
+.ds-chip--success { background: var(--tag-success-bg); color: var(--tag-success-text); }
+.ds-chip--warning { background: var(--tag-warning-bg); color: var(--tag-warning-text); }
+.ds-chip--danger  { background: var(--tag-danger-bg);  color: var(--tag-danger-text); }
+.ds-chip--info    { background: var(--tag-info-bg);    color: var(--tag-info-text); }
+
+/* ---------------- Avatar ---------------- */
+.ds-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  font-family: var(--font-family-sans);
+  flex-shrink: 0;
+}
+.ds-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.ds-avatar--xs { width: var(--sizing-xs); height: var(--sizing-xs); font-size: var(--font-size-2xs); }
+.ds-avatar--sm { width: var(--sizing-sm); height: var(--sizing-sm); font-size: var(--font-size-xs); }
+.ds-avatar--md { width: var(--sizing-md); height: var(--sizing-md); font-size: var(--font-size-sm); }
+.ds-avatar--lg { width: var(--sizing-lg); height: var(--sizing-lg); font-size: var(--font-size-md); }
+.ds-avatar--xl { width: var(--sizing-xl); height: var(--sizing-xl); font-size: var(--font-size-lg); }
+
+/* ---------------- Divider ---------------- */
+.ds-divider { height: 1px; background: var(--divider-default); border: 0; }
+.ds-divider--subtle { background: var(--divider-subtle); }
+.ds-divider--strong { background: var(--divider-strong); }
+.ds-divider--vertical { width: 1px; height: 100%; }
+
+/* ---------------- Progress ---------------- */
+.ds-progress {
+  width: 100%;
+  height: 8px;
+  background: var(--progress-track);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+.ds-progress__bar {
+  height: 100%;
+  background: var(--progress-bar);
+  transition: width var(--duration-normal) var(--easing-standard);
+  border-radius: var(--radius-full);
+}
+.ds-progress--success .ds-progress__bar { background: var(--progress-bar-success); }
+.ds-progress--warning .ds-progress__bar { background: var(--progress-bar-warning); }
+.ds-progress--danger  .ds-progress__bar { background: var(--progress-bar-danger); }
+
+/* ---------------- Skeleton ---------------- */
+.ds-skeleton {
+  background: var(--skeleton-base);
+  border-radius: var(--radius-sm);
+  position: relative;
+  overflow: hidden;
+}
+.ds-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--skeleton-highlight), transparent);
+  animation: ds-shimmer 1.5s infinite var(--easing-standard);
+}
+@keyframes ds-shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+/* ============================================================
+   Alert (Ataskate "Alert" — Color filled or White inline)
+   Size: responsive width, 88px min height (Color), 56px min (White)
+   Radius: 8px  Padding: 16/16/16/16 (Color), 0 (White)  Gap: 16px
+   Fills (Color):  Positivo #effaf4  Negative #ffebeb
+                   Alert    #ffebba  Info/Help #ebf9ff
+============================================================ */
+.ds-alert {
+  display: flex;
+  align-items: center;                 /* vertically center title+body with actions */
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-sm);
+  border: 0;
+  border-bottom: 4px solid transparent; /* colored accent stripe */
+  font-family: var(--font-family-sans);
+  width: 100%;
+  overflow: hidden;
+}
+.ds-alert--white {
+  padding: 0;
+  border-radius: 0;
+  border-bottom: 0;
+  background: transparent !important;
+}
+.ds-alert__icon {
+  flex-shrink: 0;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-base-white);
+  font-size: 14px;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+}
+.ds-alert__body-wrap { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--spacing-1); }
+.ds-alert__title { font-size: 14px; font-weight: var(--font-weight-bold); color: var(--text-primary); line-height: 1.3; }
+.ds-alert__body  { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+.ds-alert__actions { display: inline-flex; align-items: center; gap: var(--spacing-2); flex-shrink: 0; margin-left: auto; }
+.ds-alert__action {
+  padding: 0;
+  background: none;
+  border: 0;
+  font: var(--font-weight-bold) 14px/1.4 var(--font-family-sans);
+  color: var(--ats-primary-300);
+  cursor: pointer;
+}
+.ds-alert__action:hover { color: var(--ats-primary-400); }
+.ds-alert__close {
+  width: 24px; height: 24px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: none; border: 0; cursor: pointer;
+  color: var(--text-tertiary);
+  font-size: 18px;
+  line-height: 1;
+  border-radius: 50%;
+  transition: background var(--duration-fast) var(--easing-standard);
+}
+.ds-alert__close:hover { background: rgba(0,0,0,0.06); color: var(--text-primary); }
+
+/* State tones — fills + colored bottom accent stripe from Figma */
+.ds-alert--success { background: var(--ats-success-green-50); border-bottom-color: var(--ats-success-green-200); }
+.ds-alert--success .ds-alert__icon { background: var(--ats-success-green-200); }
+.ds-alert--error   { background: var(--ats-error-red-50);      border-bottom-color: var(--ats-error-red-200); }
+.ds-alert--error   .ds-alert__icon { background: var(--ats-error-red-200); }
+.ds-alert--warning { background: var(--ats-alert-yellow-100);  border-bottom-color: var(--ats-alert-yellow-200); }
+.ds-alert--warning .ds-alert__icon { background: var(--ats-alert-yellow-200); color: var(--color-base-white); }
+.ds-alert--info    { background: var(--ats-info-blue-50);      border-bottom-color: var(--ats-info-blue-200); }
+.ds-alert--info    .ds-alert__icon { background: var(--ats-info-blue-200); }
+.ds-alert--neutral { background: var(--ats-neutral-100);       border-bottom-color: var(--ats-neutral-500); }
+.ds-alert--neutral .ds-alert__icon { background: var(--ats-neutral-500); }
+.ds-alert--white.ds-alert--success,
+.ds-alert--white.ds-alert--error,
+.ds-alert--white.ds-alert--warning,
+.ds-alert--white.ds-alert--info,
+.ds-alert--white.ds-alert--neutral { border-bottom-color: transparent !important; }
+
+/* Dark mode keeps the pastel feel but darkens the surface */
+[data-theme='dark'] .ds-alert--success { background: color-mix(in srgb, var(--ats-success-green-300) 40%, var(--surface-foreground)); }
+[data-theme='dark'] .ds-alert--error   { background: color-mix(in srgb, var(--ats-error-red-300) 40%,   var(--surface-foreground)); }
+[data-theme='dark'] .ds-alert--warning { background: color-mix(in srgb, var(--ats-alert-yellow-300) 45%, var(--surface-foreground)); }
+[data-theme='dark'] .ds-alert--info    { background: color-mix(in srgb, var(--ats-info-blue-300) 40%,    var(--surface-foreground)); }
+[data-theme='dark'] .ds-alert--neutral { background: var(--color-neutral-800); }
+[data-theme='dark'] .ds-alert__title   { color: var(--text-primary); }
+[data-theme='dark'] .ds-alert__body    { color: var(--text-secondary); }
+
+/* ---------------- Tooltip ---------------- */
+.ds-tooltip { position: relative; display: inline-flex; }
+.ds-tooltip__content {
+  position: absolute;
+  bottom: calc(100% + var(--spacing-2));
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--spacing-1) var(--spacing-2);
+  background: var(--tooltip-bg);
+  color: var(--tooltip-text);
+  font-size: var(--font-size-xs);
+  border-radius: var(--radius-xs);
+  white-space: nowrap;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-fast) var(--easing-standard);
+  z-index: var(--z-tooltip);
+}
+.ds-tooltip:hover .ds-tooltip__content,
+.ds-tooltip:focus-within .ds-tooltip__content { opacity: 1; }
+
+/* ---------------- Modal ---------------- */
+.ds-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-overlay);
+  backdrop-filter: var(--blur-backdrop-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-4);
+  z-index: var(--z-modal);
+  animation: ds-fade-in var(--duration-normal) var(--easing-standard);
+}
+.ds-modal {
+  background: var(--modal-bg);
+  border: var(--border-width-1) solid var(--modal-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-2xl);
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow: auto;
+  animation: ds-modal-in var(--duration-normal) var(--easing-spring-snappy);
+}
+.ds-modal__header { padding: var(--spacing-5) var(--spacing-5) var(--spacing-3); }
+.ds-modal__title  { color: var(--modal-title); font: var(--font-weight-semibold) var(--font-size-xl)/var(--line-height-snug) var(--font-family-sans); }
+.ds-modal__body   { padding: 0 var(--spacing-5) var(--spacing-5); color: var(--modal-body); font-size: var(--font-size-md); }
+.ds-modal__footer { padding: var(--spacing-4) var(--spacing-5); display: flex; gap: var(--spacing-2); justify-content: flex-end; border-top: var(--border-width-1) solid var(--modal-border); }
+@keyframes ds-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ds-modal-in { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+/* ---------------- Tabs ---------------- */
+.ds-tabs { display: flex; flex-direction: column; }
+.ds-tabs__list {
+  display: flex;
+  gap: var(--spacing-1);
+  border-bottom: var(--border-width-1) solid var(--border-default);
+}
+.ds-tabs__tab {
+  padding: var(--spacing-2) var(--spacing-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  border-bottom: var(--border-width-2) solid transparent;
+  margin-bottom: -1px;
+  transition: color var(--duration-fast) var(--easing-standard),
+              border-color var(--duration-fast) var(--easing-standard);
+}
+.ds-tabs__tab:hover { color: var(--text-primary); }
+.ds-tabs__tab[aria-selected='true'] {
+  color: var(--text-brand);
+  border-bottom-color: var(--nav-indicator);
+}
+.ds-tabs__panel { padding: var(--spacing-4) 0; color: var(--text-primary); }
+
+/* ---------------- Breadcrumb ---------------- */
+.ds-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-sans);
+}
+.ds-breadcrumb__sep { color: var(--text-tertiary); }
+.ds-breadcrumb__link { color: var(--text-secondary); }
+.ds-breadcrumb__link:hover { color: var(--text-primary); }
+.ds-breadcrumb__current { color: var(--text-primary); font-weight: var(--font-weight-medium); }
+
+/* ============================================================
+   Toast (Ataskate "Toast") — always bordered, 4 states
+   Radius: 8px  Padding: 16/16/16/16  Gap: 16px
+   Fill + 1px stroke per state:
+     Positive:  #effaf4 on #309c60      Negative:  #ffebeb on #a82424
+     Alert:     #ffebba on #cc9200      Info/Help: #ebf9ff on #008fcc
+============================================================ */
+.ds-toast-region {
+  position: fixed;
+  bottom: var(--spacing-4);
+  right: var(--spacing-4);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  max-width: 480px;
+  pointer-events: none;
+}
+.ds-toast-region > * { pointer-events: auto; }
+.ds-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-sm);
+  border: 0;
+  border-bottom: 4px solid transparent;      /* thick bottom accent stripe */
+  font-family: var(--font-family-sans);
+  font-size: 14px;
+  line-height: 1.4;
+  box-shadow: var(--shadow-lg);
+  animation: ds-toast-in var(--duration-normal) var(--easing-spring-snappy);
+  background: var(--color-base-white);
+  color: var(--text-primary);
+  min-width: 320px;
+  overflow: hidden;                          /* keep rounded corners crisp with bottom stroke */
+}
+.ds-toast__icon {
+  flex-shrink: 0;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-base-white);
+  font-size: 14px;
+  font-weight: var(--font-weight-bold);
+}
+.ds-toast__body-wrap { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ds-toast__title { font-weight: var(--font-weight-bold); color: var(--text-primary); }
+.ds-toast__body  { color: var(--text-secondary); font-size: 13px; }
+.ds-toast__actions { display: inline-flex; align-items: center; gap: var(--spacing-2); flex-shrink: 0; }
+.ds-toast__action {
+  padding: 0;
+  background: none;
+  border: 0;
+  font: var(--font-weight-bold) 14px/1.4 var(--font-family-sans);
+  color: var(--ats-primary-300);
+  cursor: pointer;
+}
+.ds-toast__close {
+  width: 24px; height: 24px;
+  background: none;
+  border: 0;
+  color: var(--text-tertiary);
+  font-size: 18px;
+  line-height: 1;
+  border-radius: 50%;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.ds-toast__close:hover { background: rgba(0,0,0,0.06); color: var(--text-primary); }
+
+.ds-toast--success { background: var(--ats-success-green-50); border-bottom-color: var(--ats-success-green-200); }
+.ds-toast--success .ds-toast__icon { background: var(--ats-success-green-200); }
+.ds-toast--error   { background: var(--ats-error-red-50);      border-bottom-color: var(--ats-error-red-200); }
+.ds-toast--error   .ds-toast__icon { background: var(--ats-error-red-200); }
+.ds-toast--warning { background: var(--ats-alert-yellow-100);  border-bottom-color: var(--ats-alert-yellow-200); }
+.ds-toast--warning .ds-toast__icon { background: var(--ats-alert-yellow-200); }
+.ds-toast--info    { background: var(--ats-info-blue-50);      border-bottom-color: var(--ats-info-blue-200); }
+.ds-toast--info    .ds-toast__icon { background: var(--ats-info-blue-200); }
+.ds-toast--neutral { background: var(--color-base-white);      border-bottom-color: var(--ats-neutral-500); }
+.ds-toast--neutral .ds-toast__icon { background: var(--ats-neutral-500); }
+
+@keyframes ds-toast-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+
+/* ---------------- Table ---------------- */
+.ds-table { width: 100%; border-collapse: collapse; font-family: var(--font-family-sans); font-size: var(--font-size-sm); }
+.ds-table thead { background: var(--table-header-bg); }
+.ds-table th { text-align: left; padding: var(--spacing-3) var(--spacing-4); color: var(--table-header-text); font-weight: var(--font-weight-semibold); border-bottom: var(--border-width-1) solid var(--table-border); }
+.ds-table td { padding: var(--spacing-3) var(--spacing-4); color: var(--table-cell-text); border-bottom: var(--border-width-1) solid var(--table-border); }
+.ds-table tbody tr { background: var(--table-row-bg); transition: background var(--duration-fast) var(--easing-standard); }
+.ds-table tbody tr:nth-child(even) { background: var(--table-row-bg-alt); }
+.ds-table tbody tr:hover { background: var(--table-row-bg-hover); }
+.ds-table tbody tr[aria-selected='true'] { background: var(--table-row-bg-selected); }
+
+/* ---------------- Status Dot ---------------- */
+.ds-status { display: inline-block; width: 10px; height: 10px; border-radius: var(--radius-full); }
+.ds-status--online    { background: var(--status-online); }
+.ds-status--away      { background: var(--status-away); }
+.ds-status--busy      { background: var(--status-busy); }
+.ds-status--offline   { background: var(--status-offline); }
+.ds-status--invisible { background: var(--status-invisible); }
+
+/* ---------------- KBD ---------------- */
+.ds-kbd {
+  display: inline-flex;
+  align-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 var(--spacing-1);
+  background: var(--kbd-bg);
+  border: var(--border-width-1) solid var(--kbd-border);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-xs);
+  color: var(--kbd-text);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ============================================================
+   Spinner — 3 sizes × 3 colors (Ataskate pattern)
+============================================================ */
+.ds-spinner {
+  display: inline-block;
+  border-radius: 50%;
+  border-style: solid;
+  border-color: currentColor;
+  border-right-color: transparent;
+  animation: ds-spin 700ms linear infinite;
+}
+.ds-spinner--sm { width: 16px; height: 16px; border-width: 2px; }
+.ds-spinner--md { width: 24px; height: 24px; border-width: 3px; }
+.ds-spinner--lg { width: 40px; height: 40px; border-width: 4px; }
+.ds-spinner--brand { color: var(--ats-primary-300); }
+.ds-spinner--white { color: var(--ats-white); }
+.ds-spinner--danger { color: var(--ats-error-red-200); }
+.ds-spinner--neutral { color: var(--ats-neutral-500); }
+@keyframes ds-spin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   Stepper — multi-step progress (Ataskate "Stepper" component)
+============================================================ */
+.ds-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  font-family: var(--font-family-sans);
+}
+.ds-stepper__step {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.ds-stepper__dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: var(--font-weight-bold);
+  border: 2px solid var(--ats-neutral-300);
+  background: var(--color-base-white);
+  color: var(--ats-neutral-500);
+  transition: all var(--duration-fast) var(--easing-standard);
+}
+.ds-stepper__step--active .ds-stepper__dot {
+  background: var(--ats-primary-300);
+  border-color: var(--ats-primary-300);
+  color: var(--ats-white);
+}
+.ds-stepper__step--complete .ds-stepper__dot {
+  background: var(--ats-primary-400);
+  border-color: var(--ats-primary-400);
+  color: var(--ats-white);
+}
+.ds-stepper__step--complete .ds-stepper__dot::before {
+  content: '';
+  display: inline-block;
+  width: 8px; height: 4px;
+  border-left: 2px solid var(--ats-white);
+  border-bottom: 2px solid var(--ats-white);
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+.ds-stepper__step--complete .ds-stepper__dot-number { display: none; }
+.ds-stepper__label {
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  color: var(--ats-neutral-600);
+  white-space: nowrap;
+}
+.ds-stepper__step--active .ds-stepper__label,
+.ds-stepper__step--complete .ds-stepper__label { color: var(--text-primary); }
+.ds-stepper__rail {
+  flex: 1;
+  height: 2px;
+  background: var(--ats-neutral-300);
+  margin: 0 8px;
+  margin-top: -22px;
+  transition: background var(--duration-fast) var(--easing-standard);
+}
+.ds-stepper__rail--complete { background: var(--ats-primary-400); }
+
+/* ============================================================
+   Rating — star rating (Ataskate "Rating" component)
+============================================================ */
+.ds-rating { display: inline-flex; gap: 2px; }
+.ds-rating__star {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  color: var(--ats-neutral-300);
+  transition: color var(--duration-fast) var(--easing-standard);
+  background: none;
+  border: 0;
+  padding: 0;
+  line-height: 1;
+  font-size: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.ds-rating__star--filled { color: var(--ats-alert-yellow-200); }
+.ds-rating__star:hover { color: var(--ats-alert-yellow-100); }
+.ds-rating--readonly .ds-rating__star { cursor: default; }
+.ds-rating--sm .ds-rating__star { width: 14px; height: 14px; font-size: 14px; }
+.ds-rating--lg .ds-rating__star { width: 28px; height: 28px; font-size: 28px; }
+
+/* ============================================================
+   Expanded Chip variants
+   - filter (with checkmark on active)
+   - input (removable)
+   - choice (larger, option picker)
+   - status tags (8 tones)
+============================================================ */
+.ds-chip--filter {
+  border: 1px solid var(--ats-neutral-300);
+  background: var(--color-base-white);
+  color: var(--text-primary);
+  gap: 6px;
+}
+.ds-chip--filter.ds-chip--on {
+  border-color: var(--ats-primary-300);
+  background: var(--ats-primary-50);
+  color: var(--ats-primary-400);
+}
+.ds-chip--filter.ds-chip--on::before {
+  content: '';
+  width: 10px; height: 5px;
+  border-left: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg) translate(0, -1px);
+}
+.ds-chip--input {
+  background: var(--ats-primary-50);
+  color: var(--ats-primary-400);
+  padding-right: 4px;
+}
+.ds-chip--input .ds-chip__dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+}
+.ds-chip--input .ds-chip__dismiss:hover { background: rgba(0,0,0,0.08); }
+.ds-chip--choice {
+  border: 1px solid var(--ats-neutral-300);
+  background: var(--color-base-white);
+  color: var(--text-primary);
+  padding: 10px 14px;
+  height: auto;
+  font-size: 14px;
+  border-radius: var(--radius-sm);
+}
+.ds-chip--choice.ds-chip--on {
+  border-color: var(--ats-primary-300);
+  background: var(--ats-primary-50);
+  color: var(--ats-primary-400);
+  font-weight: var(--font-weight-semibold);
+}
+/* Status tags — 8 tones per QA spec */
+.ds-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-pill);
+  line-height: 1.4;
+}
+.ds-tag--verde   { background: var(--ats-success-green-50);  color: var(--ats-success-green-300); }
+.ds-tag--amarillo{ background: var(--ats-alert-yellow-50);   color: var(--ats-alert-yellow-300); }
+.ds-tag--rojo    { background: var(--ats-error-red-50);      color: var(--ats-error-red-300); }
+.ds-tag--rosa    { background: var(--ats-pink-100);          color: var(--ats-tag); }
+.ds-tag--azul    { background: var(--ats-info-blue-50);      color: var(--ats-info-blue-300); }
+.ds-tag--morado  { background: var(--ats-primary-50);        color: var(--ats-primary-400); }
+.ds-tag--gris    { background: var(--ats-neutral-100);       color: var(--ats-neutral-700); }
+.ds-tag--blanco  { background: var(--color-base-white);      color: var(--ats-neutral-700); border: 1px solid var(--ats-neutral-300); }
+
+/* ============================================================
+   Checkbox — add indeterminate and read-only states
+============================================================ */
+.ds-check input:indeterminate + .ds-check__wrap .ds-check__box,
+.ds-check--indeterminate input + .ds-check__wrap .ds-check__box {
+  background: var(--color-purple-900);
+  border-color: var(--color-purple-900);
+}
+.ds-check input:indeterminate + .ds-check__wrap .ds-check__box::after,
+.ds-check--indeterminate input + .ds-check__wrap .ds-check__box::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 2px;
+  background: var(--color-base-white);
+  border: 0;
+}
+.ds-check--readonly input + .ds-check__wrap .ds-check__box {
+  background: var(--ats-neutral-100);
+  border-color: var(--ats-neutral-300);
+  cursor: default;
+}
+.ds-check--readonly input:checked + .ds-check__wrap .ds-check__box {
+  background: var(--ats-neutral-400);
+  border-color: var(--ats-neutral-400);
+}
+
+/* ============================================================
+   Button — loading state (spinner inside)
+============================================================ */
+.ds-btn--loading { cursor: progress; position: relative; pointer-events: none; opacity: 0.85; }
+.ds-btn--loading .ds-btn__spinner {
+  display: inline-block;
+  width: 16px; height: 16px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: ds-spin 700ms linear infinite;
+}
+
+/* ---------------- Code block ---------------- */
+.ds-code-block {
+  background: var(--code-bg);
+  border: var(--border-width-1) solid var(--code-border);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-3);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  color: var(--code-text);
+  overflow-x: auto;
+}
