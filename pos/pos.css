@@ -294,8 +294,11 @@ body.pos {
 .pos-plan .ds-table thead, .pos-plan .ds-table tbody tr, .pos-plan .ds-table tbody tr:nth-child(even) { background: transparent; }
 .pos-plan .ds-table th { padding: 8px 16px; height: 48px; font-weight: var(--font-weight-bold); color: var(--pos-text-title); border-color: var(--pos-table-line); }
 .pos-plan .ds-table td { padding: 8px 16px; height: 48px; color: var(--ats-neutral-700); border-color: var(--pos-table-line); }
-.pos-plan .ds-table th:first-child, .pos-plan .ds-table td:first-child { width: 24%; white-space: nowrap; }
-.pos-plan .ds-table .pos-saldo { width: 26%; text-align: right; white-space: nowrap; }
+/* tres columnas del mismo ancho (Fecha · Pagos · Saldo restante) */
+.pos-plan .ds-table { table-layout: fixed; }
+.pos-plan .ds-table th { width: calc(100% / 3); }
+.pos-plan .ds-table th:first-child, .pos-plan .ds-table td:first-child { white-space: nowrap; }
+.pos-plan .ds-table .pos-saldo { text-align: right; white-space: nowrap; }
 .pos-plan .ds-table td.pos-saldo { font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
 .pos-saldo .ds-tag { vertical-align: 1px; margin-right: 6px; }
 .pos-plan .ds-table tbody tr:first-child td { height: 56px; }
@@ -306,12 +309,31 @@ body.pos {
 .pos-cargos__mas { border: 0; font-family: inherit; cursor: default; }
 .pos-cargos__mas:hover, .pos-cargos__mas:focus-visible { background: var(--ats-primary-100); }
 .pos-cargos__mas:focus-visible { outline: 2px solid var(--ats-primary-400); outline-offset: 2px; }
-.pos-cargos .pos-cargos__tip { bottom: auto; top: calc(100% + var(--spacing-2)); display: flex; flex-direction: column; gap: 2px; padding: var(--spacing-2) var(--spacing-3); border-radius: var(--radius-sm); font-size: 12px; line-height: 1.4; text-align: left; }
-.pos-cargos__tip small { font-size: 11px; color: var(--ats-neutral-300); }
-.pos-cargos__tip b { font-weight: var(--font-weight-semibold); }
+/* tooltip como el del DS en Figma: navy, texto blanco 14 semibold, radio 6, máx. 280 y flecha de 14×7 hacia quien lo abre */
+.pos .ds-tooltip__content {
+  width: max-content; max-width: 280px; white-space: normal;
+  padding: 6px var(--spacing-2);
+  background: var(--ats-primary-400); color: var(--color-base-white);
+  font-size: 14px; line-height: 18px; font-weight: var(--font-weight-semibold);
+  border-radius: 6px; box-shadow: var(--shadow-lg);
+}
+.pos .ds-tooltip__content::before {
+  content: ''; position: absolute; left: 50%; top: 100%; transform: translateX(-50%);
+  border: solid transparent; border-width: 7px 7px 0; border-top-color: var(--ats-primary-400);
+}
+/* en la tabla abre hacia abajo (arriba lo taparía el encabezado fijo), así que la flecha apunta hacia arriba */
+.pos-cargos .pos-cargos__tip { bottom: auto; top: calc(100% + var(--spacing-2)); display: flex; flex-direction: column; gap: 2px; text-align: left; }
+.pos-cargos .pos-cargos__tip::before { top: auto; bottom: 100%; border-width: 0 7px 7px; border-color: transparent transparent var(--ats-primary-400); }
+.pos-cargos__tip small { font-size: 12px; line-height: 16px; color: var(--ats-primary-200); }
+.pos-cargos__tip b { font-weight: var(--font-weight-bold); }
 .pos-plan__note { font-size: 14px; line-height: 1.2; color: var(--ats-neutral-600); padding: 0 0 0; }
 
 /* ---------------- Responsivo ---------------- */
+/* toasts arriba a la derecha, debajo del header fijo (--pos-header-h lo mide el JS) */
+.pos .ds-toast-region { top: calc(var(--pos-header-h, 56px) + var(--spacing-4)); bottom: auto; }
+.pos .ds-toast { transition: opacity var(--duration-fast) var(--easing-standard), transform var(--duration-fast) var(--easing-standard); }
+.pos .ds-toast.is-saliendo { opacity: 0; transform: translateX(24px); }
+
 @media (max-width: 1180px) {
   .pos-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
@@ -352,6 +374,11 @@ body.pos {
   .pos-stat { padding: 6px 8px; }
 }
 @media (max-width: 480px) {
+  .pos .ds-toast-region { left: var(--spacing-4); max-width: none; }
+  .pos .ds-toast { min-width: 0; }
+  /* tercios de ~100px: el texto baja de renglón en vez de salirse de la celda */
+  .pos-plan .ds-table th, .pos-plan .ds-table td { padding: 8px; }
+  .pos-plan .ds-table th:first-child, .pos-plan .ds-table td:first-child, .pos-plan .ds-table .pos-saldo { white-space: normal; }
   .pos-specs { grid-template-columns: minmax(0, 1fr); gap: var(--spacing-2); }
   .pos-spec:nth-child(4n + 3), .pos-spec:nth-child(4n + 4) { background: none; }
   .pos-spec:nth-child(even) { background: var(--ats-primary-10); }

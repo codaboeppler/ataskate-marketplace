@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="ds/elevation.css" />
 <link rel="stylesheet" href="ds/base.css" />
 <link rel="stylesheet" href="ds/components.css" />
-<link rel="stylesheet" href="pos.css?v=figma4" />
+<link rel="stylesheet" href="pos.css?v=figma9" />
 </head>
 <body class="pos">
 
@@ -86,7 +86,6 @@
             <div class="pos-tags">
               <span class="ds-tag ds-tag--verde">Excelente</span>
               <span class="ds-tag ds-tag--blanco">Publicado 01-02-2026</span>
-              <span class="ds-tag ds-tag--blanco">Días para depositaría: 32</span>
             </div>
             <div class="pos-title-actions">
               <button class="ds-btn ds-btn--icon-md" type="button" id="posShare" aria-label="Compartir artículo"><img class="pos-ico" src="assets/share.svg" alt="" /></button>
@@ -171,12 +170,12 @@
   </section>
 </main>
 
-<!-- Modal "Selecciona el plazo" (ds-modal) -->
+<!-- Modal "Selecciona un apartado" (ds-modal) -->
 <div class="ds-modal-overlay" id="posPlazos" hidden>
   <div class="ds-modal pos-plazos" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="posPlazosTitle">
     <div class="ds-modal__header">
-      <h2 class="ds-modal__title" id="posPlazosTitle">Selecciona el plazo</h2>
-      <p class="pos-plazos__sub">Selecciona el método de plazo que mejor te convenga</p>
+      <h2 class="ds-modal__title" id="posPlazosTitle">Selecciona un apartado</h2>
+      <p class="pos-plazos__sub">Elige el apartado que mejor te convenga</p>
     </div>
     <div class="ds-modal__body" id="posPlanes" role="radiogroup" aria-label="Planes de apartado"></div>
     <div class="ds-modal__footer">
@@ -270,10 +269,19 @@
       + '<div class="ds-toast__actions"><button type="button" class="ds-toast__close" aria-label="Cerrar">×</button></div>';
     t.querySelector('.ds-toast__title').textContent = titulo;
     t.querySelector('.ds-toast__body').textContent = texto;
-    t.querySelector('.ds-toast__close').addEventListener('click', () => t.remove());
-    $('posToasts').appendChild(t);
-    setTimeout(() => t.remove(), 4500);
+    const quitar = () => {
+      if (t.classList.contains('is-saliendo')) return;
+      t.classList.add('is-saliendo');
+      setTimeout(() => t.remove(), 200);
+    };
+    t.querySelector('.ds-toast__close').addEventListener('click', quitar);
+    // el más reciente arriba, pegado a la esquina superior derecha
+    $('posToasts').prepend(t);
+    setTimeout(quitar, 4500);
   };
+  // los toasts van justo debajo del header fijo, que en teléfono ocupa dos renglones
+  const cabecera = document.querySelector('.pos-header');
+  new ResizeObserver(() => document.documentElement.style.setProperty('--pos-header-h', cabecera.offsetHeight + 'px')).observe(cabecera);
   const agregar = (detalle) => {
     enCarrito += 1;
     $('posCartN').textContent = enCarrito;
@@ -322,7 +330,7 @@
   mostrar(10);
   $('posMore').addEventListener('click', () => mostrar(5));
 
-  // ---------- modal "Selecciona el plazo" ----------
+  // ---------- modal "Selecciona un apartado" ----------
   // iconos de la librería del design system (Figma), en currentColor para tomar el color del chip
   const ICON = {
     'fire': '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.3 2.60001C13.9 5.60001 12.9 7.40001 11.5 8.90001C11 8.00001 10.3 7.30001 9.39999 6.70001C9.59999 8.70001 8.39999 10 7.39999 11.4C6.4312 12.7387 5.90658 14.3475 5.89999 16C5.89999 17.8035 6.61642 19.5331 7.89167 20.8083C9.16692 22.0836 10.8965 22.8 12.7 22.8C14.5035 22.8 16.2331 22.0836 17.5083 20.8083C18.7836 19.5331 19.5 17.8035 19.5 16C19.5 10.4 15.3 7.50001 13.3 2.60001Z"/></svg>',
