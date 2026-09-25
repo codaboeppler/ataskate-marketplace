@@ -176,11 +176,12 @@ body.pos {
 .pos-apartado:hover { background: var(--ats-primary-100); }
 .pos-apartado__lead {
   grid-column: 2; justify-self: center;
-  display: flex; align-items: center; gap: var(--spacing-2);
+  display: flex; align-items: center; column-gap: 0.3em;
   font-size: 16px; line-height: 24px; font-weight: var(--font-weight-medium); letter-spacing: 0.5px; color: var(--ats-primary-400); white-space: nowrap;
 }
 /* ayuda "¿Qué es apartar?": icono info-circle del DS con su tooltip, pegado al texto */
-.pos-apartado__ayuda { margin-left: -4px; }
+/* el monto y el icono nunca se separan: en teléfono baja "por $3,255 ⓘ" completo */
+.pos-apartado__monto { display: inline-flex; align-items: center; gap: 2px; white-space: nowrap; }
 .pos-apartado__info { cursor: help; }
 .pos-apartado__info:hover:not(:disabled) { background: var(--surface-foreground); }
 .pos-apartado__ayuda .ds-tooltip__content { letter-spacing: 0; text-align: left; }
