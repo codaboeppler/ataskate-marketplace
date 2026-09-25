@@ -179,7 +179,11 @@ body.pos {
   display: flex; align-items: center; gap: var(--spacing-2);
   font-size: 16px; line-height: 24px; font-weight: var(--font-weight-medium); letter-spacing: 0.5px; color: var(--ats-primary-400); white-space: nowrap;
 }
-.pos-apartado__logo { width: 76px; height: 24px; }
+/* ayuda "¿Qué es apartar?": icono info-circle del DS con su tooltip, pegado al texto */
+.pos-apartado__ayuda { margin-left: -4px; }
+.pos-apartado__info { cursor: help; }
+.pos-apartado__info:hover:not(:disabled) { background: var(--surface-foreground); }
+.pos-apartado__ayuda .ds-tooltip__content { letter-spacing: 0; text-align: left; }
 .pos-apartado__go { grid-column: 3; padding: 7px; background: var(--surface-foreground); }
 
 .pos-buy { display: flex; gap: 8px; }

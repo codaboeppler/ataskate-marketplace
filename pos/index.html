@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="ds/elevation.css" />
 <link rel="stylesheet" href="ds/base.css" />
 <link rel="stylesheet" href="ds/components.css" />
-<link rel="stylesheet" href="pos.css?v=figma9" />
+<link rel="stylesheet" href="pos.css?v=figma10" />
 </head>
 <body class="pos">
 
@@ -112,7 +112,12 @@
             <button class="ds-btn ds-btn--primary" type="button" id="posBuy">Comprar ahora</button>
           </div>
           <div class="pos-apartado" id="posApartado">
-            <span class="pos-apartado__lead">Por $3,255 aparta con <img class="pos-apartado__logo" src="assets/logo-apartados-2.svg" alt="ataskate apartados" /></span>
+            <span class="pos-apartado__lead">Apártalo por $3,255
+              <span class="ds-tooltip pos-apartado__ayuda">
+                <button class="ds-btn ds-btn--tertiary ds-btn--icon-sm pos-apartado__info" type="button" id="posApartadoInfo" aria-label="¿Qué es apartar?" aria-describedby="posApartadoTip"><img class="pos-ico--20" src="assets/info-circle.svg" alt="" /></button>
+                <span class="ds-tooltip__content" role="tooltip" id="posApartadoTip">Paga un enganche hoy y guardamos el artículo para ti. Liquida el resto en pagos semanales, quincenales o mensuales y llévatelo al terminar.</span>
+              </span>
+            </span>
             <button class="ds-btn ds-btn--icon-md pos-apartado__go" type="button" id="posPlazosOpen" aria-haspopup="dialog" aria-label="Ver planes de apartado">
               <img class="pos-ico" src="assets/chevron-right-md.svg" alt="" />
             </button>
@@ -471,7 +476,9 @@
     if (volverA) volverA.focus();
   };
   $('posPlazosOpen').addEventListener('click', abrir);
-  $('posApartado').addEventListener('click', (e) => { if (!e.target.closest('#posPlazosOpen')) abrir(); });
+  // la caja completa abre los planes, salvo el icono de ayuda (ese solo muestra el tooltip)
+  $('posApartado').addEventListener('click', (e) => { if (!e.target.closest('#posPlazosOpen, .pos-apartado__ayuda')) abrir(); });
+  $('posApartadoInfo').addEventListener('keydown', (e) => { if (e.key === 'Escape') e.currentTarget.blur(); });
   if (location.hash === '#plazos') abrir();
   $('posPlazosCancel').addEventListener('click', cerrar);
   modal.addEventListener('mousedown', (e) => { presionEnFondo = e.target === modal; });
