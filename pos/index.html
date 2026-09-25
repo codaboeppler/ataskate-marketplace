@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="ds/elevation.css" />
 <link rel="stylesheet" href="ds/base.css" />
 <link rel="stylesheet" href="ds/components.css" />
-<link rel="stylesheet" href="pos.css?v=ux10" />
+<link rel="stylesheet" href="pos.css?v=ux11" />
 </head>
 <body class="pos">
 
@@ -171,12 +171,14 @@
 <div class="ds-modal-overlay" id="posPlazos" hidden>
   <div class="ds-modal pos-plazos" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="posPlazosTitle" aria-describedby="posPlazosSub">
     <div class="ds-modal__header">
-      <h2 class="ds-modal__title" id="posPlazosTitle">Selecciona un apartado</h2>
+      <div class="pos-plazos__titulos">
+        <h2 class="ds-modal__title" id="posPlazosTitle">Selecciona un apartado</h2>
+        <p class="pos-plazos__sub" id="posPlazosSub">Elige el apartado que mejor te convenga</p>
+      </div>
       <p class="pos-plazos__contado">De contado <b id="posContado">$17,969</b></p>
       <button class="pos-plazos__close" type="button" id="posPlazosClose" aria-label="Cerrar"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="currentColor"></path></svg></button>
     </div>
     <div class="ds-modal__body">
-      <p class="pos-plazos__sub" id="posPlazosSub">Elige el apartado que mejor te convenga</p>
       <p class="pos-num__help pos-num__help--error pos-planes-error" id="posPlanesError" role="alert"></p>
       <div class="pos-plazos__planes" id="posPlanes" role="radiogroup" aria-label="Planes de apartado"></div>
     </div>

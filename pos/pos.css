@@ -271,6 +271,8 @@ body.pos {
 /* precio de contado junto al cerrar, para comparar contra el "Total a pagar" de cada plan */
 .pos-plazos__contado { margin: 0 0 0 auto; display: flex; align-items: baseline; gap: var(--spacing-2); white-space: nowrap; font-size: 14px; line-height: 1.2; color: var(--ats-neutral-600); }
 .pos-plazos__contado b { font-size: 20px; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
+/* subtítulo pegado al título (4px) para que se lean como un bloque */
+.pos-plazos__titulos { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: var(--spacing-1); }
 .pos-plazos .ds-modal__title { margin: 0; font-size: 24px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); }
 /* cerrar del DS Modal: Close 24 #54575C en un botón de 40, padding 8 */
 .pos-plazos__close { flex-shrink: 0; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 8px; border: 0; border-radius: 100px; background: var(--color-base-white); color: var(--ats-neutral-600); cursor: pointer; transition: background .15s, color .15s; }
@@ -475,7 +477,6 @@ body.pos {
 }
 @media (max-width: 560px) {
   .pos-plazos .ds-modal__header { flex-wrap: wrap; row-gap: var(--spacing-1); }
-  .pos-plazos .ds-modal__title { flex: 1 1 0; min-width: 0; }
   .pos-plazos__contado { order: 3; flex-basis: 100%; margin-left: 0; }
 }
 @media (max-width: 400px) {
