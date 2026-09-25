@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="ds/elevation.css" />
 <link rel="stylesheet" href="ds/base.css" />
 <link rel="stylesheet" href="ds/components.css" />
-<link rel="stylesheet" href="pos.css?v=ux9" />
+<link rel="stylesheet" href="pos.css?v=ux10" />
 </head>
 <body class="pos">
 
@@ -459,7 +459,7 @@
   const statsHTML = (p) => [
     '<b>' + mxnC(p.hoyMonto) + '</b><span>Pago hoy</span>',
     '<b>' + mxnC(p.pago) + '</b><span>' + p.n + ' pagos ' + p.frecuencia + '</span>' + (p.ultimo !== p.pago ? '<small>último de ' + mxnC(p.ultimo) + '</small>' : ''),
-    '<b>' + fechaCorta(p.fin) + '</b><span>Fecha de entrega</span>',
+    '<b>' + fechaCorta(p.fin) + '</b><span>Liquidación</span>',   // día del último pago: el apartado queda liquidado
     '<b>' + mxnC(p.total) + '</b><span>Total a pagar</span>',
   ];
   const tagsHTML = (p) => tagsDe(p).map((t) => '<span class="ds-tag ds-tag--' + t[2] + ' pos-chip-ico">' + ICON[t[0]] + t[1] + '</span>').join('');
