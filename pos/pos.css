@@ -156,24 +156,25 @@ body.pos {
 .pos-price__was { font-size: 20px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-400); text-decoration: line-through; }
 
 .pos-actions { display: flex; flex-direction: column; gap: var(--spacing-4); }
-.pos-apartado {
-  display: grid; grid-template-columns: var(--sizing-md) minmax(0, 1fr) var(--sizing-md); align-items: center; gap: var(--spacing-2);
-  padding: var(--spacing-2) var(--spacing-4);
-  border-radius: var(--radius-md); background: var(--ats-primary-50); cursor: pointer;
+/* botón dividido: la parte principal aparta con un clic; la flecha abre las demás opciones (alto 40 = botón Large del DS) */
+.pos-apartado { display: flex; align-items: stretch; height: 40px; border-radius: var(--radius-full); background: var(--ats-primary-50); overflow: hidden; }
+.pos-apartado__btn {
+  flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: center; gap: 0.3em;
+  padding: 0 var(--spacing-4); border: 0; background: transparent; cursor: pointer;
+  font: inherit; font-size: 16px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--ats-primary-400); white-space: nowrap;
+  transition: background .15s;
 }
-.pos-apartado:hover { background: var(--ats-primary-100); }
-.pos-apartado__lead {
-  grid-column: 2; justify-self: center;
-  display: flex; align-items: center; column-gap: 0.3em;
-  font-size: 16px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--ats-primary-400); white-space: nowrap;
-}
-/* el monto y el icono de ayuda nunca se separan: en teléfono baja "por $3,255 ⓘ" completo */
+.pos-apartado__btn:hover { background: var(--ats-primary-100); }
+.pos-apartado__btn:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: -2px; }
+.pos-apartado__btn:focus-visible .ds-tooltip__content { opacity: 1; }
+/* el monto y el icono de ayuda nunca se separan: en teléfono baja "desde $1,849 ⓘ" completo */
 .pos-apartado__monto { display: inline-flex; align-items: center; gap: var(--spacing-1); white-space: nowrap; }
-/* ayuda como en el DS: icono Info 16px #A1A5AA sin fondo, con el Tooltip del DS */
-.pos-apartado__info { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; padding: 0; border: 0; background: none; cursor: help; }
-.pos-apartado__info img { width: 16px; height: 16px; }
-.pos-apartado__info:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; border-radius: 2px; }
-.pos-apartado__go { grid-column: 3; }
+/* ayuda como en el DS: icono Info 16px #A1A5AA con el Tooltip del DS (se ve al pasar el cursor o al enfocar el botón) */
+.pos-apartado__ayuda { display: inline-flex; align-items: center; cursor: help; }
+.pos-apartado__info { width: 16px; height: 16px; }
+.pos .pos-apartado__go { flex: none; width: 40px; height: 40px; border-radius: 0; background: transparent; border-left: 1px solid var(--ats-primary-200); }
+.pos .pos-apartado__go:hover:not(:disabled) { background: var(--ats-primary-100); }
+.pos .pos-apartado__go:focus-visible { outline-offset: -2px; }
 
 .pos-buy { display: flex; gap: 8px; }
 /* Botón Medium del DS = 36px de alto con el borde de 1px por dentro (7 + 1 = 8px de padding visual) */
@@ -270,7 +271,7 @@ body.pos {
 .pos-plazos .ds-modal__header { padding: 0; display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-4); }
 /* precio de contado junto al cerrar, para comparar contra el "Total a pagar" de cada plan */
 .pos-plazos__contado { margin: 0 0 0 auto; display: flex; align-items: baseline; gap: var(--spacing-2); white-space: nowrap; font-size: 14px; line-height: 1.2; color: var(--ats-neutral-600); }
-.pos-plazos__contado b { font-size: 20px; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
+.pos-plazos__contado b { font-size: 24px; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
 /* subtítulo pegado al título (4px) para que se lean como un bloque */
 .pos-plazos__titulos { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: var(--spacing-1); }
 .pos-plazos .ds-modal__title { margin: 0; font-size: 24px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); }
@@ -295,11 +296,11 @@ body.pos {
 .pos-plan:hover { box-shadow: var(--pos-shadow-card); }
 .pos-plan:has(input:checked)::before { border-color: var(--ats-primary-300); }
 .pos-plan__row { display: flex; align-items: center; gap: 16px; padding: var(--spacing-3); border-radius: var(--radius-md); background: var(--surface-foreground); cursor: pointer; }
-.pos-plan__name { flex: 1 0 0; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.pos-plan__name { flex: 1 0 0; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-1) var(--spacing-2); }
 .pos-plan__name b { font-size: 16px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .pos-stat { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-1); padding: var(--spacing-2) var(--spacing-3); white-space: nowrap; }
 .pos-stat b { font-size: 16px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
-.pos-stat span { font-size: 12px; line-height: 1; color: var(--ats-neutral-600); }
+.pos-stat span { font-size: 12px; line-height: 1; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-600); }
 .pos-stat { min-width: 96px; }
 /* columnas del mismo ancho en las tres filas para que los números queden alineados y se comparen de un vistazo */
 .pos-plan__row .pos-stat { flex: 0 0 auto; box-sizing: border-box; }
@@ -333,20 +334,13 @@ body.pos {
 .pos-plan .ds-table td { padding: 12px 8px; height: auto; font-size: 14px; font-weight: var(--font-weight-regular); line-height: normal; color: var(--ats-neutral-700); border-bottom: 1px solid var(--pos-table-line); vertical-align: middle; }
 .pos-plan .ds-table th:first-child, .pos-plan .ds-table td:first-child { padding-left: 16px; }
 .pos-plan .ds-table th:last-child, .pos-plan .ds-table td:last-child { padding-right: 16px; }
-/* celda "texto + descripción" del DataTable: monto arriba, cargos en la línea secundaria 12/12 #54575C */
-.pos-plan .ds-table td.pos-td-desc { padding-top: 4px; padding-bottom: 4px; }
-.pos-td-desc p { margin: 0; font-size: 14px; line-height: 1.2; color: var(--ats-neutral-700); }
-.pos-td-desc .pos-td-desc__sub { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-1); margin-top: var(--spacing-1); font-size: 12px; line-height: 12px; color: var(--ats-neutral-600); }
-/* tres columnas del mismo ancho (Fecha · Pagos · Saldo restante) */
+/* cuatro columnas del mismo ancho (Pago · Fecha · Monto · Saldo restante) */
 .pos-plan .ds-table { table-layout: fixed; }
-.pos-plan .ds-table th { width: calc(100% / 3); }
+.pos-plan .ds-table th { width: 25%; }
 .pos-plan .ds-table th:first-child, .pos-plan .ds-table td:first-child { white-space: nowrap; }
-.pos-plan .ds-table .pos-saldo { text-align: left; white-space: nowrap; }  /* las tres columnas alineadas igual: se leen como tercios del mismo tamaño */
+.pos-plan .ds-table .pos-saldo { text-align: left; white-space: nowrap; }
 .pos-saldo .ds-tag { vertical-align: 1px; margin-right: var(--spacing-2); }
 .pos-plan .ds-table tbody tr:last-child td { border-bottom: 0; }
-/* "+N" = chip de estado blanco (como el "+6" de CardInventario); es un <button> para abrir el tooltip con teclado */
-.pos-cargos__mas { font-family: inherit; }
-.pos-cargos__mas:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
 /* Tooltip del DS: #0D166B, 14/1.2 regular, radio 8, padding 8, máx. 267, flecha SVG de 16×8 pegada al disparador */
 .pos .ds-tooltip { align-items: center; justify-content: center; }
 .pos .ds-tooltip__content {
@@ -361,8 +355,6 @@ body.pos {
 }
 .ds-tooltip__arrow { position: absolute; display: block; pointer-events: none; top: 100%; left: 50%; transform: translateX(-50%); }
 .ds-tooltip__title { display: block; font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1); }
-/* en la tabla abre hacia abajo (position="bottom" del DS), así que la flecha va arriba */
-.pos-cargos__tip .ds-tooltip__arrow { top: auto; bottom: 100%; }
 .pos-plan__note { margin: 0; font-size: 14px; line-height: 1.2; color: var(--ats-neutral-600); }
 /* texto de error del DS (14/1.4 #A82424 con icono Close de 16) */
 .pos-num__help { padding: 0 var(--spacing-2); font-size: 14px; line-height: 1.4; color: var(--ats-neutral-600); }
@@ -462,14 +454,13 @@ body.pos {
   .pos .ds-toast-region { left: var(--spacing-4); max-width: none; }
   .pos .ds-toast { min-width: 0; }
   /* tercios de ~100px: el texto baja de renglón en vez de salirse de la celda */
-  .pos-plan .ds-table th, .pos-plan .ds-table td { padding: 8px; }
-  .pos-plan .ds-table th:first-child, .pos-plan .ds-table td:first-child, .pos-plan .ds-table .pos-saldo { white-space: normal; }
+  .pos-plan .ds-table th, .pos-plan .ds-table td { padding: 8px 6px; white-space: normal; font-size: 12px; }
   .pos-specs { grid-template-columns: minmax(0, 1fr); gap: var(--spacing-2); }
   .pos-spec:nth-child(4n + 3), .pos-spec:nth-child(4n + 4) { background: none; }
   .pos-spec:nth-child(even) { background: var(--ats-primary-10); }
-  .pos-apartado { grid-template-columns: minmax(0, 1fr) var(--sizing-md); }
-  .pos-apartado__lead { grid-column: 1; justify-self: start; flex-wrap: wrap; white-space: normal; row-gap: 0; }
-  .pos-apartado__go { grid-column: 2; }
+  .pos-apartado { height: auto; min-height: 40px; }
+  .pos-apartado__btn { white-space: normal; padding: 8px 12px; text-align: center; }
+  .pos .pos-apartado__go { height: auto; }   /* la flecha llena la caja cuando el texto baja a dos líneas */
   .pos-card__pub { max-width: calc(100% - 60px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .pos-card__prices { min-width: 0; overflow: hidden; }
   .pos-card__now { font-size: 16px; }
@@ -484,7 +475,6 @@ body.pos {
   .pos-plan .ds-table th:last-child, .pos-plan .ds-table td:last-child { padding-right: var(--spacing-2); }
   /* "Liquidado" arriba del $0.00 para que la columna no se desborde */
   .pos-plan .ds-table td.pos-saldo .ds-tag { display: flex; width: max-content; margin: 0 0 var(--spacing-1); }
-  .pos-plan .ds-table td:first-child p:first-child, .pos-plan .ds-table .pos-saldo { font-size: 12px; }
 }
 /* teléfono acostado: el modal aprovecha el alto */
 @media (max-height: 500px) {
