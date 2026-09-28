@@ -156,25 +156,31 @@ body.pos {
 .pos-price__was { font-size: 20px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-400); text-decoration: line-through; }
 
 .pos-actions { display: flex; flex-direction: column; gap: var(--spacing-4); }
-/* botón dividido: la parte principal aparta con un clic; la flecha abre las demás opciones (alto 40 = botón Large del DS) */
-.pos-apartado { display: flex; align-items: stretch; height: 40px; border-radius: var(--radius-full); background: var(--ats-primary-50); overflow: hidden; }
+/* caja lavanda del Figma (radio 16, alto 56) con dos acciones en estilo de botón:
+   "Apártalo por $X" = botón link (texto morado en negritas, aparta de un clic); "Ver más opciones" = Tertiary con flecha (abre el popup) */
+.pos-apartado {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-2);
+  min-height: 56px; padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--radius-md); background: var(--ats-primary-50);
+}
 .pos-apartado__btn {
-  flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: center; gap: 0.3em;
-  padding: 0 var(--spacing-4); border: 0; background: transparent; cursor: pointer;
-  font: inherit; font-size: 16px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--ats-primary-400); white-space: nowrap;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.3em; min-width: 0;
+  height: 36px; padding: 7px var(--spacing-4); border: 1px solid transparent; border-radius: var(--radius-full);
+  background: transparent; cursor: pointer;
+  font: inherit; font-size: 14px; line-height: 20px; font-weight: var(--font-weight-bold); color: var(--ats-primary-300); white-space: nowrap;
   transition: background .15s;
 }
 .pos-apartado__btn:hover { background: var(--ats-primary-100); }
-.pos-apartado__btn:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: -2px; }
+.pos-apartado__btn:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
 .pos-apartado__btn:focus-visible .ds-tooltip__content { opacity: 1; }
 /* el monto y el icono de ayuda nunca se separan: en teléfono baja "desde $1,849 ⓘ" completo */
 .pos-apartado__monto { display: inline-flex; align-items: center; gap: var(--spacing-1); white-space: nowrap; }
 /* ayuda como en el DS: icono Info 16px #A1A5AA con el Tooltip del DS (se ve al pasar el cursor o al enfocar el botón) */
 .pos-apartado__ayuda { display: inline-flex; align-items: center; cursor: help; }
 .pos-apartado__info { width: 16px; height: 16px; }
-.pos .pos-apartado__go { flex: none; width: 40px; height: 40px; border-radius: 0; background: transparent; border-left: 1px solid var(--ats-primary-200); }
+/* Tertiary Medium con icono a la derecha (el hover del DS, #F0F0FF, se perdería sobre la caja: usa primary-100) */
+.pos .pos-apartado__go { flex: none; padding-right: var(--spacing-2); }
 .pos .pos-apartado__go:hover:not(:disabled) { background: var(--ats-primary-100); }
-.pos .pos-apartado__go:focus-visible { outline-offset: -2px; }
 
 .pos-buy { display: flex; gap: 8px; }
 /* Botón Medium del DS = 36px de alto con el borde de 1px por dentro (7 + 1 = 8px de padding visual) */
@@ -458,9 +464,9 @@ body.pos {
   .pos-specs { grid-template-columns: minmax(0, 1fr); gap: var(--spacing-2); }
   .pos-spec:nth-child(4n + 3), .pos-spec:nth-child(4n + 4) { background: none; }
   .pos-spec:nth-child(even) { background: var(--ats-primary-10); }
-  .pos-apartado { height: auto; min-height: 40px; }
-  .pos-apartado__btn { white-space: normal; padding: 8px 12px; text-align: center; }
-  .pos .pos-apartado__go { height: auto; }   /* la flecha llena la caja cuando el texto baja a dos líneas */
+  .pos-apartado { flex-direction: column; align-items: stretch; }
+  .pos-apartado__btn { height: auto; min-height: 36px; white-space: normal; text-align: center; }
+  .pos .pos-apartado__go { justify-content: center; }
   .pos-card__pub { max-width: calc(100% - 60px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .pos-card__prices { min-width: 0; overflow: hidden; }
   .pos-card__now { font-size: 16px; }
