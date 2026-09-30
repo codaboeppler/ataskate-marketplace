@@ -147,42 +147,58 @@ body.pos {
 /* icono de 12px a la izquierda del chip (iconos del DS en currentColor) */
 .pos-chip-ico svg, .pos-chip-ico img { width: 12px; height: 12px; flex: none; }
 
+/* tag de Estado junto al color: texto 14px, azul del DS, esquinas de 8px */
+/* Chip informativo del DS ("Chips informativas"): radio 8, padding 4/8, borde transparente, Nunito 400.
+   El DS usa gap 8; con ícono de 12-16px se ve separado, así que aquí va a 4.
+   Tamaños: Tabla = 20px / texto 12 · aquí además uno de 14 (Estado y Ahorras).
+   Colores: azul #EBF9FF, gris #E8E9EA (texto #2A2C2F), morado #E5E5FF (texto #0D166B) y rojo de estado. Ícono a la izquierda. */
+.pos-chip {
+  display: inline-flex; align-items: center; gap: 4px; box-sizing: border-box; white-space: nowrap;
+  padding: 4px 8px; border: 1px solid transparent; border-radius: 8px;
+  font-family: var(--font-family-sans); font-weight: var(--font-weight-regular); color: var(--ats-neutral-700);
+}
+.pos-chip svg { flex: none; }
+.pos-chip--tabla { height: 20px; font-size: 12px; line-height: 12px; }
+.pos-chip--tabla svg { width: 12px; height: 12px; }
+.pos-chip--14 { height: 24px; font-size: 14px; line-height: 16px; }
+.pos-chip--14 svg { width: 16px; height: 16px; }
+.pos-chip--blue { background: var(--ats-info-blue-50); }
+.pos-chip--grey { background: #e8e9ea; }
+.pos-chip--purple { background: var(--ats-primary-100); color: var(--ats-primary-400); }
+/* rojo suave del DS (feedback / error): superficie #FFEBEB y título #501111 */
+.pos-chip--red { background: var(--ats-error-red-50); color: var(--ats-error-red-300); }
+
 .pos-color { display: flex; align-items: center; gap: var(--spacing-2); }
 .pos-color__label { font-size: 16px; line-height: 1.2; color: var(--ats-neutral-600); }
-.pos-swatch { width: 28px; height: 27px; border-radius: 50%; background: var(--pos-text-title); }
+.pos-swatch { width: 20px; height: 20px; border-radius: 50%; background: var(--pos-text-title); }
 
 .pos-price { display: flex; align-items: center; gap: var(--spacing-2); }
-.pos-price__now { font-size: 28px; line-height: 1.2; font-weight: var(--font-weight-bold); color: var(--pos-text-title); }
+.pos-price__now { font-size: 28px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
 .pos-price__was { font-size: 20px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-400); text-decoration: line-through; }
 
 .pos-actions { display: flex; flex-direction: column; gap: var(--spacing-4); }
-/* caja lavanda del Figma (radio 16, alto 56) con dos acciones en estilo de botón:
-   "Apártalo por $X" = botón link (texto morado en negritas, aparta de un clic); "Ver más opciones" = Tertiary con flecha (abre el popup) */
-.pos-apartado {
-  display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-2);
-  min-height: 56px; padding: var(--spacing-2) var(--spacing-4);
-  border-radius: var(--radius-md); background: var(--ats-primary-50);
+/* Bloque de compra: Comprar ahora (Primary) a todo lo ancho; debajo, Agregar al carrito y Apártalo por $X
+   como par de Secondary; "Ver otros apartados" (Tertiary) pegado bajo el botón de apartar, en su columna. */
+.pos-buy { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.pos-buy__main { grid-column: 1 / -1; }
+.pos .pos-buy__apartar { gap: 0.3em; }
+.pos-buy__apartar svg { width: 20px; height: 20px; flex: none; margin-right: 4px; }
+/* línea del plan (como los mensajes de las plataformas de financiamiento): ícono, "Paga $X hoy y N pagos de $Y"
+   y el Tertiary "Ver otros apartados" en línea con el texto */
+.pos-buy__plan {
+  grid-column: 1 / -1; display: flex; align-items: center; gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3); border-radius: var(--radius-md); background: var(--ats-primary-50);
 }
-.pos-apartado__btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 0.3em; min-width: 0;
-  height: 36px; padding: 7px var(--spacing-4); border: 1px solid transparent; border-radius: var(--radius-full);
-  background: transparent; cursor: pointer;
-  font: inherit; font-size: 14px; line-height: 20px; font-weight: var(--font-weight-bold); color: var(--ats-primary-300); white-space: nowrap;
-  transition: background .15s;
+.pos-buy__plan-ico { flex: none; display: inline-flex; color: var(--ats-primary-300); }
+.pos-buy__plan-ico svg { width: 20px; height: 20px; }
+.pos-buy__plan p { margin: 0; min-width: 0; font-size: 14px; line-height: 20px; color: var(--ats-neutral-600); }
+.pos-buy__plan b { font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
+.pos .ds-btn.pos-buy__mas {
+  display: inline-flex; vertical-align: middle; height: 28px; margin: -4px 0 -4px 2px; padding: 0 4px 0 8px; gap: 2px; background: transparent;
 }
-.pos-apartado__btn:hover { background: var(--ats-primary-100); }
-.pos-apartado__btn:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
-.pos-apartado__btn:focus-visible .ds-tooltip__content { opacity: 1; }
-/* el monto y el icono de ayuda nunca se separan: en teléfono baja "desde $1,849 ⓘ" completo */
-.pos-apartado__monto { display: inline-flex; align-items: center; gap: var(--spacing-1); white-space: nowrap; }
-/* ayuda como en el DS: icono Info 16px #A1A5AA con el Tooltip del DS (se ve al pasar el cursor o al enfocar el botón) */
-.pos-apartado__ayuda { display: inline-flex; align-items: center; cursor: help; }
-.pos-apartado__info { width: 16px; height: 16px; }
-/* Tertiary Medium con icono a la derecha (el hover del DS, #F0F0FF, se perdería sobre la caja: usa primary-100) */
-.pos .pos-apartado__go { flex: none; padding-right: var(--spacing-2); }
-.pos .pos-apartado__go:hover:not(:disabled) { background: var(--ats-primary-100); }
+/* sobre el cuadro lavanda el hover del Tertiary sube un tono */
+.pos .ds-btn.pos-buy__mas:hover:not(:disabled) { background: var(--ats-primary-100); }
 
-.pos-buy { display: flex; gap: 8px; }
 /* Botón Medium del DS = 36px de alto con el borde de 1px por dentro (7 + 1 = 8px de padding visual) */
 .pos .ds-btn--md { padding: 7px var(--spacing-4); }
 /* los botones del DS no se hunden al presionar; el foco es un contorno de 2px #5A5AFF */
@@ -193,8 +209,6 @@ body.pos {
 .pos .ds-btn--icon-md { width: 40px; height: 40px; padding: 8px; border: 0; background: var(--color-base-white); }
 .pos .ds-btn--icon-sm { width: 36px; height: 36px; padding: 8px; border: 0; background: var(--color-base-white); }
 .pos .ds-btn--icon-md:hover:not(:disabled), .pos .ds-btn--icon-sm:hover:not(:disabled) { background: var(--ats-primary-50); }
-/* CTAs en tamaño Medium ("Uso Tipografía/Boton": Nunito Bold 14/20, sin letter-spacing) */
-.pos-buy .ds-btn { flex: 1 0 0; max-width: 366px; }
 /* entrega: una sola tarjeta con las dos opciones separadas por una línea fina */
 .pos-delivery {
   display: flex; align-items: center; gap: var(--spacing-4);
@@ -316,6 +330,8 @@ body.pos {
 .pos-plan__row .pos-stat--hi { width: 136px; }
 .pos-stat--hi { background: var(--ats-primary-50); border-radius: var(--radius-sm); min-width: 108px; }
 .pos-stat small { font-size: 12px; line-height: 1; color: var(--ats-neutral-600); white-space: nowrap; }
+/* sobrecosto contra contado, bajo "Total a pagar": morado oscuro para que se lea como dato del total */
+.pos-stat .pos-stat__extra { font-weight: var(--font-weight-semibold); color: var(--ats-primary-400); }
 .pos-plan__tags { display: flex; flex-wrap: wrap; gap: var(--spacing-1) var(--spacing-2); }
 .pos-plan .ds-table tr.pos-plan__total td { font-weight: var(--font-weight-bold); color: var(--pos-text-title); border-top: 1px solid var(--pos-table-line); }
 .pos-plan .ds-table tr.pos-plan__total td.pos-saldo { font-size: 12px; font-weight: var(--font-weight-regular); color: var(--ats-neutral-600); }
@@ -342,7 +358,7 @@ body.pos {
 .pos-plan .ds-table th:last-child, .pos-plan .ds-table td:last-child { padding-right: 16px; }
 /* cuatro columnas del mismo ancho (Pago · Fecha · Monto · Saldo restante) */
 .pos-plan .ds-table { table-layout: fixed; }
-.pos-plan .ds-table th { width: 25%; }
+.pos-plan .ds-table th { width: 33.33%; }
 .pos-plan .ds-table th:first-child, .pos-plan .ds-table td:first-child { white-space: nowrap; }
 .pos-plan .ds-table .pos-saldo { text-align: left; white-space: nowrap; }
 .pos-saldo .ds-tag { vertical-align: 1px; margin-right: var(--spacing-2); }
@@ -361,7 +377,9 @@ body.pos {
 }
 .ds-tooltip__arrow { position: absolute; display: block; pointer-events: none; top: 100%; left: 50%; transform: translateX(-50%); }
 .ds-tooltip__title { display: block; font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1); }
-.pos-plan__note { margin: 0; font-size: 14px; line-height: 1.2; color: var(--ats-neutral-600); }
+/* notas al pie de los apartados: (1), (2), (3) debajo de todos, ligadas a la referencia junto a cada nombre */
+.pos-plazos__notas { margin: var(--spacing-3) 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 2px; font-size: 12px; line-height: 1.4; color: var(--ats-neutral-600); }
+.pos-plan__ref { margin-left: 2px; font-size: 10px; font-weight: var(--font-weight-regular); color: var(--ats-neutral-600); vertical-align: super; line-height: 0; }
 /* texto de error del DS (14/1.4 #A82424 con icono Close de 16) */
 .pos-num__help { padding: 0 var(--spacing-2); font-size: 14px; line-height: 1.4; color: var(--ats-neutral-600); }
 .pos-num__help--error { display: flex; align-items: center; gap: var(--spacing-1); color: var(--ats-error-red-200); }
@@ -421,6 +439,12 @@ body.pos {
 .pos .ds-toast__close:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
 .ds-toast__timer { position: absolute; bottom: 0; left: 0; height: 3px; width: 100%; background-color: var(--ats-success-green-200); animation: ds-toast-timer 5s linear forwards; }
 @keyframes ds-toast-timer { from { width: 100%; } to { width: 0%; } }
+/* toast en tono de advertencia (publicación pausada) */
+.pos .ds-toast--warning { background: var(--pos-warning-surface); border-bottom-color: var(--ats-alert-yellow-200); }
+.pos .ds-toast--warning .ds-toast__icon { color: var(--ats-alert-yellow-200); }
+.pos .ds-toast--warning .ds-toast__title { color: var(--ats-alert-yellow-300); }
+.pos .ds-toast--warning .ds-toast__timer { background-color: var(--ats-alert-yellow-200); }
+
 
 @media (max-width: 1180px) {
   .pos-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -447,10 +471,10 @@ body.pos {
   .pos-stage__img { width: 220px; height: 273px; }
   .pos-thumb { width: 96px; height: 96px; }
   .pos-title { font-size: 20px; line-height: 1.2; }
-  .pos-buy { flex-direction: column; }
+  .pos-buy { grid-template-columns: minmax(0, 1fr); }
+  .pos-buy__plan { align-items: flex-start; }
   .pos-delivery { flex-direction: column; align-items: stretch; gap: var(--spacing-3); }
   .pos-delivery__opt + .pos-delivery__opt { padding-left: 0; padding-top: var(--spacing-3); border-left: 0; border-top: 1px solid var(--ats-neutral-300); }
-  .pos-buy .ds-btn { max-width: none; }
   .pos-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pos-related__title span { display: none; }
   .pos .ds-modal.pos-plazos { padding: 16px; }
@@ -464,9 +488,6 @@ body.pos {
   .pos-specs { grid-template-columns: minmax(0, 1fr); gap: var(--spacing-2); }
   .pos-spec:nth-child(4n + 3), .pos-spec:nth-child(4n + 4) { background: none; }
   .pos-spec:nth-child(even) { background: var(--ats-primary-10); }
-  .pos-apartado { flex-direction: column; align-items: stretch; }
-  .pos-apartado__btn { height: auto; min-height: 36px; white-space: normal; text-align: center; }
-  .pos .pos-apartado__go { justify-content: center; }
   .pos-card__pub { max-width: calc(100% - 60px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .pos-card__prices { min-width: 0; overflow: hidden; }
   .pos-card__now { font-size: 16px; }
@@ -479,8 +500,6 @@ body.pos {
 @media (max-width: 400px) {
   .pos-plan .ds-table th:first-child, .pos-plan .ds-table td:first-child { padding-left: var(--spacing-2); }
   .pos-plan .ds-table th:last-child, .pos-plan .ds-table td:last-child { padding-right: var(--spacing-2); }
-  /* "Liquidado" arriba del $0.00 para que la columna no se desborde */
-  .pos-plan .ds-table td.pos-saldo .ds-tag { display: flex; width: max-content; margin: 0 0 var(--spacing-1); }
 }
 /* teléfono acostado: el modal aprovecha el alto */
 @media (max-height: 500px) {
@@ -493,4 +512,56 @@ body.pos {
   .pos-header { padding-left: var(--spacing-2); padding-right: var(--spacing-2); }
   .pos-header__ctas { gap: var(--spacing-1); }
   .pos-brand__logo { width: 84px; height: 16px; }
+}
+
+/* ---------------- Fila de canales: "Publicado: En línea / En sucursal" ---------------- */
+.pos-tags { align-items: center; row-gap: 4px; }
+.pos-tags__label { font-size: 12px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-600); }
+.pos-canal { transition: background-color .3s, color .3s; }
+.pos-canal__est { display: none; }
+.pos-canal.is-off .pos-canal__est { display: inline; }
+.pos-canal.is-off { animation: pos-pop .35s var(--easing-spring-snappy, cubic-bezier(.2, .8, .2, 1.2)); }
+
+/* ---------------- Menú de tres puntos ----------------
+   Lista desplegable del design system (panel del Select): fondo blanco, radio 16, sombra 0 4 16 al 12 %,
+   padding 8/0; opciones de 40px con padding 8/16, Nunito 14/400 #2A2C2F y hover #F0F0FF. */
+.pos-opts { position: relative; }
+.pos-opts__menu {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 25; min-width: 232px; padding: 8px 0;
+  display: flex; flex-direction: column; overflow: hidden;
+  background: var(--color-base-white); border-radius: 16px; box-shadow: 0 4px 16px 0 rgba(0, 0, 0, .12);
+  transform-origin: top right; animation: pos-menu-in .16s ease-out;
+}
+.pos-opts__menu[hidden], .pos-opts__item[hidden] { display: none; }
+.pos-opts__item {
+  display: flex; align-items: center; gap: var(--spacing-2); box-sizing: border-box; width: 100%; height: 40px; padding: 8px 16px;
+  border: 0; background: none; cursor: pointer; text-align: left; white-space: nowrap; transition: background .15s;
+  font: var(--font-weight-regular) 14px/1.2 var(--font-family-sans); color: var(--ats-neutral-700);
+}
+.pos-opts__item:hover, .pos-opts__item:focus-visible { background: var(--ats-primary-50); outline: none; }
+.pos-opts__ico { display: inline-flex; }
+.pos-opts__ico svg { width: 20px; height: 20px; }
+@keyframes pos-menu-in { from { opacity: 0; transform: translateY(-4px) scale(.97); } to { opacity: 1; transform: none; } }
+@keyframes pos-pop { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: none; } }
+
+/* ---------------- Publicación pausada por canal ----------------
+   El artículo sigue visible en el POS, pero cada canal pausado se marca: su chip se vuelve
+   amarillo ("· Pausado"), su mosaico de entrega se apaga y un aviso permite reanudar.
+   Con los dos canales pausados la foto se desatura sobre un fondo rayado y la compra queda inerte. */
+.pos-pausa {
+  display: grid; grid-template-rows: 0fr; margin-bottom: calc(var(--spacing-4) * -1);
+  transition: grid-template-rows .4s cubic-bezier(.2, .8, .2, 1), margin-bottom .4s cubic-bezier(.2, .8, .2, 1);
+}
+.pos-pausa > div { overflow: hidden; min-height: 0; }
+.pos-pausa .ds-alert { margin: 0; }
+.pos-pausa__ico svg { width: 16px; height: 16px; }
+.pos-pausa .ds-alert__icon { color: var(--color-base-white); }
+.has-pausa .pos-pausa { grid-template-rows: 1fr; margin-bottom: 0; }
+
+.pos-delivery__opt { transition: opacity .4s ease, filter .4s ease; }
+.pos-delivery__opt.is-off { opacity: .45; filter: grayscale(1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pos-pausa, .pos-delivery__opt, .pos-opts__menu, .pos-canal { transition: none; animation: none; }
+}
 }

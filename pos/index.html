@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="ds/elevation.css" />
 <link rel="stylesheet" href="ds/base.css" />
 <link rel="stylesheet" href="ds/components.css" />
-<link rel="stylesheet" href="pos.css?v=ux19" />
+<link rel="stylesheet" href="pos.css?v=ux44" />
 </head>
 <body class="pos">
 
@@ -72,18 +72,39 @@
     </div>
 
     <div class="pos-info">
+      <div class="pos-pausa" id="posPausa">
+        <div>
+          <div class="ds-alert ds-alert--warning" role="status">
+            <span class="ds-alert__icon pos-pausa__ico" aria-hidden="true"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M15 19C14.45 19 13.9793 18.8043 13.588 18.413C13.196 18.021 13 17.55 13 17V7C13 6.45 13.196 5.97933 13.588 5.588C13.9793 5.196 14.45 5 15 5H17C17.55 5 18.021 5.196 18.413 5.588C18.8043 5.97933 19 6.45 19 7V17C19 17.55 18.8043 18.021 18.413 18.413C18.021 18.8043 17.55 19 17 19H15ZM7 19C6.45 19 5.97933 18.8043 5.588 18.413C5.196 18.021 5 17.55 5 17V7C5 6.45 5.196 5.97933 5.588 5.588C5.97933 5.196 6.45 5 7 5H9C9.55 5 10.021 5.196 10.413 5.588C10.8043 5.97933 11 6.45 11 7V17C11 17.55 10.8043 18.021 10.413 18.413C10.021 18.8043 9.55 19 9 19H7ZM15 17H17V7H15V17ZM7 17H9V7H7V17Z" fill="currentColor"/></svg></span>
+            <div class="ds-alert__body-wrap">
+              <p class="ds-alert__title" id="posPausaTitulo">Publicación pausada</p>
+              <p class="ds-alert__body" id="posPausaTxt">No aparece en línea ni en sucursal. Sus datos y fotos se conservan.</p>
+            </div>
+            <div class="ds-alert__actions"><button class="ds-alert__action" type="button" id="posReanudar">Reanudar</button></div>
+          </div>
+        </div>
+      </div>
       <div class="pos-block">
         <div class="pos-headline">
           <div class="pos-headline__top">
             <div class="pos-tags">
-              <span class="ds-tag ds-tag--verde">Excelente</span>
-              <span class="ds-tag ds-tag--blanco">Publicado 01-02-2026</span>
-              <span class="ds-tag ds-tag--blanco pos-chip-ico"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M12 22C10.6333 22 9.34167 21.7375 8.125 21.2125C6.90833 20.6875 5.84583 19.9708 4.9375 19.0625C4.02917 18.1542 3.3125 17.0917 2.7875 15.875C2.2625 14.6583 2 13.3667 2 12C2 10.6167 2.2625 9.32083 2.7875 8.1125C3.3125 6.90417 4.02917 5.84583 4.9375 4.9375C5.84583 4.02917 6.90833 3.3125 8.125 2.7875C9.34167 2.2625 10.6333 2 12 2C13.3833 2 14.6792 2.2625 15.8875 2.7875C17.0958 3.3125 18.1542 4.02917 19.0625 4.9375C19.9708 5.84583 20.6875 6.90417 21.2125 8.1125C21.7375 9.32083 22 10.6167 22 12C22 13.3667 21.7375 14.6583 21.2125 15.875C20.6875 17.0917 19.9708 18.1542 19.0625 19.0625C18.1542 19.9708 17.0958 20.6875 15.8875 21.2125C14.6792 21.7375 13.3833 22 12 22ZM12 19.95C12.4333 19.35 12.8083 18.725 13.125 18.075C13.4417 17.425 13.7 16.7333 13.9 16H10.1C10.3 16.7333 10.5583 17.425 10.875 18.075C11.1917 18.725 11.5667 19.35 12 19.95ZM9.4 19.55C9.1 19 8.8375 18.4292 8.6125 17.8375C8.3875 17.2458 8.2 16.6333 8.05 16H5.1C5.58333 16.8333 6.1875 17.5583 6.9125 18.175C7.6375 18.7917 8.46667 19.25 9.4 19.55ZM14.6 19.55C15.5333 19.25 16.3625 18.7917 17.0875 18.175C17.8125 17.5583 18.4167 16.8333 18.9 16H15.95C15.8 16.6333 15.6125 17.2458 15.3875 17.8375C15.1625 18.4292 14.9 19 14.6 19.55ZM4.25 14H7.65C7.6 13.6667 7.5625 13.3375 7.5375 13.0125C7.5125 12.6875 7.5 12.35 7.5 12C7.5 11.65 7.5125 11.3125 7.5375 10.9875C7.5625 10.6625 7.6 10.3333 7.65 10H4.25C4.16667 10.3333 4.10417 10.6625 4.0625 10.9875C4.02083 11.3125 4 11.65 4 12C4 12.35 4.02083 12.6875 4.0625 13.0125C4.10417 13.3375 4.16667 13.6667 4.25 14ZM9.65 14H14.35C14.4 13.6667 14.4375 13.3375 14.4625 13.0125C14.4875 12.6875 14.5 12.35 14.5 12C14.5 11.65 14.4875 11.3125 14.4625 10.9875C14.4375 10.6625 14.4 10.3333 14.35 10H9.65C9.6 10.3333 9.5625 10.6625 9.5375 10.9875C9.5125 11.3125 9.5 11.65 9.5 12C9.5 12.35 9.5125 12.6875 9.5375 13.0125C9.5625 13.3375 9.6 13.6667 9.65 14ZM16.35 14H19.75C19.8333 13.6667 19.8958 13.3375 19.9375 13.0125C19.9792 12.6875 20 12.35 20 12C20 11.65 19.9792 11.3125 19.9375 10.9875C19.8958 10.6625 19.8333 10.3333 19.75 10H16.35C16.4 10.3333 16.4375 10.6625 16.4625 10.9875C16.4875 11.3125 16.5 11.65 16.5 12C16.5 12.35 16.4875 12.6875 16.4625 13.0125C16.4375 13.3375 16.4 13.6667 16.35 14ZM15.95 8H18.9C18.4167 7.16667 17.8125 6.44167 17.0875 5.825C16.3625 5.20833 15.5333 4.75 14.6 4.45C14.9 5 15.1625 5.57083 15.3875 6.1625C15.6125 6.75417 15.8 7.36667 15.95 8ZM10.1 8H13.9C13.7 7.26667 13.4417 6.575 13.125 5.925C12.8083 5.275 12.4333 4.65 12 4.05C11.5667 4.65 11.1917 5.275 10.875 5.925C10.5583 6.575 10.3 7.26667 10.1 8ZM5.1 8H8.05C8.2 7.36667 8.3875 6.75417 8.6125 6.1625C8.8375 5.57083 9.1 5 9.4 4.45C8.46667 4.75 7.6375 5.20833 6.9125 5.825C6.1875 6.44167 5.58333 7.16667 5.1 8Z" fill="currentColor"/></svg>En línea</span>
-              <span class="ds-tag ds-tag--blanco pos-chip-ico"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M21.0251 11.05V19C21.0251 19.55 20.8293 20.0208 20.4376 20.4125C20.0459 20.8042 19.5751 21 19.0251 21H5.02509C4.47509 21 4.00425 20.8042 3.61259 20.4125C3.22092 20.0208 3.02509 19.55 3.02509 19V11.05C2.64175 10.7 2.34592 10.25 2.13759 9.7C1.92925 9.15 1.92509 8.55 2.12509 7.9L3.17509 4.5C3.30842 4.06667 3.54592 3.70833 3.88759 3.425C4.22925 3.14167 4.62509 3 5.07509 3H18.9751C19.4251 3 19.8168 3.1375 20.1501 3.4125C20.4834 3.6875 20.7251 4.05 20.8751 4.5L21.9251 7.9C22.1251 8.55 22.1209 9.14167 21.9126 9.675C21.7043 10.2083 21.4084 10.6667 21.0251 11.05ZM14.2251 10C14.6751 10 15.0168 9.84583 15.2501 9.5375C15.4834 9.22917 15.5751 8.88333 15.5251 8.5L14.9751 5H13.0251V8.7C13.0251 9.05 13.1418 9.35417 13.3751 9.6125C13.6084 9.87083 13.8918 10 14.2251 10ZM9.72509 10C10.1084 10 10.4209 9.87083 10.6626 9.6125C10.9043 9.35417 11.0251 9.05 11.0251 8.7V5H9.07509L8.52509 8.5C8.45842 8.9 8.54592 9.25 8.78759 9.55C9.02926 9.85 9.34176 10 9.72509 10ZM5.27509 10C5.57509 10 5.83759 9.89167 6.06259 9.675C6.28759 9.45833 6.42509 9.18333 6.47509 8.85L7.02509 5H5.07509L4.07509 8.35C3.97509 8.68333 4.02925 9.04167 4.23759 9.425C4.44592 9.80833 4.79175 10 5.27509 10ZM18.7751 10C19.2584 10 19.6084 9.80833 19.8251 9.425C20.0418 9.04167 20.0918 8.68333 19.9751 8.35L18.9251 5H17.0251L17.5751 8.85C17.6251 9.18333 17.7626 9.45833 17.9876 9.675C18.2126 9.89167 18.4751 10 18.7751 10ZM5.02509 19H19.0251V11.95C18.9418 11.9833 18.8876 12 18.8626 12H18.7751C18.3251 12 17.9293 11.925 17.5876 11.775C17.2459 11.625 16.9084 11.3833 16.5751 11.05C16.2751 11.35 15.9334 11.5833 15.5501 11.75C15.1668 11.9167 14.7584 12 14.3251 12C13.8751 12 13.4543 11.9167 13.0626 11.75C12.6709 11.5833 12.3251 11.35 12.0251 11.05C11.7418 11.35 11.4126 11.5833 11.0376 11.75C10.6626 11.9167 10.2584 12 9.82509 12C9.34175 12 8.90426 11.9167 8.51259 11.75C8.12092 11.5833 7.77509 11.35 7.47509 11.05C7.12509 11.4 6.77925 11.6458 6.43759 11.7875C6.09592 11.9292 5.70842 12 5.27509 12H5.16259C5.12092 12 5.07509 11.9833 5.02509 11.95V19Z" fill="currentColor"/></svg>En sucursal</span>
+              <span class="pos-tags__label" id="posCanalesLbl">Publicado:</span>
+              <span class="pos-chip pos-chip--tabla pos-chip--blue pos-canal" data-canal="linea"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M12 22C10.6333 22 9.34167 21.7375 8.125 21.2125C6.90833 20.6875 5.84583 19.9708 4.9375 19.0625C4.02917 18.1542 3.3125 17.0917 2.7875 15.875C2.2625 14.6583 2 13.3667 2 12C2 10.6167 2.2625 9.32083 2.7875 8.1125C3.3125 6.90417 4.02917 5.84583 4.9375 4.9375C5.84583 4.02917 6.90833 3.3125 8.125 2.7875C9.34167 2.2625 10.6333 2 12 2C13.3833 2 14.6792 2.2625 15.8875 2.7875C17.0958 3.3125 18.1542 4.02917 19.0625 4.9375C19.9708 5.84583 20.6875 6.90417 21.2125 8.1125C21.7375 9.32083 22 10.6167 22 12C22 13.3667 21.7375 14.6583 21.2125 15.875C20.6875 17.0917 19.9708 18.1542 19.0625 19.0625C18.1542 19.9708 17.0958 20.6875 15.8875 21.2125C14.6792 21.7375 13.3833 22 12 22ZM12 19.95C12.4333 19.35 12.8083 18.725 13.125 18.075C13.4417 17.425 13.7 16.7333 13.9 16H10.1C10.3 16.7333 10.5583 17.425 10.875 18.075C11.1917 18.725 11.5667 19.35 12 19.95ZM9.4 19.55C9.1 19 8.8375 18.4292 8.6125 17.8375C8.3875 17.2458 8.2 16.6333 8.05 16H5.1C5.58333 16.8333 6.1875 17.5583 6.9125 18.175C7.6375 18.7917 8.46667 19.25 9.4 19.55ZM14.6 19.55C15.5333 19.25 16.3625 18.7917 17.0875 18.175C17.8125 17.5583 18.4167 16.8333 18.9 16H15.95C15.8 16.6333 15.6125 17.2458 15.3875 17.8375C15.1625 18.4292 14.9 19 14.6 19.55ZM4.25 14H7.65C7.6 13.6667 7.5625 13.3375 7.5375 13.0125C7.5125 12.6875 7.5 12.35 7.5 12C7.5 11.65 7.5125 11.3125 7.5375 10.9875C7.5625 10.6625 7.6 10.3333 7.65 10H4.25C4.16667 10.3333 4.10417 10.6625 4.0625 10.9875C4.02083 11.3125 4 11.65 4 12C4 12.35 4.02083 12.6875 4.0625 13.0125C4.10417 13.3375 4.16667 13.6667 4.25 14ZM9.65 14H14.35C14.4 13.6667 14.4375 13.3375 14.4625 13.0125C14.4875 12.6875 14.5 12.35 14.5 12C14.5 11.65 14.4875 11.3125 14.4625 10.9875C14.4375 10.6625 14.4 10.3333 14.35 10H9.65C9.6 10.3333 9.5625 10.6625 9.5375 10.9875C9.5125 11.3125 9.5 11.65 9.5 12C9.5 12.35 9.5125 12.6875 9.5375 13.0125C9.5625 13.3375 9.6 13.6667 9.65 14ZM16.35 14H19.75C19.8333 13.6667 19.8958 13.3375 19.9375 13.0125C19.9792 12.6875 20 12.35 20 12C20 11.65 19.9792 11.3125 19.9375 10.9875C19.8958 10.6625 19.8333 10.3333 19.75 10H16.35C16.4 10.3333 16.4375 10.6625 16.4625 10.9875C16.4875 11.3125 16.5 11.65 16.5 12C16.5 12.35 16.4875 12.6875 16.4625 13.0125C16.4375 13.3375 16.4 13.6667 16.35 14ZM15.95 8H18.9C18.4167 7.16667 17.8125 6.44167 17.0875 5.825C16.3625 5.20833 15.5333 4.75 14.6 4.45C14.9 5 15.1625 5.57083 15.3875 6.1625C15.6125 6.75417 15.8 7.36667 15.95 8ZM10.1 8H13.9C13.7 7.26667 13.4417 6.575 13.125 5.925C12.8083 5.275 12.4333 4.65 12 4.05C11.5667 4.65 11.1917 5.275 10.875 5.925C10.5583 6.575 10.3 7.26667 10.1 8ZM5.1 8H8.05C8.2 7.36667 8.3875 6.75417 8.6125 6.1625C8.8375 5.57083 9.1 5 9.4 4.45C8.46667 4.75 7.6375 5.20833 6.9125 5.825C6.1875 6.44167 5.58333 7.16667 5.1 8Z" fill="currentColor"/></svg>En línea<span class="pos-canal__est"> · Pausado</span></span>
+              <span class="pos-chip pos-chip--tabla pos-chip--blue pos-canal" data-canal="sucursal"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M21.0251 11.05V19C21.0251 19.55 20.8293 20.0208 20.4376 20.4125C20.0459 20.8042 19.5751 21 19.0251 21H5.02509C4.47509 21 4.00425 20.8042 3.61259 20.4125C3.22092 20.0208 3.02509 19.55 3.02509 19V11.05C2.64175 10.7 2.34592 10.25 2.13759 9.7C1.92925 9.15 1.92509 8.55 2.12509 7.9L3.17509 4.5C3.30842 4.06667 3.54592 3.70833 3.88759 3.425C4.22925 3.14167 4.62509 3 5.07509 3H18.9751C19.4251 3 19.8168 3.1375 20.1501 3.4125C20.4834 3.6875 20.7251 4.05 20.8751 4.5L21.9251 7.9C22.1251 8.55 22.1209 9.14167 21.9126 9.675C21.7043 10.2083 21.4084 10.6667 21.0251 11.05ZM14.2251 10C14.6751 10 15.0168 9.84583 15.2501 9.5375C15.4834 9.22917 15.5751 8.88333 15.5251 8.5L14.9751 5H13.0251V8.7C13.0251 9.05 13.1418 9.35417 13.3751 9.6125C13.6084 9.87083 13.8918 10 14.2251 10ZM9.72509 10C10.1084 10 10.4209 9.87083 10.6626 9.6125C10.9043 9.35417 11.0251 9.05 11.0251 8.7V5H9.07509L8.52509 8.5C8.45842 8.9 8.54592 9.25 8.78759 9.55C9.02926 9.85 9.34176 10 9.72509 10ZM5.27509 10C5.57509 10 5.83759 9.89167 6.06259 9.675C6.28759 9.45833 6.42509 9.18333 6.47509 8.85L7.02509 5H5.07509L4.07509 8.35C3.97509 8.68333 4.02925 9.04167 4.23759 9.425C4.44592 9.80833 4.79175 10 5.27509 10ZM18.7751 10C19.2584 10 19.6084 9.80833 19.8251 9.425C20.0418 9.04167 20.0918 8.68333 19.9751 8.35L18.9251 5H17.0251L17.5751 8.85C17.6251 9.18333 17.7626 9.45833 17.9876 9.675C18.2126 9.89167 18.4751 10 18.7751 10ZM5.02509 19H19.0251V11.95C18.9418 11.9833 18.8876 12 18.8626 12H18.7751C18.3251 12 17.9293 11.925 17.5876 11.775C17.2459 11.625 16.9084 11.3833 16.5751 11.05C16.2751 11.35 15.9334 11.5833 15.5501 11.75C15.1668 11.9167 14.7584 12 14.3251 12C13.8751 12 13.4543 11.9167 13.0626 11.75C12.6709 11.5833 12.3251 11.35 12.0251 11.05C11.7418 11.35 11.4126 11.5833 11.0376 11.75C10.6626 11.9167 10.2584 12 9.82509 12C9.34175 12 8.90426 11.9167 8.51259 11.75C8.12092 11.5833 7.77509 11.35 7.47509 11.05C7.12509 11.4 6.77925 11.6458 6.43759 11.7875C6.09592 11.9292 5.70842 12 5.27509 12H5.16259C5.12092 12 5.07509 11.9833 5.02509 11.95V19Z" fill="currentColor"/></svg>En sucursal<span class="pos-canal__est"> · Pausado</span></span>
+              <span class="pos-chip pos-chip--tabla pos-chip--grey pos-fecha">Desde 01-02-2026</span>
             </div>
             <div class="pos-title-actions">
               <button class="ds-btn ds-btn--icon-md" type="button" id="posShare" aria-label="Compartir artículo"><img class="pos-ico" src="assets/ds/Share.svg" alt="" /></button>
-              <button class="ds-btn ds-btn--icon-md" type="button" aria-label="Más acciones del artículo"><img class="pos-ico" src="assets/ds/MoreVert.svg" alt="" /></button>
+              <div class="pos-opts" id="posOpts">
+                <button class="ds-btn ds-btn--icon-md" type="button" id="posOptsBtn" aria-label="Más acciones del artículo" aria-haspopup="menu" aria-expanded="false" aria-controls="posOptsMenu"><img class="pos-ico" src="assets/ds/MoreVert.svg" alt="" /></button>
+                <div class="pos-opts__menu" id="posOptsMenu" role="menu" aria-labelledby="posOptsBtn" hidden>
+                  <button class="pos-opts__item" type="button" role="menuitem" id="posEditar"><span class="pos-opts__ico"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M5 19H6.4L15.025 10.375L13.625 8.975L5 17.6V19ZM19.3 8.925L15.05 4.725L16.45 3.325C16.8333 2.94167 17.3043 2.75 17.863 2.75C18.421 2.75 18.8917 2.94167 19.275 3.325L20.675 4.725C21.0583 5.10833 21.2583 5.571 21.275 6.113C21.2917 6.65433 21.1083 7.11667 20.725 7.5L19.3 8.925ZM17.85 10.4L7.25 21H3V16.75L13.6 6.15L17.85 10.4Z" fill="currentColor"/></svg></span><span class="pos-opts__txt">Editar</span></button>
+                  <button class="pos-opts__item" type="button" role="menuitem" id="posPzLinea"><span class="pos-opts__ico"></span><span class="pos-opts__txt"></span></button>
+                  <button class="pos-opts__item" type="button" role="menuitem" id="posPzSuc"><span class="pos-opts__ico"></span><span class="pos-opts__txt"></span></button>
+                  <button class="pos-opts__item" type="button" role="menuitem" id="posPzAmbos"><span class="pos-opts__ico"></span><span class="pos-opts__txt">Pausar en ambos</span></button>
+                  <button class="pos-opts__item" type="button" role="menuitem" id="posRzAmbos"><span class="pos-opts__ico"></span><span class="pos-opts__txt">Reanudar en ambos</span></button>
+                </div>
+              </div>
             </div>
           </div>
           <h1 class="pos-title">iPhone 16 512GB Negro · 5G</h1>
@@ -92,35 +113,39 @@
         <div class="pos-color">
           <p class="pos-color__label">Color: Negro</p>
           <span class="pos-swatch" role="img" aria-label="Negro"></span>
+          <p class="pos-color__label">Estado:</p>
+          <span class="pos-chip pos-chip--14 pos-chip--blue"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M23 12L20.56 9.21L20.9 5.52L17.29 4.7L15.4 1.5L12 2.96L8.6 1.5L6.71 4.69L3.1 5.5L3.44 9.2L1 12L3.44 14.79L3.1 18.49L6.71 19.31L8.6 22.5L12 21.03L15.4 22.49L17.29 19.3L20.9 18.48L20.56 14.79L23 12ZM10.09 16.72L6.29 12.91L7.77 11.43L10.09 13.76L15.94 7.89L17.42 9.37L10.09 16.72Z" fill="currentColor"/></svg>Excelente</span>
         </div>
 
         <div class="pos-price">
           <span class="pos-price__now">$17,969</span>
           <span class="pos-price__was">$22,000</span>
-          <span class="ds-tag ds-tag--amarillo pos-chip-ico"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M11.1 19H12.85V17.75C13.6833 17.6 14.4 17.275 15 16.775C15.6 16.275 15.9 15.5333 15.9 14.55C15.9 13.85 15.7 13.2083 15.3 12.625C14.9 12.0417 14.1 11.5333 12.9 11.1C11.9 10.7667 11.2083 10.475 10.825 10.225C10.4417 9.975 10.25 9.63333 10.25 9.2C10.25 8.76667 10.4043 8.425 10.713 8.175C11.021 7.925 11.4667 7.8 12.05 7.8C12.5833 7.8 13 7.92933 13.3 8.188C13.6 8.446 13.8167 8.76667 13.95 9.15L15.55 8.5C15.3667 7.91667 15.0293 7.40833 14.538 6.975C14.046 6.54167 13.5 6.3 12.9 6.25V5H11.15V6.25C10.3167 6.43333 9.66667 6.8 9.2 7.35C8.73333 7.9 8.5 8.51667 8.5 9.2C8.5 9.98333 8.72933 10.6167 9.188 11.1C9.646 11.5833 10.3667 12 11.35 12.35C12.4 12.7333 13.1293 13.075 13.538 13.375C13.946 13.675 14.15 14.0667 14.15 14.55C14.15 15.1 13.954 15.504 13.562 15.762C13.1707 16.0207 12.7 16.15 12.15 16.15C11.6 16.15 11.1127 15.979 10.688 15.637C10.2627 15.2957 9.95 14.7833 9.75 14.1L8.1 14.75C8.33333 15.55 8.696 16.196 9.188 16.688C9.67933 17.1793 10.3167 17.5167 11.1 17.7V19ZM12 22C10.6167 22 9.31667 21.7373 8.1 21.212C6.88333 20.6873 5.825 19.975 4.925 19.075C4.025 18.175 3.31267 17.1167 2.788 15.9C2.26267 14.6833 2 13.3833 2 12C2 10.6167 2.26267 9.31667 2.788 8.1C3.31267 6.88333 4.025 5.825 4.925 4.925C5.825 4.025 6.88333 3.31233 8.1 2.787C9.31667 2.26233 10.6167 2 12 2C13.3833 2 14.6833 2.26233 15.9 2.787C17.1167 3.31233 18.175 4.025 19.075 4.925C19.975 5.825 20.6873 6.88333 21.212 8.1C21.7373 9.31667 22 10.6167 22 12C22 13.3833 21.7373 14.6833 21.212 15.9C20.6873 17.1167 19.975 18.175 19.075 19.075C18.175 19.975 17.1167 20.6873 15.9 21.212C14.6833 21.7373 13.3833 22 12 22ZM12 20C14.2167 20 16.1043 19.221 17.663 17.663C19.221 16.1043 20 14.2167 20 12C20 9.78333 19.221 7.89567 17.663 6.337C16.1043 4.779 14.2167 4 12 4C9.78333 4 7.896 4.779 6.338 6.337C4.77933 7.89567 4 9.78333 4 12C4 14.2167 4.77933 16.1043 6.338 17.663C7.896 19.221 9.78333 20 12 20Z" fill="currentColor"/></svg>Ahorra -18%</span>
+          <span class="pos-chip pos-chip--14 pos-chip--purple">Descuento 18%</span>
         </div>
 
         <div class="pos-actions">
+          <!-- Comprar ahora (Primary) a todo lo ancho; debajo, Agregar al carrito y Apártalo como par de Secondary.
+               abajo, a todo lo ancho, la línea del apartado con "Compáralos" (Tertiary) -->
           <div class="pos-buy">
+            <button class="ds-btn ds-btn--primary ds-btn--md pos-buy__main" type="button" id="posBuy">Comprar ahora</button>
             <button class="ds-btn ds-btn--secondary ds-btn--md" type="button" id="posAdd">Agregar al carrito</button>
-            <button class="ds-btn ds-btn--primary ds-btn--md" type="button" id="posBuy">Comprar ahora</button>
-          </div>
-          <div class="pos-apartado" id="posApartado">
-            <button class="pos-apartado__btn" type="button" id="posApartar" aria-describedby="posApartadoTip">Apártalo
-              <span class="pos-apartado__monto">por <span id="posApartadoDesde">$1,849</span><span class="ds-tooltip pos-apartado__ayuda"><img class="pos-apartado__info" src="assets/ds/Info-5A5AFF.svg" width="16" height="16" alt="" /><span class="ds-tooltip__content" role="tooltip" id="posApartadoTip" aria-hidden="true">Paga hoy el enganche y los cargos del día, y guardamos el artículo para ti. Liquida el resto en pagos semanales, quincenales o mensuales y llévatelo al terminar.<svg class="ds-tooltip__arrow" aria-hidden="true" viewBox="0 0 16 8" width="16" height="8" fill="none"><path d="M0 0 L16 0 L8 8 Z" fill="#0D166B"/></svg></span></span></span>
-            </button>
-            <button class="ds-btn ds-btn--tertiary ds-btn--md pos-apartado__go" type="button" id="posPlazosOpen" aria-haspopup="dialog">
-              Ver más opciones <img class="pos-ico--20" src="assets/ds/ArrowForwardIos.svg" alt="" />
-            </button>
+            <button class="ds-btn ds-btn--secondary ds-btn--md pos-buy__apartar" type="button" id="posApartar"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M12 7H10C9.71667 7 9.47917 6.90417 9.2875 6.7125C9.09583 6.52083 9 6.28333 9 6C9 5.71667 9.09583 5.47917 9.2875 5.2875C9.47917 5.09583 9.71667 5 10 5H12V3C12 2.71667 12.0958 2.47917 12.2875 2.2875C12.4792 2.09583 12.7167 2 13 2C13.2833 2 13.5208 2.09583 13.7125 2.2875C13.9042 2.47917 14 2.71667 14 3V5H16C16.2833 5 16.5208 5.09583 16.7125 5.2875C16.9042 5.47917 17 5.71667 17 6C17 6.28333 16.9042 6.52083 16.7125 6.7125C16.5208 6.90417 16.2833 7 16 7H14V9C14 9.28333 13.9042 9.52083 13.7125 9.7125C13.5208 9.90417 13.2833 10 13 10C12.7167 10 12.4792 9.90417 12.2875 9.7125C12.0958 9.52083 12 9.28333 12 9V7ZM8 23C7.45 23 6.97917 22.8042 6.5875 22.4125C6.19583 22.0208 6 21.55 6 21C6 20.45 6.19583 19.9792 6.5875 19.5875C6.97917 19.1958 7.45 19 8 19C8.55 19 9.02083 19.1958 9.4125 19.5875C9.80417 19.9792 10 20.45 10 21C10 21.55 9.80417 22.0208 9.4125 22.4125C9.02083 22.8042 8.55 23 8 23ZM18 23C17.45 23 16.9792 22.8042 16.5875 22.4125C16.1958 22.0208 16 21.55 16 21C16 20.45 16.1958 19.9792 16.5875 19.5875C16.9792 19.1958 17.45 19 18 19C18.55 19 19.0208 19.1958 19.4125 19.5875C19.8042 19.9792 20 20.45 20 21C20 21.55 19.8042 22.0208 19.4125 22.4125C19.0208 22.8042 18.55 23 18 23ZM4 5H3C2.71667 5 2.47917 4.90417 2.2875 4.7125C2.09583 4.52083 2 4.28333 2 4C2 3.71667 2.09583 3.47917 2.2875 3.2875C2.47917 3.09583 2.71667 3 3 3H4.65C4.83333 3 5.00833 3.05 5.175 3.15C5.34167 3.25 5.46667 3.39167 5.55 3.575L9.525 12H16.525L20.15 5.5C20.2333 5.33333 20.35 5.20833 20.5 5.125C20.65 5.04167 20.8167 5 21 5C21.3833 5 21.6708 5.1625 21.8625 5.4875C22.0542 5.8125 22.0583 6.14167 21.875 6.475L18.3 12.95C18.1167 13.2833 17.8708 13.5417 17.5625 13.725C17.2542 13.9083 16.9167 14 16.55 14H9.1L8 16H19C19.2833 16 19.5208 16.0958 19.7125 16.2875C19.9042 16.4792 20 16.7167 20 17C20 17.2833 19.9042 17.5208 19.7125 17.7125C19.5208 17.9042 19.2833 18 19 18H8C7.25 18 6.67917 17.675 6.2875 17.025C5.89583 16.375 5.88333 15.7167 6.25 15.05L7.6 12.6L4 5Z" fill="currentColor"/></svg>Apártalo con <span id="posApartadoDesde">$1,849</span></button>
+            <!-- línea tipo plataforma de financiamiento: cómo queda el apartado del "desde" y liga a los demás planes -->
+            <div class="pos-buy__plan">
+              <span class="pos-buy__plan-ico"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M5 8V19H19V8H16V16L12 14L8 16V8H5ZM5 21C4.45 21 3.97917 20.8042 3.5875 20.4125C3.19583 20.0208 3 19.55 3 19V6.525C3 6.29167 3.0375 6.06667 3.1125 5.85C3.1875 5.63333 3.3 5.43333 3.45 5.25L4.7 3.725C4.88333 3.49167 5.1125 3.3125 5.3875 3.1875C5.6625 3.0625 5.95 3 6.25 3H17.75C18.05 3 18.3375 3.0625 18.6125 3.1875C18.8875 3.3125 19.1167 3.49167 19.3 3.725L20.55 5.25C20.7 5.43333 20.8125 5.63333 20.8875 5.85C20.9625 6.06667 21 6.29167 21 6.525V19C21 19.55 20.8042 20.0208 20.4125 20.4125C20.0208 20.8042 19.55 21 19 21H5ZM5.4 6H18.6L17.75 5H6.25L5.4 6ZM10 8V12.75L12 11.75L14 12.75V8H10Z" fill="currentColor"/></svg></span>
+              <p><span id="posApartadoPlan">Paga en partes y llévatelo al liquidar.</span>
+                <button class="ds-btn ds-btn--tertiary ds-btn--md pos-buy__mas" type="button" id="posPlazosOpen" aria-haspopup="dialog">Compáralos <img class="pos-ico--20" src="assets/ds/ArrowForwardIos.svg" alt="" /></button>
+              </p>
+            </div>
           </div>
           <ul class="pos-delivery" aria-label="Formas de entrega">
-            <li class="pos-delivery__opt">
+            <li class="pos-delivery__opt" data-canal="linea">
               <span class="pos-delivery__ico"><img class="pos-ico--20" src="assets/ds/LocalShipping-004461.svg" alt="" /></span>
               <span class="pos-delivery__txt"><b>Envíos nacionales</b><span>A todo México</span></span>
             </li>
-            <li class="pos-delivery__opt">
+            <li class="pos-delivery__opt" data-canal="sucursal">
               <span class="pos-delivery__ico"><img class="pos-ico--20" src="assets/ds/Storefront-004461.svg" alt="" /></span>
-              <span class="pos-delivery__txt"><b>Recoger en Sucursal</b><span>Sucursal Centro Histórico</span></span>
+              <span class="pos-delivery__txt"><b>Recoger en sucursal</b><span>Sucursal Centro Histórico</span></span>
             </li>
           </ul>
         </div>
@@ -137,8 +162,9 @@
             <div class="pos-spec"><dt>Almacenamiento</dt><dd>512GB</dd></div>
             <div class="pos-spec"><dt>Cargador</dt><dd>Original</dd></div>
             <div class="pos-spec"><dt>Color</dt><dd>Negro</dd></div>
+            <div class="pos-spec"><dt>Condición</dt><dd>Excelente</dd></div>
             <div class="pos-spec"><dt>Operador</dt><dd>Sin operador</dd></div>
-            <div class="pos-spec"><dt>Número de Modelo</dt><dd>A2160</dd></div>
+            <div class="pos-spec"><dt>Número de modelo</dt><dd>A2160</dd></div>
           </dl>
         </div>
         <div role="tabpanel" class="ds-tabs__panel" id="posTabNotas" aria-labelledby="posTabNotasBtn" hidden>
@@ -171,8 +197,8 @@
   <div class="ds-modal pos-plazos" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="posPlazosTitle" aria-describedby="posPlazosSub">
     <div class="ds-modal__header">
       <div class="pos-plazos__titulos">
-        <h2 class="ds-modal__title" id="posPlazosTitle">Selecciona un apartado</h2>
-        <p class="pos-plazos__sub" id="posPlazosSub">Elige el apartado que mejor te convenga</p>
+        <h2 class="ds-modal__title" id="posPlazosTitle">Elige tu apartado</h2>
+        <p class="pos-plazos__sub" id="posPlazosSub">Paga el enganche hoy y llévatelo cuando termines de pagar</p>
       </div>
       <p class="pos-plazos__contado"><b id="posContado">$17,969</b><span>De contado</span></p>
       <button class="pos-plazos__close" type="button" id="posPlazosClose" aria-label="Cerrar"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="currentColor"></path></svg></button>
@@ -180,6 +206,7 @@
     <div class="ds-modal__body">
       <p class="pos-num__help pos-num__help--error pos-planes-error" id="posPlanesError" role="alert"></p>
       <div class="pos-plazos__planes" id="posPlanes" role="radiogroup" aria-label="Planes de apartado"></div>
+      <ol class="pos-plazos__notas" id="posPlanesNotas" aria-label="Notas de los apartados"></ol>
     </div>
     <div class="ds-modal__footer">
       <button class="ds-btn ds-btn--tertiary ds-btn--md" type="button" id="posPlazosCancel">Cancelar</button>
@@ -257,11 +284,12 @@
   // Toast del DS (variante positiva): icono EstadosSuccess, título y texto, cerrar y barra de tiempo de 5 s
   const TOAST_ICO = '<svg aria-hidden="true" width="24" height="24" viewBox="96 156 24 24" fill="none"><path d="M108 178C106.617 178 105.317 177.737 104.1 177.212C102.883 176.687 101.825 175.975 100.925 175.075C100.025 174.175 99.3127 173.117 98.788 171.9C98.2627 170.683 98 169.383 98 168C98 166.617 98.2627 165.317 98.788 164.1C99.3127 162.883 100.025 161.825 100.925 160.925C101.825 160.025 102.883 159.312 104.1 158.787C105.317 158.262 106.617 158 108 158C109.383 158 110.683 158.262 111.9 158.787C113.117 159.312 114.175 160.025 115.075 160.925C115.975 161.825 116.687 162.883 117.212 164.1C117.737 165.317 118 166.617 118 168C118 169.383 117.737 170.683 117.212 171.9C116.687 173.117 115.975 174.175 115.075 175.075C114.175 175.975 113.117 176.687 111.9 177.212C110.683 177.737 109.383 178 108 178ZM106.6 172.6L113.65 165.55L112.25 164.15L106.6 169.8L103.75 166.95L102.35 168.35L106.6 172.6Z" fill="currentColor"/></svg>';
   const CLOSE_20 = '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="currentColor"/></svg>';
-  const toast = (titulo, texto) => {
+  const PAUSE_ICO = '<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" fill="currentColor"/></svg>';
+  const toast = (titulo, texto, tono, ico) => {
     const t = document.createElement('div');
-    t.className = 'ds-toast ds-toast--success';
+    t.className = 'ds-toast ds-toast--' + (tono || 'success');
     t.setAttribute('role', 'status');
-    t.innerHTML = '<span class="ds-toast__icon" aria-hidden="true">' + TOAST_ICO + '</span>'
+    t.innerHTML = '<span class="ds-toast__icon" aria-hidden="true">' + (ico || TOAST_ICO) + '</span>'
       + '<div class="ds-toast__body-wrap"><p class="ds-toast__title"></p><p class="ds-toast__body"></p></div>'
       + '<button type="button" class="ds-toast__close" aria-label="Cerrar">' + CLOSE_20 + '</button>'
       + '<div class="ds-toast__timer" aria-hidden="true"></div>';
@@ -277,7 +305,8 @@
   // sin salirse de la pantalla y sin que lo recorte el scroll de la tabla
   const colocarTip = (host) => {
     const tip = host.querySelector('.ds-tooltip__content');
-    const trig = host.querySelector('button, img') || host;
+    // si el propio anfitrión es el botón (flecha de apartados), el tooltip se ancla al botón completo
+    const trig = host.matches('button') ? host : (host.querySelector('button, img') || host);
     if (!tip) return;
     const abajo = host.classList.contains('pos-cargos');
     const r = trig.getBoundingClientRect();
@@ -316,12 +345,103 @@
     $('posCart').setAttribute('aria-label', 'Carrito, ' + enCarrito + (enCarrito === 1 ? ' artículo' : ' artículos'));
     toast(titulo || 'Agregado al carrito', detalle);
   };
-  $('posAdd').addEventListener('click', () => agregar('iPhone 16 512GB Negro · $17,969'));
-  $('posBuy').addEventListener('click', () => toast('Listo para cobrar', 'iPhone 16 512GB Negro pasó a caja · $17,969'));
+  $('posAdd').addEventListener('click', () => agregar('iPhone 16 512GB Negro de contado · $17,969'));
+  $('posBuy').addEventListener('click', () => toast('Listo para cobrar', 'iPhone 16 512GB Negro ya está en caja por $17,969'));
   $('posShare').addEventListener('click', () => {
     if (navigator.share) navigator.share({ title: 'iPhone 16 512GB Negro · 5G', url: location.href }).catch(() => {});
     else navigator.clipboard && navigator.clipboard.writeText(location.href).then(() => toast('Enlace copiado', 'Ya puedes compartir este artículo'));
   });
+
+  // ---------- menú de tres puntos · pausar / reanudar por canal ----------
+  const detalle = document.querySelector('.pos-detail');
+  const menuBtn = $('posOptsBtn'), menu = $('posOptsMenu');
+  const itemsVisibles = () => [...menu.querySelectorAll('.pos-opts__item')].filter((b) => !b.hidden);
+  const abrirMenu = (abrir) => {
+    menu.hidden = !abrir;
+    menuBtn.setAttribute('aria-expanded', abrir);
+    if (abrir) { const p = itemsVisibles()[0]; if (p) p.focus(); }
+  };
+  menuBtn.addEventListener('click', () => abrirMenu(menu.hidden));
+  document.addEventListener('click', (e) => { if (!menu.hidden && !$('posOpts').contains(e.target)) abrirMenu(false); });
+  document.addEventListener('keydown', (e) => {
+    if (menu.hidden) return;
+    if (e.key === 'Escape') { abrirMenu(false); menuBtn.focus(); return; }
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      const it = itemsVisibles();
+      const i = it.indexOf(document.activeElement);
+      it[(i + (e.key === 'ArrowDown' ? 1 : -1) + it.length) % it.length].focus();
+    }
+  });
+
+  const svgCirc = (d) => '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="' + d + '" fill="currentColor"/></svg>';
+  // íconos Pause y Play del design system
+  const ICO_PAUSA = svgCirc('M15 19C14.45 19 13.9793 18.8043 13.588 18.413C13.196 18.021 13 17.55 13 17V7C13 6.45 13.196 5.97933 13.588 5.588C13.9793 5.196 14.45 5 15 5H17C17.55 5 18.021 5.196 18.413 5.588C18.8043 5.97933 19 6.45 19 7V17C19 17.55 18.8043 18.021 18.413 18.413C18.021 18.8043 17.55 19 17 19H15ZM7 19C6.45 19 5.97933 18.8043 5.588 18.413C5.196 18.021 5 17.55 5 17V7C5 6.45 5.196 5.97933 5.588 5.588C5.97933 5.196 6.45 5 7 5H9C9.55 5 10.021 5.196 10.413 5.588C10.8043 5.97933 11 6.45 11 7V17C11 17.55 10.8043 18.021 10.413 18.413C10.021 18.8043 9.55 19 9 19H7ZM15 17H17V7H15V17ZM7 17H9V7H7V17Z');
+  const ICO_PLAY = svgCirc('M9.525 18.0248C9.19167 18.2415 8.854 18.2538 8.512 18.0618C8.17067 17.8705 8 17.5748 8 17.1748V6.82484C8 6.42484 8.17067 6.12884 8.512 5.93684C8.854 5.7455 9.19167 5.75817 9.525 5.97484L17.675 11.1498C17.975 11.3498 18.125 11.6332 18.125 11.9998C18.125 12.3665 17.975 12.6498 17.675 12.8498L9.525 18.0248ZM10 15.3498L15.25 11.9998L10 8.64984V15.3498Z');
+  const CANAL = {
+    linea:    { nombre: 'en línea',    btn: 'posPzLinea' },
+    sucursal: { nombre: 'en sucursal', btn: 'posPzSuc' },
+  };
+  const pausado = { linea: false, sucursal: false };
+  const ARTICULO = 'iPhone 16 512GB Negro';
+  const lista = (ks) => ks.map((k) => CANAL[k].nombre).join(' y ');
+
+  const pintar = () => {
+    const off = Object.keys(pausado).filter((k) => pausado[k]);
+    const vivos = Object.keys(pausado).filter((k) => !pausado[k]);
+    const total = off.length === 2, parcial = off.length === 1;
+    // el aviso fijo (con "Reanudar") solo aparece cuando el artículo está pausado en los dos canales
+    detalle.classList.toggle('has-pausa', total);
+
+    Object.keys(CANAL).forEach((k) => {
+      const apagado = pausado[k];
+      document.querySelectorAll('[data-canal="' + k + '"]').forEach((el) => {
+        el.classList.toggle('is-off', apagado);
+        if (el.classList.contains('pos-chip')) {
+          // chip informativo del DS: azul = publicado, gris = pausado
+          el.classList.toggle('pos-chip--grey', apagado);
+          el.classList.toggle('pos-chip--blue', !apagado);
+        }
+      });
+      const b = $(CANAL[k].btn);
+      b.querySelector('.pos-opts__ico').innerHTML = apagado ? ICO_PLAY : ICO_PAUSA;
+      b.querySelector('.pos-opts__txt').textContent = (apagado ? 'Reanudar ' : 'Pausar ') + CANAL[k].nombre;
+    });
+    $('posPzAmbos').hidden = total;
+    $('posRzAmbos').hidden = off.length === 0;
+    $('posPzAmbos').querySelector('.pos-opts__ico').innerHTML = ICO_PAUSA;
+    $('posRzAmbos').querySelector('.pos-opts__ico').innerHTML = ICO_PLAY;
+
+    const titulo = total ? 'Publicación pausada' : 'Pausada ' + lista(off);
+    if (off.length) {
+      $('posPausaTitulo').textContent = titulo;
+      const hora = new Date().toLocaleTimeString('es-MX', { hour: 'numeric', minute: '2-digit' });
+      $('posPausaTxt').textContent = 'Desde hoy a las ' + hora + ' no aparece ' + lista(off)
+        + (parcial ? '. Sigue visible ' + lista(vivos) + '.' : '. Sus datos y fotos se conservan.');
+    }
+    const base = document.title.replace(/^\(Pausad[^)]*\) /, '');
+    document.title = (total ? '(Pausado) ' : parcial ? '(Pausado ' + lista(off) + ') ' : '') + base;
+  };
+
+  const cambiar = (claves, pausar) => {
+    const cambian = claves.filter((k) => pausado[k] !== pausar);
+    if (!cambian.length) return;
+    cambian.forEach((k) => { pausado[k] = pausar; });
+    pintar();
+    // el toast solo avisa cuando el artículo queda pausado en los dos canales; en un solo canal lo dicen el chip y el aviso
+    if (pausar && Object.keys(pausado).every((k) => pausado[k])) {
+      toast('Publicación pausada', 'Ya no aparece en línea ni en sucursal. Reanúdala cuando quieras desde el menú ⋮.', 'warning', ICO_PAUSA);
+    }
+  };
+  const accion = (id, fn) => $(id).addEventListener('click', () => { abrirMenu(false); menuBtn.focus(); fn(); });
+  accion('posPzLinea', () => cambiar(['linea'], !pausado.linea));
+  accion('posPzSuc', () => cambiar(['sucursal'], !pausado.sucursal));
+  accion('posPzAmbos', () => cambiar(['linea', 'sucursal'], true));
+  accion('posRzAmbos', () => cambiar(['linea', 'sucursal'], false));
+  // Editar: por ahora solo cierra el menú (sin funcionalidad)
+  $('posEditar').addEventListener('click', () => { abrirMenu(false); menuBtn.focus(); });
+  $('posReanudar').addEventListener('click', () => cambiar(['linea', 'sucursal'], false));
+  pintar();
 
   // ---------- productos relacionados ----------
   const REL = [
@@ -366,23 +486,23 @@
     'trend-down': '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M16 18V16H18.6L13.4 10.85L9.4 14.85L2 7.4L3.4 6L9.4 12L13.4 8L20 14.6V12H22V18H16Z" fill="currentColor"></path></svg>',
     'calendar-today': '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M5 22C4.45 22 3.979 21.8043 3.587 21.413C3.19567 21.021 3 20.55 3 20V6C3 5.45 3.19567 4.97933 3.587 4.588C3.979 4.196 4.45 4 5 4H6V2H8V4H16V2H18V4H19C19.55 4 20.021 4.196 20.413 4.588C20.8043 4.97933 21 5.45 21 6V20C21 20.55 20.8043 21.021 20.413 21.413C20.021 21.8043 19.55 22 19 22H5ZM5 20H19V10H5V20ZM5 8H19V6H5V8Z" fill="currentColor"></path></svg>',
     'sell': '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M12.85 22C12.5667 22 12.3 21.9457 12.05 21.837C11.8 21.729 11.5833 21.5833 11.4 21.4L2.6 12.6C2.41667 12.4167 2.271 12.2 2.163 11.95C2.05433 11.7 2 11.4333 2 11.15V4C2 3.45 2.196 2.979 2.588 2.587C2.97933 2.19567 3.45 2 4 2H11.15C11.4333 2 11.7 2.054 11.95 2.162C12.2 2.27067 12.4167 2.41667 12.6 2.6L21.4 11.425C21.7833 11.8083 21.975 12.279 21.975 12.837C21.975 13.3957 21.7833 13.8667 21.4 14.25L14.25 21.4C14.0667 21.5833 13.8543 21.729 13.613 21.837C13.371 21.9457 13.1167 22 12.85 22ZM12.825 20L19.975 12.85L11.15 4H4V11.15L12.825 20ZM6.5 8C6.91667 8 7.27067 7.854 7.562 7.562C7.854 7.27067 8 6.91667 8 6.5C8 6.08333 7.854 5.72933 7.562 5.438C7.27067 5.146 6.91667 5 6.5 5C6.08333 5 5.72933 5.146 5.438 5.438C5.146 5.72933 5 6.08333 5 6.5C5 6.91667 5.146 7.27067 5.438 7.562C5.72933 7.854 6.08333 8 6.5 8Z" fill="currentColor"></path></svg>',
-    'shield': '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M17 17C17.4167 17 17.7707 16.854 18.062 16.562C18.354 16.2707 18.5 15.9167 18.5 15.5C18.5 15.0833 18.354 14.7293 18.062 14.438C17.7707 14.146 17.4167 14 17 14C16.5833 14 16.2293 14.146 15.938 14.438C15.646 14.7293 15.5 15.0833 15.5 15.5C15.5 15.9167 15.646 16.2707 15.938 16.562C16.2293 16.854 16.5833 17 17 17ZM17 20C17.5167 20 17.9917 19.879 18.425 19.637C18.8583 19.3957 19.2083 19.075 19.475 18.675C19.1083 18.4583 18.7167 18.2917 18.3 18.175C17.8833 18.0583 17.45 18 17 18C16.55 18 16.1167 18.0583 15.7 18.175C15.2833 18.2917 14.8917 18.4583 14.525 18.675C14.7917 19.075 15.1417 19.3957 15.575 19.637C16.0083 19.879 16.4833 20 17 20ZM12 22C9.68333 21.4167 7.771 20.0873 6.263 18.012C4.75433 15.9373 4 13.6333 4 11.1V5L12 2L20 5V10.675C19.6833 10.5417 19.3583 10.4207 19.025 10.312C18.6917 10.204 18.35 10.125 18 10.075V6.4L12 4.15L6 6.4V11.1C6 11.8833 6.104 12.6667 6.312 13.45C6.52067 14.2333 6.81267 14.9793 7.188 15.688C7.56267 16.396 8.01667 17.05 8.55 17.65C9.08333 18.25 9.675 18.75 10.325 19.15C10.5083 19.6833 10.75 20.1917 11.05 20.675C11.35 21.1583 11.6917 21.5917 12.075 21.975C12.0583 21.975 12.046 21.9793 12.038 21.988C12.0293 21.996 12.0167 22 12 22ZM17 22C15.6167 22 14.4377 21.5127 13.463 20.538C12.4877 19.5627 12 18.3833 12 17C12 15.6167 12.4877 14.4373 13.463 13.462C14.4377 12.4873 15.6167 12 17 12C18.3833 12 19.5627 12.4873 20.538 13.462C21.5127 14.4373 22 15.6167 22 17C22 18.3833 21.5127 19.5627 20.538 20.538C19.5627 21.5127 18.3833 22 17 22Z" fill="currentColor"></path></svg>',
+    'lock': '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M6 22C5.45 22 4.97917 21.8042 4.5875 21.4125C4.19583 21.0208 4 20.55 4 20V10C4 9.45 4.19583 8.97917 4.5875 8.5875C4.97917 8.19583 5.45 8 6 8H7V6C7 4.61667 7.4875 3.4375 8.4625 2.4625C9.4375 1.4875 10.6167 1 12 1C13.3833 1 14.5625 1.4875 15.5375 2.4625C16.5125 3.4375 17 4.61667 17 6V8H18C18.55 8 19.0208 8.19583 19.4125 8.5875C19.8042 8.97917 20 9.45 20 10V20C20 20.55 19.8042 21.0208 19.4125 21.4125C19.0208 21.8042 18.55 22 18 22H6ZM6 20H18V10H6V20ZM12 17C12.55 17 13.0208 16.8042 13.4125 16.4125C13.8042 16.0208 14 15.55 14 15C14 14.45 13.8042 13.9792 13.4125 13.5875C13.0208 13.1958 12.55 13 12 13C11.45 13 10.9792 13.1958 10.5875 13.5875C10.1958 13.9792 10 14.45 10 15C10 15.55 10.1958 16.0208 10.5875 16.4125C10.9792 16.8042 11.45 17 12 17ZM9 8H15V6C15 5.16667 14.7083 4.45833 14.125 3.875C13.5417 3.29167 12.8333 3 12 3C11.1667 3 10.4583 3.29167 9.875 3.875C9.29167 4.45833 9 5.16667 9 6V8Z" fill="currentColor"/></svg>',
     'time': '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M8 20H16V17C16 15.9 15.6083 14.9583 14.825 14.175C14.0417 13.3917 13.1 13 12 13C10.9 13 9.95833 13.3917 9.175 14.175C8.39167 14.9583 8 15.9 8 17V20ZM12 11C13.1 11 14.0417 10.6083 14.825 9.825C15.6083 9.04167 16 8.1 16 7V4H8V7C8 8.1 8.39167 9.04167 9.175 9.825C9.95833 10.6083 10.9 11 12 11ZM4 22V20H6V17C6 15.9833 6.2375 15.0292 6.7125 14.1375C7.1875 13.2458 7.85 12.5333 8.7 12C7.85 11.4667 7.1875 10.7542 6.7125 9.8625C6.2375 8.97083 6 8.01667 6 7V4H4V2H20V4H18V7C18 8.01667 17.7625 8.97083 17.2875 9.8625C16.8125 10.7542 16.15 11.4667 15.3 12C16.15 12.5333 16.8125 13.2458 17.2875 14.1375C17.7625 15.0292 18 15.9833 18 17V20H20V22H4Z" fill="currentColor"></path></svg>',
   };
   const PRECIO = 17969;
   const PRODUCTO = 'iPhone 16 512GB Negro · 5G';
   // cada apartado: enganche mínimo + cargos del día + n pagos (con cargo por pago opcional).
-  // tags cortos: los fijos van aquí; "Menor enganche / Más barato / Más rápido" se calculan al pintar.
+  // tags cortos: los fijos van aquí; "Paga menos hoy / Más barato" se calculan al pintar.
   const PLANES = [
     {
       nombre: 'Apartado Plus',
-      tags: [['mode-heat', 'Popular', 'amarillo'], ['shield', 'Con seguro', 'verde']],
+      tags: [['mode-heat', 'Popular', 'red'], ['lock', 'Con seguro', 'blue']],
       enganche: 3255, hoy: [['Apertura', 50], ['Almacenaje', 110], ['Seguro', 371]],
       n: 4, cada: 'quincena', frecuencia: 'quincenales', extra: null, mora: 2,
     },
     {
       nombre: 'Apartado Mensual',
-      tags: [['calendar-today', 'Nuevo', 'morado']],
+      tags: [['calendar-today', 'Nuevo', 'purple']],
       enganche: 1799, hoy: [['Apertura', 50]],
       n: 3, cada: 'mes', frecuencia: 'mensuales', extra: ['Almacenaje', 60], mora: 3,
     },
@@ -398,7 +518,7 @@
   const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
   const MESES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
   const fechaCorta = (d) => d.getDate() + ' ' + MESES[d.getMonth()];                       // "24 Nov"
-  const fecha = (d) => d.getDate() + ' de ' + MESES[d.getMonth()] + ' ' + d.getFullYear();  // "25 de Sep 2026"
+  const fecha = (d) => d.getDate() + ' ' + MESES[d.getMonth()] + ' ' + d.getFullYear();  // "25 Sep 2026"
   // calendario en centavos: lo que se paga hoy, cada pago y el saldo que queda (el último pago cierra exacto en 0)
   const calendario = (p) => {
     const base = new Date();
@@ -429,39 +549,53 @@
   };
   const calcular = () => PLANES.forEach((p) => Object.assign(p, calendario(p)));
   calcular();
-  // la caja lavanda anuncia el apartado más accesible con el enganche mínimo de cada plan
-  $('posApartadoDesde').textContent = mxnC(Math.min(...PLANES.map((p) => p.hoyMonto)));
+  // la opción de apartado muestra el plan más accesible (menor pago hoy): es el que se aparta de un clic
+  const planDesde = () => PLANES.reduce((a, b) => (b.hoyMonto < a.hoyMonto ? b : a));
+  const pDesde = planDesde();
+  $('posApartadoDesde').textContent = mxnC(pDesde.hoyMonto);
+  // la línea explica qué es apartar y cuántos apartados hay (sin montos: esos están en el modal)
+  $('posApartadoPlan').innerHTML = 'Paga en partes y llévatelo al liquidar. Hay <b>' + PLANES.length + ' apartados</b>.';
+  $('posPlazosOpen').setAttribute('aria-label', 'Comparar los ' + PLANES.length + ' apartados');
+  // el botón dice qué plan aparta (lo leen los lectores de pantalla; el toast lo confirma al agregar)
+  $('posApartar').setAttribute('aria-label', 'Apártalo con ' + mxnC(pDesde.hoyMonto) + ' de enganche (' + pDesde.nombre + ', ' + pDesde.n + ' pagos ' + pDesde.frecuencia + ' de ' + mxnC(pDesde.pago) + ', total ' + mxnC(pDesde.total) + ')');
   $('posContado').textContent = mxn(PRECIO, 0);
 
   // etiquetas comparativas: se calculan con los números para que siempre digan la verdad
   const tagsDe = (p) => {
     const min = (f) => Math.min(...PLANES.map(f));
     const calc = [];
-    if (p.hoyMonto === min((x) => x.hoyMonto)) calc.push(['trend-down', 'Menor enganche', 'verde']);
-    if (p.total === min((x) => x.total)) calc.push(['sell', 'Más barato', 'verde']);
-    if (+p.fin === min((x) => +x.fin)) calc.push(['time', 'Más rápido', 'azul']);
-    return calc.concat(p.tags).slice(0, 2);
+    if (p.hoyMonto === min((x) => x.hoyMonto)) calc.push([null, 'Paga menos hoy', 'blue']);
+    if (p.total === min((x) => x.total)) calc.push([null, 'Más barato', 'blue']);
+    return calc.concat(p.tags);
   };
   const X16 = '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="currentColor"/></svg>';
   let abierto = -1;          // el modal abre con los tres cerrados: la fila ya trae lo necesario para comparar
   let elegido = null;
   let faltaPlan = false;     // se intentó agregar sin elegir plan → error del DS en los radios + mensaje
 
+  // cuánto más cuesta el apartado contra el precio de contado: "+3%", "+1.3%" (un decimal si es menos de 10%)
+  const extraVsContado = (p) => {
+    const pct = (p.total / 100 - PRECIO) / PRECIO * 100;
+    const r = pct < 10 ? Math.round(pct * 10) / 10 : Math.round(pct);
+    return '+' + String(r) + '%';
+  };
   // piezas no interactivas: se pueden reescribir sin tocar radios, campos ni botones
   const statsHTML = (p) => [
     '<span>Pago hoy</span><b>' + mxnC(p.hoyMonto) + '</b>',
     '<span>' + p.n + ' pagos ' + p.frecuencia + '</span><b>' + mxnC(p.pago) + '</b>' + (p.ultimo !== p.pago ? '<small>último de ' + mxnC(p.ultimo) + '</small>' : ''),
     '<span>Liquidación</span><b>' + fechaCorta(p.fin) + '</b>',   // día del último pago: el apartado queda liquidado
-    '<span>Total a pagar</span><b>' + mxnC(p.total) + '</b>',
+    '<span>Total a pagar</span><b>' + mxnC(p.total) + '</b><small class="pos-stat__extra">' + extraVsContado(p) + ' vs. contado</small>',
   ];
-  const tagsHTML = (p) => tagsDe(p).map((t) => '<span class="ds-tag ds-tag--' + t[2] + ' pos-chip-ico">' + ICON[t[0]] + t[1] + '</span>').join('');
+  // chips informativos del DS (14px): morado para lo destacado (Popular, Nuevo, con ícono) y azul para los beneficios
+  // a lo mucho un chip de cada color por apartado; el azul va primero y los destacados (Popular rojo, Nuevo morado) a la derecha
+  const unoPorColor = (ts) => ts.filter((t, i) => ts.findIndex((x) => x[2] === t[2]) === i);
+  const tagsHTML = (p) => unoPorColor(tagsDe(p)).sort((a, b) => (a[2] !== 'blue') - (b[2] !== 'blue')).map((t) => '<span class="pos-chip pos-chip--14 pos-chip--' + t[2] + '">' + (t[0] ? ICON[t[0]] : '') + t[1] + '</span>').join('');
   const radioLabel = (p) => p.nombre + ': pago hoy ' + mxnC(p.hoyMonto) + ', total ' + mxnC(p.total);
   const tbodyHTML = (p) => p.filas.map((r) => '<tr' + (r.hoy ? ' class="pos-plan__hoy"' : '') + '>'
-      + '<td>' + (r.hoy ? 'Hoy' : 'Pago ' + r.k + ' de ' + p.n) + ' · ' + DIAS[r.d.getDay()] + '</td>'
-      + '<td>' + fecha(r.d) + '</td>'
+      + '<td>' + (r.hoy ? 'Hoy · ' : '') + fecha(r.d) + '</td>'
       + '<td>' + mxn(r.monto / 100, 2) + '</td>'
-      + '<td class="pos-saldo">' + (r.saldo === 0 ? '<span class="ds-tag ds-tag--verde">Liquidado</span> ' : '') + mxn(r.saldo / 100, 2) + '</td></tr>').join('')
-    + '<tr class="pos-plan__total"><td>Total a pagar</td><td></td><td>' + mxn(p.total / 100, 2) + '</td><td></td></tr>';
+      + '<td class="pos-saldo">' + mxn(r.saldo / 100, 2) + '</td></tr>').join('')
+    + '<tr class="pos-plan__total"><td>Total a pagar</td><td>' + mxn(p.total / 100, 2) + '</td><td></td></tr>';
 
   const pintarPlanes = () => {
     $('posPlanes').innerHTML = PLANES.map((p, i) => {
@@ -471,17 +605,18 @@
         + '<div class="pos-plan__row">'
         + '<label class="ds-radio' + (faltaPlan ? ' ds-radio--error' : '') + '"><input type="radio" name="posPlan" value="' + i + '" aria-label="' + radioLabel(p) + '"' + (elegido === i ? ' checked' : '') + ' />'
         + '<span class="ds-radio__wrap"><span class="ds-radio__dot"></span></span></label>'
-        + '<div class="pos-plan__name"><b>' + p.nombre + '</b><span class="pos-plan__tags">' + tagsHTML(p) + '</span></div>'
+        + '<div class="pos-plan__name"><b>' + p.nombre + '<sup class="pos-plan__ref">(' + (i + 1) + ')</sup></b><span class="pos-plan__tags">' + tagsHTML(p) + '</span></div>'
         + st.slice(0, 3).map((x) => '<div class="pos-stat">' + x + '</div>').join('')
         + '<div class="pos-stat pos-stat--hi">' + st[3] + '</div>'
         + '<button class="ds-btn ds-btn--icon-md pos-plan__toggle" type="button" aria-expanded="' + open + '" aria-label="' + (open ? 'Ocultar' : 'Ver') + ' calendario de pagos de ' + p.nombre + '">'
         + '<img class="pos-ico" src="assets/ds/KeyboardArrow' + (open ? 'Up' : 'Down') + '.svg" alt="" /></button>'
         + '</div>'
-        + '<div class="pos-plan__table" tabindex="0" role="region" aria-label="Calendario de pagos de ' + p.nombre + '"><table class="ds-table"><thead><tr><th>Pago</th><th>Fecha</th><th>Monto</th><th class="pos-saldo">Saldo restante</th></tr></thead><tbody>'
+        + '<div class="pos-plan__table" tabindex="0" role="region" aria-label="Calendario de pagos de ' + p.nombre + '"><table class="ds-table"><thead><tr><th>Fecha</th><th>Cantidad</th><th class="pos-saldo">Saldo</th></tr></thead><tbody>'
         + tbodyHTML(p) + '</tbody></table></div>'
-        + '</div>'
-        + (open ? '<p class="pos-plan__note">Este apartado tiene un ' + p.mora + '% de mora por pagos atrasados</p>' : '');
+        + '</div>';
     }).join('');
+    // una nota por apartado, numerada igual que la referencia junto a su nombre
+    $('posPlanesNotas').innerHTML = PLANES.map((p, i) => '<li>(' + (i + 1) + ') ' + p.nombre + ': si un pago se atrasa, se cobra ' + p.mora + '% de mora.</li>').join('');
     $('posPlanes').setAttribute('aria-invalid', String(faltaPlan));
   };
   const avisarPlan = (texto) => {
@@ -517,12 +652,12 @@
   let presionEnFondo = false;
   const abrir = () => {
     volverA = document.activeElement;
-    // cada apertura empieza limpia: nada elegido, todo cerrado y fechas de hoy
+    // cada apertura empieza con el plan del "desde" (el de menor pago hoy) ya elegido y todo cerrado
+    calcular();
     abierto = -1;
-    elegido = null;
+    elegido = PLANES.indexOf(planDesde());
     faltaPlan = false;
     avisarPlan('');
-    calcular();
     pintarPlanes();
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -536,12 +671,11 @@
     if (volverA) volverA.focus();
   };
   $('posPlazosOpen').addEventListener('click', abrir);
-  // un clic en el botón aparta con el plan más accesible (el del "desde"); la flecha abre las demás opciones
-  $('posApartar').addEventListener('click', (e) => {
-    if (e.target.closest('.pos-apartado__ayuda')) return;
+  // "Apártalo con" agrega de un clic el plan del "desde"; "Compáralos" abre todos los apartados
+  $('posApartar').addEventListener('click', () => {
     calcular();
-    const p = PLANES.reduce((a, b) => (b.hoyMonto < a.hoyMonto ? b : a));
-    agregar('iPhone 16 512GB Negro · ' + p.nombre + ' · Hoy ' + mxnC(p.hoyMonto) + ' · Total ' + mxnC(p.total), 'Apartado agregado al carrito');
+    const p = planDesde();
+    agregar(p.nombre + ': hoy ' + mxnC(p.hoyMonto) + ' y total ' + mxnC(p.total) + '. Se entrega al liquidar.', 'Apartado agregado al carrito');
   });
   if (location.hash === '#plazos') abrir();
   $('posPlazosCancel').addEventListener('click', cerrar);
@@ -569,7 +703,7 @@
     }
     const p = PLANES[elegido];
     cerrar();
-    agregar('iPhone 16 512GB Negro · ' + p.nombre + ' · Hoy ' + mxnC(p.hoyMonto) + ' · Total ' + mxnC(p.total));
+    agregar(p.nombre + ': hoy ' + mxnC(p.hoyMonto) + ' y total ' + mxnC(p.total) + '. Se entrega al liquidar.', 'Apartado agregado al carrito');
   });
 })();
 </script>
