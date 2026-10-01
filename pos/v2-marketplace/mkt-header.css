@@ -1,0 +1,239 @@
+/* ============================================================
+   Header del marketplace (el del cotizador en línea) para la ficha V2 marketplace.
+   Copia fiel de ataskate-marketplace/index.html: .topbar (franja lila con buscador y carrito),
+   .catnav (links de categorías) y .crumbs (breadcrumb). Lo único propio de este archivo es el
+   bloque "Entorno": el cotizador trae estas bases en el <body>, aquí van acotadas al header
+   para no tocar el resto de la página (que usa el design system de ../ds).
+   ============================================================ */
+
+/* ---------------- Entorno ---------------- */
+.topbar, .crumbs-wrap {
+  --purple: #5a5aff; --purple-200: #acacff; --purple-100: #e5e5ff; --purple-50: #f0f0ff;
+  --navy: #0d166b;
+  --ink: #16181b; --ink-soft: #2a2c2f; --gray: #71767d; --line: #e6e7e9;
+  --font: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --r-pill: 999px;
+  --spring: cubic-bezier(.34, 1.4, .4, 1);
+  font-size: 17px; line-height: 1.55; color: var(--ink);
+}
+:where(.topbar, .topbar *, .crumbs-wrap, .crumbs-wrap *) { box-sizing: border-box; margin: 0; padding: 0; }
+:where(.topbar, .crumbs-wrap) svg { display: block; max-width: 100%; }
+:where(.topbar, .crumbs-wrap) a { color: inherit; text-decoration: none; }
+:where(.topbar, .crumbs-wrap) a:hover { color: inherit; }
+:where(.topbar, .crumbs-wrap) button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+:where(.topbar, .crumbs-wrap) ul { list-style: none; }
+:where(.topbar, .crumbs-wrap) :focus-visible { outline: 3px solid var(--purple); outline-offset: 3px; border-radius: 4px; }
+.topbar input[type="search"]::-webkit-search-cancel-button,
+.topbar input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
+.topbar .wrap, .crumbs-wrap.wrap { margin-inline: auto; }
+/* el breadcrumb corre sobre una franja casi blanca, como en el cotizador */
+.crumbs-wrap { position: relative; background: #fbfbfe; }
+
+/* ---------------- Copia del cotizador ---------------- */
+.topbar { position: sticky; top: 0; z-index: 50; background: #fff; font-family: 'Nunito', var(--font); }
+/* header rows and breadcrumbs run edge to edge with 24px side padding */
+.topbar .wrap, .crumbs-wrap { max-width: none; padding-inline: 24px; }
+.topbar-main {
+  background: #d5a4ff;
+  border-radius: 0 0 16px 16px;
+}
+.topbar-row {
+  display: flex; align-items: center; gap: clamp(12px, 1.8vw, 24px);
+  height: 64px;
+}
+.logo { color: #09001c; flex: none; display: block; }
+.wordmark { display: block; height: 27px; width: auto; aspect-ratio: 151 / 28; }
+
+.ship-to {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 12px; line-height: 1.25; color: var(--ink-soft);
+  font-weight: 600; flex: none;
+}
+.ship-to svg { width: 19px; height: 19px; stroke: var(--ink); flex: none; }
+.ship-to b { display: block; color: var(--ink); font-weight: 700; font-size: 14px; }
+/* el widget abre el selector de direccion */
+button.ship-to { background: none; border: 0; padding: 0; text-align: left; cursor: pointer; font-family: inherit; }
+button.ship-to:hover b { text-decoration: underline; }
+
+.searchbar {
+  flex: 1; display: flex; align-items: center;
+  background: #fff;
+  border: 2px solid transparent;
+  border-radius: var(--r-pill);
+  padding: 9px 10px 9px 20px;
+  transition: border-color .2s, box-shadow .2s;
+  min-width: 0;
+  box-shadow: 0 2px 10px -4px rgba(13,22,107,.18);
+}
+.searchbar:focus-within { border-color: var(--purple); box-shadow: 0 8px 24px -10px rgba(90,90,255,.4); }
+.searchbar input {
+  border: 0; background: none; outline: none; width: 100%; min-width: 0;
+  font: inherit;
+  font-family: 'Nunito', var(--font); /* DS input type */
+  font-size: 14px; font-weight: 400; color: var(--ink);
+  /* el line-height 1.55 heredado del body descentraba el texto en la pill */
+  line-height: normal; padding: 0;
+}
+.searchbar input::placeholder { color: var(--gray); }
+.searchbar .search-go { display: grid; place-items: center; flex: none; padding: 2px 8px; }
+.searchbar .search-go svg { width: 20px; height: 20px; stroke: var(--purple); }
+
+/* pedido: la bandera de idioma se retira; el pais ya vive junto al logo (.mx) */
+.lang { display: none !important; }
+.lang {
+  display: flex; align-items: center; gap: 5px; flex: none;
+}
+.lang .flag { width: 26px; height: 26px; border-radius: 50%; overflow: hidden; display: block; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+.lang svg.chev { width: 14px; height: 14px; stroke: var(--ink); }
+
+.top-links { display: flex; align-items: center; gap: clamp(10px, 1.6vw, 22px); flex: none; }
+.top-link { font-size: 12px; line-height: 1.25; color: var(--ink-soft); font-weight: 600; }
+.top-link b { display: flex; align-items: center; gap: 4px; color: var(--ink); font-weight: 700; font-size: 14px; }
+.top-link b svg { width: 13px; height: 13px; stroke: var(--ink); }
+.top-link:hover b { color: var(--navy); }
+
+.pay-interest {
+  display: flex; align-items: center; gap: 8px; flex: none;
+  font-size: 12px; line-height: 1.2; color: var(--ink-soft); font-weight: 600;
+}
+.pay-interest svg { width: 24px; height: 24px; stroke: var(--ink); flex: none; }
+.pay-interest b { display: block; color: var(--ink); font-weight: 700; font-size: 14px; }
+.pay-interest:hover b { color: var(--navy); }
+
+.cart {
+  position: relative; display: flex; align-items: center; gap: 7px; flex: none;
+  background: #fff; border-radius: var(--r-pill);
+  padding: 9px 16px;
+  font-size: 14px; font-weight: 600; color: var(--ink);
+  box-shadow: 0 2px 10px -4px rgba(13,22,107,.18);
+  transition: transform .3s var(--spring), box-shadow .2s;
+}
+.cart:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -8px rgba(13,22,107,.3); }
+.cart svg { width: 20px; height: 20px; stroke: var(--ink); }
+
+/* category nav */
+.catnav { border-bottom: 1px solid var(--line); background: #fff; }
+.catnav-row {
+  display: flex; align-items: center; gap: 2px;
+  padding-block: 3px; /* barra fina: menos blanco (pedido) */
+  overflow-x: auto; scrollbar-width: none;
+}
+.catnav-row::-webkit-scrollbar { display: none; }
+.menu-btn { display: grid; place-items: center; flex: none; padding: 4px; margin-right: 8px; }
+.menu-btn svg { width: 22px; height: 22px; stroke: var(--ink); }
+/* la hamburguesa del topbar y el mini perfil solo existen en móvil */
+.menu-btn-top, .top-mini-perfil { display: none; }
+@media (max-width: 720px) {
+  /* fila 1: hamburguesa + logo ... Francisco + carrito; fila 2: buscador entero */
+  .topbar-row { flex-wrap: wrap; height: auto; padding: 6px 0; row-gap: 6px; }
+  /* laterales del navbar: 12px en vez de 24 — el buscador casi a sangre, como Amazon */
+  .topbar-main .wrap { padding-inline: 12px; }
+  .menu-btn-top { display: grid; margin-right: 0; }
+  .searchbar { order: 10; flex: 1 1 100%; }
+  .top-links { margin-left: auto; }
+  .top-mini-perfil {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: 'Nunito', var(--font); font-size: 14px; font-weight: 700;
+    color: var(--ink); text-decoration: none;
+  }
+  .top-mini-perfil svg { width: 20px; height: 20px; }
+  /* en el flujo sin sesión el nombre no aplica, igual que el "Hola, Francisco" */
+  body.flow-cel:not(.cel-auth) .top-mini-perfil { display: none; }
+  /* la barra del catnav desaparece; queda como ancla invisible del panel de links */
+  .catnav { border-bottom: 0; }
+  .catnav-row { padding: 0; height: 0; overflow: visible; }
+  .catnav-row > .menu-btn:not(.menu-btn-top) { display: none; }
+}
+/* en escritorio el envoltorio no existe para el layout; en móvil es el panel
+   desplegable de la hamburguesa */
+.catnav-links { display: contents; }
+@media (max-width: 720px) {
+  .catnav { position: relative; }
+  .catnav-links { display: none; }
+  .catnav.menu-abierto .catnav-links {
+    display: block;
+    position: absolute; left: 0; right: 0; top: 100%; z-index: 60;
+    background: #fff; border-top: 1px solid var(--line);
+    box-shadow: 0 22px 34px -20px rgba(13, 22, 107, .4);
+    padding: 6px 0 10px;
+  }
+  .catnav.menu-abierto .catnav-links a { display: block; padding: 12px 24px; font-size: 14px; border-radius: 0; }
+  .catnav.menu-abierto .catnav-links .spacer { display: none; }
+  .catnav.menu-abierto .menu-btn { background: #f0f0ff; border-radius: 8px; }
+}
+
+.catnav a {
+  font-family: 'Nunito', var(--font);
+  font-size: 14px; font-weight: 400; color: var(--ink);
+  white-space: nowrap;
+  padding: 6px 8px; margin: -6px 0; border-radius: 100px;
+  transition: background .2s, color .2s;
+}
+.catnav a:hover { background: #f0f0ff; color: #0d166b; }
+.catnav a:active { background: #e5e5ff; color: #0d166b; }
+.catnav a:focus-visible { outline: 2px solid #acacff; outline-offset: 2px; }
+.catnav a.is-active { background: #f0f0ff; color: #0d166b; font-weight: 700; }
+.catnav .spacer { flex: 1; }
+
+/* breadcrumb */
+/* DS Breadcrumb — un solo componente para todas las pantallas (landing, detalle
+   del cotizador, casas, cuenta y detalle de cotización): Nunito 14/600, gap 4,
+   chevron de separador. Siempre va arriba, nunca dentro del contenido. */
+.crumbs {
+  display: flex; align-items: center; gap: 4px;
+  list-style: none; margin: 0; padding: 8px 0;
+  font-family: 'Nunito', var(--font);
+  font-size: 14px; font-weight: 600; line-height: 1.2;
+}
+.crumbs a { color: #54575c; transition: color .2s; }
+@media (max-width: 720px) {
+  /* una sola línea deslizable: los pasos no se parten en dos renglones */
+  .crumbs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .crumbs::-webkit-scrollbar { display: none; }
+  .crumbs a, .crumbs .here { white-space: nowrap; flex: none; }
+}
+.crumbs a:hover { color: var(--purple); }
+.crumbs .here { color: #1d1e20; font-weight: 600; }
+.crumbs .sep { display: flex; }
+.crumbs .sep svg { width: 16px; height: 16px; }
+
+.logo { display: inline-flex; align-items: flex-end; gap: 3px; }
+.logo-mx { font-family: 'Nunito', var(--font); font-size: 14px; font-weight: 800; line-height: 1; letter-spacing: .2px; transform: translateY(-1px); }
+
+/* la elección vive junto a "Recibes hoy" y solo aparece con la tarjeta
+   desplegada, en el flujo Celulares & telefonía */
+.top-anon { display: none; }
+body.flow-cel #topAcct { display: none; }
+body.flow-cel .top-anon { display: block; }
+body.flow-cel.cel-auth #topAcct { display: block; }
+body.flow-cel.cel-auth .top-anon { display: none; }
+
+/* ---------------- Responsive (reglas del cotizador) ---------------- */
+@media (max-width: 1080px) {
+  .ship-to { display: none; }
+}
+@media (max-width: 720px) {
+  .top-links .top-link,
+  body.flow-cel .top-links .top-anon,
+  body.flow-cel.cel-auth .top-links #topAcct { display: none; }
+  .topbar-row { min-height: 60px; } /* height:auto la pone la reorganización móvil */
+  .logo .wordmark { height: 22px; }
+  .pay-interest, .lang { display: none; }
+}
+
+
+/* ---------------- Correcciones de la ficha (el cotizador no las trae) ---------------- */
+/* el separador del breadcrumb no se encoge a 0 cuando la ruta no cabe en el teléfono */
+.crumbs .sep { flex: none; }
+/* "Envío a" no abre el selector de ubicación del cotizador: se ve como texto, no como botón */
+div.ship-to { cursor: default; }
+@media (max-width: 720px) {
+  /* el anillo de foco del primer paso del breadcrumb no se recorta por el overflow */
+  .crumbs { padding-inline: 6px; margin-inline: -6px; }
+  /* en teléfono horizontal el panel de links cabe en pantalla y se desplaza por dentro */
+  .catnav.menu-abierto .catnav-links {
+    max-height: calc(100vh - var(--pos-header-h, 104px));
+    max-height: calc(100dvh - var(--pos-header-h, 104px));
+    overflow-y: auto; overscroll-behavior: contain;
+  }
+}

@@ -1,0 +1,79 @@
+/* ============================================================
+   Ataskate — Ficha de artículo · V2 marketplace
+   Misma ficha que /pos/v2/ (pestañas Compra | Apartado), pero para el cliente final del marketplace:
+   header del cotizador (mkt-header.css), sin nada del inventario del POS (canales publicados, menú ⋮,
+   pausar, ubicación en bodega) y con lo que el cliente necesita para decidir: Comprar ahora, Agregar al
+   carrito, envíos y en qué sucursal recoger. El resto viene de ../pos.css, ../v2/v2.css y el design system (../ds).
+   ============================================================ */
+
+.mkt .pos-main { padding-top: 16px; }
+.mkt .pos-detail { margin-top: 0; }
+/* título y compartir en una línea; el botón se alinea con la primera línea del título */
+.mkt .pos-headline__top { align-items: flex-start; }
+.mkt .pos-title { min-width: 0; }
+
+/* Comprar ahora (Primary) y Agregar al carrito (Secondary), uno bajo el otro y a todo lo ancho */
+.mkt-buy { display: flex; flex-direction: column; gap: var(--spacing-2); }
+.pos .mkt-buy .ds-btn { width: 100%; }
+
+/* ---------------- Productos relacionados: ProductCard del design system (la del cliente) ----------------
+   175 de ancho, borde #E8E9EA, radio 8, imagen de 188 con degradado gris, chip de descuento arriba a la izquierda,
+   Favorito (28) arriba a la derecha y Agregar al carrito (36) abajo a la derecha, ambos flotando sobre la imagen.
+   Nombre 12/400 en una línea; precio 16/700 y precio anterior tachado 12/400. */
+.mkt .pos-grid { grid-template-columns: repeat(auto-fill, 175px); justify-content: space-between; gap: var(--spacing-4); }
+.mkt-card {
+  position: relative; display: flex; flex-direction: column; width: 100%; min-width: 0;
+  background: var(--color-base-white); border: 1px solid #e8e9ea; border-radius: var(--radius-sm); overflow: hidden;
+  cursor: pointer; transition: box-shadow .15s;
+}
+.mkt-card:hover { box-shadow: 0 4px 16px 0 rgba(0, 0, 0, .1); }
+.mkt-card__media {
+  position: relative; flex: none; width: 100%; height: 188px; overflow: hidden;
+  background: linear-gradient(179.9deg, #fafafa 77.13%, #ededed 101.35%);
+}
+.mkt-card__media img { width: 100%; height: 100%; object-fit: cover; }
+.mkt-card__off { position: absolute; top: 8px; left: 8px; }
+.mkt-card__fav, .mkt-card__add {
+  position: absolute; display: grid; place-items: center; box-sizing: border-box;
+  border: 0; border-radius: 100px; background: var(--color-base-white); cursor: pointer; transition: background .15s;
+}
+.mkt-card__fav { top: 8px; right: 8px; width: 28px; height: 28px; padding: 4px; color: var(--ats-neutral-600); }
+.mkt-card__add { bottom: 12px; right: 8px; width: 36px; height: 36px; padding: 8px; color: var(--ats-neutral-700); }
+.mkt-card__fav:hover, .mkt-card__add:hover { background: var(--ats-neutral-100); }
+.mkt-card__fav:focus-visible, .mkt-card__add:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
+.mkt-card__fav svg { width: 20px; height: 20px; }
+.mkt-card__add svg { width: 20px; height: 20px; }
+.mkt-card__body { display: flex; flex-direction: column; gap: var(--spacing-2); padding: var(--spacing-2); background: var(--color-base-white); }
+.mkt-card__name { font-size: 12px; line-height: 12px; color: var(--pos-text-title); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mkt-card__prices { display: flex; align-items: center; gap: var(--spacing-1); min-width: 0; }
+.mkt-card__now { font-size: 16px; line-height: 1.5; letter-spacing: .3px; font-weight: var(--font-weight-bold); color: var(--ats-neutral-700); }
+.mkt-card__was { font-size: 12px; line-height: 12px; color: var(--ats-neutral-400); text-decoration: line-through; white-space: nowrap; }
+
+/* en teléfono: dos columnas que ceden hasta 175 (la tarjeta del DS no pasa de ese ancho: la foto no se recorta) */
+@media (max-width: 560px) {
+  .mkt .pos-grid { grid-template-columns: repeat(2, minmax(0, 175px)); }
+}
+
+/* el header del marketplace mide ~101px (franja lila + links): la foto solo se queda fija si cabe completa
+   (748 de galería + header + 16 de aire); en pantallas más bajas se queda en su sitio y no corta las miniaturas */
+@media (min-width: 1025px) and (max-height: 869px) {
+  .mkt .pos-gallery { position: static; }
+}
+
+/* ---------------- Accesibilidad y detalles ---------------- */
+/* el header es fijo (~101px): al tabular hacia arriba el foco no debe quedar tapado detrás de él */
+html { scroll-padding-top: calc(var(--pos-header-h, 101px) + 16px); }
+/* pestañas y miniaturas: mismo contorno de 2px #5A5AFF que el resto de controles (el anillo del navegador se recorta y desentona) */
+.mkt .ds-tabs__tab:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: -2px; }
+.mkt .pos-thumb:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
+.mkt .pos-thumbs { padding: 4px; margin: -4px; }
+/* calendario de pagos en teléfono: la fecha "Hoy · 28 Mar 2026" baja de renglón en vez de pisar la columna de montos */
+@media (max-width: 480px) {
+  .mkt .pos-plan .ds-table th:first-child, .mkt .pos-plan .ds-table td:first-child { white-space: normal; }
+}
+/* la tarjeta entera lleva al artículo: el enlace del nombre se estira sobre ella y los botones quedan por encima */
+.mkt-card__link { color: inherit; text-decoration: none; }
+.mkt-card__link::after { content: ''; position: absolute; inset: 0; }
+.mkt-card__link:focus-visible { outline: none; }
+.mkt-card__link:focus-visible::after { outline: 2px solid var(--ats-primary-300); outline-offset: -2px; border-radius: var(--radius-sm); }
+.mkt-card__fav, .mkt-card__add { z-index: 1; }

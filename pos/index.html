@@ -404,7 +404,9 @@
         }
       });
       const b = $(CANAL[k].btn);
-      b.querySelector('.pos-opts__ico').innerHTML = apagado ? ICO_PLAY : ICO_PAUSA;
+      // cada canal lleva su propio ícono (el mismo de su chip: globo / tienda), para que las opciones no se repitan;
+      // Pause y Play quedan solo para "en ambos"
+      b.querySelector('.pos-opts__ico').innerHTML = document.querySelector('.pos-chip[data-canal="' + k + '"] svg').outerHTML;
       b.querySelector('.pos-opts__txt').textContent = (apagado ? 'Reanudar ' : 'Pausar ') + CANAL[k].nombre;
     });
     $('posPzAmbos').hidden = total;

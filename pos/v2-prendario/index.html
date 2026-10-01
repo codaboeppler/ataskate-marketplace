@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ataskate POS — Detalles de artículo (Prendario)</title>
+<meta name="description" content="Ataskate POS (Operativo): detalle de un artículo del inventario prendario, con su contrato, refrendo y desempeño." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../ds/primitives.css" />
+<link rel="stylesheet" href="../ds/semantic.css" />
+<link rel="stylesheet" href="../ds/elevation.css" />
+<link rel="stylesheet" href="../ds/base.css" />
+<link rel="stylesheet" href="../ds/components.css" />
+<link rel="stylesheet" href="../pos.css?v=ux44" />
+<link rel="stylesheet" href="../v2/v2.css?v=5" />
+<link rel="stylesheet" href="prendario.css?v=2" />
+</head>
+<body class="pos pr">
+
+<header class="pos-header">
+  <div class="pos-header__menu">
+    <button class="pos-hbtn pos-menu" type="button" aria-label="Menú">
+      <img src="../assets/ds/Menu-2A2C2F.svg" width="20" height="20" alt="" />
+    </button>
+    <a class="pos-brand" href="./" aria-label="Ataskate · Operativo">
+      <img class="pos-brand__logo" src="../assets/logo-ataskate.svg" alt="ataskate" />
+      <span class="pos-brand__role">Operativo</span>
+    </a>
+  </div>
+
+  <form class="pos-search" role="search" onsubmit="return false">
+    <label class="ds-field-wrap">
+      <span class="ds-field-addon"><img src="../assets/ds/Search-A1A5AA.svg" width="20" height="20" alt="" /></span>
+      <input class="ds-input" type="search" placeholder="Buscar..." aria-label="Buscar en el inventario" />
+    </label>
+  </form>
+
+  <div class="pos-header__ctas">
+    <button class="pos-cart" type="button" id="posCart" aria-label="Carrito, 0 artículos">
+      <img src="../assets/ds/Cart-2A2C2F.svg" width="20" height="20" alt="" />
+      <span id="posCartN">0</span>
+    </button>
+    <button class="pos-hbtn pos-hide-sm" type="button" aria-label="Notificaciones">
+      <img src="../assets/ds/Notifications-2A2C2F.svg" width="20" height="20" alt="" />
+    </button>
+    <button class="pos-profile" type="button" aria-label="Rosa Pérez · Cambiar de sucursal">
+      <span class="ds-avatar ds-avatar--sm">RP</span>
+      <img src="../assets/ds/KeyboardArrowDown-2A2C2F-16.svg" width="16" height="16" alt="" />
+    </button>
+  </div>
+</header>
+
+<main class="pos-main">
+  <nav aria-label="Breadcrumb" class="ds-breadcrumb">
+    <ol class="pos-crumbs">
+      <li><a href="#" class="ds-breadcrumb__link">Home</a><span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt="" /></span></li>
+      <li><a href="#" class="ds-breadcrumb__link">Inventario prendario</a><span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt="" /></span></li>
+      <li><span class="ds-breadcrumb__current" aria-current="page">Detalles de artículo</span></li>
+    </ol>
+  </nav>
+
+  <section class="pos-detail">
+    <div class="pos-gallery">
+      <div class="pos-stage" id="posStage">
+        <img class="pos-stage__img" id="posStageImg" src="../assets/iphone16-negro.png" alt="iPhone 16 512GB Negro" />
+      </div>
+      <div class="pos-thumbs-wrap" id="posThumbsWrap">
+        <button class="ds-btn ds-btn--icon-sm pos-thumbs-nav pos-thumbs-nav--prev" type="button" id="posThumbsPrev" aria-label="Ver miniaturas anteriores" hidden><img class="pos-ico--20" src="../assets/ds/ArrowBackIos.svg" alt="" /></button>
+        <div class="pos-thumbs" id="posThumbs"></div>
+        <button class="ds-btn ds-btn--icon-sm pos-thumbs-nav pos-thumbs-nav--next" type="button" id="posThumbsNext" aria-label="Ver más miniaturas" hidden><img class="pos-ico--20" src="../assets/ds/ArrowForwardIos.svg" alt="" /></button>
+      </div>
+    </div>
+
+    <div class="pos-info">
+      <!-- aviso del contrato (Alert del DS, variante de advertencia): solo aparece cuando el contrato está en mora -->
+      <div class="ds-alert ds-alert--warning pr-aviso" role="status" id="prAviso" hidden>
+        <span class="ds-alert__icon" aria-hidden="true"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M1 21L12 2L23 21H1ZM12 18C12.2833 18 12.5208 17.9042 12.7125 17.7125C12.9042 17.5208 13 17.2833 13 17C13 16.7167 12.9042 16.4792 12.7125 16.2875C12.5208 16.0958 12.2833 16 12 16C11.7167 16 11.4792 16.0958 11.2875 16.2875C11.0958 16.4792 11 16.7167 11 17C11 17.2833 11.0958 17.5208 11.2875 17.7125C11.4792 17.9042 11.7167 18 12 18ZM11 15H13V10H11V15Z" fill="currentColor"/></svg></span>
+        <div class="ds-alert__body-wrap">
+          <p class="ds-alert__title" id="prAvisoTitulo"></p>
+          <p class="ds-alert__body" id="prAvisoTxt"></p>
+        </div>
+      </div>
+      <div class="pos-block">
+        <div class="pos-headline">
+          <div class="pos-headline__top">
+            <!-- chips informativos del DS: el contrato al que pertenece la prenda, su estado y su vencimiento (los pinta el JS) -->
+            <div class="pos-tags" id="prTags"></div>
+            <div class="pos-title-actions">
+              <div class="pos-opts" id="posOpts">
+                <button class="ds-btn ds-btn--icon-md" type="button" id="posOptsBtn" aria-label="Más acciones del contrato" aria-haspopup="menu" aria-expanded="false" aria-controls="posOptsMenu"><img class="pos-ico" src="../assets/ds/MoreVert.svg" alt="" /></button>
+                <div class="pos-opts__menu" id="posOptsMenu" role="menu" aria-labelledby="posOptsBtn" hidden>
+                  <button class="pos-opts__item" type="button" role="menuitem" id="prAbonar"><span class="pos-opts__ico"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M14 13C13.1667 13 12.4583 12.7083 11.875 12.125C11.2917 11.5417 11 10.8333 11 10C11 9.16667 11.2917 8.45833 11.875 7.875C12.4583 7.29167 13.1667 7 14 7C14.8333 7 15.5417 7.29167 16.125 7.875C16.7083 8.45833 17 9.16667 17 10C17 10.8333 16.7083 11.5417 16.125 12.125C15.5417 12.7083 14.8333 13 14 13ZM7 16C6.45 16 5.97933 15.804 5.588 15.412C5.196 15.0207 5 14.55 5 14V6C5 5.45 5.196 4.97933 5.588 4.588C5.97933 4.196 6.45 4 7 4H21C21.55 4 22.021 4.196 22.413 4.588C22.8043 4.97933 23 5.45 23 6V14C23 14.55 22.8043 15.0207 22.413 15.412C22.021 15.804 21.55 16 21 16H7ZM9 14H19C19 13.45 19.1957 12.979 19.587 12.587C19.979 12.1957 20.45 12 21 12V8C20.45 8 19.979 7.804 19.587 7.412C19.1957 7.02067 19 6.55 19 6H9C9 6.55 8.804 7.02067 8.412 7.412C8.02067 7.804 7.55 8 7 8V12C7.55 12 8.02067 12.1957 8.412 12.587C8.804 12.979 9 13.45 9 14ZM20 20H3C2.45 20 1.97933 19.8043 1.588 19.413C1.196 19.021 1 18.55 1 18V7H3V18H20V20Z" fill="currentColor"/></svg></span><span class="pos-opts__txt">Abonar a capital</span></button>
+                  <button class="pos-opts__item" type="button" role="menuitem" id="prExtender"><span class="pos-opts__ico"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M12 21C10.75 21 9.57917 20.7625 8.4875 20.2875C7.39583 19.8125 6.44583 19.1708 5.6375 18.3625C4.82917 17.5542 4.1875 16.6042 3.7125 15.5125C3.2375 14.4208 3 13.25 3 12C3 10.75 3.2375 9.57917 3.7125 8.4875C4.1875 7.39583 4.82917 6.44583 5.6375 5.6375C6.44583 4.82917 7.39583 4.1875 8.4875 3.7125C9.57917 3.2375 10.75 3 12 3C13.3667 3 14.6625 3.29167 15.8875 3.875C17.1125 4.45833 18.15 5.28333 19 6.35V4H21V10H15V8H17.75C17.0667 7.06667 16.225 6.33333 15.225 5.8C14.225 5.26667 13.15 5 12 5C10.05 5 8.39583 5.67917 7.0375 7.0375C5.67917 8.39583 5 10.05 5 12C5 13.95 5.67917 15.6042 7.0375 16.9625C8.39583 18.3208 10.05 19 12 19C13.75 19 15.2792 18.4333 16.5875 17.3C17.8958 16.1667 18.6667 14.7333 18.9 13H20.95C20.7 15.2833 19.7208 17.1875 18.0125 18.7125C16.3042 20.2375 14.3 21 12 21ZM14.8 16.2L11 12.4V7H13V11.6L16.2 14.8L14.8 16.2Z" fill="currentColor"/></svg></span><span class="pos-opts__txt">Extender</span></button>
+                  <button class="pos-opts__item" type="button" role="menuitem" id="prVer"><span class="pos-opts__ico"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M6 22C5.45 22 4.97917 21.8042 4.5875 21.4125C4.19583 21.0208 4 20.55 4 20V4C4 3.45 4.19583 2.97917 4.5875 2.5875C4.97917 2.19583 5.45 2 6 2H14L20 8V20C20 20.55 19.8042 21.0208 19.4125 21.4125C19.0208 21.8042 18.55 22 18 22H6ZM13 9V4H6V20H18V9H13Z" fill="currentColor"/></svg></span><span class="pos-opts__txt">Ver contrato</span></button>
+                  <button class="pos-opts__item" type="button" role="menuitem" id="prImprimir"><span class="pos-opts__ico"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M16 8V5H8V8H6V3H18V8H16ZM18 12.5C18.2833 12.5 18.5207 12.404 18.712 12.212C18.904 12.0207 19 11.7833 19 11.5C19 11.2167 18.904 10.979 18.712 10.787C18.5207 10.5957 18.2833 10.5 18 10.5C17.7167 10.5 17.4793 10.5957 17.288 10.787C17.096 10.979 17 11.2167 17 11.5C17 11.7833 17.096 12.0207 17.288 12.212C17.4793 12.404 17.7167 12.5 18 12.5ZM16 19V15H8V19H16ZM18 21H6V17H2V11C2 10.15 2.29167 9.43767 2.875 8.863C3.45833 8.28767 4.16667 8 5 8H19C19.85 8 20.5627 8.28767 21.138 8.863C21.7127 9.43767 22 10.15 22 11V17H18V21ZM20 15V11C20 10.7167 19.904 10.479 19.712 10.287C19.5207 10.0957 19.2833 10 19 10H5C4.71667 10 4.479 10.0957 4.287 10.287C4.09567 10.479 4 10.7167 4 11V15H6V13H18V15H20Z" fill="currentColor"/></svg></span><span class="pos-opts__txt">Imprimir contrato</span></button>
+                  <button class="pos-opts__item" type="button" role="menuitem" id="prAlmacen"><span class="pos-opts__ico"><svg aria-hidden="true" viewBox="0 0 20 20" fill="none"><path d="M9.99999 4.29167L3.33332 6.95833V15.8333H4.99999V10.8333C4.99999 10.375 5.16318 9.98264 5.48957 9.65625C5.81596 9.32986 6.20832 9.16667 6.66666 9.16667H13.3333C13.7917 9.16667 14.184 9.32986 14.5104 9.65625C14.8368 9.98264 15 10.375 15 10.8333V15.8333H16.6667V6.95833L9.99999 4.29167ZM1.66666 15.8333V6.95833C1.66666 6.61111 1.76041 6.29861 1.94791 6.02083C2.13541 5.74306 2.38888 5.54167 2.70832 5.41667L9.37499 2.75C9.56943 2.66667 9.77777 2.625 9.99999 2.625C10.2222 2.625 10.4305 2.66667 10.625 2.75L17.2917 5.41667C17.6111 5.54167 17.8646 5.74306 18.0521 6.02083C18.2396 6.29861 18.3333 6.61111 18.3333 6.95833V15.8333C18.3333 16.2917 18.1701 16.684 17.8437 17.0104C17.5174 17.3368 17.125 17.5 16.6667 17.5H13.3333V10.8333H6.66666V17.5H3.33332C2.87499 17.5 2.48263 17.3368 2.15624 17.0104C1.82985 16.684 1.66666 16.2917 1.66666 15.8333ZM7.49999 17.5V15.8333H9.16666V17.5H7.49999ZM9.16666 15V13.3333H10.8333V15H9.16666ZM10.8333 17.5V15.8333H12.5V17.5H10.8333Z" fill="currentColor"/></svg></span><span class="pos-opts__txt">Editar almacenamiento</span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h1 class="pos-title">iPhone 16 512GB Negro · 5G</h1>
+        </div>
+
+        <div class="pos-color">
+          <p class="pos-color__label">Color: Negro</p>
+          <span class="pos-swatch" role="img" aria-label="Negro"></span>
+          <p class="pos-color__label">Condición:</p>
+          <span class="pos-chip pos-chip--14 pos-chip--blue"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M23 12L20.56 9.21L20.9 5.52L17.29 4.7L15.4 1.5L12 2.96L8.6 1.5L6.71 4.69L3.1 5.5L3.44 9.2L1 12L3.44 14.79L3.1 18.49L6.71 19.31L8.6 22.5L12 21.03L15.4 22.49L17.29 19.3L20.9 18.48L20.56 14.79L23 12ZM10.09 16.72L6.29 12.91L7.77 11.43L10.09 13.76L15.94 7.89L17.42 9.37L10.09 16.72Z" fill="currentColor"/></svg>Excelente</span>
+        </div>
+
+        <!-- Prendario: las dos pestañas son las dos formas de pagar el contrato (Tabs del DS, igual que Compra | Apartado
+             en la ficha comercial). Cada una: monto de hoy, renglones concepto → monto y un solo botón. -->
+        <div class="ds-tabs v2-modo">
+          <div role="tablist" class="ds-tabs__list" id="posModo" aria-label="Operación del contrato">
+            <button class="ds-tabs__tab" type="button" role="tab" id="posTabRefrendo" aria-selected="true" aria-controls="posPanelRefrendo">Refrendo</button>
+            <button class="ds-tabs__tab" type="button" role="tab" id="posTabDesempeno" aria-selected="false" aria-controls="posPanelDesempeno" tabindex="-1">Desempeño</button>
+          </div>
+        </div>
+
+        <div class="v2-panel" role="tabpanel" id="posPanelRefrendo" aria-labelledby="posTabRefrendo">
+          <div class="pos-price"><span class="pos-price__now" id="prRefTotal"></span><span class="v2-price__sufijo">hoy</span></div>
+          <dl class="v2-desglose" id="prRefDesglose"></dl>
+          <button class="ds-btn ds-btn--primary ds-btn--md v2-cta" type="button" id="prRefrendar">Refrendar contrato</button>
+          <ul class="pos-plazos__notas" id="prRefNotas"></ul>
+        </div>
+
+        <div class="v2-panel" role="tabpanel" id="posPanelDesempeno" aria-labelledby="posTabDesempeno" hidden>
+          <div class="pos-price"><span class="pos-price__now" id="prDesTotal"></span><span class="v2-price__sufijo">hoy</span></div>
+          <dl class="v2-desglose" id="prDesDesglose"></dl>
+          <button class="ds-btn ds-btn--primary ds-btn--md v2-cta" type="button" id="prDesempenar">Desempeñar contrato</button>
+          <ul class="pos-plazos__notas" id="prDesNotas"></ul>
+        </div>
+
+      </div>
+      <div class="ds-tabs">
+        <div role="tablist" class="ds-tabs__list" aria-label="Información del artículo">
+          <button role="tab" class="ds-tabs__tab" aria-selected="true" aria-controls="posTabContrato" id="posTabContratoBtn">Contrato</button>
+          <button role="tab" class="ds-tabs__tab" aria-selected="false" aria-controls="posTabSpecs" id="posTabSpecsBtn" tabindex="-1">Especificaciones</button>
+          <button role="tab" class="ds-tabs__tab" aria-selected="false" aria-controls="posTabUbic" id="posTabUbicBtn" tabindex="-1">Ubicación</button>
+          <button role="tab" class="ds-tabs__tab" aria-selected="false" aria-controls="posTabHist" id="posTabHistBtn" tabindex="-1">Historial</button>
+        </div>
+        <div role="tabpanel" class="ds-tabs__panel" id="posTabContrato" aria-labelledby="posTabContratoBtn">
+          <dl class="pos-specs" id="prContrato"></dl>
+        </div>
+        <div role="tabpanel" class="ds-tabs__panel" id="posTabSpecs" aria-labelledby="posTabSpecsBtn" hidden>
+          <dl class="pos-specs">
+            <div class="pos-spec"><dt>Almacenamiento</dt><dd>512GB</dd></div>
+            <div class="pos-spec"><dt>Cargador</dt><dd>Original</dd></div>
+            <div class="pos-spec"><dt>Color</dt><dd>Negro</dd></div>
+            <div class="pos-spec"><dt>Condición</dt><dd>Excelente</dd></div>
+            <div class="pos-spec"><dt>Operador</dt><dd>Sin operador</dd></div>
+            <div class="pos-spec"><dt>Número de modelo</dt><dd>A2160</dd></div>
+          </dl>
+        </div>
+        <div role="tabpanel" class="ds-tabs__panel" id="posTabUbic" aria-labelledby="posTabUbicBtn" hidden>
+          <p class="pos-note"><b>Sucursal Centro Histórico</b> · Bodega 2 · Anaquel B-14</p>
+        </div>
+        <div role="tabpanel" class="ds-tabs__panel" id="posTabHist" aria-labelledby="posTabHistBtn" hidden>
+          <!-- historial de movimientos del contrato: Fecha · Transacción · Monto (DataTable del DS, la misma tabla del calendario de apartados) -->
+          <div class="pos-plan v2-plan is-open pr-historial">
+            <div class="pos-plan__table">
+              <table class="ds-table"><thead><tr><th>Fecha</th><th>Transacción</th><th>Monto</th></tr></thead><tbody id="prHistorial"></tbody></table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- en lugar de "Productos relacionados": las prendas que comparten el contrato (el refrendo y el desempeño son del contrato completo) -->
+  <section class="pos-related pr-prendas" aria-labelledby="prPrendasTitle">
+    <div class="pos-related__head">
+      <div class="pos-related__title">
+        <h2 id="prPrendasTitle">Prendas en el contrato</h2>
+        <span id="prPrendasN"></span>
+      </div>
+    </div>
+    <div class="pr-prendas__wrap" tabindex="0" role="region" aria-labelledby="prPrendasTitle">
+      <table class="ds-table">
+        <thead><tr><th>Artículo</th><th>Condición</th><th>Avalúo</th><th>Préstamo</th><th>Ubicación</th><th><span class="pr-sr">Acciones</span></th></tr></thead>
+        <tbody id="prPrendas"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<div class="ds-toast-region" id="posToasts" role="region" aria-live="polite"></div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+
+  // ---------- galería ----------
+  const FOTOS = [
+    { src: '../assets/iphone16-negro.png', recorte: true, alt: 'iPhone 16 512GB Negro, frente y reverso' },
+    { src: '../assets/iphone16-foto2.jpg', alt: 'Foto del reverso del artículo' },
+    { src: '../assets/iphone16-foto3.jpg', alt: 'Foto del artículo en mano' },
+  ];
+  let foto = 0;
+  const pintarGaleria = () => {
+    const f = FOTOS[foto];
+    const img = $('posStageImg');
+    img.src = f.src;
+    img.alt = f.alt;
+    img.className = f.recorte ? 'pos-stage__img' : 'pos-stage__img pos-stage__img--foto';
+    const tira = $('posThumbs');
+    const x0 = tira.scrollLeft;
+    tira.innerHTML = FOTOS.map((x, i) =>
+      '<button type="button" class="pos-thumb" aria-label="Ver foto ' + (i + 1) + '" aria-current="' + (i === foto) + '" data-i="' + i + '">'
+      + '<img src="' + x.src + '" alt=""' + (x.recorte ? ' class="pos-thumb__cut"' : '') + ' /></button>').join('');
+    tira.scrollLeft = x0;
+    const activa = tira.querySelector('[aria-current="true"]');
+    // se acomoda moviendo solo la tira: scrollIntoView también desplaza la página (salta con la galería pegada)
+    if (activa) {
+      const a = activa.offsetLeft - tira.offsetLeft, b = a + activa.offsetWidth;
+      if (a < tira.scrollLeft) tira.scrollLeft = a;
+      else if (b > tira.scrollLeft + tira.clientWidth) tira.scrollLeft = b - tira.clientWidth;
+    }
+    flechasTira();
+  };
+  // flechas de la tira de miniaturas: solo aparecen si hay más miniaturas de ese lado
+  const flechasTira = () => {
+    const tira = $('posThumbs');
+    const antes = tira.scrollLeft > 1;
+    const despues = tira.scrollLeft + tira.clientWidth < tira.scrollWidth - 1;
+    $('posThumbsPrev').hidden = !antes;
+    $('posThumbsNext').hidden = !despues;
+  };
+  // paso del HorizontalCarousel del DS (scrollStep 220)
+  const moverTira = (dir) => $('posThumbs').scrollBy({ left: dir * 220, behavior: 'smooth' });
+  const irA = (e) => {
+    const b = e.target.closest('[data-i]');
+    if (!b) return;
+    const conFoco = b.contains(document.activeElement) || b === document.activeElement;
+    foto = Number(b.dataset.i);
+    pintarGaleria();
+    if (conFoco) { const t = $('posThumbs').querySelector('[data-i="' + foto + '"]'); if (t) t.focus({ preventScroll: true }); }
+  };
+  $('posThumbs').addEventListener('click', irA);
+  $('posThumbs').addEventListener('scroll', flechasTira, { passive: true });
+  $('posThumbsPrev').addEventListener('click', () => moverTira(-1));
+  $('posThumbsNext').addEventListener('click', () => moverTira(1));
+  addEventListener('resize', flechasTira);
+  pintarGaleria();
+
+  // ---------- tabs de información (ds-tabs): clic, flechas, Inicio y Fin ----------
+  const tabs = [...document.querySelectorAll('.pos-info [aria-label="Información del artículo"] .ds-tabs__tab')];
+  const verTab = (i, conFoco) => {
+    tabs.forEach((x, k) => {
+      const on = k === i;
+      x.setAttribute('aria-selected', on);
+      x.tabIndex = on ? 0 : -1;
+      $(x.getAttribute('aria-controls')).hidden = !on;
+    });
+    if (conFoco) tabs[i].focus();
+    tabs[i].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  };
+  tabs.forEach((t, i) => t.addEventListener('click', () => verTab(i)));
+  tabs[0].parentElement.addEventListener('keydown', (e) => {
+    const i = tabs.indexOf(document.activeElement);
+    if (i < 0) return;
+    const a = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i - 1 + tabs.length) % tabs.length, Home: 0, End: tabs.length - 1 }[e.key];
+    if (a === undefined) return;
+    e.preventDefault();
+    verTab(a, true);
+  });
+
+  // ---------- carrito + toast (ds-toast) ----------
+  // Toast del DS (variante positiva): icono EstadosSuccess, título y texto, cerrar y barra de tiempo de 5 s
+  const TOAST_ICO = '<svg aria-hidden="true" width="24" height="24" viewBox="96 156 24 24" fill="none"><path d="M108 178C106.617 178 105.317 177.737 104.1 177.212C102.883 176.687 101.825 175.975 100.925 175.075C100.025 174.175 99.3127 173.117 98.788 171.9C98.2627 170.683 98 169.383 98 168C98 166.617 98.2627 165.317 98.788 164.1C99.3127 162.883 100.025 161.825 100.925 160.925C101.825 160.025 102.883 159.312 104.1 158.787C105.317 158.262 106.617 158 108 158C109.383 158 110.683 158.262 111.9 158.787C113.117 159.312 114.175 160.025 115.075 160.925C115.975 161.825 116.687 162.883 117.212 164.1C117.737 165.317 118 166.617 118 168C118 169.383 117.737 170.683 117.212 171.9C116.687 173.117 115.975 174.175 115.075 175.075C114.175 175.975 113.117 176.687 111.9 177.212C110.683 177.737 109.383 178 108 178ZM106.6 172.6L113.65 165.55L112.25 164.15L106.6 169.8L103.75 166.95L102.35 168.35L106.6 172.6Z" fill="currentColor"/></svg>';
+  const CLOSE_20 = '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="currentColor"/></svg>';
+  const toast = (titulo, texto, tono, ico) => {
+    const t = document.createElement('div');
+    t.className = 'ds-toast ds-toast--' + (tono || 'success');
+    t.setAttribute('role', 'status');
+    t.innerHTML = '<span class="ds-toast__icon" aria-hidden="true">' + (ico || TOAST_ICO) + '</span>'
+      + '<div class="ds-toast__body-wrap"><p class="ds-toast__title"></p><p class="ds-toast__body"></p></div>'
+      + '<button type="button" class="ds-toast__close" aria-label="Cerrar">' + CLOSE_20 + '</button>'
+      + '<div class="ds-toast__timer" aria-hidden="true"></div>';
+    t.querySelector('.ds-toast__title').textContent = titulo;
+    t.querySelector('.ds-toast__body').textContent = texto;
+    const quitar = () => t.remove();
+    t.querySelector('.ds-toast__close').addEventListener('click', quitar);
+    // el más reciente arriba, pegado a la esquina superior derecha
+    $('posToasts').prepend(t);
+    setTimeout(quitar, 5000);
+  };
+  // los toasts van justo debajo del header fijo, que en teléfono ocupa dos renglones
+  const cabecera = document.querySelector('.pos-header');
+  new ResizeObserver(() => document.documentElement.style.setProperty('--pos-header-h', cabecera.offsetHeight + 'px')).observe(cabecera);
+
+  // ---------- menú de tres puntos · acciones del contrato ----------
+  const menuBtn = $('posOptsBtn'), menu = $('posOptsMenu');
+  const itemsVisibles = () => [...menu.querySelectorAll('.pos-opts__item')].filter((b) => !b.hidden);
+  const abrirMenu = (abrir) => {
+    menu.hidden = !abrir;
+    menuBtn.setAttribute('aria-expanded', abrir);
+    if (abrir) { const p = itemsVisibles()[0]; if (p) p.focus(); }
+  };
+  menuBtn.addEventListener('click', () => abrirMenu(menu.hidden));
+  document.addEventListener('click', (e) => { if (!menu.hidden && !$('posOpts').contains(e.target)) abrirMenu(false); });
+  // al salir del menú con Tab se cierra (no se queda abierto tapando las pestañas)
+  $('posOpts').addEventListener('focusout', (e) => { if (!menu.hidden && e.relatedTarget && !$('posOpts').contains(e.relatedTarget)) abrirMenu(false); });
+  document.addEventListener('keydown', (e) => {
+    if (menu.hidden) return;
+    if (e.key === 'Escape') { abrirMenu(false); menuBtn.focus(); return; }
+    if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && $('posOpts').contains(document.activeElement)) {
+      e.preventDefault();
+      const it = itemsVisibles();
+      const i = it.indexOf(document.activeElement);
+      it[(i + (e.key === 'ArrowDown' ? 1 : -1) + it.length) % it.length].focus();
+    }
+  });
+  // Abonar a capital, Extender, Ver / Imprimir contrato y Editar almacenamiento: por ahora solo cierran el menú (sin funcionalidad)
+  ['prAbonar', 'prExtender', 'prVer', 'prImprimir', 'prAlmacen'].forEach((id) => $(id).addEventListener('click', () => { abrirMenu(false); menuBtn.focus(); }));
+
+  // ---------- datos del contrato ----------
+  // íconos del design system (qa.ataskate.com.mx/design-system → Íconos), en currentColor
+  const ICO_CONTRATO = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M6 22C5.45 22 4.97917 21.8042 4.5875 21.4125C4.19583 21.0208 4 20.55 4 20V4C4 3.45 4.19583 2.97917 4.5875 2.5875C4.97917 2.19583 5.45 2 6 2H14L20 8V20C20 20.55 19.8042 21.0208 19.4125 21.4125C19.0208 21.8042 18.55 22 18 22H6ZM13 9V4H6V20H18V9H13Z" fill="currentColor"/></svg>';
+  const ICO_AVISO = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M1 21L12 2L23 21H1ZM12 18C12.2833 18 12.5208 17.9042 12.7125 17.7125C12.9042 17.5208 13 17.2833 13 17C13 16.7167 12.9042 16.4792 12.7125 16.2875C12.5208 16.0958 12.2833 16 12 16C11.7167 16 11.4792 16.0958 11.2875 16.2875C11.0958 16.4792 11 16.7167 11 17C11 17.2833 11.0958 17.5208 11.2875 17.7125C11.4792 17.9042 11.7167 18 12 18ZM11 15H13V10H11V15Z" fill="currentColor"/></svg>';
+  // el refrendo y el desempeño son del contrato completo (todas sus prendas); avalúo, préstamo, estado y ubicación son de cada prenda
+  const CONTRATO = {
+    folio: '100C35643', cliente: 'Francisca Morales', sucursal: 'Centro Histórico',
+    plazo: 'Electrónicos +', frecuencia: 'Refrendo ilimitado',
+    tasa: 8.5,          // interés del periodo (%)
+    tasaGracia: 14.5,   // interés de periodo de gracia (%), el que aplica con el contrato en mora
+    iva: 16,            // IVA sobre el interés (%)
+    diasGracia: 4,      // días de gracia (días moratorios) del plazo
+    prendas: [
+      { nombre: 'iPhone 16 512GB Negro · 5G', sub: '512GB · Negro', img: '../assets/iphone16-negro.png', recorte: true, estado: 'Excelente', avaluo: 14000, prestamo: 13000, ubicacion: 'Bodega 2 · Anaquel B-14', actual: true },
+      { nombre: 'Apple iPhone 15 Pro Max (512GB) Negro', sub: '512GB · Negro', img: '../assets/iphone15-pro.png', estado: 'Excelente', avaluo: 11000, prestamo: 9000, ubicacion: 'Bodega 2 · Anaquel B-15' },
+    ],
+  };
+  // estado del contrato: Vigente por defecto; ?estado=mora muestra "En mora vigente" (venció, pero aún se puede refrendar o desempeñar)
+  const enMora = new URLSearchParams(location.search).get('estado') === 'mora';
+  const DIAS_MORA = 2;      // días moratorios transcurridos en el ejemplo de mora
+  const DIAS_VIGENTE = 12;  // días que faltan para la fecha límite en el ejemplo vigente
+
+  const mxn = (cent) => (cent < 0 ? '−' : '') + '$' + (Math.abs(cent) / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const MESES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+  const fecha = (d) => d.getDate() + ' ' + MESES[d.getMonth()] + ' ' + d.getFullYear();   // "13 Oct 2026"
+  const masDias = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+  // suma meses sin saltarse el fin de mes (31 Ene + 1 mes = 28/29 Feb)
+  const masMeses = (d, k) => {
+    const x = new Date(d);
+    x.setDate(1);
+    x.setMonth(x.getMonth() + k);
+    x.setDate(Math.min(d.getDate(), new Date(x.getFullYear(), x.getMonth() + 1, 0).getDate()));
+    return x;
+  };
+  const plural = (n, uno, varios) => n + ' ' + (n === 1 ? uno : varios);
+  const prendasTxt = plural(CONTRATO.prendas.length, 'prenda', 'prendas');
+  const unaPrenda = CONTRATO.prendas.length === 1;
+
+  // todo se calcula en centavos y a partir de "hoy"
+  let diaPintado = '';
+  const calcular = () => {
+    const hoy = new Date();
+    hoy.setHours(12, 0, 0, 0);
+    const c = (v) => Math.round(v * 100);
+    const limite = masDias(hoy, enMora ? -DIAS_MORA : DIAS_VIGENTE);   // fecha límite del periodo actual
+    const prestamo = CONTRATO.prendas.reduce((t, p) => t + c(p.prestamo), 0);
+    const avaluo = CONTRATO.prendas.reduce((t, p) => t + c(p.avaluo), 0);
+    const tasa = enMora ? CONTRATO.tasaGracia : CONTRATO.tasa;
+    const interes = Math.round(prestamo * tasa / 100);
+    const iva = Math.round(interes * CONTRATO.iva / 100);
+    const refrendo = interes + iva;                 // Refrendo = interés + IVA
+    const desempeno = prestamo + refrendo;          // Desempeño = préstamo + (interés + IVA)
+    // lo ya pagado: dos refrendos a la tasa del periodo, en sus fechas límite anteriores
+    const interesBase = Math.round(prestamo * CONTRATO.tasa / 100);
+    const refrendoBase = interesBase + Math.round(interesBase * CONTRATO.iva / 100);
+    return {
+      hoy, limite, prestamo, avaluo, tasa, interes, iva, refrendo, desempeno,
+      empeno: masMeses(limite, -3), nuevaLimite: masMeses(limite, 1), finGracia: masDias(limite, CONTRATO.diasGracia),
+      historial: [
+        [masMeses(limite, -1), 'Refrendo', refrendoBase],
+        [masMeses(limite, -2), 'Refrendo', refrendoBase],
+        [masMeses(limite, -3), 'Empeño', -prestamo],
+      ],
+    };
+  };
+  let K = calcular();
+
+  // ---------- pintar ----------
+  const chip = (tono, txt, ico) => '<span class="pos-chip pos-chip--tabla pos-chip--' + tono + '">' + (ico || '') + txt + '</span>';
+  const renglon = (dt, dd, nota, total) => '<div' + (total ? ' class="v2-desglose__total"' : '') + '><dt>' + dt + '</dt><dd>' + dd + (nota ? '<small>' + nota + '</small>' : '') + '</dd></div>';
+  const par = (dt, dd) => '<div class="pos-spec"><dt>' + dt + '</dt><dd>' + dd + '</dd></div>';
+  const pintar = () => {
+    K = calcular();
+    const estado = enMora ? 'En mora vigente' : 'Vigente';
+    const diasGraciaRestan = CONTRATO.diasGracia - DIAS_MORA;
+
+    // chips de arriba: contrato · estado · vencimiento
+    $('prTags').innerHTML = chip('grey', 'Contrato ' + CONTRATO.folio, ICO_CONTRATO)
+      + (enMora
+        ? chip('red', estado) + chip('grey', 'Días moratorios: ' + DIAS_MORA + ' de ' + CONTRATO.diasGracia)
+        : chip('blue', estado) + chip('grey', 'Vence en ' + plural(DIAS_VIGENTE, 'día', 'días')));
+
+    // aviso: solo con el contrato en mora
+    $('prAviso').hidden = !enMora;
+    $('prAbonar').hidden = enMora;   // abonar a capital solo aplica con el contrato Vigente
+    if (enMora) {
+      $('prAvisoTitulo').textContent = 'Contrato en mora';
+      $('prAvisoTxt').textContent = 'Venció el ' + fecha(K.limite) + '. Aún se puede refrendar o desempeñar dentro del periodo de gracia: '
+        + (diasGraciaRestan === 1 ? 'queda 1 día' : 'quedan ' + diasGraciaRestan + ' días') + ' (termina el ' + fecha(K.finGracia) + ').';
+    }
+
+    const interesDt = enMora ? 'Interés de periodo de gracia' : 'Interés del periodo';
+    const interesNota = K.tasa + '% de ' + mxn(K.prestamo);
+    $('prRefTotal').textContent = mxn(K.refrendo);
+    $('prRefDesglose').innerHTML = renglon(interesDt, mxn(K.interes), interesNota)
+      + renglon('IVA', mxn(K.iva), CONTRATO.iva + '% del interés')
+      + renglon('Nueva fecha límite', fecha(K.nuevaLimite))
+      + renglon('Total del refrendo', mxn(K.refrendo), '', true);
+    $('prRefNotas').innerHTML = '<li>Renueva el contrato completo: ' + (unaPrenda ? 'su prenda sigue' : 'sus ' + prendasTxt + ' siguen') + ' en resguardo.</li>';
+
+    $('prDesTotal').textContent = mxn(K.desempeno);
+    $('prDesDesglose').innerHTML = renglon('Préstamo', mxn(K.prestamo), prendasTxt)
+      + renglon(interesDt, mxn(K.interes), interesNota)
+      + renglon('IVA', mxn(K.iva), CONTRATO.iva + '% del interés')
+      + renglon('Total para desempeñar', mxn(K.desempeno), '', true);
+    $('prDesNotas').innerHTML = '<li>Liquida el contrato y ' + (unaPrenda ? 'se entrega su prenda' : 'se entregan sus ' + prendasTxt) + '.</li><li>Solo el titular o un cotitular puede desempeñar.</li>';
+
+    // pestaña Contrato: resumen en pares etiqueta / valor
+    $('prContrato').innerHTML = par('Cliente', CONTRATO.cliente) + par('Contrato', CONTRATO.folio)
+      + par('Estado', estado) + par('Fecha límite', fecha(K.limite))
+      + par('Plazo', CONTRATO.plazo) + par('Tasa de interés', CONTRATO.tasa + '%')
+      + par('Frecuencia', CONTRATO.frecuencia) + par('Interés de gracia', CONTRATO.tasaGracia + '%')
+      + par('Sucursal', CONTRATO.sucursal) + par('Fecha de empeño', fecha(K.empeno));
+
+    // pestaña Historial: del movimiento más reciente al más antiguo
+    $('prHistorial').innerHTML = K.historial.map((m) => '<tr><td>' + fecha(m[0]) + '</td><td>' + m[1] + '</td><td>' + mxn(m[2]) + '</td></tr>').join('');
+
+    // prendas en el contrato
+    $('prPrendasN').textContent = plural(CONTRATO.prendas.length, 'Artículo', 'Artículos');
+    $('prPrendas').innerHTML = CONTRATO.prendas.map((p) => '<tr' + (p.actual ? ' aria-current="true"' : '') + '>'
+      + '<td><div class="pr-art"><span class="pr-art__img"><img src="' + p.img + '" alt=""' + (p.recorte ? ' class="pr-art__cut"' : '') + ' /></span>'
+      + '<span class="pr-art__txt"><b>' + p.nombre + '</b><span>' + p.sub + '</span></span></div></td>'
+      + '<td>' + chip('blue', p.estado) + '</td>'
+      + '<td>' + mxn(Math.round(p.avaluo * 100)) + '</td>'
+      + '<td>' + mxn(Math.round(p.prestamo * 100)) + '</td>'
+      + '<td>' + p.ubicacion + '</td>'
+      + '<td class="pr-prendas__fin">' + (p.actual ? chip('grey', 'Esta prenda')
+        : '<a class="ds-btn ds-btn--tertiary ds-btn--md pr-ver" href="#" aria-label="Ver detalle: ' + p.nombre + '">Ver detalle</a>') + '</td></tr>').join('')
+      + '<tr class="pr-prendas__total"><td>Total del contrato</td><td></td><td>' + mxn(K.avaluo) + '</td><td>' + mxn(K.prestamo) + '</td><td></td><td></td></tr>';
+
+    const base = document.title.replace(/^\(En mora\) /, '');
+    document.title = (enMora ? '(En mora) ' : '') + base;
+    diaPintado = new Date().toDateString();
+  };
+  pintar();
+  // las fechas parten de "hoy": se recalculan si cambió el día con la ficha abierta
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && diaPintado !== new Date().toDateString()) pintar(); });
+  // "Ver detalle" de la otra prenda todavía no lleva a otra ficha
+  $('prPrendas').addEventListener('click', (e) => { if (e.target.closest('.pr-ver')) e.preventDefault(); });
+
+  // ---------- pestañas Refrendo / Desempeño (Tabs del DS) ----------
+  const modos = [$('posTabRefrendo'), $('posTabDesempeno')];
+  const verModo = (i, conFoco) => {
+    modos.forEach((t, k) => {
+      const on = k === i;
+      t.setAttribute('aria-selected', on);
+      t.tabIndex = on ? 0 : -1;
+      $(t.getAttribute('aria-controls')).hidden = !on;
+    });
+    if (diaPintado !== new Date().toDateString()) pintar();
+    if (conFoco) modos[i].focus();
+  };
+  modos.forEach((t, i) => t.addEventListener('click', () => verModo(i)));
+  $('posModo').addEventListener('keydown', (e) => {
+    const i = modos.indexOf(document.activeElement);
+    if (i < 0) return;
+    const a = { ArrowRight: (i + 1) % modos.length, ArrowLeft: (i - 1 + modos.length) % modos.length, Home: 0, End: modos.length - 1 }[e.key];
+    if (a === undefined) return;
+    e.preventDefault();
+    verModo(a, true);
+  });
+
+  // ---------- carrito: una sola operación por contrato ----------
+  // el mismo contrato no se duplica en el carrito; si ya tenía la otra operación, se cambia por la nueva
+  const OPER = {
+    refrendo:  { nombre: 'Refrendo',  monto: () => K.refrendo },
+    desempeno: { nombre: 'Desempeño', monto: () => K.desempeno },
+  };
+  let operacion = null;
+  const operar = (tipo) => {
+    const o = OPER[tipo];
+    const detalle = 'Contrato ' + CONTRATO.folio + ' · ' + prendasTxt + ' · ' + mxn(o.monto());
+    if (operacion === tipo) {
+      toast('Ya está en el carrito', o.nombre + ' del contrato ' + CONTRATO.folio + '.', 'warning', ICO_AVISO);
+      return;
+    }
+    const cambio = operacion !== null;
+    operacion = tipo;
+    $('posCartN').textContent = 1;
+    $('posCart').setAttribute('aria-label', 'Carrito, 1 artículo');
+    toast(cambio ? 'Se cambió a ' + o.nombre.toLowerCase() : o.nombre + ' agregado al carrito', detalle);
+  };
+  $('prRefrendar').addEventListener('click', () => operar('refrendo'));
+  $('prDesempenar').addEventListener('click', () => operar('desempeno'));
+
+  // enlace directo a cada pestaña (#refrendo / #desempeno), al cargar y si el # cambia con la página abierta
+  const porHash = () => { if (location.hash === '#desempeno') verModo(1); else if (location.hash === '#refrendo') verModo(0); };
+  addEventListener('hashchange', porHash);
+  porHash();
+})();
+</script>
+</body>
+</html>

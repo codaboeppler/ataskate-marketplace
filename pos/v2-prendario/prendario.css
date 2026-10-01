@@ -1,0 +1,106 @@
+/* ============================================================
+   Ataskate POS — Detalles de artículo · Prendario
+   La misma ficha que /pos/v2/ (inventario comercial), pero para un artículo que está EN UN CONTRATO de empeño:
+   no se vende, es la prenda de un préstamo. Cambia lo que el vendedor puede hacer con él:
+   · chips de arriba: contrato al que pertenece, estado del contrato y vencimiento;
+   · pestañas Refrendo | Desempeño (las dos formas de pagar el contrato) en lugar de Compra | Apartado;
+   · pestañas de información: Contrato, Especificaciones, Ubicación e Historial de movimientos;
+   · "Prendas en el contrato" en lugar de "Productos relacionados".
+   Esta hoja solo agrega lo propio; el resto viene de ../pos.css, ../v2/v2.css y el design system (../ds).
+   ============================================================ */
+
+/* ---------------- Chips de arriba ---------------- */
+/* los chips pueden ocupar dos renglones en pantallas angostas: el menú ⋮ se queda arriba */
+.pr .pos-headline__top { align-items: flex-start; }
+.pr .pos-tags { padding-top: 10px; }  /* centra el primer renglón de chips (20px) con el botón ⋮ (40px) */
+
+/* ---------------- Aviso de mora: Alert del DS, variante de advertencia ----------------
+   Fondo #FFEBBA, icono 24 #CC9200, título 16/700 #614500 y texto 16/400 #2A2C2F; padding 16, icono a 8 del texto, radio 8. */
+.pr-aviso.ds-alert {
+  align-items: flex-start; gap: var(--spacing-2); padding: var(--spacing-4);
+  border: 0; border-radius: var(--radius-sm); background: var(--pos-warning-surface);
+}
+.pr-aviso[hidden] { display: none; }
+.pr-aviso .ds-alert__icon { width: 24px; height: 24px; border-radius: 0; background: none; color: var(--ats-alert-yellow-200); }
+.pr-aviso .ds-alert__icon svg { width: 24px; height: 24px; }
+.pr-aviso .ds-alert__body-wrap { gap: var(--spacing-2); }
+.pr-aviso .ds-alert__title { font-size: 16px; line-height: 1.5; letter-spacing: .3px; color: var(--ats-alert-yellow-300); }
+.pr-aviso .ds-alert__body { font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--ats-neutral-700); }
+
+/* ---------------- Paneles Refrendo / Desempeño ---------------- */
+/* la nota va pegada al botón, como las notas al pie de los apartados */
+.pr .v2-panel .pos-plazos__notas { margin-top: calc(var(--spacing-2) * -1); }
+
+/* ---------------- Historial de movimientos ----------------
+   Reutiliza la tabla del calendario de apartados (.pos-plan): tres columnas iguales, sin tarjeta que se levante al pasar el cursor. */
+.pr-historial.pos-plan:hover { box-shadow: none; }
+@media (max-width: 480px) {
+  /* la fecha baja de renglón en vez de pisar la columna de al lado */
+  .pr .pos-plan .ds-table th:first-child, .pr .pos-plan .ds-table td:first-child { white-space: normal; }
+  /* las cuatro pestañas de información caben en el teléfono: se reparten el ancho, a 14px (el tamaño base de las Tabs del DS) */
+  .pr .pos-info > .ds-tabs .ds-tabs__tab { flex: 1 1 auto; justify-content: center; padding-inline: 4px; font-size: var(--font-size-sm); }
+}
+@media (max-width: 560px) {
+  /* los pares del contrato son más largos que las especificaciones: pasan a una columna antes, para no cortar valores */
+  .pr #prContrato { grid-template-columns: minmax(0, 1fr); gap: var(--spacing-2); }
+  .pr #prContrato .pos-spec:nth-child(n) { background: none; }
+  .pr #prContrato .pos-spec:nth-child(even) { background: var(--ats-primary-10); }
+}
+
+/* ---------------- Prendas en el contrato: DataTable del DS ----------------
+   Encabezado 14/600 #1D1E20, celdas 14/400 #2A2C2F, padding 12/8 (16 en los extremos), líneas #D4D6D8, la última sin línea.
+   Celda de artículo: 4 de padding vertical (fila de 51), miniatura 42 con radio 4 a 8 del texto, nombre 14 y detalle 12 separados 4. La fila de la prenda que se está viendo va seleccionada (#F0F0FF). */
+.pr-prendas__wrap {
+  position: relative;
+  border: 1px solid var(--ats-neutral-300); border-radius: var(--radius-md); overflow-x: auto;
+  background: var(--surface-foreground); scrollbar-width: thin;
+}
+.pr-prendas__wrap:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
+.pr-prendas .ds-table { min-width: 760px; }
+@media (max-width: 840px) {
+  /* en tablet vertical cabe sin scroll: la ubicación baja a dos renglones */
+  .pr-prendas .ds-table { min-width: 660px; }
+  .pr-prendas .ds-table td:nth-child(5) { white-space: normal; }
+}
+.pr-prendas .ds-table thead, .pr-prendas .ds-table tbody tr, .pr-prendas .ds-table tbody tr:nth-child(even) { background: transparent; }
+.pr-prendas .ds-table tbody tr:hover { background: transparent; }
+.pr-prendas .ds-table th {
+  padding: 12px 8px; font-size: 14px; font-weight: var(--font-weight-semibold); line-height: normal; white-space: nowrap;
+  color: var(--pos-text-title); border-bottom: 1px solid var(--pos-table-line); vertical-align: middle;
+}
+.pr-prendas .ds-table td {
+  padding: 12px 8px; font-size: 14px; font-weight: var(--font-weight-regular); line-height: normal; white-space: nowrap;
+  color: var(--ats-neutral-700); border-bottom: 1px solid var(--pos-table-line); vertical-align: middle;
+}
+.pr-prendas .ds-table th:first-child, .pr-prendas .ds-table td:first-child { padding-left: 16px; }
+.pr-prendas .ds-table th:last-child, .pr-prendas .ds-table td:last-child { padding-right: 16px; }
+.pr-prendas .ds-table tbody tr:not(.pr-prendas__total) td:first-child { padding-top: 4px; padding-bottom: 4px; }
+.pr-prendas .ds-table tbody tr:last-child td { border-bottom: 0; }
+.pr-prendas .ds-table tbody tr[aria-current='true'], .pr-prendas .ds-table tbody tr[aria-current='true']:hover { background: var(--ats-primary-50); }
+.pr-prendas .ds-table tr.pr-prendas__total td { font-weight: var(--font-weight-bold); color: var(--pos-text-title); }
+.pr-prendas__fin { text-align: right; }
+.pr-art { display: flex; align-items: center; gap: var(--spacing-2); }
+.pr-art__img {
+  position: relative; flex: none; width: 42px; height: 42px; border-radius: var(--radius-xs); overflow: hidden;
+  background: var(--pos-surface-media);
+}
+.pr-art__img img { width: 100%; height: 100%; object-fit: cover; }
+/* la foto recortada (PNG sin fondo) se muestra entera y centrada, como en la miniatura de la galería */
+.pr-art__img img.pr-art__cut { position: absolute; inset: 0; margin: auto; width: 26px; height: 32px; }
+.pr-art__txt { min-width: 0; display: flex; flex-direction: column; gap: var(--spacing-1); white-space: normal; }
+.pr-art__txt b { font-size: 14px; line-height: 1.2; font-weight: var(--font-weight-regular); color: var(--pos-text-title); }
+.pr-art__txt span { font-size: 12px; line-height: 1; color: var(--ats-neutral-700); }
+/* "Ver detalle" = botón Tertiary Medium; dentro de la fila no agrega alto */
+.pos .ds-btn.pr-ver { margin: -8px 0; text-decoration: none; }
+/* texto solo para lectores de pantalla (encabezado de la columna de acciones) */
+.pr-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+/* ---------------- Accesibilidad ---------------- */
+/* el header es fijo: al tabular hacia arriba el foco no debe quedar tapado detrás de él */
+html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 16px); }
+/* pestañas y miniaturas: el mismo contorno de 2px #5A5AFF que el resto de los controles */
+.pr .ds-tabs__tab:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: -2px; }
+.pr .pos-thumb:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
+.pr .pos-thumbs { padding: 4px; margin: -4px; }
+/* opciones del menú ⋮: el foco de teclado se distingue del hover con el contorno de 2px */
+.pr .pos-opts__item:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: -2px; }
