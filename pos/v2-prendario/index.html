@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="../ds/elevation.css" />
 <link rel="stylesheet" href="../ds/base.css" />
 <link rel="stylesheet" href="../ds/components.css" />
-<link rel="stylesheet" href="../pos.css?v=ux44" />
+<link rel="stylesheet" href="../pos.css?v=ux46" />
 <link rel="stylesheet" href="../v2/v2.css?v=5" />
 <link rel="stylesheet" href="prendario.css?v=2" />
 </head>
@@ -21,8 +21,8 @@
 
 <header class="pos-header">
   <div class="pos-header__menu">
-    <button class="pos-hbtn pos-menu" type="button" aria-label="Menú">
-      <img src="../assets/ds/Menu-2A2C2F.svg" width="20" height="20" alt="" />
+    <button class="pos-hbtn pos-hbtn--plain pos-menu" type="button" aria-label="Menú">
+      <img src="../assets/menu.svg" width="24" height="24" alt="" />
     </button>
     <a class="pos-brand" href="./" aria-label="Ataskate · Operativo">
       <img class="pos-brand__logo" src="../assets/logo-ataskate.svg" alt="ataskate" />
@@ -31,26 +31,54 @@
   </div>
 
   <form class="pos-search" role="search" onsubmit="return false">
-    <label class="ds-field-wrap">
-      <span class="ds-field-addon"><img src="../assets/ds/Search-A1A5AA.svg" width="20" height="20" alt="" /></span>
-      <input class="ds-input" type="search" placeholder="Buscar..." aria-label="Buscar en el inventario" />
-    </label>
+    <input class="pos-search__input" type="search" placeholder="Buscar" aria-label="Buscar en el inventario" />
+    <button class="pos-search__go" type="submit" aria-label="Buscar"><img src="../assets/search.svg" width="24" height="24" alt="" /></button>
   </form>
 
   <div class="pos-header__ctas">
-    <button class="pos-cart" type="button" id="posCart" aria-label="Carrito, 0 artículos">
-      <img src="../assets/ds/Cart-2A2C2F.svg" width="20" height="20" alt="" />
+    <button class="pos-hbtn pos-hide-sm" type="button" aria-label="Notificaciones">
+      <img src="../assets/notification.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-hide-xs" type="button" id="posCaja" aria-label="Flujo de fondos · caja abierta" aria-haspopup="dialog" aria-expanded="false" aria-controls="posCajaPanel">
+      <img src="../assets/pos-terminal.svg" width="24" height="24" alt="" />
+      <span class="pos-hbtn__status" aria-hidden="true"></span>
+    </button>
+    <button class="pos-hbtn pos-hide-sm" type="button" id="posAjustes" aria-label="Configuración" aria-haspopup="menu" aria-expanded="false" aria-controls="posAjustesMenu">
+      <img src="../assets/settings.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-cart" type="button" id="posCart" aria-label="Carrito, 0 artículos">
+      <img src="../assets/cart.svg" width="24" height="24" alt="" />
       <span id="posCartN">0</span>
     </button>
-    <button class="pos-hbtn pos-hide-sm" type="button" aria-label="Notificaciones">
-      <img src="../assets/ds/Notifications-2A2C2F.svg" width="20" height="20" alt="" />
-    </button>
-    <button class="pos-profile" type="button" aria-label="Rosa Pérez · Cambiar de sucursal">
-      <span class="ds-avatar ds-avatar--sm">RP</span>
-      <img src="../assets/ds/KeyboardArrowDown-2A2C2F-16.svg" width="16" height="16" alt="" />
+    <button class="pos-hbtn pos-profile" type="button" aria-label="RP · Cambiar de usuario">
+      <span class="ds-avatar">RP</span>
+      <img src="../assets/sync.svg" width="24" height="24" alt="" />
     </button>
   </div>
 </header>
+
+<!-- paneles del Header (HU-CE-595-F / 573-F): se anclan bajo la barra; los abre y cierra ../navbar.js -->
+<div class="pos-navpanel pos-caja" id="posCajaPanel" role="dialog" aria-labelledby="posCajaTitulo" hidden>
+  <div class="pos-caja__head">
+    <h2 id="posCajaTitulo">Flujo de fondos</h2>
+    <button class="ds-btn ds-btn--primary pos-caja__btn" type="button">Cerrar flujo</button>
+    <button class="pos-caja__x" type="button" aria-label="Cerrar"><img src="../assets/navbar/close.svg" alt="" /></button>
+  </div>
+  <dl class="pos-caja__tiles">
+    <div class="pos-caja__tile"><dt>Saldo total</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Ingresos</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Salidas</dt><dd>$8,038</dd></div>
+  </dl>
+</div>
+<div class="pos-navpanel pos-ajustes" id="posAjustesMenu" role="menu" aria-label="Configuración" hidden>
+  <div class="pos-ajustes__user" role="presentation">
+    <img src="../assets/navbar/menu-avatar.png" alt="" />
+    <span><b>Omar</b><small>omar.man@gmail.com</small></span>
+  </div>
+  <button class="pos-ajustes__item pos-ajustes__item--plat" type="button" role="menuitem"><img src="../assets/navbar/menu-admin.png" alt="" />Ir a Administrativo</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/sync.svg" alt="" />Sucursal Polanco</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/navbar/logout.svg" alt="" />Cerrar sesión</button>
+</div>
 
 <main class="pos-main">
   <nav aria-label="Breadcrumb" class="ds-breadcrumb">
@@ -507,5 +535,6 @@
   porHash();
 })();
 </script>
+<script src="../navbar.js?v=1"></script>
 </body>
 </html>

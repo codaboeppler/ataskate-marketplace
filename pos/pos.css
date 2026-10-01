@@ -31,48 +31,103 @@ body.pos {
 .pos-ico--20 { width: 20px; height: 20px; }
 .pos-ico--16 { width: 16px; height: 16px; }
 
-/* ---------------- Header (DS Header "OP — DESKTOP") ---------------- */
+/* ---------------- Header (Figma: Header · Version=Op, HU-CE-595-F "Navbar 2.0") ----------------
+   56px, fondo #F0F0FF, padding 8/12. Tres zonas iguales: menú + logo + píldora de rol · buscador central ·
+   chips blancos de 40: notificaciones, caja con punto de estado, tuerquita, carrito con contador y perfil con cambio de usuario.
+   El chip con su panel abierto va en navy con el ícono en blanco. */
 .pos-header {
   position: sticky; top: 0; z-index: 30;
-  height: 60px;
+  box-sizing: border-box; height: 56px;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 8px var(--spacing-5);
+  padding: 8px var(--spacing-3);
   background: var(--ats-primary-50);
 }
-.pos-header__menu, .pos-header__ctas { flex: 1 0 0; min-width: 0; display: flex; align-items: center; gap: var(--spacing-2); }
-.pos-header__ctas { justify-content: flex-end; }
-.pos-brand { display: flex; align-items: center; gap: var(--spacing-2); }
+.pos-header__menu, .pos-header__ctas { flex: 1 0 0; min-width: 0; display: flex; align-items: center; }
+.pos-header__ctas { justify-content: flex-end; gap: var(--spacing-2); }
+/* logo y píldora de rol: la píldora va a 4px del logo, apoyada en su base */
+.pos-brand { display: flex; align-items: flex-end; gap: var(--spacing-1); }
 .pos-brand__logo { width: 129.424px; height: 24px; }
 .pos-brand__role {
-  display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 100px;
-  background: var(--ats-lime-300);
-  font-size: 12px; line-height: 1; font-weight: var(--font-weight-semibold); white-space: nowrap;
-  color: var(--ats-neutral-700);
+  display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; height: 16px;
+  padding: 2px 6px; border-radius: 80px; background: var(--ats-lime-300); opacity: .9;
+  font-size: 12px; line-height: 12px; font-weight: var(--font-weight-regular); white-space: nowrap;
+  color: var(--ats-primary-400);
 }
-/* botones redondos del Header (Menú / Notificaciones): 36×36, padding 8, icono 20, hover #F4F5F5 */
+/* chips del Header: 40 de alto, blancos, radio 100, padding 8, ícono 24 */
 .pos-hbtn {
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  width: 36px; height: 36px; padding: 8px; border: 0; border-radius: 100px;
-  background: var(--color-base-white); cursor: pointer; transition: background .15s;
+  position: relative; display: flex; align-items: center; justify-content: center; gap: var(--spacing-2); flex-shrink: 0;
+  box-sizing: border-box; height: 40px; min-width: 40px; padding: 8px; border: 0; border-radius: 100px;
+  background: var(--color-base-white); color: var(--ats-neutral-700); cursor: pointer; transition: background .15s;
 }
 .pos-hbtn:hover { background: var(--ats-neutral-100); }
-.pos-hbtn img { width: 20px; height: 20px; }
-/* carrito del Header: icono 20 + cantidad 14/600, sin fondo */
-.pos-cart { display: flex; align-items: center; gap: var(--spacing-2); padding: 0; border: 0; background: none; cursor: pointer; }
-.pos-cart img { width: 20px; height: 20px; }
-#posCartN { font-size: 14px; font-weight: var(--font-weight-semibold); line-height: normal; color: var(--ats-neutral-700); }
-/* avatar del Header: Avatar 32 + KeyboardArrowDown 16, separados 4 */
-.pos-profile { display: flex; align-items: center; gap: var(--spacing-1); padding: 0; border: 0; background: none; cursor: pointer; }
-.pos-profile img { width: 16px; height: 16px; }
-.pos-profile .ds-avatar { background: var(--ats-info-blue-50); color: var(--pos-text-title); font-size: 14px; font-weight: var(--font-weight-semibold); line-height: 1.2; }
-.pos-hbtn:focus-visible, .pos-cart:focus-visible, .pos-profile:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
-/* buscador del Header: blanco, borde 1px #D4D6D8, lupa a la izquierda 20px #A1A5AA */
-.pos-search { flex: 1 0 0; min-width: 0; max-width: 550px; }
-.pos-search .ds-field-wrap { height: 40px; padding: 0 var(--spacing-4); gap: var(--spacing-2); background: var(--color-base-white); border-color: var(--ats-neutral-300); }
-.pos-search .ds-field-addon { margin: 0; }
-.pos-search .ds-field-addon img { width: 20px; height: 20px; }
-.pos-search .ds-input { font-size: 16px; line-height: normal; letter-spacing: normal; color: var(--ats-neutral-700); }
-.pos-search .ds-input::placeholder { color: var(--ats-neutral-400); }
+.pos-hbtn img { width: 24px; height: 24px; }
+/* la hamburguesa no lleva fondo */
+.pos-hbtn--plain { background: none; }
+.pos-hbtn--plain:hover { background: var(--color-base-white); }
+/* chip activo (su panel está abierto): navy con el ícono y el número en blanco */
+.pos-hbtn[aria-expanded='true'], .pos-hbtn[aria-expanded='true']:hover { background: var(--ats-primary-400); color: var(--color-base-white); }
+.pos-hbtn[aria-expanded='true'] img { filter: brightness(0) invert(1); }
+/* punto de estado de la caja (flujo abierto): 12, verde, en la esquina del chip */
+.pos-hbtn__status { position: absolute; top: 0; right: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--ats-success-green-200); }
+/* carrito: ícono 24 + cantidad 16 bold */
+#posCartN { font-size: 16px; font-weight: var(--font-weight-bold); line-height: 1.5; letter-spacing: .3px; color: inherit; }
+/* perfil: avatar 32 con iniciales + cambio de usuario, en un solo chip */
+.pos-profile { padding: 4px 8px; }
+.pos-profile .ds-avatar { width: 32px; height: 32px; border-radius: 30px; background: var(--ats-info-blue-50); color: var(--ats-neutral-700); font-size: 14px; font-weight: var(--font-weight-semibold); line-height: 1.2; }
+.pos-hbtn:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
+/* buscador central (Search field V2): 40 de alto, fondo #FBFBFE, sin borde, lupa 24 #5A5AFF a la derecha */
+.pos-search {
+  flex: 1 0 0; min-width: 0; display: flex; align-items: center; height: 40px; margin: 0;
+  border-radius: 100px; overflow: hidden; background: var(--pos-surface-page); transition: box-shadow .15s;
+}
+.pos-search:hover { box-shadow: inset 0 0 0 1px var(--ats-primary-300); }
+.pos-search:focus-within { box-shadow: inset 0 0 0 1px var(--ats-primary-400); }
+.pos-search__input {
+  flex: 1 1 0; min-width: 0; box-sizing: border-box; height: 40px; padding: 8px 16px; border: 0; outline: 0; background: none;
+  font-family: var(--font-family-sans); font-size: 16px; font-weight: var(--font-weight-regular); line-height: 1.2; letter-spacing: .3px;
+  color: var(--ats-neutral-700);
+}
+.pos-search__input::placeholder { color: var(--ats-neutral-400); opacity: 1; }
+.pos-search__input::-webkit-search-cancel-button, .pos-search__input::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
+.pos-search__go { flex: none; display: flex; align-items: center; box-sizing: border-box; height: 40px; padding: 8px 16px; border: 0; border-radius: 100px; background: none; cursor: pointer; }
+.pos-search__go img { width: 24px; height: 24px; }
+.pos-search__go:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: -4px; }
+
+/* paneles del Header: se anclan 4px bajo la barra, a 24px del borde derecho, con la sombra "Pop ups" */
+.pos-navpanel {
+  position: fixed; z-index: 40; top: calc(var(--pos-header-h, 56px) + 4px); right: var(--spacing-5);
+  box-sizing: border-box; background: var(--color-base-white); box-shadow: var(--pos-shadow-popup);
+}
+.pos-navpanel[hidden] { display: none; }
+/* menú de la tuerquita: usuario, cambio de plataforma, sucursal activa y cerrar sesión */
+.pos-ajustes { width: min(260px, calc(100vw - 24px)); display: flex; flex-direction: column; border-radius: var(--radius-sm); overflow: hidden; }
+.pos-ajustes__user { display: flex; align-items: center; gap: var(--spacing-2); padding: var(--spacing-2); }
+.pos-ajustes__user img, .pos-ajustes__item--plat img { flex: none; width: 32px; height: 32px; border-radius: 50%; }
+.pos-ajustes__user span { min-width: 0; display: flex; flex-direction: column; gap: var(--spacing-1); }
+.pos-ajustes__user b { font-size: 16px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
+.pos-ajustes__user small { font-size: 12px; line-height: 1; color: var(--ats-neutral-600); overflow: hidden; text-overflow: ellipsis; }
+.pos-ajustes__item {
+  display: flex; align-items: center; box-sizing: border-box; width: 100%; border: 0; background: none; cursor: pointer; text-align: left;
+  font-family: var(--font-family-sans); font-weight: var(--font-weight-regular); transition: background .15s;
+}
+.pos-ajustes__item:hover, .pos-ajustes__item:focus-visible { background: var(--ats-primary-50); }
+.pos-ajustes__item:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: -2px; }
+.pos-ajustes__item--plat { gap: var(--spacing-4); padding: var(--spacing-2); font-size: 14px; line-height: 1.2; color: var(--pos-text-title); }
+.pos-ajustes__item--fila { gap: var(--spacing-2); padding: var(--spacing-2) var(--spacing-4); font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--ats-neutral-700); }
+.pos-ajustes__item--fila img { flex: none; width: 20px; height: 20px; }
+/* caja: "Flujo de fondos" con saldo, ingresos y salidas de la sucursal */
+.pos-caja { width: min(402.667px, calc(100vw - 24px)); display: flex; flex-direction: column; gap: var(--spacing-2); padding: var(--spacing-3); border-radius: var(--radius-md); }
+.pos-caja__head { display: flex; align-items: center; gap: var(--spacing-2); }
+.pos-caja__head h2 { flex: 1 1 0; min-width: 0; margin: 0; font-size: 16px; line-height: 24px; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); }
+.pos .ds-btn.pos-caja__btn { height: 30px; padding: 7px var(--spacing-4); font-size: 14px; line-height: 14px; }
+.pos-caja__x { flex: none; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 4px; border: 0; border-radius: 100px; background: none; cursor: pointer; transition: background .15s; }
+.pos-caja__x:hover { background: var(--ats-primary-50); }
+.pos-caja__x:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
+.pos-caja__x img { width: 20px; height: 20px; }
+.pos-caja__tiles { display: flex; gap: var(--spacing-2); margin: 0; }
+.pos-caja__tile { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; padding: 9px; border-radius: var(--radius-sm); background: var(--pos-surface-page); }
+.pos-caja__tile dt { font-size: 14px; line-height: 18px; color: var(--ats-neutral-600); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pos-caja__tile dd { margin: 0; font-size: 16px; line-height: 24px; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); }
 
 /* ---------------- Página ---------------- */
 .pos-main { max-width: 1280px; margin: 0 auto; padding: 16px 24px 16px; }
@@ -414,7 +469,7 @@ body.pos {
 
 /* ---------------- Responsivo ---------------- */
 /* toasts arriba a la derecha, debajo del header fijo (--pos-header-h lo mide el JS) */
-.pos .ds-toast-region { top: calc(var(--pos-header-h, 60px) + var(--spacing-4)); bottom: auto; max-width: 512px; }
+.pos .ds-toast-region { top: calc(var(--pos-header-h, 56px) + var(--spacing-4)); bottom: auto; max-width: 512px; }
 /* Toast del DS: 320–480, padding 16, separación 16, radio 8, sin borde, barra de tiempo de 3px */
 .pos .ds-toast {
   position: relative; box-sizing: content-box; min-width: 320px; max-width: 480px;
@@ -454,18 +509,18 @@ body.pos {
   .pos-detail { flex-direction: column; align-items: stretch; }
   .pos-info { width: 100%; }
   .pos-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .pos-search { max-width: none; margin: 0 12px; }
+  .pos-search { flex: 1 1 0; margin: 0 12px; }
 }
 @media (max-width: 720px) {
   .pos-specs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pos-header { flex-wrap: wrap; height: auto; row-gap: 8px; }
-  .pos-search { order: 3; flex-basis: 100%; margin: 0; max-width: none; }
+  .pos-search { order: 3; flex: 1 0 100%; margin: 0; }
+  .pos-navpanel { right: var(--spacing-3); }
   .pos-main { padding: 12px 16px; }
   .pos-related__head { flex-wrap: wrap; }
   .pos-related__title h2 { font-size: 20px; line-height: 1.2; }
   .pos .ds-tabs__list { overflow-x: auto; scrollbar-width: none; }
   .pos .ds-tabs__tab { flex-shrink: 0; }
-  .pos-header__ctas .pos-hide-sm { display: none; }
   .pos-brand__logo { width: 97px; height: 18px; }
   .pos-stage { height: 380px; min-height: 0; }
   .pos-stage__img { width: 220px; height: 273px; }
@@ -507,10 +562,14 @@ body.pos {
   .pos .ds-modal.pos-plazos { padding: 12px 16px; gap: 12px; max-height: calc(100dvh - 16px); }
   .pos-plazos .ds-modal__title { font-size: 20px; }
 }
+/* los cinco chips caben junto al logo hasta ~530px; por debajo se quedan caja, carrito y perfil */
+@media (max-width: 540px) {
+  .pos-header__ctas .pos-hide-sm { display: none; }
+}
 /* teléfono: logo + carrito y perfil en un renglón, el buscador abajo (2 renglones) */
 @media (max-width: 420px) {
   .pos-header { padding-left: var(--spacing-2); padding-right: var(--spacing-2); }
-  .pos-header__ctas { gap: var(--spacing-1); }
+  .pos-header__ctas .pos-hide-xs { display: none; }
   .pos-brand__logo { width: 84px; height: 16px; }
 }
 
@@ -564,4 +623,8 @@ body.pos {
 @media (prefers-reduced-motion: reduce) {
   .pos-pausa, .pos-delivery__opt, .pos-opts__menu, .pos-canal { transition: none; animation: none; }
 }
+/* 320–350: la hamburguesa se compacta y el perfil queda solo con las iniciales, para que logo, rol, carrito y perfil quepan en un renglón */
+@media (max-width: 350px) {
+  .pos-hbtn--plain { height: 32px; min-width: 32px; padding: 4px; }
+  .pos-profile img { display: none; }
 }
