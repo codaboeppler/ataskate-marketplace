@@ -1,0 +1,80 @@
+/* ============================================================
+   Ataskate POS — Detalles de artículo · V2
+   Misma ficha que /pos/, pero sin popup de apartados: dos pestañas (Compra | Apartado)
+   al estilo de un configurador. Esta hoja solo agrega lo propio de la V2; el resto viene
+   de ../pos.css y del design system (../ds).
+   ============================================================ */
+
+/* ---------------- Pestañas Compra | Apartado ----------------
+   Tabs del DS (.ds-tabs, las mismas de "Especificaciones"): subrayado de 1.2px, activa en #5A5AFF semibold.
+   Aquí solo se reparten a lo ancho, para que se lean como las dos formas de pago. */
+.pos .v2-modo { gap: 0; }
+.v2-modo .ds-tabs__tab { flex: 1 1 0; justify-content: center; }
+
+/* los dos paneles comparten estructura: precio grande, renglones concepto → monto y un botón */
+.v2-panel { display: flex; flex-direction: column; gap: var(--spacing-4); }
+.v2-panel[hidden] { display: none; }
+/* a 320px el chip de descuento baja de renglón en vez de sacar scroll horizontal */
+.v2-panel .pos-price { flex-wrap: wrap; }
+.v2-price__sufijo { font-size: 16px; line-height: 1.2; color: var(--ats-neutral-600); }
+.pos .v2-cta { width: 100%; }
+
+/* ---------------- Desglose: renglones concepto → monto ---------------- */
+.v2-desglose { margin: 0; display: flex; flex-direction: column; }
+.v2-desglose > div {
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--spacing-4);
+  padding: var(--spacing-2) var(--spacing-3); font-size: 14px; line-height: 20px; color: var(--ats-neutral-700);
+}
+.v2-desglose > div:nth-child(odd) { background: var(--ats-primary-10); border-radius: var(--radius-sm); }
+.v2-desglose dt { color: var(--ats-neutral-600); }
+.v2-desglose dd { margin: 0; display: flex; flex-direction: column; align-items: flex-end; text-align: right; white-space: nowrap; }
+.v2-desglose dd small { font-size: 12px; line-height: 16px; font-weight: var(--font-weight-regular); color: var(--ats-neutral-600); }
+.v2-desglose .v2-desglose__total dt, .v2-desglose .v2-desglose__total dd { font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
+
+/* ---------------- Apartado ----------------
+   Las tarjetas reutilizan .pos-plan (borde, radio y tabla del calendario del popup de la V1). */
+.v2-plan__name { min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-1) var(--spacing-2); }
+.v2-plan__name b { font-size: 16px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
+
+/* el mejor apartado no es una tarjeta: es el contenido del panel, igual que Compra */
+.pos-plan.v2-plan--mejor { display: flex; flex-direction: column; gap: var(--spacing-4); overflow: visible; border-radius: 0; background: none; }
+.pos-plan.v2-plan--mejor::before { content: none; }
+.pos-plan.v2-plan--mejor:hover { box-shadow: none; }
+.v2-plan--mejor .v2-plan__name { margin-top: calc(var(--spacing-2) * -1); }
+.pos .ds-btn.v2-plan__ver { align-self: center; gap: 2px; margin: calc(var(--spacing-2) * -1) 0; padding-right: var(--spacing-2); }
+.v2-plan--mejor .pos-plan__table { border: 1px solid var(--ats-neutral-300); overflow: hidden; }
+
+/* los demás apartados: lista de filas que se abren */
+.v2-otros { display: flex; flex-direction: column; gap: var(--spacing-2); padding-top: var(--spacing-4); border-top: 1px solid var(--ats-neutral-300); }
+.v2-otros-titulo { margin: 0; font-size: 14px; line-height: 20px; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
+.v2-planes { display: flex; flex-direction: column; gap: var(--spacing-2); }
+.v2-plan__head {
+  width: 100%; display: flex; align-items: center; gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-3) var(--spacing-3) var(--spacing-4); border: 0; background: none; cursor: pointer; text-align: left; font: inherit;
+}
+.v2-plan__head .v2-plan__name { flex: 1 1 auto; }
+.v2-plan__head:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: -2px; border-radius: var(--radius-md); }
+.v2-plan__head > img { flex: none; }
+.v2-hoy { flex: none; font-size: 14px; line-height: 20px; color: var(--ats-neutral-600); white-space: nowrap; }
+.v2-hoy b { font-size: 16px; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
+.v2-plan__det { display: none; flex-direction: column; gap: var(--spacing-3); padding: 0 var(--spacing-4) var(--spacing-4); }
+.v2-plan.is-open .v2-plan__det { display: flex; }
+/* dentro de una fila abierta el calendario va siempre a la vista, con su borde */
+.v2-plan__det .pos-plan__table { display: block; border: 1px solid var(--ats-neutral-300); overflow: hidden; }
+
+/* la tabla va completa en la página (sin el scroll interno del popup) */
+.v2-plan .pos-plan__table { max-height: none; }
+.v2-plan .ds-table thead th { position: static; }
+
+.v2-panel .pos-plazos__notas { margin-top: 0; }
+
+/* en escritorio la foto acompaña al scroll: la columna derecha puede crecer con los calendarios abiertos.
+   Solo si cabe completa (mide 748px con el header): en pantallas bajas se quedaría con las miniaturas cortadas. */
+@media (min-width: 1025px) and (min-height: 800px) {
+  .pos-gallery { position: sticky; top: calc(var(--pos-header-h, 60px) + var(--spacing-4)); }
+}
+
+@media (max-width: 480px) {
+  .v2-plan__head { padding-left: var(--spacing-3); }
+  .v2-plan__det { padding: 0 var(--spacing-3) var(--spacing-3); }
+}
