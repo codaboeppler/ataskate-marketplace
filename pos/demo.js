@@ -16,8 +16,12 @@
 
   const css = document.createElement('style');
   css.textContent = `
-.demo-tab {
+/* riel fijo en el borde izquierdo, bajo el header: aquí cuelgan esta pestaña y la de comentarios (comentarios.js) */
+.demo-rail {
   position: fixed; left: 0; top: calc(var(--pos-header-h, 56px) + 8px); z-index: 29;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+}
+.demo-tab {
   box-sizing: border-box; width: 18px; margin: 0; padding: 8px 3px; border: 0; border-radius: 8px 0 0 8px;
   writing-mode: vertical-rl; transform: rotate(180deg);
   background: #e5e5ff; color: #0d166b; cursor: pointer; opacity: .8;
@@ -46,7 +50,7 @@
 .demo-menu a[aria-current='page'] small::after { content: ' · estás aquí'; color: #0d166b; }
 @media (max-width: 720px) { .demo-tab { width: 14px; padding: 8px 1px; font-size: 10px; } .demo-menu { left: 20px; width: min(288px, calc(100vw - 32px)); } }
 @media (prefers-reduced-motion: reduce) { .demo-tab, .demo-menu a { transition: none; } }
-@media print { .demo-tab, .demo-menu { display: none; } }
+@media print { .demo-rail, .demo-menu { display: none; } }
 `;
   document.head.appendChild(css);
 
@@ -82,7 +86,10 @@
     a.appendChild(s);
     menu.appendChild(a);
   });
-  document.body.append(tab, menu);
+  const riel = document.createElement('div');
+  riel.className = 'demo-rail';
+  riel.append(tab);
+  document.body.append(riel, menu);
 
   const links = () => [...menu.querySelectorAll('a')];
   const cerrar = (devolverFoco) => {
