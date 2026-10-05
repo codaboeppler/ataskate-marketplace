@@ -54,15 +54,15 @@
   .mkt .pos-grid { grid-template-columns: repeat(2, minmax(0, 175px)); }
 }
 
-/* el header del marketplace mide ~101px (franja lila + links): la foto solo se queda fija si cabe completa
-   (748 de galería + header + 16 de aire); en pantallas más bajas se queda en su sitio y no corta las miniaturas */
-@media (min-width: 1025px) and (max-height: 869px) {
-  .mkt .pos-gallery { position: static; }
-}
-
 /* ---------------- Accesibilidad y detalles ---------------- */
 /* el header es fijo (~101px): al tabular hacia arriba el foco no debe quedar tapado detrás de él */
 html { scroll-padding-top: calc(var(--pos-header-h, 101px) + 16px); }
+/* el header de esta ficha mide ~101px: sirve de valor inicial hasta que el JS mide el real (evita que la foto fija cambie de alto al cargar) */
+:root { --pos-header-h: 101px; }
+/* ese header mide 45px más que el del POS: la galería mínima termina en 539px, así que el alto para soltarla sube de 500 a 545 */
+@media (min-width: 1025px) and (max-height: 545px) {
+  .mkt .pos-gallery { position: static; }
+}
 /* pestañas y miniaturas: mismo contorno de 2px #5A5AFF que el resto de controles (el anillo del navegador se recorta y desentona) */
 .mkt .ds-tabs__tab:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: -2px; }
 .mkt .pos-thumb:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }

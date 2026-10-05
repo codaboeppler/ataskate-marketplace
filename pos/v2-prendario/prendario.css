@@ -4,7 +4,7 @@
    no se vende, es la prenda de un préstamo. Cambia lo que el vendedor puede hacer con él:
    · chips de arriba: contrato al que pertenece, estado del contrato y vencimiento;
    · pestañas Refrendo | Desempeño (las dos formas de pagar el contrato) en lugar de Compra | Apartado;
-   · pestañas de información: Contrato, Especificaciones, Ubicación e Historial de movimientos;
+   · pestañas de información: Notas, Contrato, Especificaciones, Ubicación e Historial de movimientos;
    · "Prendas en el contrato" en lugar de "Productos relacionados".
    Esta hoja solo agrega lo propio; el resto viene de ../pos.css, ../v2/v2.css y el design system (../ds).
    ============================================================ */
@@ -37,14 +37,18 @@
 @media (max-width: 480px) {
   /* la fecha baja de renglón en vez de pisar la columna de al lado */
   .pr .pos-plan .ds-table th:first-child, .pr .pos-plan .ds-table td:first-child { white-space: normal; }
-  /* las cuatro pestañas de información caben en el teléfono: se reparten el ancho, a 14px (el tamaño base de las Tabs del DS) */
-  .pr .pos-info > .ds-tabs .ds-tabs__tab { flex: 1 1 auto; justify-content: center; padding-inline: 4px; font-size: var(--font-size-sm); }
 }
 @media (max-width: 560px) {
   /* los pares del contrato son más largos que las especificaciones: pasan a una columna antes, para no cortar valores */
   .pr #prContrato { grid-template-columns: minmax(0, 1fr); gap: var(--spacing-2); }
   .pr #prContrato .pos-spec:nth-child(n) { background: none; }
   .pr #prContrato .pos-spec:nth-child(even) { background: var(--ats-primary-10); }
+  /* las cinco pestañas de información caben sin scroll: se reparten el ancho, a 14px (el tamaño base de las Tabs del DS) */
+  .pr .pos-info > .ds-tabs .ds-tabs__tab { flex: 1 1 auto; justify-content: center; padding-inline: 4px; font-size: var(--font-size-sm); }
+}
+@media (max-width: 392px) {
+  /* cinco pestañas a 14px necesitan 361px: en teléfonos angostos bajan a 12px */
+  .pr .pos-info > .ds-tabs .ds-tabs__tab { font-size: var(--font-size-xs); }
 }
 
 /* ---------------- Prendas en el contrato: DataTable del DS ----------------

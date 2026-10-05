@@ -26,8 +26,8 @@
     b.addEventListener('click', () => (p.hidden ? abrir(b, p) : cerrar(true)));
     // las acciones de los paneles todavía no hacen nada: cierran el panel y devuelven el foco a su chip
     p.addEventListener('click', (e) => { if (e.target.closest('button')) cerrar(true); });
-    // al salir del panel con Tab se cierra
-    p.addEventListener('focusout', (e) => { if (!p.hidden && e.relatedTarget && !p.contains(e.relatedTarget) && e.relatedTarget !== b) cerrar(); });
+    // al salir del panel con Tab se cierra (salvo que el foco pase a los comentarios del prototipo: así se puede comentar el panel)
+    p.addEventListener('focusout', (e) => { if (!p.hidden && e.relatedTarget && !p.contains(e.relatedTarget) && e.relatedTarget !== b && !e.relatedTarget.closest('.cm-pins, .cm-lista, .cm-barra')) cerrar(); });
   });
   document.addEventListener('click', (e) => { if (!pares.some(([b, p]) => b.contains(e.target) || p.contains(e.target))) cerrar(); });
   document.addEventListener('keydown', (e) => {

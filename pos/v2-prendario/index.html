@@ -13,9 +13,9 @@
 <link rel="stylesheet" href="../ds/elevation.css" />
 <link rel="stylesheet" href="../ds/base.css" />
 <link rel="stylesheet" href="../ds/components.css" />
-<link rel="stylesheet" href="../pos.css?v=ux47" />
-<link rel="stylesheet" href="../v2/v2.css?v=5" />
-<link rel="stylesheet" href="prendario.css?v=2" />
+<link rel="stylesheet" href="../pos.css?v=ux51" />
+<link rel="stylesheet" href="../v2/v2.css?v=7" />
+<link rel="stylesheet" href="prendario.css?v=3" />
 </head>
 <body class="pos pr">
 
@@ -164,12 +164,16 @@
       </div>
       <div class="ds-tabs">
         <div role="tablist" class="ds-tabs__list" aria-label="Información del artículo">
-          <button role="tab" class="ds-tabs__tab" aria-selected="true" aria-controls="posTabContrato" id="posTabContratoBtn">Contrato</button>
+          <button role="tab" class="ds-tabs__tab" aria-selected="true" aria-controls="posTabNotas" id="posTabNotasBtn">Notas</button>
+          <button role="tab" class="ds-tabs__tab" aria-selected="false" aria-controls="posTabContrato" id="posTabContratoBtn" tabindex="-1">Contrato</button>
           <button role="tab" class="ds-tabs__tab" aria-selected="false" aria-controls="posTabSpecs" id="posTabSpecsBtn" tabindex="-1">Especificaciones</button>
           <button role="tab" class="ds-tabs__tab" aria-selected="false" aria-controls="posTabUbic" id="posTabUbicBtn" tabindex="-1">Ubicación</button>
           <button role="tab" class="ds-tabs__tab" aria-selected="false" aria-controls="posTabHist" id="posTabHistBtn" tabindex="-1">Historial</button>
         </div>
-        <div role="tabpanel" class="ds-tabs__panel" id="posTabContrato" aria-labelledby="posTabContratoBtn">
+        <div role="tabpanel" class="ds-tabs__panel" id="posTabNotas" aria-labelledby="posTabNotasBtn">
+          <p class="pos-note">Artículo valuado en sucursal. Incluye cargador original y caja.</p>
+        </div>
+        <div role="tabpanel" class="ds-tabs__panel" id="posTabContrato" aria-labelledby="posTabContratoBtn" hidden>
           <dl class="pos-specs" id="prContrato"></dl>
         </div>
         <div role="tabpanel" class="ds-tabs__panel" id="posTabSpecs" aria-labelledby="posTabSpecsBtn" hidden>
@@ -299,21 +303,74 @@
   // Toast del DS (variante positiva): icono EstadosSuccess, título y texto, cerrar y barra de tiempo de 5 s
   const TOAST_ICO = '<svg aria-hidden="true" width="24" height="24" viewBox="96 156 24 24" fill="none"><path d="M108 178C106.617 178 105.317 177.737 104.1 177.212C102.883 176.687 101.825 175.975 100.925 175.075C100.025 174.175 99.3127 173.117 98.788 171.9C98.2627 170.683 98 169.383 98 168C98 166.617 98.2627 165.317 98.788 164.1C99.3127 162.883 100.025 161.825 100.925 160.925C101.825 160.025 102.883 159.312 104.1 158.787C105.317 158.262 106.617 158 108 158C109.383 158 110.683 158.262 111.9 158.787C113.117 159.312 114.175 160.025 115.075 160.925C115.975 161.825 116.687 162.883 117.212 164.1C117.737 165.317 118 166.617 118 168C118 169.383 117.737 170.683 117.212 171.9C116.687 173.117 115.975 174.175 115.075 175.075C114.175 175.975 113.117 176.687 111.9 177.212C110.683 177.737 109.383 178 108 178ZM106.6 172.6L113.65 165.55L112.25 164.15L106.6 169.8L103.75 166.95L102.35 168.35L106.6 172.6Z" fill="currentColor"/></svg>';
   const CLOSE_20 = '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="currentColor"/></svg>';
-  const toast = (titulo, texto, tono, ico) => {
+  // "deshacer" (opcional) agrega la acción del Toast del DS: un botón de texto que revierte lo que el toast anuncia
+  let ganchoTab = null;   // solo el toast más reciente con "Deshacer" recibe el primer Tab
+  // "etiqueta" (opcional) dice qué revierte "Deshacer" cuando no es quitar del carrito
+  const toast = (titulo, texto, tono, ico, deshacer, etiqueta) => {
     const t = document.createElement('div');
     t.className = 'ds-toast ds-toast--' + (tono || 'success');
     t.setAttribute('role', 'status');
     t.innerHTML = '<span class="ds-toast__icon" aria-hidden="true">' + (ico || TOAST_ICO) + '</span>'
       + '<div class="ds-toast__body-wrap"><p class="ds-toast__title"></p><p class="ds-toast__body"></p></div>'
+      + (deshacer ? '<div class="ds-toast__actions"><button type="button" class="ds-toast__action" aria-label="Deshacer: ' + (etiqueta || 'quitar del carrito') + '">Deshacer</button></div>' : '')
       + '<button type="button" class="ds-toast__close" aria-label="Cerrar">' + CLOSE_20 + '</button>'
       + '<div class="ds-toast__timer" aria-hidden="true"></div>';
     t.querySelector('.ds-toast__title').textContent = titulo;
     t.querySelector('.ds-toast__body').textContent = texto;
-    const quitar = () => t.remove();
+    const accion = t.querySelector('.ds-toast__action');
+    let origen = document.activeElement;   // a dónde vuelve el foco si el toast se va con el foco dentro
+    let reloj = null, resta = 5000, desde = 0, encima = false;
+    // con "Deshacer", el primer Tab lleva a la acción: la región de toasts va al final del body, a decenas de tabulaciones
+    const alTab = (e) => {
+      if (!t.isConnected) { document.removeEventListener('keydown', alTab, true); return; }
+      if (e.key !== 'Tab' || e.shiftKey || e.altKey || e.ctrlKey || e.metaKey || t.contains(document.activeElement)) return;
+      // con un diálogo abierto, el foco se queda dentro de él
+      if ([...document.querySelectorAll('[aria-modal="true"]')].some((m) => m.getClientRects().length)) return;
+      e.preventDefault();
+      document.removeEventListener('keydown', alTab, true);
+      accion.focus();
+      sincronizar();
+    };
+    const quitar = () => {
+      clearTimeout(reloj);
+      document.removeEventListener('keydown', alTab, true);
+      // si el foco estaba dentro (Deshacer, Cerrar o al caducar), vuelve a donde estaba en vez de perderse en <body>
+      const a = document.activeElement, dentro = t.contains(a), teclado = dentro && a.matches(':focus-visible');
+      t.remove();
+      if (dentro && origen && origen !== document.body && origen.isConnected) origen.focus({ preventScroll: !teclado });
+    };
+    // el reloj y la barra de tiempo se detienen con el puntero encima o con el foco dentro
+    const sincronizar = () => {
+      if (!t.isConnected) return;
+      const pausa = encima || t.contains(document.activeElement);
+      if (pausa && reloj !== null) { clearTimeout(reloj); reloj = null; resta -= Date.now() - desde; }
+      else if (!pausa && reloj === null) { desde = Date.now(); reloj = setTimeout(quitar, resta); }
+      t.classList.toggle('is-paused', pausa);
+    };
+    t.addEventListener('mouseenter', () => { encima = true; sincronizar(); });
+    t.addEventListener('mouseleave', () => { encima = false; sincronizar(); });
+    t.addEventListener('focusin', (e) => {
+      if (e.relatedTarget && !e.relatedTarget.closest('.ds-toast-region')) origen = e.relatedTarget;
+      sincronizar();
+    });
+    t.addEventListener('focusout', () => setTimeout(sincronizar));
+    t.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); quitar(); } });
     t.querySelector('.ds-toast__close').addEventListener('click', quitar);
+    if (deshacer) {
+      accion.addEventListener('click', () => {
+        quitar(); deshacer();
+        // el segundo clic de un doble clic no debe caer en lo que quedó bajo el puntero (otro "Deshacer" o la página)
+        const tragar = (e) => { if (e.detail) { e.stopPropagation(); e.preventDefault(); } };
+        document.addEventListener('click', tragar, true);
+        setTimeout(() => document.removeEventListener('click', tragar, true), 500);
+      });
+      if (ganchoTab) document.removeEventListener('keydown', ganchoTab, true);
+      ganchoTab = alTab;
+      document.addEventListener('keydown', alTab, true);
+    }
     // el más reciente arriba, pegado a la esquina superior derecha
     $('posToasts').prepend(t);
-    setTimeout(quitar, 5000);
+    sincronizar();
   };
   // los toasts van justo debajo del header fijo, que en teléfono ocupa dos renglones
   const cabecera = document.querySelector('.pos-header');
@@ -330,7 +387,7 @@
   menuBtn.addEventListener('click', () => abrirMenu(menu.hidden));
   document.addEventListener('click', (e) => { if (!menu.hidden && !$('posOpts').contains(e.target)) abrirMenu(false); });
   // al salir del menú con Tab se cierra (no se queda abierto tapando las pestañas)
-  $('posOpts').addEventListener('focusout', (e) => { if (!menu.hidden && e.relatedTarget && !$('posOpts').contains(e.relatedTarget)) abrirMenu(false); });
+  $('posOpts').addEventListener('focusout', (e) => { if (!menu.hidden && e.relatedTarget && !$('posOpts').contains(e.relatedTarget) && !e.relatedTarget.closest('.cm-pins, .cm-lista, .cm-barra')) abrirMenu(false); });
   document.addEventListener('keydown', (e) => {
     if (menu.hidden) return;
     if (e.key === 'Escape') { abrirMenu(false); menuBtn.focus(); return; }
@@ -418,7 +475,6 @@
   const pintar = () => {
     K = calcular();
     const estado = enMora ? 'En mora vigente' : 'Vigente';
-    const diasGraciaRestan = CONTRATO.diasGracia - DIAS_MORA;
 
     // chips de arriba: contrato · estado · vencimiento
     $('prTags').innerHTML = chip('grey', 'Contrato ' + CONTRATO.folio, ICO_CONTRATO)
@@ -432,10 +488,10 @@
     if (enMora) {
       $('prAvisoTitulo').textContent = 'Contrato en mora';
       $('prAvisoTxt').textContent = 'Venció el ' + fecha(K.limite) + '. Aún se puede refrendar o desempeñar dentro del periodo de gracia: '
-        + (diasGraciaRestan === 1 ? 'queda 1 día' : 'quedan ' + diasGraciaRestan + ' días') + ' (termina el ' + fecha(K.finGracia) + ').';
+        + 'van ' + DIAS_MORA + ' de ' + CONTRATO.diasGracia + ' días (termina el ' + fecha(K.finGracia) + ').';
     }
 
-    const interesDt = enMora ? 'Interés de periodo de gracia' : 'Interés del periodo';
+    const interesDt = enMora ? 'Interés del periodo de gracia' : 'Interés del periodo';
     const interesNota = K.tasa + '% de ' + mxn(K.prestamo);
     $('prRefTotal').textContent = mxn(K.refrendo);
     $('prRefDesglose').innerHTML = renglon(interesDt, mxn(K.interes), interesNota)
@@ -462,7 +518,7 @@
     $('prHistorial').innerHTML = K.historial.map((m) => '<tr><td>' + fecha(m[0]) + '</td><td>' + m[1] + '</td><td>' + mxn(m[2]) + '</td></tr>').join('');
 
     // prendas en el contrato
-    $('prPrendasN').textContent = plural(CONTRATO.prendas.length, 'Artículo', 'Artículos');
+    $('prPrendasN').textContent = prendasTxt;
     $('prPrendas').innerHTML = CONTRATO.prendas.map((p) => '<tr' + (p.actual ? ' aria-current="true"' : '') + '>'
       + '<td><div class="pr-art"><span class="pr-art__img"><img src="' + p.img + '" alt=""' + (p.recorte ? ' class="pr-art__cut"' : '') + ' /></span>'
       + '<span class="pr-art__txt"><b>' + p.nombre + '</b><span>' + p.sub + '</span></span></div></td>'
@@ -513,6 +569,11 @@
     desempeno: { nombre: 'Desempeño', monto: () => K.desempeno },
   };
   let operacion = null;
+  const pintarCarrito = () => {
+    const n = operacion ? 1 : 0;
+    $('posCartN').textContent = n;
+    $('posCart').setAttribute('aria-label', 'Carrito, ' + n + (n === 1 ? ' artículo' : ' artículos'));
+  };
   const operar = (tipo) => {
     const o = OPER[tipo];
     const detalle = 'Contrato ' + CONTRATO.folio + ' · ' + prendasTxt + ' · ' + mxn(o.monto());
@@ -520,11 +581,19 @@
       toast('Ya está en el carrito', o.nombre + ' del contrato ' + CONTRATO.folio + '.', 'warning', ICO_AVISO);
       return;
     }
-    const cambio = operacion !== null;
+    const previa = operacion;                                    // la operación que ya estaba en el carrito (se sustituye), o ninguna
+    const anterior = previa ? OPER[previa].nombre : null;
     operacion = tipo;
-    $('posCartN').textContent = 1;
-    $('posCart').setAttribute('aria-label', 'Carrito, 1 artículo');
-    toast(cambio ? 'Se cambió a ' + o.nombre.toLowerCase() : o.nombre + ' agregado al carrito', detalle);
+    pintarCarrito();
+    // un toast anterior con "Deshacer" ya no aplica: su operación fue sustituida por esta
+    $('posToasts').querySelectorAll('.ds-toast__action').forEach((b) => b.closest('.ds-toast').remove());
+    // "Deshacer" deja el carrito como estaba: sin operación, o con la que esta había sustituido
+    toast(anterior ? anterior + ' cambiado por ' + o.nombre.toLowerCase() + ' en el carrito' : o.nombre + ' agregado al carrito', detalle, null, null, () => {
+      operacion = previa;
+      pintarCarrito();
+      if (previa) toast(anterior + ' de nuevo en el carrito', 'Contrato ' + CONTRATO.folio + ' · ' + prendasTxt + ' · ' + mxn(OPER[previa].monto()));
+      else toast('Se quitó del carrito', detalle);
+    }, anterior ? 'volver a ' + anterior.toLowerCase() : null);
   };
   $('prRefrendar').addEventListener('click', () => operar('refrendo'));
   $('prDesempenar').addEventListener('click', () => operar('desempeno'));
@@ -535,8 +604,8 @@
   porHash();
 })();
 </script>
-<script src="../navbar.js?v=2"></script>
+<script src="../navbar.js?v=3"></script>
 <script src="../demo.js?v=4"></script>
-<script src="../comentarios.js?v=3"></script>
+<script src="../comentarios.js?v=5"></script>
 </body>
 </html>

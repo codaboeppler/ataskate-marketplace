@@ -59,6 +59,8 @@
 .v2-plan__head .v2-plan__name { flex: 1 1 auto; }
 .v2-plan__head:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: -2px; border-radius: var(--radius-md); }
 .v2-plan__head > img { flex: none; }
+/* frecuencia de pagos bajo el nombre de cada fila de "Otros apartados": se ve sin abrir la fila */
+.v2-plan__frec { flex: 1 0 100%; font-size: 14px; line-height: 20px; font-weight: var(--font-weight-regular); color: var(--ats-neutral-600); }
 .v2-hoy { flex: none; font-size: 14px; line-height: 20px; color: var(--ats-neutral-600); white-space: nowrap; }
 .v2-hoy b { font-size: 16px; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
 .v2-plan__det { display: none; flex-direction: column; gap: var(--spacing-3); padding: 0 var(--spacing-4) var(--spacing-4); }
@@ -72,11 +74,7 @@
 
 .v2-panel .pos-plazos__notas { margin-top: 0; }
 
-/* en escritorio la foto acompaña al scroll: la columna derecha puede crecer con los calendarios abiertos.
-   Solo si cabe completa (mide 748px con el header): en pantallas bajas se quedaría con las miniaturas cortadas. */
-@media (min-width: 1025px) and (min-height: 800px) {
-  .pos-gallery { position: sticky; top: calc(var(--pos-header-h, 60px) + var(--spacing-4)); }
-}
+/* (la galería fija en escritorio vive ahora en ../pos.css, para las cuatro fichas) */
 
 @media (max-width: 480px) {
   .v2-plan__head { padding-left: var(--spacing-3); }
