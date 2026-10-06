@@ -1,5 +1,5 @@
 /* Inventario del Operativo — Figma Entregable 13 · HU-CE-571 (Comercial) y HU-CE-572 (Prendario).
-   Datos de muestra en el propio archivo. Cada tarjeta lleva a su ficha: Comercial → ../ (Detalles de artículo),
+   Datos de muestra en el propio archivo. Cada tarjeta lleva a su ficha: Comercial → ../v2/ (Detalles de artículo V2),
    Prendario → ../v2-prendario/. ?tipo=prendario abre en Prendario; ?vacio=1 muestra el estado vacío del Figma. */
 (() => {
   const $ = (id) => document.getElementById(id);
@@ -122,7 +122,7 @@
   const vence = (d) => (d <= 0 ? 'Vence hoy' : `Vence: ${d} día${d === 1 ? '' : 's'}`);
   function tarjeta(it) {
     const com = st.tipo === 'comercial';
-    const href = com ? '../' : '../v2-prendario/';
+    const href = com ? '../v2/' : '../v2-prendario/';
     const sel = st.sel.has(it.id);
     const tags = [];
     if (st.multi) tags.push(`<span class="inv-card__check" aria-hidden="true"><span></span></span>`);

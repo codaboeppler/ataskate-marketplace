@@ -310,14 +310,14 @@ body.pos {
 .pos .ds-tabs__tab:hover:not([aria-selected='true']) { color: var(--ats-primary-300); border-bottom-color: var(--ats-primary-300); }
 .pos .ds-tabs__tab[aria-selected='true'] { font-weight: var(--font-weight-semibold); letter-spacing: normal; color: var(--ats-primary-300); border-bottom-color: var(--ats-primary-300); }
 .pos .ds-tabs__panel { padding: 0; }
-/* especificaciones: pares etiqueta / valor en dos columnas, una fila sí y una no en lavanda */
+/* especificaciones: pares etiqueta / valor en dos columnas, una fila sí y una no en lavanda (primary-50: primary-10 ya no se distingue del fondo de la página) */
 .pos-specs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--spacing-4); margin: 0; }
 .pos-spec {
   min-width: 0; height: var(--sizing-md); padding: 0 var(--spacing-2);
   display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-2);
   border-radius: var(--radius-sm);
 }
-.pos-spec:nth-child(4n + 3), .pos-spec:nth-child(4n + 4) { background: var(--ats-primary-10); }
+.pos-spec:nth-child(4n + 3), .pos-spec:nth-child(4n + 4) { background: var(--ats-primary-50); }
 .pos-spec dt { font-size: 16px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); white-space: nowrap; }
 .pos-spec dd { margin: 0; min-width: 0; font-size: 16px; line-height: 1.2; color: var(--ats-neutral-700); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pos-note { font-size: 16px; line-height: 1.2; color: var(--ats-neutral-700); }
@@ -583,7 +583,7 @@ body.pos {
   .pos-plan .ds-table th, .pos-plan .ds-table td { padding: 8px 6px; white-space: normal; font-size: 12px; }
   .pos-specs { grid-template-columns: minmax(0, 1fr); gap: var(--spacing-2); }
   .pos-spec:nth-child(4n + 3), .pos-spec:nth-child(4n + 4) { background: none; }
-  .pos-spec:nth-child(even) { background: var(--ats-primary-10); }
+  .pos-spec:nth-child(even) { background: var(--ats-primary-50); }
   .pos-card__pub { max-width: calc(100% - 60px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .pos-card__prices { min-width: 0; overflow: hidden; }
   .pos-card__now { font-size: 16px; }

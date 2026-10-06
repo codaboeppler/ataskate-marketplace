@@ -25,7 +25,7 @@
   display: flex; align-items: baseline; justify-content: space-between; gap: var(--spacing-4);
   padding: var(--spacing-2) var(--spacing-3); font-size: 14px; line-height: 20px; color: var(--ats-neutral-700);
 }
-.v2-desglose > div:nth-child(odd) { background: var(--ats-primary-10); border-radius: var(--radius-sm); }
+.v2-desglose > div:nth-child(odd) { background: var(--ats-primary-50); border-radius: var(--radius-sm); }
 .v2-desglose dt { color: var(--ats-neutral-600); }
 .v2-desglose dd { margin: 0; display: flex; flex-direction: column; align-items: flex-end; text-align: right; white-space: nowrap; }
 .v2-desglose dd small { font-size: 12px; line-height: 16px; font-weight: var(--font-weight-regular); color: var(--ats-neutral-600); }

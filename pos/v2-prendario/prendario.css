@@ -42,7 +42,7 @@
   /* los pares del contrato son más largos que las especificaciones: pasan a una columna antes, para no cortar valores */
   .pr #prContrato { grid-template-columns: minmax(0, 1fr); gap: var(--spacing-2); }
   .pr #prContrato .pos-spec:nth-child(n) { background: none; }
-  .pr #prContrato .pos-spec:nth-child(even) { background: var(--ats-primary-10); }
+  .pr #prContrato .pos-spec:nth-child(even) { background: var(--ats-primary-50); }
   /* las cinco pestañas de información caben sin scroll: se reparten el ancho, a 14px (el tamaño base de las Tabs del DS) */
   .pr .pos-info > .ds-tabs .ds-tabs__tab { flex: 1 1 auto; justify-content: center; padding-inline: 4px; font-size: var(--font-size-sm); }
 }
