@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ataskate — Sitemap de la plataforma</title>
+<meta name="description" content="Sitemap de la plataforma Ataskate: cómo se conectan las pantallas del Operativo, el Administrativo y el Marketplace a partir del Home." />
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../pos/ds/primitives.css" />
+<link rel="stylesheet" href="../pos/ds/semantic.css" />
+<link rel="stylesheet" href="../pos/ds/elevation.css" />
+<link rel="stylesheet" href="../pos/ds/base.css" />
+<link rel="stylesheet" href="sitemap.css?v=4" />
+</head>
+<body class="sm">
+
+<header class="sm-header">
+  <a class="sm-brand" href="./" aria-label="Ataskate · Sitemap">
+    <img class="sm-brand__logo" src="../pos/assets/logo-ataskate.svg" alt="ataskate" />
+    <span class="sm-brand__role">Sitemap</span>
+  </a>
+  <p class="sm-header__meta">Actualizado el <time datetime="2026-10-05">5 oct 2026</time></p>
+</header>
+
+<main>
+  <section class="sm-intro">
+    <div class="sm-wrap">
+      <h1 class="sm-title">Sitemap de la plataforma</h1>
+      <p class="sm-lead">Home arriba, las opciones del menú abajo y, adentro de cada una, sus pantallas. Toca cualquiera para ver su ruta, desde dónde se entra y a dónde lleva.</p>
+      <div class="sm-apps" id="smApps" role="tablist" aria-label="Plataforma"></div>
+    </div>
+  </section>
+
+  <section class="sm-wrap sm-canvas" aria-label="Mapa">
+    <div class="sm-root" id="smRoot"></div>
+    <div class="sm-cols" id="smCols"></div>
+    <p class="sm-legend" id="smLegend"></p>
+  </section>
+
+  <section class="sm-wrap sm-flows" aria-labelledby="smFlowsTitle">
+    <h2 id="smFlowsTitle" class="sm-h2">Flujos principales</h2>
+    <p class="sm-sub">Los caminos más comunes de una pantalla a otra.</p>
+    <div id="smFlows"></div>
+  </section>
+</main>
+
+<aside class="sm-panel" id="smPanel" aria-hidden="true" aria-labelledby="smPanelTitle">
+  <div class="sm-panel__inner">
+    <button class="sm-panel__close" id="smPanelClose" type="button" aria-label="Cerrar"><img src="../pos/assets/navbar/close.svg" width="24" height="24" alt="" /></button>
+    <nav class="sm-crumbs" id="smCrumbs" aria-label="Ruta"></nav>
+    <h2 class="sm-panel__title" id="smPanelTitle"></h2>
+    <p class="sm-panel__meta" id="smPanelMeta"></p>
+    <p class="sm-panel__desc" id="smPanelDesc"></p>
+    <div id="smPanelBody"></div>
+  </div>
+</aside>
+<div class="sm-scrim" id="smScrim" hidden></div>
+
+<footer class="sm-footer">
+  <div class="sm-wrap sm-footer__row">
+    <img class="sm-footer__logo" src="../pos/assets/logo-ataskate.svg" alt="ataskate" />
+    <p>Armado con las historias de usuario y los diseños vigentes de cada plataforma. Las pantallas en curso o planeadas están marcadas.</p>
+  </div>
+</footer>
+
+<script src="data.js?v=4"></script>
+<script src="icons.js?v=2"></script>
+<script src="sitemap.js?v=4"></script>
+</body>
+</html>
