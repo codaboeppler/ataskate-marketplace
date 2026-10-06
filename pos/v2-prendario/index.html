@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="../ds/components.css" />
 <link rel="stylesheet" href="../pos.css?v=ux54" />
 <link rel="stylesheet" href="../v2/v2.css?v=8" />
-<link rel="stylesheet" href="prendario.css?v=4" />
+<link rel="stylesheet" href="prendario.css?v=5" />
 </head>
 <body class="pos pr">
 
@@ -508,11 +508,17 @@
     $('prDesNotas').innerHTML = '<li>Liquida el contrato y ' + (unaPrenda ? 'se entrega su prenda' : 'se entregan sus ' + prendasTxt) + '.</li><li>Solo el titular o un cotitular puede desempeñar.</li>';
 
     // pestaña Contrato: resumen en pares etiqueta / valor
-    $('prContrato').innerHTML = par('Cliente', CONTRATO.cliente) + par('Contrato', CONTRATO.folio)
+    $('prContrato').innerHTML = par('Cliente', '<a class="pr-cliente" href="#perfil-cliente" title="Ver perfil del cliente">' + CONTRATO.cliente + '</a>') + par('Contrato', CONTRATO.folio)
       + par('Estado', estado) + par('Fecha límite', fecha(K.limite))
       + par('Plazo', CONTRATO.plazo) + par('Tasa de interés', CONTRATO.tasa + '%')
       + par('Frecuencia', CONTRATO.frecuencia) + par('Interés de gracia', CONTRATO.tasaGracia + '%')
       + par('Sucursal', CONTRATO.sucursal) + par('Fecha de empeño', fecha(K.empeno));
+
+    // el nombre del cliente lleva a su perfil (pantalla aún sin prototipo: avisa con un toast)
+    $('prContrato').querySelector('.pr-cliente').addEventListener('click', (e) => {
+      e.preventDefault();
+      toast('Perfil del cliente', 'Aquí se abre el perfil de ' + CONTRATO.cliente + ' con sus contratos y datos.');
+    });
 
     // pestaña Historial: del movimiento más reciente al más antiguo
     $('prHistorial').innerHTML = K.historial.map((m) => '<tr><td>' + fecha(m[0]) + '</td><td>' + m[1] + '</td><td>' + mxn(m[2]) + '</td></tr>').join('');

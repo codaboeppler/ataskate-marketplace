@@ -108,3 +108,8 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 16px); }
 .pr .pos-thumbs { padding: 4px; margin: -4px; }
 /* opciones del menú ⋮: el foco de teclado se distingue del hover con el contorno de 2px */
 .pr .pos-opts__item:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: -2px; }
+
+/* Cliente en la pestaña Contrato: enlace al perfil del cliente */
+.pr-cliente { color: var(--ats-primary-300); font-weight: var(--font-weight-semibold); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; border-radius: 2px; }
+.pr-cliente:hover { color: var(--ats-primary-400); }
+.pr-cliente:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
