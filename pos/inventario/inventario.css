@@ -170,7 +170,7 @@ body.inv { background: #fbfbfe; }
 .inv-fmore { margin: 4px 0 0 8px; }
 
 /* ---------- resultados ---------- */
-.inv-bar { position: relative; display: flex; align-items: center; gap: 8px 16px; flex-wrap: wrap; min-height: 32px; margin-bottom: 16px; }
+.inv-bar { position: relative; display: flex; align-items: center; gap: 8px 16px; flex-wrap: wrap; min-height: 24px; margin-bottom: 16px; }
 .inv-count { margin: 0; font-size: 16px; line-height: 24px; color: #54575c; }
 .inv-count b { font-weight: 700; color: #2a2c2f; }
 .inv-activos { display: flex; align-items: center; gap: 8px 12px; flex-wrap: wrap; min-width: 0; padding-left: 16px; border-left: 1px solid #e8e9ea; }
@@ -183,19 +183,19 @@ body.inv { background: #fbfbfe; }
 /* Ordenar por (como Klarna): texto con flecha a la derecha del conteo, sin caja; su lista usa el #drop-down list del DS.
    El DS no tiene un selector sin borde (SelectionInput solo trae "pill" y "tabla"), así que este es nuevo. */
 .inv-sort { position: relative; order: 9; margin-left: auto; }
-.inv-sort__btn { display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 4px; border: 0; border-radius: 8px; background: transparent; font: 400 16px/19px var(--font-family-sans); color: #2a2c2f; cursor: pointer; white-space: nowrap; }
+.inv-sort__btn { display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 4px; border: 0; border-radius: 8px; background: transparent; font: 400 16px/19px var(--font-family-sans); color: #2a2c2f; cursor: pointer; white-space: nowrap; }
 .inv-sort__btn:hover { color: #5a5aff; }
 .inv-sort__btn:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
 .inv-sort__btn svg { transition: transform .15s; }
 .inv-sort__btn[aria-expanded='true'] svg { transform: rotate(180deg); }
-.inv-sort__menu { position: absolute; right: 0; top: 36px; z-index: 6; display: flex; flex-direction: column; min-width: 220px; border: 1px solid #f3f3f3; border-radius: 8px; background: #fff; box-shadow: 0 11px 27px rgba(0, 0, 0, .12); overflow: hidden; }
+.inv-sort__menu { position: absolute; right: 0; top: 32px; z-index: 6; display: flex; flex-direction: column; min-width: 220px; border: 1px solid #f3f3f3; border-radius: 8px; background: #fff; box-shadow: 0 11px 27px rgba(0, 0, 0, .12); overflow: hidden; }
 .inv-sort__menu button { width: 100%; min-height: 35px; padding: 8px; border: 0; background: #fff; text-align: left; font: 400 16px/19px var(--font-family-sans); color: #2a2c2f; cursor: pointer; white-space: nowrap; }
 .inv-sort__menu button:hover, .inv-sort__menu button:focus-visible { background: #f0f0ff; outline: 0; }
 .inv-sort__menu button[aria-selected='true'] { color: #5a5aff; font-weight: 600; }
 
 /* rejilla de tarjetas: 224 de ancho, 8 entre columnas, 20 entre filas */
 .inv-results { container-type: inline-size; min-width: 0; }
-.inv-grid { display: grid; grid-template-columns: repeat(var(--inv-cols, 4), minmax(0, 1fr)); gap: 20px 16px; }
+.inv-grid { display: grid; grid-template-columns: repeat(var(--inv-cols, 4), minmax(0, 1fr)); gap: 16px; }
 /* 4 columnas con el panel de filtros (como el Figma, ~224 px), 5 sin él; luego 3, 2 y 1 al angostar */
 @container (max-width: 1179px) { .inv-grid { --inv-cols: 4; } }
 @container (min-width: 1180px) { .inv-grid { --inv-cols: 5; } }
@@ -243,7 +243,7 @@ body.inv { background: #fbfbfe; }
 .inv-card.is-vendido .inv-card__media img { opacity: .55; }
 
 /* vista de lista */
-.inv-grid.is-lista { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.inv-grid.is-lista { grid-template-columns: minmax(0, 1fr); gap: 16px; }
 .is-lista .inv-card { flex-direction: row; align-items: center; gap: 16px; padding: 8px 8px 8px 8px; border: 1px solid #e8e9ea; border-radius: 16px; background: #fff; }
 .is-lista .inv-card__media { width: 88px; flex-shrink: 0; border-radius: 12px; }
 .is-lista .inv-tag--tl, .is-lista .inv-tag--br, .is-lista .inv-tag--tr { display: none; }
