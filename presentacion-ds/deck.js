@@ -120,12 +120,15 @@
     const prev = slides[cur];
     const next = slides[i];
     const t = ++token;
+    slides.forEach((s) => { if (s !== prev && s !== next) { clearTimeout(s._lt); s.classList.remove('leave-fwd', 'leave-back'); } });
     if (prev) {
       prev.classList.remove('is-on', 'enter-fwd', 'enter-back');
       prev.classList.add(dir > 0 ? 'leave-fwd' : 'leave-back');
-      setTimeout(() => prev.classList.remove('leave-fwd', 'leave-back'), 700);
+      clearTimeout(prev._lt);
+      prev._lt = setTimeout(() => prev.classList.remove('leave-fwd', 'leave-back'), 700);
       leave(prev);
     }
+    clearTimeout(next._lt);
     cur = i;
     step = atEnd ? maxSteps(next) : 0;
     next.classList.remove('leave-fwd', 'leave-back');
@@ -176,7 +179,19 @@
     },
     ba: { enter(sl, t) { baSweep(t); } },
     prod: {
-      enter(sl) { $$('iframe[data-src]', sl).forEach((f) => { if (!f.src) f.src = f.dataset.src; }); },
+      enter(sl) {
+        $$('iframe[data-src]', sl).forEach((f) => {
+          if (f.src) return;
+          f.addEventListener('load', () => {
+            try {
+              const st = f.contentDocument.createElement('style');
+              st.textContent = '.demo-rail, .demo-tab, .demo-menu, [class^="cm-"], [class*=" cm-"] { display: none !important; }';
+              f.contentDocument.head.appendChild(st);
+            } catch (e) { /* otro origen: se queda como está */ }
+          }, { once: true });
+          f.src = f.dataset.src;
+        });
+      },
     },
     // beneficios y, en el paso 1, el cierre con confeti
     end: {
@@ -196,7 +211,19 @@
     $('#btnTag').textContent = k >= 5 ? 'Ataskate DS · Primary Large' : k ? 'Transformando…' : 'Referencia: Square';
   }
 
-  // editor de artículo: cada paso pasa una zona al DS
+  // editor de artículo: cada paso pasa una zona al DS y la cámara se acerca a esa zona
+  const host = $('#edHost');
+  const VIEW = { w: 972, h: 628, z: 0.7136 };
+  function camera(zone) {
+    if (!zone) { host.style.transform = `scale(${VIEW.z})`; return; }
+    let x = 0, y = 0, el = zone;
+    while (el && el !== ed) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; }
+    const z = 1.05, cx = x + zone.offsetWidth / 2, cy = y + zone.offsetHeight / 2;
+    const tx = Math.min(0, Math.max(VIEW.w - 1360 * z, VIEW.w / 2 - cx * z));
+    const ty = Math.min(0, Math.max(VIEW.h - 880 * z, VIEW.h / 2 - cy * z));
+    host.style.transform = `translate(${tx}px, ${ty}px) scale(${z})`;
+  }
+  const ZONES = { 3: '.ed-col', 4: '.z-desc', 5: '.z-vis', 6: '.z-media' };
   async function editor(k, animate) {
     ED_STEPS.forEach((c, i) => ed.classList.toggle(c, k > i));
     const items = $$('.ed-step');
@@ -204,39 +231,50 @@
     $('#edUrl').textContent = k >= 2 ? 'ataskate · Inventario · Agregar artículo' : 'Referencia: Square · Add Item (recreación)';
     const etb = $('.etb', ed), wrap = $('.etb-wrap', ed);
     wrap.classList.remove('is-bad'); etb.classList.remove('is-bad');
+    camera(animate && ZONES[k] ? $(ZONES[k], ed) : null);
     if (animate) {
       const zone = { 1: '.ed-card', 2: '.ed-head', 3: '.z-fields', 4: '.z-desc .eta', 5: '.eseg', 6: '.emedia' }[k];
       const el = zone && $(zone, ed);
       if (el) { el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
     }
+    const t = token;
     if (k === 4 && animate) {
       // la barra de formato se muestra marcada un momento antes de irse
       ed.classList.remove('t-desc'); wrap.classList.add('is-bad'); etb.classList.add('is-bad');
-      const t = token; await wait(1300); if (t !== token || step !== 4) return;
+      await wait(1300); if (t !== token || step !== 4) return;
       wrap.classList.remove('is-bad'); etb.classList.remove('is-bad'); ed.classList.add('t-desc');
+    }
+    if (k === 6 && animate) {
+      // al terminar, la cámara se aleja para ver la página completa
+      await wait(2600); if (t !== token || step !== 6) return;
+      camera(null);
     }
   }
 
   // antes / después con jalador
   const ba = $('#ba');
-  let baDrag = false;
+  let baDrag = false, baUser = false;
   const setX = (p) => ba.style.setProperty('--x', `${Math.max(0, Math.min(100, p))}%`);
   const fromEvent = (e) => { const r = ba.getBoundingClientRect(); setX(((e.clientX - r.left) / r.width) * 100); };
-  ba.addEventListener('pointerdown', (e) => { baDrag = true; ba.setPointerCapture(e.pointerId); fromEvent(e); });
+  ba.addEventListener('pointerdown', (e) => { baDrag = true; baUser = true; ba.setPointerCapture(e.pointerId); fromEvent(e); });
   ba.addEventListener('pointermove', (e) => { if (baDrag) fromEvent(e); });
   ba.addEventListener('pointerup', () => { baDrag = false; });
   async function baSweep(t) {
     const anim = (a, b, ms) => new Promise((res) => {
       const t0 = performance.now();
       const f = (now) => {
-        if (t !== token || baDrag) return res();
+        if (t !== token || baUser) return res();
         const p = Math.min(1, (now - t0) / ms); const e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
         setX(a + (b - a) * e); p < 1 ? requestAnimationFrame(f) : res();
       };
       requestAnimationFrame(f);
     });
+    baUser = false;
     setX(100);
-    await wait(900); await anim(100, 8, 1800); await wait(400); await anim(8, 50, 1100);
+    await wait(900); if (baUser || t !== token) return;
+    await anim(100, 8, 1800); if (baUser || t !== token) return;
+    await wait(400); if (baUser || t !== token) return;
+    await anim(8, 50, 1100);
   }
 
   // confeti del cierre, en los colores de las ilustraciones del DS
@@ -260,7 +298,7 @@
   $('.cover__start .pill').addEventListener('click', next);
   $('.cover__start .pill').style.cursor = 'pointer';
   addEventListener('keydown', (e) => {
-    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
     if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }
     else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
     else if (e.key === 'Home') go(0, -1);
@@ -271,7 +309,7 @@
   });
   // deslizar en pantallas táctiles
   let tx = null;
-  addEventListener('touchstart', (e) => { tx = e.touches[0].clientX; }, { passive: true });
+  addEventListener('touchstart', (e) => { tx = e.target.closest && e.target.closest('#ba') ? null : e.touches[0].clientX; }, { passive: true });
   addEventListener('touchend', (e) => {
     if (tx == null || baDrag) return;
     const dx = e.changedTouches[0].clientX - tx; tx = null;
@@ -282,6 +320,7 @@
   const wake = () => { ctrl.classList.remove('is-idle'); clearTimeout(idle); idle = setTimeout(() => ctrl.classList.add('is-idle'), 2500); };
   addEventListener('mousemove', wake); wake();
 
-  const start = Math.min(total, Math.max(1, parseInt(location.hash.slice(1), 10) || 1)) - 1;
-  go(start, 1);
+  const fromHash = () => Math.min(total, Math.max(1, parseInt(location.hash.slice(1), 10) || 1)) - 1;
+  addEventListener('hashchange', () => { const n = fromHash(); if (n !== cur) go(n, n > cur ? 1 : -1); });
+  go(fromHash(), 1);
 })();
