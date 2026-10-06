@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="../ds/components.css" />
 <link rel="stylesheet" href="../pos.css?v=ux54" />
 <link rel="stylesheet" href="../v2/v2.css?v=8" />
-<link rel="stylesheet" href="prendario.css?v=5" />
+<link rel="stylesheet" href="prendario.css?v=6" />
 </head>
 <body class="pos pr">
 
@@ -215,6 +215,8 @@
         <tbody id="prPrendas"></tbody>
       </table>
     </div>
+    <!-- titular del contrato: nombre, correo y teléfono (cada dato solo si el cliente lo tiene) -->
+    <div class="pr-titular" id="prTitular"></div>
   </section>
 </main>
 
@@ -408,6 +410,8 @@
   // el refrendo y el desempeño son del contrato completo (todas sus prendas); avalúo, préstamo, estado y ubicación son de cada prenda
   const CONTRATO = {
     folio: '100C35643', cliente: 'Francisca Morales', sucursal: 'Centro Histórico',
+    // datos de muestra del titular; correo y teléfono son opcionales
+    titular: { correo: 'francisca.morales@ejemplo.com', telefono: '55 1234 5678', desde: 'mar 2023', contratos: 3 },
     plazo: 'Electrónicos +', frecuencia: 'Refrendo ilimitado',
     tasa: 8.5,          // interés del periodo (%)
     tasaGracia: 14.5,   // interés de periodo de gracia (%), el que aplica con el contrato en mora
@@ -516,6 +520,26 @@
 
     // el nombre del cliente lleva a su perfil (pantalla aún sin prototipo: avisa con un toast)
     $('prContrato').querySelector('.pr-cliente').addEventListener('click', (e) => {
+      e.preventDefault();
+      toast('Perfil del cliente', 'Aquí se abre el perfil de ' + CONTRATO.cliente + ' con sus contratos y datos.');
+    });
+
+    // tarjeta del titular, debajo de las prendas
+    const T = CONTRATO.titular || {};
+    const iniciales = CONTRATO.cliente.split(' ').map((w) => w[0]).slice(0, 2).join('');
+    const ICO_MAIL = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 20C3.45 20 2.97933 19.8043 2.588 19.413C2.196 19.021 2 18.55 2 18V6C2 5.45 2.196 4.97933 2.588 4.588C2.97933 4.196 3.45 4 4 4H20C20.55 4 21.021 4.196 21.413 4.588C21.8043 4.97933 22 5.45 22 6V18C22 18.55 21.8043 19.021 21.413 19.413C21.021 19.8043 20.55 20 20 20H4ZM12 13L4 8V18H20V8L12 13ZM12 11L20 6H4L12 11ZM4 8V6V18V8Z" fill="currentColor"/></svg>';
+    const ICO_CALL = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M19.95 21C17.8667 21 15.8083 20.5458 13.775 19.6375C11.7417 18.7292 9.89167 17.4417 8.225 15.775C6.55833 14.1083 5.27083 12.2583 4.3625 10.225C3.45417 8.19167 3 6.13333 3 4.05C3 3.75 3.1 3.5 3.3 3.3C3.5 3.1 3.75 3 4.05 3H8.1C8.33333 3 8.54167 3.07917 8.725 3.2375C8.90833 3.39583 9.01667 3.58333 9.05 3.8L9.7 7.3C9.73333 7.56667 9.725 7.79167 9.675 7.975C9.625 8.15833 9.53333 8.31667 9.4 8.45L6.975 10.9C7.30833 11.5167 7.70417 12.1125 8.1625 12.6875C8.62083 13.2625 9.125 13.8167 9.675 14.35C10.1917 14.8667 10.7333 15.3458 11.3 15.7875C11.8667 16.2292 12.4667 16.6333 13.1 17L15.45 14.65C15.6 14.5 15.7958 14.3875 16.0375 14.3125C16.2792 14.2375 16.5167 14.2167 16.75 14.25L20.2 14.95C20.4333 15.0167 20.625 15.1375 20.775 15.3125C20.925 15.4875 21 15.6833 21 15.9V19.95C21 20.25 20.9 20.5 20.7 20.7C20.5 20.9 20.25 21 19.95 21ZM6.025 9L7.675 7.35L7.25 5H5.025C5.10833 5.68333 5.225 6.35833 5.375 7.025C5.525 7.69167 5.74167 8.35 6.025 9ZM14.975 17.95C15.625 18.2333 16.2875 18.4583 16.9625 18.625C17.6375 18.7917 18.3167 18.9 19 18.95V16.75L16.65 16.275L14.975 17.95Z" fill="currentColor"/></svg>';
+    const dato = (ico, etiqueta, valor, href) => '<li><span class="pr-titular__ic">' + ico + '</span><span><small>' + etiqueta + '</small>'
+      + (valor ? '<a href="' + href + '">' + valor + '</a>' : '<em>Sin registrar</em>') + '</span></li>';
+    $('prTitular').innerHTML = '<div class="pr-titular__who"><span class="pr-titular__av" aria-hidden="true">' + iniciales + '</span>'
+      + '<div><span class="pr-titular__k">Titular del contrato</span><b>' + CONTRATO.cliente + '</b>'
+      + '<span class="pr-titular__meta">Cliente desde ' + T.desde + ' · ' + T.contratos + ' contratos</span></div></div>'
+      + '<ul class="pr-titular__datos">'
+      + dato(ICO_MAIL, 'Correo', T.correo, 'mailto:' + T.correo)
+      + dato(ICO_CALL, 'Teléfono', T.telefono, 'tel:' + (T.telefono || '').replace(/\s/g, ''))
+      + '</ul>'
+      + '<a class="ds-btn ds-btn--secondary ds-btn--md pr-titular__btn pr-cliente-perfil" href="#perfil-cliente">Ver perfil</a>';
+    $('prTitular').querySelector('.pr-cliente-perfil').addEventListener('click', (e) => {
       e.preventDefault();
       toast('Perfil del cliente', 'Aquí se abre el perfil de ' + CONTRATO.cliente + ' con sus contratos y datos.');
     });

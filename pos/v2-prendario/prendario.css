@@ -113,3 +113,22 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 16px); }
 .pr-cliente { color: var(--ats-primary-300); font-weight: var(--font-weight-semibold); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; border-radius: 2px; }
 .pr-cliente:hover { color: var(--ats-primary-400); }
 .pr-cliente:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
+
+/* titular del contrato, debajo de las prendas: tarjeta blanca con avatar de iniciales, correo y teléfono */
+.pr-titular { margin-top: var(--spacing-4); display: flex; align-items: center; gap: var(--spacing-5); flex-wrap: wrap; padding: var(--spacing-4) var(--spacing-5); border: 1px solid var(--ats-neutral-300); border-radius: var(--radius-md); background: #fff; }
+.pr-titular__who { display: flex; align-items: center; gap: var(--spacing-3); min-width: 240px; }
+.pr-titular__av { flex: none; width: 48px; height: 48px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--ats-primary-100); color: var(--ats-primary-400); font-size: 18px; font-weight: var(--font-weight-semibold); }
+.pr-titular__who div { display: flex; flex-direction: column; gap: 2px; }
+.pr-titular__k { font-size: 12px; line-height: 1; color: var(--ats-neutral-600); }
+.pr-titular__who b { font-size: 18px; line-height: 1.3; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
+.pr-titular__meta { font-size: 14px; color: var(--ats-neutral-600); }
+.pr-titular__datos { display: flex; gap: var(--spacing-5); flex-wrap: wrap; margin: 0; padding: 0; list-style: none; flex: 1; }
+.pr-titular__datos li { display: flex; align-items: center; gap: var(--spacing-2); min-width: 0; }
+.pr-titular__ic { flex: none; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--ats-primary-50); color: var(--ats-primary-300); }
+.pr-titular__ic svg { width: 20px; height: 20px; }
+.pr-titular__datos small { display: block; font-size: 12px; line-height: 1.2; color: var(--ats-neutral-600); }
+.pr-titular__datos a { font-size: 16px; color: var(--ats-neutral-700); text-decoration: none; }
+.pr-titular__datos a:hover { color: var(--ats-primary-300); text-decoration: underline; text-underline-offset: 3px; }
+.pr-titular__datos em { font-style: normal; font-size: 16px; color: var(--ats-neutral-400); }
+.pr-titular__btn { margin-left: auto; }
+@media (max-width: 760px) { .pr-titular { flex-direction: column; align-items: flex-start; } .pr-titular__btn { margin-left: 0; } }
