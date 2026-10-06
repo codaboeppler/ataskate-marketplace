@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Design System Ataskate</title>
+<meta name="description" content="Presentación animada del Design System de Ataskate: sus piezas, sus leyes y una página de producto transformada con el DS." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Platypi:wght@500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="deck.css?v=3" />
+</head>
+<body>
+<div class="deck" id="deck">
+<div class="stage" id="stage">
+
+<!-- 1 · portada -->
+<section class="slide cover" data-title="Portada">
+  <div class="cover__blob"></div>
+  <div class="cover__ring spin-slow"></div>
+  <img class="logo" src="../pos/assets/logo-ataskate.svg" alt="Ataskate" data-a="down" />
+  <div class="cover__txt">
+    <span class="kicker" data-a="up" style="--d:.2s"><i class="ic" data-i="GridView"></i>Design System</span>
+    <h1 class="h1 words" style="--d:.35s">Una sola forma de diseñar <em>Ataskate</em></h1>
+    <p class="lead" data-a="up" style="--d:1.2s">Las piezas, las leyes y los personajes con los que construimos el Operativo, el Administrativo y el Marketplace.</p>
+  </div>
+  <div class="cover__ground"></div>
+  <div class="m" style="left:1180px; top:90px; width:250px;" data-a="drop" data-d=".6"><div class="bob-slow"><img src="ilus/ilust-07-color.svg" alt="" /></div></div>
+  <div class="m" style="left:1040px; top:340px; width:340px;" data-a="right" data-d="1"><div class="sway"><img src="ilus/ilust-15-color.svg" alt="" /></div></div>
+  <div class="m" style="left:1400px; top:520px; width:120px;" data-a="pop" data-d="1.4"><div class="bob"><img src="ilus/propuesta-cactus-tall.svg" alt="" /></div></div>
+  <div class="m run" style="top:735px; width:150px; --dur:12s; --d:1s;"><img src="ilus/ilust-02-color.svg" alt="" /></div>
+  <div class="m run-back" style="top:750px; width:130px; --dur:15s; --d:3s;"><img src="ilus/ilust-06-color.svg" alt="" /></div>
+  <div class="cover__start" data-a="up" style="--d:1.6s"><span class="pill">Empezar <i class="ic" data-i="ArrowForwardIos"></i></span> o usa las flechas del teclado</div>
+</section>
+
+<!-- 2 · qué es el DS -->
+<section class="slide" data-title="Qué es" data-hook="counters">
+  <span class="kicker" data-a="up"><i class="ic" data-i="Category"></i>Nuestro Design System</span>
+  <h2 class="h2" data-a="up" style="--d:.1s">Piezas pequeñas que arman <em>pantallas completas</em></h2>
+  <p class="lead" data-a="up" style="--d:.2s; max-width:980px">El mismo sistema vive en Figma y en código. Diseño y desarrollo usan los mismos nombres, colores y medidas.</p>
+  <div class="layers">
+    <div class="layer" data-a="up" style="--d:.4s">
+      <span class="layer__tag">1</span>
+      <h3>Tokens</h3>
+      <p>Las decisiones base: colores, tipografía, espacios y radios.</p>
+      <div class="tok-row">
+        <i class="sw" style="background:#5a5aff"></i><i class="sw" style="background:#0d166b"></i><i class="sw" style="background:#f0f0ff"></i><i class="sw" style="background:#e5e5ff"></i><i class="sw" style="background:#2a2c2f"></i><i class="sw" style="background:#d4d6d8"></i>
+      </div>
+      <div class="space-bars"><span style="height:4px"></span><span style="height:8px"></span><span style="height:12px"></span><span style="height:16px"></span><span style="height:24px"></span><span style="height:32px"></span><span style="height:48px"></span><span style="height:64px"></span></div>
+    </div>
+    <div class="arrow-x" data-a="fade" style="--d:.7s"><i class="ic" data-i="ArrowForwardIos"></i></div>
+    <div class="layer" data-a="up" style="--d:.8s">
+      <span class="layer__tag">2</span>
+      <h3>Componentes</h3>
+      <p>Botones, campos, chips, tarjetas y tablas, armados con esos tokens.</p>
+      <div class="mini-comp">
+        <span style="display:inline-flex; align-items:center; height:36px; padding:0 16px; border-radius:100px; background:var(--pri); color:#fff; font-weight:700; font-size:14px;">Guardar</span>
+        <span style="display:inline-flex; align-items:center; height:36px; padding:0 16px; border-radius:100px; background:#fff; color:var(--pri); border:1px solid var(--pri); font-weight:700; font-size:14px;">Cancelar</span>
+        <span class="chip" style="background:#d1ffd1; color:#174a2e; height:18px; font-size:12px; padding:0 4px;">Activo</span>
+        <span class="chip" style="background:#ffebba; color:#614500; height:18px; font-size:12px; padding:0 4px;">Pausado</span>
+        <span style="display:flex; align-items:center; width:100%; height:40px; padding:0 12px; border-radius:100px; border:1px solid #d4d6d8; color:#a1a5aa; font-size:15px;">Buscar artículo</span>
+      </div>
+    </div>
+    <div class="arrow-x" data-a="fade" style="--d:1.1s"><i class="ic" data-i="ArrowForwardIos"></i></div>
+    <div class="layer" data-a="up" style="--d:1.2s">
+      <span class="layer__tag">3</span>
+      <h3>Pantallas</h3>
+      <p>Inventario, detalle del artículo, cotizador… todas con las mismas piezas.</p>
+      <div class="mini-screen"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+  </div>
+  <div class="counters" data-a="up" style="--d:1.5s">
+    <div class="counter"><b data-count="53">0</b><span>componentes y fundamentos documentados</span></div>
+    <div class="counter"><b data-count="372">0</b><span>íconos</span></div>
+    <div class="counter"><b data-count="47">0</b><span>colores con nombre</span></div>
+    <div class="counter"><b data-count="42">0</b><span>ilustraciones (nuestros muñequitos)</span></div>
+  </div>
+  <div class="m" style="left:1400px; top:36px; width:150px;" data-a="drop" data-d=".5"><div class="bob"><img src="ilus/ilust-17-color.svg" alt="" /></div></div>
+</section>
+
+<!-- 3 · las 8 leyes -->
+<section class="slide" data-title="Las 8 leyes">
+  <span class="kicker" data-a="up"><i class="ic" data-i="Checklist"></i>Las leyes del DS</span>
+  <h2 class="h2" data-a="up" style="--d:.1s">8 reglas que <em>no se negocian</em></h2>
+  <div class="laws">
+    <div class="law" data-a="pop" style="--d:.3s">
+      <div class="md md-color"><span class="is-main" style="--c:#5a5aff">Guardar</span><span style="--c:#16a34a"></span><span style="--c:#f97316"></span><span style="--c:#0ea5e9"></span><span style="--c:#db2777"></span></div>
+      <span class="law__n">LEY 1</span><h4>Un solo color para actuar</h4><p>#5A5AFF es acción; nada más compite.</p><span class="law__ux">Efecto Von Restorff</span>
+    </div>
+    <div class="law" data-a="pop" style="--d:.4s">
+      <div class="md md-gap"><i></i><i></i><i></i><i></i><b class="a">7</b><b class="a">13</b><b class="a">22</b><b class="z">16</b><b class="z">16</b><b class="z">16</b></div>
+      <span class="law__n">LEY 2</span><h4>Todo mide múltiplos de 4</h4><p>4 · 8 · 12 · 16 · 24 · 32 · 48 · 64</p><span class="law__ux">Proximidad (Gestalt)</span>
+    </div>
+    <div class="law" data-a="pop" style="--d:.5s">
+      <div class="md md-type"><span style="font-family:'Times New Roman',serif">Agregar</span><span style="font-family:'Courier New',monospace">Agregar</span><span style="font-family:Impact,sans-serif">Agregar</span><span style="font-family:Georgia,serif">Agregar</span><span class="is-final">Agregar</span><small>Nunito · Platypi</small></div>
+      <span class="law__n">LEY 3</span><h4>Dos voces, 16 escalas</h4><p>Nunito para operar; Platypi para el Marketplace.</p><span class="law__ux">Jerarquía visual</span>
+    </div>
+    <div class="law" data-a="pop" style="--d:.6s">
+      <div class="md md-shape"><span>Guardar</span></div>
+      <span class="law__n">LEY 4</span><h4>La forma dice qué es</h4><p>Píldora: acción o campo. 16 px: tarjeta. 4 px: chip.</p><span class="law__ux">Affordance</span>
+    </div>
+    <div class="law" data-a="pop" style="--d:.7s">
+      <div class="md md-fitts"><u>guardar</u><span>Guardar</span><svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 2-3 6z" fill="#fff" stroke="#1d1e20" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+      <span class="law__n">LEY 5</span><h4>Fácil de tocar</h4><p>Botones de 36 a 40 px; campos de 40 px.</p><span class="law__ux">Ley de Fitts</span>
+    </div>
+    <div class="law" data-a="pop" style="--d:.8s">
+      <div class="md md-hick"><span class="x">Duplicar</span><span class="x">Imprimir</span><span class="x">Exportar</span><span class="more">⋮</span><span class="p">Refrendar</span></div>
+      <span class="law__n">LEY 6</span><h4>Una acción principal</h4><p>Un Primary por pantalla; lo demás, en “más acciones”.</p><span class="law__ux">Ley de Hick</span>
+    </div>
+    <div class="law" data-a="pop" style="--d:.9s">
+      <div class="md md-jakob"><span><i></i><b>Op</b></span><span><i></i><b>Admin</b></span><span><i></i><b>Market</b></span></div>
+      <span class="law__n">LEY 7</span><h4>Igual en todos lados</h4><p>Las mismas piezas en las tres apps.</p><span class="law__ux">Ley de Jakob</span>
+    </div>
+    <div class="law" data-a="pop" style="--d:1s">
+      <div class="md md-only"><i class="ic" data-i="Search"></i><i class="ic" data-i="Inventory"></i><i class="ic" data-i="Storefront"></i><i class="ic" data-i="Sync"></i><span class="rg">B <em>I</em> <u>U</u></span><span class="st">No está en el DS</span></div>
+      <span class="law__n">LEY 8</span><h4>Si no está en el DS, no va</h4><p>Lo que falta se propone al DS, no se inventa.</p><span class="law__ux">Consistencia (Nielsen)</span>
+    </div>
+  </div>
+  <div class="m" style="left:1390px; top:40px; width:160px;" data-a="right" data-d=".4"><div class="sway"><img src="ilus/ilust-19-color.svg" alt="" /></div></div>
+</section>
+
+<!-- 4 · comparación: un botón -->
+<section class="slide" data-title="Un botón" data-steps="5" data-hook="button">
+  <span class="kicker" data-a="up"><i class="ic" data-i="CompareArrows"></i>Comparación</span>
+  <h2 class="h2" data-a="up" style="--d:.1s">De un botón de Square a <em>uno de Ataskate</em></h2>
+  <p class="lead" data-a="up" style="--d:.2s; max-width:980px">Mismo botón, cinco decisiones del DS. Cada flecha → aplica una.</p>
+  <div class="btnlab">
+    <div class="btnlab__stage" data-a="zoom" style="--d:.3s">
+      <span class="btnlab__tag" id="btnTag">Referencia: Square</span>
+      <button class="morph" id="morph" type="button"><span class="sw-t"><span class="en">Save</span><span class="es">Guardar</span></span></button>
+    </div>
+    <div class="spec" data-a="right" style="--d:.4s">
+      <div class="spec__row" data-row="1"><b>Color</b><span class="from">Azul #006AFF</span><span class="ar"><i class="ic" data-i="ArrowForwardIos"></i></span><span class="to">#5A5AFF<small>Primary · hover #0D166B</small></span></div>
+      <div class="spec__row" data-row="2"><b>Forma</b><span class="from">Esquinas de 6 px</span><span class="ar"><i class="ic" data-i="ArrowForwardIos"></i></span><span class="to">Píldora<small>radius full</small></span></div>
+      <div class="spec__row" data-row="3"><b>Tipografía</b><span class="from">Sans 500</span><span class="ar"><i class="ic" data-i="ArrowForwardIos"></i></span><span class="to">Nunito Bold<small>16 / 19 en Large</small></span></div>
+      <div class="spec__row" data-row="4"><b>Tamaño</b><span class="from">42 px de alto</span><span class="ar"><i class="ic" data-i="ArrowForwardIos"></i></span><span class="to">40 px<small>Large · padding 8 / 16</small></span></div>
+      <div class="spec__row" data-row="5"><b>Texto</b><span class="from">“Save”</span><span class="ar"><i class="ic" data-i="ArrowForwardIos"></i></span><span class="to">“Guardar”<small>verbo claro, en español</small></span></div>
+    </div>
+  </div>
+  <div class="m" style="left:1330px; top:40px; width:200px;" data-a="drop" data-d=".5"><div class="bob"><img src="ilus/ilust-09-color.svg" alt="" /></div></div>
+</section>
+
+<!-- 5 · transformación: editor de artículo -->
+<section class="slide" data-title="Transformación" data-steps="6" data-hook="editor">
+  <span class="kicker" data-a="up"><i class="ic" data-i="Sync"></i>Transformación</span>
+  <h2 class="h2" data-a="up" style="--d:.1s; font-size:48px; line-height:56px">La página de producto de Square, <em>con nuestro DS</em></h2>
+  <div class="frame ed-frame" data-a="up" style="--d:.3s">
+    <div class="frame__bar"><i></i><i></i><i></i><span class="frame__url" id="edUrl">Referencia: Square · Add Item (recreación)</span></div>
+    <div class="ed-viewport"><div class="ed-scale" id="edHost"></div></div>
+  </div>
+  <div class="ed-steps" id="edSteps">
+    <div class="ed-step" data-a="right" style="--d:.4s"><span class="ed-step__n"><em>1</em><i class="ic" data-i="Check"></i></span><div><b>Fondo, tarjeta y Nunito</b><span>Página #FBFBFE, tarjeta con radio 16.</span></div></div>
+    <div class="ed-step" data-a="right" style="--d:.5s"><span class="ed-step__n"><em>2</em><i class="ic" data-i="Check"></i></span><div><b>Breadcrumb, título y botones</b><span>Una sola acción Primary; píldoras de 40 px.</span></div></div>
+    <div class="ed-step" data-a="right" style="--d:.6s"><span class="ed-step__n"><em>3</em><i class="ic" data-i="Check"></i></span><div><b>TextInput y Select</b><span>Campos píldora de 40 px; Tipo: Comercial.</span></div></div>
+    <div class="ed-step" data-a="right" style="--d:.7s"><span class="ed-step__n"><em>4</em><i class="ic" data-i="Check"></i></span><div><b>Descripción</b><span>La barra de formato no está en el DS: fuera.</span></div></div>
+    <div class="ed-step" data-a="right" style="--d:.8s"><span class="ed-step__n"><em>5</em><i class="ic" data-i="Check"></i></span><div><b>Visibilidad</b><span>Se vuelve un TabsButton del DS.</span></div></div>
+    <div class="ed-step" data-a="right" style="--d:.9s"><span class="ed-step__n"><em>6</em><i class="ic" data-i="Check"></i></span><div><b>Fotos y aviso</b><span>Dropzone del DS y un muñequito.</span></div></div>
+  </div>
+</section>
+
+<!-- 6 · antes / después -->
+<section class="slide" data-title="Antes y después" data-hook="ba">
+  <span class="kicker" data-a="up"><i class="ic" data-i="CompareArrows"></i>Antes y después</span>
+  <h2 class="h2" data-a="up" style="--d:.1s; font-size:48px; line-height:56px">Arrastra para comparar</h2>
+  <div class="ba" id="ba" data-a="up" style="--d:.25s">
+    <div class="ba__layer ba__bottom"><div class="ed-scale" id="baA"></div></div>
+    <div class="ba__layer ba__top"><div class="ed-scale" id="baB"></div></div>
+    <div class="ba__handle"><span class="ba__lbl l">Square</span><span class="ba__lbl r">Ataskate DS</span><span class="ba__knob"><i class="ic" data-i="CompareArrows"></i></span></div>
+  </div>
+  <div class="m" style="left:1330px; top:20px; width:210px;" data-a="drop" data-d=".6"><div class="bob"><img src="ilus/ilust-10-color.svg" alt="" /></div></div>
+</section>
+
+<!-- 7 · en producción -->
+<section class="slide" data-title="En producción" data-hook="prod">
+  <span class="kicker" data-a="up"><i class="ic" data-i="Storefront"></i>Ya lo estamos usando</span>
+  <h2 class="h2" data-a="up" style="--d:.1s">Pantallas reales, <em>hechas con el DS</em></h2>
+  <div class="prod">
+    <div class="prod__item" data-a="left" style="--d:.3s">
+      <div class="prod__frame"><div class="frame__bar"><i></i><i></i><i></i><span class="frame__url">Operativo · Inventario</span></div><iframe data-src="../pos/inventario/" title="Inventario" loading="lazy" tabindex="-1"></iframe></div>
+      <div class="prod__cap"><i class="ic" data-i="Inventory" style="color:var(--pri)"></i>Inventario <span>· búsqueda, filtros y tarjetas del DS</span></div>
+    </div>
+    <div class="prod__item" data-a="right" style="--d:.45s">
+      <div class="prod__frame"><div class="frame__bar"><i></i><i></i><i></i><span class="frame__url">Operativo · Detalles del artículo</span></div><iframe data-src="../pos/v2/" title="Detalles del artículo" loading="lazy" tabindex="-1"></iframe></div>
+      <div class="prod__cap"><i class="ic" data-i="Search" style="color:var(--pri)"></i>Detalles del artículo <span>· breadcrumb, tabs y botones del DS</span></div>
+    </div>
+  </div>
+  <div class="m" style="left:1360px; top:40px; width:170px;" data-a="drop" data-d=".6"><div class="bob"><img src="ilus/propuesta-computador-lupa.png" alt="" /></div></div>
+</section>
+
+<!-- 8 · beneficios y cierre -->
+<section class="slide end" data-title="Qué ganamos" data-steps="1" data-hook="end">
+  <div class="confetti" id="confetti"></div>
+  <div class="end__a">
+  <span class="kicker" data-a="up"><i class="ic" data-i="TrendingUp"></i>Qué gana el negocio</span>
+  <h2 class="h2" data-a="up" style="--d:.1s">Menos tiempo diseñando, <em>más tiempo construyendo</em></h2>
+  <div class="wins">
+    <div class="win" data-a="up" style="--d:.3s"><span class="law__ic"><i class="ic" data-i="Schedule"></i></span><h4>Velocidad</h4><p>Las pantallas nuevas se arman con piezas que ya existen y ya se probaron.</p><span class="win__m"><img src="ilus/ilust-16-color.svg" alt="" class="bob" /></span></div>
+    <div class="win" data-a="up" style="--d:.45s"><span class="law__ic"><i class="ic" data-i="Checklist"></i></span><h4>Calidad</h4><p>QA revisa contra una sola referencia. Menos errores visuales y menos idas y vueltas.</p><span class="win__m"><img src="ilus/success-message.png" alt="" class="bob-slow" /></span></div>
+    <div class="win" data-a="up" style="--d:.6s"><span class="law__ic"><i class="ic" data-i="Group"></i></span><h4>Una sola marca</h4><p>Operativo, Administrativo y Marketplace se sienten como un mismo producto.</p><span class="win__m"><img src="ilus/mundo-icono.png" alt="" class="bob" /></span></div>
+    <div class="win" data-a="up" style="--d:.75s"><span class="law__ic"><i class="ic" data-i="Sync"></i></span><h4>Figma = código</h4><p>Diseño y desarrollo hablan con los mismos tokens. Lo que se aprueba es lo que se programa.</p><span class="win__m"><img src="ilus/ilust-07-color.svg" alt="" class="bob-slow" /></span></div>
+  </div>
+  </div>
+  <div class="end__b">
+    <h1 class="h1">Un sistema. Una voz. <em>Una experiencia.</em></h1>
+    <p class="lead">Gracias. ¿Preguntas?</p>
+    <img class="end__logo" src="../pos/assets/logo-ataskate.svg" alt="Ataskate" />
+    <div class="parade">
+      <div class="m run" style="top:20px; width:150px; --dur:14s;"><img src="ilus/ilust-02-color.svg" alt="" /></div>
+      <div class="m run" style="top:10px; width:130px; --dur:14s; --d:-2.4s"><img src="ilus/ilust-06-color.svg" alt="" /></div>
+      <div class="m run" style="top:0; width:170px; --dur:14s; --d:-4.8s"><img src="ilus/ilust-15-color.svg" alt="" /></div>
+      <div class="m run" style="top:30px; width:140px; --dur:14s; --d:-7.2s"><img src="ilus/ilust-05-color.svg" alt="" /></div>
+      <div class="m run" style="top:20px; width:140px; --dur:14s; --d:-9.6s"><img src="ilus/ilust-12-color.svg" alt="" /></div>
+      <div class="m run" style="top:10px; width:130px; --dur:14s; --d:-12s"><img src="ilus/ilust-14-color.svg" alt="" /></div>
+    </div>
+  </div>
+</section>
+
+</div>
+</div>
+
+<nav class="ctrl" id="ctrl" aria-label="Controles de la presentación">
+  <button class="ctrl__btn" id="prev" type="button" aria-label="Anterior"><i class="ic" data-i="ArrowBackIos"></i></button>
+  <button class="ctrl__btn" id="next" type="button" aria-label="Siguiente"><i class="ic" data-i="ArrowForwardIos"></i></button>
+  <div class="ctrl__bar"><span id="bar"></span></div>
+  <span class="ctrl__hint"><kbd>←</kbd><kbd>→</kbd> navegar · <kbd>F</kbd> pantalla completa</span>
+  <span class="ctrl__num" id="num">1 / 8</span>
+</nav>
+
+<!-- el editor de artículo, estilo Square; cada zona z-* pasa al DS con su clase t-* -->
+<template id="edTpl">
+  <div class="ed">
+    <div class="ed-head z-head">
+      <div class="ed-crumbwrap">
+        <div class="ed-crumb"><span class="a tx"><span class="en">Items</span><span class="es">Artículos</span></span><i class="ic sep" data-sq="chev" data-i2="ArrowForwardIos"></i><span class="b tx"><span class="en">Add Item</span><span class="es">Agregar artículo</span></span></div>
+        <div class="ed-title">Agregar artículo</div>
+      </div>
+      <div class="ed-acts">
+        <span class="eb s tx"><span class="en">Save and View</span><span class="es">Guardar y ver</span></span>
+        <span class="eb t tx"><span class="en">Cancel</span><span class="es">Cancelar</span></span>
+        <span class="eb p tx"><span class="en">Save</span><span class="es">Guardar</span></span>
+      </div>
+    </div>
+    <div class="ed-card">
+      <h3 class="z-base"><span class="tx"><span class="en">Item Information</span><span class="es">Información del artículo</span></span></h3>
+      <div class="ed-col">
+        <div class="ef z-fields"><label><span class="tx"><span class="en">Item Type</span><span class="es">Tipo de artículo</span></span><i class="ic" data-sq="info" data-i2="Info"></i></label><span class="ein is-sel"><span class="tx"><span class="en">Physical</span><span class="es">Comercial</span></span><i class="ic" data-sq="down" data-i2="Chevron"></i></span></div>
+        <div class="ef z-fields"><label><span class="tx"><span class="en">Item Title</span><span class="es">Nombre del artículo</span></span><i class="ic" data-sq="sync" data-i2="Sync"></i></label><span class="ein is-focus">iPhone 15 Pro 256 GB · Titanio natural</span></div>
+        <div class="ef-row z-fields">
+          <div class="ef"><label><span class="tx"><span class="en">Price</span><span class="es">Precio de venta</span></span><i class="ic" data-sq="sync" data-i2="Sync"></i></label><span class="ein"><span class="pre">$</span><span class="tx"><span class="en">18,999</span><span class="es">$18,999.00</span></span></span></div>
+          <div class="ef"><label><span class="tx"><span class="en">Sale Price</span><span class="es">Precio con descuento</span></span></label><span class="ein is-ph"><span class="pre">$</span><span class="tx"><span class="en">0</span><span class="es">$0.00</span></span></span></div>
+        </div>
+        <div class="ef z-desc">
+          <label><span class="tx"><span class="en">Description</span><span class="es">Descripción</span></span><i class="ic" data-sq="sync" data-i2="Sync"></i></label>
+          <div class="etb-wrap"><div class="etb"><span>Bold</span><span class="it">Italic</span><span>• ≡</span><span>1. ≡</span><span>🔗</span><span>T̸</span></div><span class="etb-stamp">No está en el DS</span></div>
+          <div class="eta"><span class="tx"><span class="en">Apple iPhone 15 Pro in natural titanium, 256 GB. Excellent condition, includes the original charger and box.</span><span class="es">iPhone 15 Pro de titanio natural, 256 GB. En excelente estado, con cargador original y caja.</span></span></div>
+          <div class="eta-help">Want to style your description with bold, italics, or bullets? Unsync your item description in <a>sync settings.</a></div>
+          <div class="eta-count"><span>Máximo 500 caracteres</span><span>92/500</span></div>
+        </div>
+        <div class="ef z-vis">
+          <label><span class="tx"><span class="en">Visibility</span><span class="es">Visibilidad</span></span></label>
+          <div class="eseg"><span class="is-sel tx"><span class="en">Visible</span><span class="es">Visible</span></span><span class="tx"><span class="en">Hidden</span><span class="es">Oculto</span></span><span class="tx"><span class="en">Unavailable</span><span class="es">No disponible</span></span></div>
+          <div class="eseg-help tx"><span class="en">Your item is ready to sell online and will show up in navigation &amp; search results.</span><span class="es">Listo para venderse en línea; aparece en el menú y en las búsquedas.</span></div>
+        </div>
+      </div>
+      <div class="ed-col z-media">
+        <div class="ef">
+          <div class="emedia-head"><span class="tx"><span class="en">Media</span><span class="es">Fotos</span></span><span class="add"><i class="ic" data-sq="plus" data-i2="Add"></i><span class="tx"><span class="en">Add other media types</span><span class="es">Agregar video</span></span></span></div>
+          <div class="emedia">
+            <div class="ephoto"><img src="../pos/assets/inventario/iphone-15-pro.png" alt="" /></div>
+            <div class="eup"><span class="eup__ic"><i class="ic" data-sq="up" data-i2="Upload"></i></span><span class="eup__t">Arrastra elementos aquí o</span><span class="eup__b"><i class="ic" data-i="Search"></i>Busca archivos</span></div>
+          </div>
+        </div>
+        <div class="epromo">
+          <b class="tx"><span class="en">Help boost sales with professional item photos</span><span class="es">Fotos que venden más</span></b>
+          <p class="tx"><span class="en">Photo studio provides stunning item photography at a remarkably low price.</span><span class="es">Fondo claro y tres ángulos: el artículo se entiende mejor y se vende más rápido.</span></p>
+          <div class="acts"><span class="a tx"><span class="en">Learn more about Photo Studio</span><span class="es">Ver guía de fotos</span></span><span class="b tx"><span class="en">Maybe later</span><span class="es">Ahora no</span></span></div>
+          <img class="mascot" src="ilus/propuesta-computador-lupa.png" alt="" />
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script src="deck.js?v=3"></script>
+</body>
+</html>
