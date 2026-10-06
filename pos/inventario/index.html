@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ataskate POS — Inventario</title>
+<meta name="description" content="Ataskate POS (Operativo): inventario de la sucursal, comercial y prendario, con filtros, multi selección y acciones por artículo." />
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../ds/primitives.css" />
+<link rel="stylesheet" href="../ds/semantic.css" />
+<link rel="stylesheet" href="../ds/elevation.css" />
+<link rel="stylesheet" href="../ds/base.css" />
+<link rel="stylesheet" href="../ds/components.css" />
+<link rel="stylesheet" href="../pos.css?v=ux51" />
+<link rel="stylesheet" href="inventario.css?v=1" />
+</head>
+<body class="pos inv">
+<header class="pos-header">
+  <div class="pos-header__menu">
+    <button class="pos-hbtn pos-hbtn--plain pos-menu" type="button" aria-label="Menú">
+      <img src="../assets/menu.svg" width="24" height="24" alt="" />
+    </button>
+    <a class="pos-brand" href="./" aria-label="Ataskate · Operativo">
+      <img class="pos-brand__logo" src="../assets/logo-ataskate.svg" alt="ataskate" />
+      <span class="pos-brand__role">Operativo</span>
+    </a>
+  </div>
+
+  <form class="pos-search" role="search" onsubmit="return false">
+    <input class="pos-search__input" type="search" placeholder="Buscar" aria-label="Buscar en el inventario" />
+    <button class="pos-search__go" type="submit" aria-label="Buscar"><img src="../assets/search.svg" width="24" height="24" alt="" /></button>
+  </form>
+
+  <div class="pos-header__ctas">
+    <button class="pos-hbtn pos-hide-sm" type="button" aria-label="Notificaciones">
+      <img src="../assets/notification.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-hide-xs" type="button" id="posCaja" aria-label="Flujo de fondos · caja abierta" aria-haspopup="dialog" aria-expanded="false" aria-controls="posCajaPanel">
+      <img src="../assets/pos-terminal.svg" width="24" height="24" alt="" />
+      <span class="pos-hbtn__status" aria-hidden="true"></span>
+    </button>
+    <button class="pos-hbtn pos-hide-sm" type="button" id="posAjustes" aria-label="Configuración" aria-haspopup="menu" aria-expanded="false" aria-controls="posAjustesMenu">
+      <img src="../assets/settings.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-cart" type="button" id="posCart" aria-label="Carrito, 0 artículos">
+      <img src="../assets/cart.svg" width="24" height="24" alt="" />
+      <span id="posCartN">0</span>
+    </button>
+    <button class="pos-hbtn pos-profile" type="button" aria-label="RP · Cambiar de usuario">
+      <span class="ds-avatar">RP</span>
+      <img src="../assets/sync.svg" width="24" height="24" alt="" />
+    </button>
+  </div>
+</header>
+
+<!-- paneles del Header (HU-CE-595-F / 573-F): se anclan bajo la barra; los abre y cierra ../navbar.js -->
+<div class="pos-navpanel pos-caja" id="posCajaPanel" role="dialog" aria-labelledby="posCajaTitulo" hidden>
+  <div class="pos-caja__head">
+    <h2 id="posCajaTitulo">Flujo de fondos</h2>
+    <button class="ds-btn ds-btn--primary pos-caja__btn" type="button">Cerrar flujo</button>
+    <button class="pos-caja__x" type="button" aria-label="Cerrar"><img src="../assets/navbar/close.svg" alt="" /></button>
+  </div>
+  <dl class="pos-caja__tiles">
+    <div class="pos-caja__tile"><dt>Saldo total</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Ingresos</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Salidas</dt><dd>$8,038</dd></div>
+  </dl>
+</div>
+<div class="pos-navpanel pos-ajustes" id="posAjustesMenu" role="menu" aria-label="Configuración · sesión de Omar, omar.man@gmail.com" hidden>
+  <div class="pos-ajustes__user" role="presentation">
+    <img src="../assets/navbar/menu-avatar.png" alt="" />
+    <span><b>Omar</b><small>omar.man@gmail.com</small></span>
+  </div>
+  <button class="pos-ajustes__item pos-ajustes__item--plat" type="button" role="menuitem"><img src="../assets/navbar/menu-admin.png" alt="" />Ir a Administrativo</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/sync.svg" alt="" />Sucursal Polanco</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/navbar/logout.svg" alt="" />Cerrar sesión</button>
+</div>
+
+
+<!-- Inventario (Figma "Casa de empeño (Dev)" · Entregable 13 · HU-CE-571 Comercial y HU-CE-572 Prendario) -->
+<main class="inv-main" id="invMain">
+  <h1 class="inv-title">Inventario</h1>
+
+  <section class="inv-toolbar" aria-label="Buscar y vista">
+    <form class="inv-search" role="search" id="invSearch">
+      <input class="inv-search__input" id="invQ" type="search" placeholder="Buscar por" aria-label="Buscar en el inventario" autocomplete="off" />
+      <div class="inv-search__by">
+        <button class="inv-search__by-btn" type="button" id="invByBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="invByMenu"><span id="invByLbl">Artículo</span><span class="inv-ico inv-ico--24" data-ico="dropdown"></span></button>
+        <div class="inv-menu inv-menu--by" id="invByMenu" role="menu" hidden></div>
+      </div>
+      <button class="inv-search__go" type="submit" aria-label="Buscar"><span class="inv-ico inv-ico--24" data-ico="search"></span></button>
+    </form>
+
+    <div class="inv-toolbar__right">
+      <div class="inv-switch">
+        <span id="invFiltrosLbl">Ver filtros</span>
+        <button class="inv-switch__track" type="button" role="switch" id="invVerFiltros" aria-checked="true" aria-labelledby="invFiltrosLbl"><span class="inv-switch__dot"></span></button>
+      </div>
+      <div class="inv-switch">
+        <span id="invMultiLbl">Multi selección</span>
+        <button class="inv-switch__track" type="button" role="switch" id="invMulti" aria-checked="false" aria-labelledby="invMultiLbl"><span class="inv-switch__dot"></span></button>
+      </div>
+      <div class="inv-view" role="group" aria-label="Vista del inventario">
+        <button class="inv-view__btn" type="button" id="invVistaGrid" aria-pressed="true" aria-label="Ver en tarjetas"><span class="inv-ico inv-ico--20" data-ico="grid"></span></button>
+        <button class="inv-view__btn" type="button" id="invVistaLista" aria-pressed="false" aria-label="Ver en lista"><span class="inv-ico inv-ico--20" data-ico="list"></span></button>
+      </div>
+    </div>
+  </section>
+
+  <div class="inv-body" id="invBody">
+    <aside class="inv-filters" id="invFilters" aria-labelledby="invFiltersTitle">
+      <h2 class="inv-filters__title" id="invFiltersTitle">Filtros</h2>
+      <div class="inv-filters__inner" id="invFiltersInner"></div>
+    </aside>
+
+    <section class="inv-results" aria-label="Artículos">
+      <div class="inv-bar">
+        <div class="inv-bar__left">
+          <span class="inv-bar__label">Filtrar por:</span>
+          <button class="inv-link" type="button" id="invLimpiar" hidden><span class="inv-ico inv-ico--20" data-ico="redo"></span>Limpiar filtros</button>
+          <div class="inv-bar__chips" id="invChips"></div>
+        </div>
+        <label class="inv-sort">
+          <span class="inv-visually-hidden">Ordenar</span>
+          <select id="invOrden" aria-label="Ordenar por">
+            <option value="" selected>Ordenar por</option>
+            <option value="recientes">Más recientes</option>
+            <option value="precio-asc">Precio: menor a mayor</option>
+            <option value="precio-desc">Precio: mayor a menor</option>
+            <option value="nombre">Nombre (A–Z)</option>
+          </select>
+          <span class="inv-ico inv-ico--24" data-ico="dropdown"></span>
+        </label>
+      </div>
+      <p class="inv-count" id="invCount" aria-live="polite"></p>
+      <div class="inv-grid" id="invGrid"></div>
+      <div class="inv-empty" id="invEmpty" hidden>
+        <img class="inv-empty__img" src="../assets/inventario/vacio.png" width="216" height="216" alt="" />
+        <p class="inv-empty__txt" id="invEmptyTxt">No tienes inventario disponible</p>
+        <button class="inv-empty__btn" type="button" id="invEmptyBtn">Comienza a empeñar</button>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- pestañas de sesión al pie (Figma: Top Container · "Ventana principal" + "+") -->
+<nav class="inv-sessions" aria-label="Sesiones de trabajo">
+  <span class="inv-sessions__tab is-active" aria-current="page">Ventana principal<span class="inv-ico inv-ico--20 inv-sessions__help" data-ico="help" title="Cada pestaña es una sesión de trabajo con su propio carrito"></span></span>
+  <button class="inv-sessions__add" type="button" aria-label="Abrir otra sesión" title="Abrir otra sesión"><span class="inv-ico inv-ico--20" data-ico="add"></span></button>
+</nav>
+
+<div class="inv-menu inv-menu--card" id="invCardMenu" role="menu" hidden></div>
+<div class="ds-toast-region" id="posToasts" role="region" aria-live="polite"></div>
+
+<script src="inventario.js?v=1"></script>
+<script src="../navbar.js?v=3"></script>
+<script src="../demo.js?v=6"></script>
+<script src="../comentarios.js?v=5"></script>
+</body>
+</html>

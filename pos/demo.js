@@ -5,13 +5,20 @@
 (() => {
   const base = new URL('.', document.currentScript.src);   // …/pos/
   const DEMOS = [
+    ['Inventario', 'POS · artículos a la venta (comercial)', 'inventario/'],
+    ['Inventario prendario', 'POS · artículos empeñados', 'inventario/?tipo=prendario'],
+    ['Inventario vacío', 'POS · sin artículos todavía', 'inventario/?vacio=1'],
     ['Comercial V1', 'POS · popup de apartados', ''],
     ['Comercial V2', 'POS · pestañas Compra | Apartado', 'v2/'],
     ['Prendario', 'POS · artículo en contrato vigente', 'v2-prendario/'],
     ['Prendario en mora', 'POS · contrato en mora vigente', 'v2-prendario/?estado=mora'],
     ['Marketplace', 'Ficha del cliente', 'v2-marketplace/'],
   ];
-  const limpiar = (u) => u.pathname.replace(/index\.html$/, '').replace(/\/?$/, '/') + (u.searchParams.get('estado') === 'mora' ? '?estado=mora' : '');
+  // la ruta sin index.html, más los parámetros que cambian de ficha (mora, tipo de inventario, inventario vacío)
+  const limpiar = (u) => u.pathname.replace(/index\.html$/, '').replace(/\/?$/, '/')
+    + (u.searchParams.get('estado') === 'mora' ? '?estado=mora' : '')
+    + (u.searchParams.get('tipo') === 'prendario' ? '?tipo=prendario' : '')
+    + (u.searchParams.get('vacio') === '1' ? '?vacio=1' : '');
   const aqui = limpiar(new URL(location.href));
 
   const css = document.createElement('style');
