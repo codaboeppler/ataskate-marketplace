@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="ds/elevation.css" />
 <link rel="stylesheet" href="ds/base.css" />
 <link rel="stylesheet" href="ds/components.css" />
-<link rel="stylesheet" href="pos.css?v=ux51" />
+<link rel="stylesheet" href="pos.css?v=ux53" />
 </head>
 <body class="pos">
 
@@ -161,9 +161,8 @@
             <!-- línea tipo plataforma de financiamiento: cómo queda el apartado del "desde" y liga a los demás planes -->
             <div class="pos-buy__plan">
               <span class="pos-buy__plan-ico"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M5 8V19H19V8H16V16L12 14L8 16V8H5ZM5 21C4.45 21 3.97917 20.8042 3.5875 20.4125C3.19583 20.0208 3 19.55 3 19V6.525C3 6.29167 3.0375 6.06667 3.1125 5.85C3.1875 5.63333 3.3 5.43333 3.45 5.25L4.7 3.725C4.88333 3.49167 5.1125 3.3125 5.3875 3.1875C5.6625 3.0625 5.95 3 6.25 3H17.75C18.05 3 18.3375 3.0625 18.6125 3.1875C18.8875 3.3125 19.1167 3.49167 19.3 3.725L20.55 5.25C20.7 5.43333 20.8125 5.63333 20.8875 5.85C20.9625 6.06667 21 6.29167 21 6.525V19C21 19.55 20.8042 20.0208 20.4125 20.4125C20.0208 20.8042 19.55 21 19 21H5ZM5.4 6H18.6L17.75 5H6.25L5.4 6ZM10 8V12.75L12 11.75L14 12.75V8H10Z" fill="currentColor"/></svg></span>
-              <p><span id="posApartadoPlan">Se paga en partes y se entrega al liquidar.</span>
-                <button class="ds-btn ds-btn--tertiary ds-btn--md pos-buy__mas" type="button" id="posPlazosOpen" aria-haspopup="dialog" aria-controls="posPlazos">Comparar <img class="pos-ico--20" src="assets/ds/ArrowForwardIos.svg" alt="" /></button>
-              </p>
+              <p id="posApartadoPlan"><b>3 planes de apartado:</b> pagos en partes y entrega al liquidar.</p>
+              <button class="ds-btn ds-btn--tertiary ds-btn--md pos-buy__mas" type="button" id="posPlazosOpen" aria-haspopup="dialog" aria-controls="posPlazos">Comparar planes <img class="pos-ico--20" src="assets/ds/ArrowForwardIos.svg" alt="" /></button>
             </div>
           </div>
         </div>
@@ -171,14 +170,11 @@
 
       <div class="ds-tabs">
         <div role="tablist" class="ds-tabs__list" aria-label="Información del artículo">
-          <button role="tab" class="ds-tabs__tab" aria-selected="true" aria-controls="posTabNotas" id="posTabNotasBtn">Notas</button>
-          <button role="tab" class="ds-tabs__tab" aria-selected="false" aria-controls="posTabSpecs" id="posTabSpecsBtn">Especificaciones</button>
+          <button role="tab" class="ds-tabs__tab" aria-selected="true" aria-controls="posTabSpecs" id="posTabSpecsBtn">Especificaciones</button>
+          <button role="tab" class="ds-tabs__tab" aria-selected="false" aria-controls="posTabNotas" id="posTabNotasBtn">Notas</button>
           <button role="tab" class="ds-tabs__tab" aria-selected="false" aria-controls="posTabUbic" id="posTabUbicBtn">Ubicación</button>
         </div>
-        <div role="tabpanel" class="ds-tabs__panel" id="posTabNotas" aria-labelledby="posTabNotasBtn">
-          <p class="pos-note">Artículo valuado en sucursal. La pantalla tiene un rasguño leve en la esquina inferior derecha, de unos 5 mm, que solo se nota a contraluz; no afecta la imagen ni la respuesta al tacto. El marco y la parte trasera no tienen golpes ni rayones. Se probaron cámaras, bocinas, micrófono y Face ID, y todo funciona. Incluye cargador original y caja.</p>
-        </div>
-        <div role="tabpanel" class="ds-tabs__panel" id="posTabSpecs" aria-labelledby="posTabSpecsBtn" hidden>
+        <div role="tabpanel" class="ds-tabs__panel" id="posTabSpecs" aria-labelledby="posTabSpecsBtn">
           <dl class="pos-specs">
             <div class="pos-spec"><dt>Almacenamiento</dt><dd>512GB</dd></div>
             <div class="pos-spec"><dt>Cargador</dt><dd>Original</dd></div>
@@ -187,6 +183,9 @@
             <div class="pos-spec"><dt>Operador</dt><dd>Sin operador</dd></div>
             <div class="pos-spec"><dt>Número de modelo</dt><dd>A2160</dd></div>
           </dl>
+        </div>
+        <div role="tabpanel" class="ds-tabs__panel" id="posTabNotas" aria-labelledby="posTabNotasBtn" hidden>
+          <p class="pos-note">Artículo valuado en sucursal. La pantalla tiene un rasguño leve en la esquina inferior derecha, de unos 5 mm, que solo se nota a contraluz; no afecta la imagen ni la respuesta al tacto. El marco y la parte trasera no tienen golpes ni rayones. Se probaron cámaras, bocinas, micrófono y Face ID, y todo funciona. Incluye cargador original y caja.</p>
         </div>
         <div role="tabpanel" class="ds-tabs__panel" id="posTabUbic" aria-labelledby="posTabUbicBtn" hidden>
           <p class="pos-note"><b>Sucursal Centro Histórico</b> · Bodega 2 · Anaquel B-14</p>
@@ -636,9 +635,9 @@
   const planDesde = () => PLANES.reduce((a, b) => (b.hoyMonto < a.hoyMonto ? b : a));
   const pDesde = planDesde();
   $('posApartadoDesde').textContent = mxnC(pDesde.hoyMonto);
-  // la línea explica qué es apartar y cuántos apartados hay (sin montos: esos están en el modal)
-  $('posApartadoPlan').innerHTML = 'Se paga en partes y se entrega al liquidar. Hay <b>' + PLANES.length + ' apartados</b>.';
-  $('posPlazosOpen').setAttribute('aria-label', 'Comparar los ' + PLANES.length + ' apartados');
+  // la línea dice primero cuántos planes hay y luego la regla del apartado (sin montos: esos están en el modal)
+  $('posApartadoPlan').innerHTML = '<b>' + PLANES.length + ' planes de apartado:</b> pagos en partes y entrega al liquidar.';
+  $('posPlazosOpen').setAttribute('aria-label', 'Comparar los ' + PLANES.length + ' planes de apartado');
   // el botón dice qué plan aparta (lo leen los lectores de pantalla; el toast lo confirma al agregar)
   $('posApartar').setAttribute('aria-label', 'Apartar con ' + mxnC(pDesde.hoyMonto) + ' hoy (' + pDesde.nombre + ', ' + pDesde.n + ' pagos ' + pDesde.frecuencia + ' de ' + mxnC(pDesde.pago) + ', total ' + mxnC(pDesde.total) + ')');
   $('posContado').textContent = mxn(PRECIO, 0);

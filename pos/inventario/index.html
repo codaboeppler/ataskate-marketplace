@@ -14,8 +14,8 @@
 <link rel="stylesheet" href="../ds/elevation.css" />
 <link rel="stylesheet" href="../ds/base.css" />
 <link rel="stylesheet" href="../ds/components.css" />
-<link rel="stylesheet" href="../pos.css?v=ux51" />
-<link rel="stylesheet" href="inventario.css?v=1" />
+<link rel="stylesheet" href="../pos.css?v=ux53" />
+<link rel="stylesheet" href="inventario.css?v=16" />
 </head>
 <body class="pos inv">
 <header class="pos-header">
@@ -82,60 +82,64 @@
 
 <!-- Inventario (Figma "Casa de empeño (Dev)" · Entregable 13 · HU-CE-571 Comercial y HU-CE-572 Prendario) -->
 <main class="inv-main" id="invMain">
-  <h1 class="inv-title">Inventario</h1>
-
-  <section class="inv-toolbar" aria-label="Buscar y vista">
-    <form class="inv-search" role="search" id="invSearch">
-      <input class="inv-search__input" id="invQ" type="search" placeholder="Buscar por" aria-label="Buscar en el inventario" autocomplete="off" />
-      <div class="inv-search__by">
-        <button class="inv-search__by-btn" type="button" id="invByBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="invByMenu"><span id="invByLbl">Artículo</span><span class="inv-ico inv-ico--24" data-ico="dropdown"></span></button>
-        <div class="inv-menu inv-menu--by" id="invByMenu" role="menu" hidden></div>
-      </div>
-      <button class="inv-search__go" type="submit" aria-label="Buscar"><span class="inv-ico inv-ico--24" data-ico="search"></span></button>
-    </form>
-
-    <div class="inv-toolbar__right">
-      <div class="inv-switch">
-        <span id="invFiltrosLbl">Ver filtros</span>
-        <button class="inv-switch__track" type="button" role="switch" id="invVerFiltros" aria-checked="true" aria-labelledby="invFiltrosLbl"><span class="inv-switch__dot"></span></button>
-      </div>
-      <div class="inv-switch">
-        <span id="invMultiLbl">Multi selección</span>
-        <button class="inv-switch__track" type="button" role="switch" id="invMulti" aria-checked="false" aria-labelledby="invMultiLbl"><span class="inv-switch__dot"></span></button>
-      </div>
-      <div class="inv-view" role="group" aria-label="Vista del inventario">
-        <button class="inv-view__btn" type="button" id="invVistaGrid" aria-pressed="true" aria-label="Ver en tarjetas"><span class="inv-ico inv-ico--20" data-ico="grid"></span></button>
-        <button class="inv-view__btn" type="button" id="invVistaLista" aria-pressed="false" aria-label="Ver en lista"><span class="inv-ico inv-ico--20" data-ico="list"></span></button>
-      </div>
+  <div class="inv-head">
+    <h1 class="inv-title">Inventario</h1>
+    <!-- importar / exportar: botones Secondary del DS con iconos action/upload y action/download -->
+    <div class="inv-head__actions">
+      <button class="ds-btn ds-btn--secondary ds-btn--md inv-io" type="button" id="invImportar"><span class="inv-ico inv-ico--20" data-ico="upload"></span>Importar</button>
+      <button class="ds-btn ds-btn--secondary ds-btn--md inv-io" type="button" id="invExportar"><span class="inv-ico inv-ico--20" data-ico="download"></span>Exportar</button>
+      <input type="file" id="invArchivo" accept=".csv,text/csv,.xlsx,.xls" hidden />
     </div>
-  </section>
+  </div>
 
   <div class="inv-body" id="invBody">
     <aside class="inv-filters" id="invFilters" aria-labelledby="invFiltersTitle">
-      <h2 class="inv-filters__title" id="invFiltersTitle">Filtros</h2>
+      <div class="inv-filters__head">
+        <h2 class="inv-filters__title" id="invFiltersTitle">Filtros<span class="inv-badge" id="invFiltersN" hidden></span></h2>
+        <button class="inv-fclose" type="button" id="invOcultarFiltros" aria-controls="invFilters" aria-expanded="true" aria-label="Ocultar filtros" title="Ocultar filtros"><span class="inv-ico inv-ico--20" data-ico="panelClose"></span></button>
+      </div>
       <div class="inv-filters__inner" id="invFiltersInner"></div>
     </aside>
 
     <section class="inv-results" aria-label="Artículos">
-      <div class="inv-bar">
-        <div class="inv-bar__left">
-          <span class="inv-bar__label">Filtrar por:</span>
-          <button class="inv-link" type="button" id="invLimpiar" hidden><span class="inv-ico inv-ico--20" data-ico="redo"></span>Limpiar filtros</button>
-          <div class="inv-bar__chips" id="invChips"></div>
+      <!-- barra del buscador: arriba de los artículos, al lado del panel de Filtros -->
+    <section class="inv-toolbar" aria-label="Buscar y vista">
+      <!-- Search field V2 del DS de Figma ("Buscador" · variante con filtro y botón): selector a la izquierda, campo y botón morado.
+           El selector conserva las opciones del DS de QA: Artículo / Contrato / Cliente -->
+      <form class="inv-sf" role="search" id="invSearch">
+        <button class="inv-sf__select" type="button" id="invByBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="invByMenu" aria-label="Buscar por: Artículo"><span id="invByLbl">Artículo</span><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <input class="inv-sf__input" id="invQ" type="text" placeholder="Buscar" aria-label="Buscar en el inventario" autocomplete="off"
+          role="combobox" aria-autocomplete="list" aria-controls="invSugs" aria-expanded="false" />
+        <button class="inv-sf__go" type="submit" id="invGo" aria-label="Buscar"><span class="inv-ico inv-ico--24" data-ico="search"></span></button>
+        <div class="inv-sf__menu" id="invByMenu" role="listbox" aria-label="Buscar por" hidden></div>
+        <div class="inv-sf__list" id="invSugs" role="listbox" aria-label="Resultados" hidden></div>
+      </form>
+
+      <div class="inv-toolbar__right">
+        <div class="inv-switch">
+          <span id="invMultiLbl">Multi selección</span>
+          <button class="inv-switch__track" type="button" role="switch" id="invMulti" aria-checked="false" aria-labelledby="invMultiLbl"><span class="inv-switch__dot"></span></button>
         </div>
-        <label class="inv-sort">
-          <span class="inv-visually-hidden">Ordenar</span>
-          <select id="invOrden" aria-label="Ordenar por">
-            <option value="" selected>Ordenar por</option>
-            <option value="recientes">Más recientes</option>
-            <option value="precio-asc">Precio: menor a mayor</option>
-            <option value="precio-desc">Precio: mayor a menor</option>
-            <option value="nombre">Nombre (A–Z)</option>
-          </select>
-          <span class="inv-ico inv-ico--24" data-ico="dropdown"></span>
-        </label>
+        <div class="inv-view" role="group" aria-label="Vista del inventario">
+          <button class="inv-view__btn" type="button" id="invVistaGrid" aria-pressed="true" aria-label="Ver en tarjetas"><span class="inv-ico inv-ico--20" data-ico="grid"></span></button>
+          <button class="inv-view__btn" type="button" id="invVistaLista" aria-pressed="false" aria-label="Ver en lista"><span class="inv-ico inv-ico--20" data-ico="list"></span></button>
+        </div>
       </div>
-      <p class="inv-count" id="invCount" aria-live="polite"></p>
+    </section>
+      <!-- encabezado de resultados: cuántos hay y, solo si hay filtros activos, cuáles son -->
+      <div class="inv-bar">
+        <div class="inv-sort" id="invSort">
+          <button class="inv-sort__btn" type="button" id="invSortBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="invSortMenu"><span id="invSortLbl">Ordenar por</span><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="inv-sort__menu" id="invSortMenu" role="listbox" aria-label="Ordenar por" hidden></div>
+        </div>
+        <button class="inv-fopen" type="button" id="invMostrarFiltros" aria-controls="invFilters" aria-expanded="false" title="Mostrar filtros" hidden><span class="inv-ico inv-ico--20" data-ico="sliders"></span>Filtros<span class="inv-badge" id="invFopenN" hidden></span></button>
+        <p class="inv-count" id="invCount" aria-live="polite"></p>
+        <div class="inv-activos" id="invActivos" hidden>
+          <span class="inv-activos__label">Filtrando por:</span>
+          <div class="inv-bar__chips" id="invChips"></div>
+          <button class="inv-link" type="button" id="invLimpiar"><span class="inv-ico inv-ico--20" data-ico="redo"></span>Limpiar filtros</button>
+        </div>
+      </div>
       <div class="inv-grid" id="invGrid"></div>
       <div class="inv-empty" id="invEmpty" hidden>
         <img class="inv-empty__img" src="../assets/inventario/vacio.png" width="216" height="216" alt="" />
@@ -155,7 +159,7 @@
 <div class="inv-menu inv-menu--card" id="invCardMenu" role="menu" hidden></div>
 <div class="ds-toast-region" id="posToasts" role="region" aria-live="polite"></div>
 
-<script src="inventario.js?v=1"></script>
+<script src="inventario.js?v=9"></script>
 <script src="../navbar.js?v=3"></script>
 <script src="../demo.js?v=6"></script>
 <script src="../comentarios.js?v=5"></script>

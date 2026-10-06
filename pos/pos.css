@@ -9,7 +9,7 @@
 /* Variables que el Figma usa y el DS en código todavía no tiene */
 :root {
   --pos-surface-page: #fbfbfe;          /* surface/surface-page */
-  --pos-surface-media: #f7f7f7;         /* fondo de fotos de artículo */
+  --pos-surface-media: #f1f2f8;         /* fondo de fotos de artículo: gris con un toque azul (el DS usa #f7f7f7); el mismo del inventario */
   --pos-info-tile: var(--ats-info-blue-50); /* feedback/info/surface #EBF9FF (tiles de envío / sucursal) */
   --pos-warning-surface: #ffebba;       /* feedback/warning/surface */
   --pos-text-title: #1d1e20;            /* text/title */
@@ -22,7 +22,7 @@
 .pos .ds-modal-overlay[hidden], .pos .ds-btn[hidden], .pos .ds-tabs__panel[hidden] { display: none; }
 
 body.pos {
-  background: var(--surface-foreground);
+  background: var(--pos-surface-page);   /* #FBFBFE, el mismo fondo del inventario */
   color: var(--ats-neutral-700);
   min-width: 320px;
 }
@@ -263,10 +263,11 @@ body.pos {
 }
 .pos-buy__plan-ico { flex: none; display: inline-flex; color: var(--ats-primary-300); }
 .pos-buy__plan-ico svg { width: 20px; height: 20px; }
-.pos-buy__plan p { margin: 0; min-width: 0; font-size: 14px; line-height: 20px; color: var(--ats-neutral-600); }
+.pos-buy__plan p { flex: 1; margin: 0; min-width: 0; font-size: 14px; line-height: 20px; color: var(--ats-neutral-600); }
 .pos-buy__plan b { font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
+/* "Comparar planes" va a la derecha de la línea, centrado con el texto (ya no baja a otro renglón) */
 .pos .ds-btn.pos-buy__mas {
-  display: inline-flex; vertical-align: middle; height: 28px; margin: -4px 0 -4px 2px; padding: 0 4px 0 8px; gap: 2px; background: transparent;
+  display: inline-flex; flex: none; height: 28px; margin: -4px -4px -4px auto; padding: 0 4px 0 8px; gap: 2px; background: transparent; white-space: nowrap;
 }
 /* sobre el cuadro lavanda el hover del Tertiary sube un tono */
 .pos .ds-btn.pos-buy__mas:hover:not(:disabled) { background: var(--ats-primary-100); }

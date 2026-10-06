@@ -6,6 +6,9 @@
    ============================================================ */
 
 body.inv { background: #fbfbfe; }
+/* fondo de la foto en las tarjetas: gris con un toque frío (como el #F7F7FA de Klarna, un poco más oscuro) para que la
+   tarjeta se despegue del fondo de la página (#fbfbfe). El DS usa #F7F7F7; si se adopta, sería un token surface nuevo. */
+:root { --inv-card-surface: var(--pos-surface-media); }   /* #f1f2f8, definido en ../pos.css para todas las pantallas */
 .inv [hidden] { display: none !important; }
 .inv-visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
@@ -16,25 +19,68 @@ body.inv { background: #fbfbfe; }
 .inv-ico--20 { width: 20px; height: 20px; }
 
 .inv-main { max-width: 1280px; margin: 0 auto; padding: 16px 24px 72px; box-sizing: border-box; }
-.inv-title { margin: 0 0 16px; font-size: 28px; line-height: 34px; font-weight: 500; color: #2a2c2f; }
+.inv-head { display: flex; align-items: center; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.inv-title { margin: 0; font-size: 28px; line-height: 34px; font-weight: 500; color: #2a2c2f; }
+.inv-head__actions { display: flex; align-items: center; gap: 8px; }
+.pos .ds-btn.inv-io { gap: 8px; }
 
 /* ---------- barra: buscador · ver filtros · multi selección · vista ---------- */
 .inv-toolbar {
   display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
   padding: 16px; margin-bottom: 16px; border: 1px solid #e8e9ea; border-radius: 16px; background: #fff;
 }
-.inv-search { display: flex; align-items: center; width: 430px; max-width: 100%; height: 40px; border-radius: 100px; background: #fafafa; }
-.inv-search__input {
-  flex: 1; min-width: 0; height: 40px; padding: 8px 16px; border: 0; background: transparent; border-radius: 100px 0 0 100px;
-  font: 400 16px/1.2 var(--font-family-sans); color: #2a2c2f; outline: none;
+/* Search field V2 del DS de Figma (página "Buscador", variante con filtro): contorno #D4D6D8 de radio completo,
+   selector a la izquierda con divisor, campo blanco y botón morado de 56; con foco el contorno pasa a #5A5AFF */
+.inv-sf {
+  position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) 56px; align-items: stretch;
+  width: 430px; max-width: 100%; height: 40px; box-sizing: border-box;
+  border: 1px solid #a1a5aa; border-radius: 100px; background: #fff; transition: border-color .15s;
 }
-.inv-search__input::placeholder { color: #a1a5aa; }
-.inv-search__input::-webkit-search-cancel-button { cursor: pointer; }
-.inv-search:focus-within { box-shadow: 0 0 0 2px #acacff; }
-.inv-search__by { position: relative; }
-.inv-search__by-btn { display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 8px 4px 8px 16px; font: 400 16px/1.2 var(--font-family-sans); color: #2a2c2f; cursor: pointer; }
-.inv-search__by-btn .inv-ico { color: #54575c; }
-.inv-search__go { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 8px 16px 8px 4px; color: #5a5aff; cursor: pointer; border-radius: 0 100px 100px 0; }
+/* contorno y divisor en gris Neutro 400 (#A1A5AA) para que el buscador se distinga sobre la barra blanca */
+.inv-sf:hover { border-color: #54575c; }
+.inv-sf:focus-within { border-color: #5a5aff; }
+.inv-sf__select {
+  display: flex; align-items: center; gap: 4px; max-width: 10rem; padding: 0 8px 0 16px; border: 0; border-right: 1px solid #a1a5aa;
+  border-radius: 100px 0 0 100px; background: #fff; font: 400 16px/19px var(--font-family-sans); color: #54575c; white-space: nowrap; cursor: pointer;
+  transition: background .15s;
+}
+.inv-sf__select svg { flex-shrink: 0; transition: transform .15s; }
+/* activo: gris Neutro 200, como pide la nota del DS */
+.inv-sf__select[aria-expanded='true'] { background: #e8e9ea; }
+.inv-sf__select[aria-expanded='true'] svg { transform: rotate(180deg); }
+.inv-sf__select:focus-visible { outline: 2px solid #5a5aff; outline-offset: -2px; }
+.inv-sf__input {
+  min-width: 0; width: 100%; padding: 8px 16px; box-sizing: border-box; border: 0; outline: 0; background: transparent;
+  font: 400 16px/19px var(--font-family-sans); color: #2a2c2f; text-overflow: ellipsis;
+}
+.inv-sf__input::placeholder { color: #a1a5aa; }
+.inv-sf { grid-template-columns: auto minmax(0, 1fr) 48px; }
+/* lupa (o tache con texto) en morado, sin relleno */
+.inv-sf__go {
+  display: flex; align-items: center; justify-content: center; align-self: center; width: 32px; height: 32px; margin-right: 8px; padding: 4px;
+  border: 0; border-radius: 100px; background: transparent; color: #5a5aff; cursor: pointer; transition: background .15s;
+}
+.inv-sf__go:hover { background: #f0f0ff; }
+.inv-sf__go:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
+/* listas desplegables del DS (#drop-down list): blancas, borde #F3F3F3, radio 8, filas de 35 */
+.inv-sf__menu, .inv-sf__list {
+  position: absolute; top: 48px; z-index: 4; display: flex; flex-direction: column; box-sizing: border-box;
+  border: 1px solid #f3f3f3; border-radius: 8px; background: #fff; box-shadow: 0 11px 27px rgba(0, 0, 0, .12); overflow: hidden;
+}
+.inv-sf__menu { left: 0; min-width: 180px; }
+.inv-sf__menu button { width: 100%; min-height: 35px; padding: 8px; border: 0; background: #fff; text-align: left; font: 400 16px/19px var(--font-family-sans); color: #2a2c2f; cursor: pointer; }
+.inv-sf__menu button:hover, .inv-sf__menu button:focus-visible { background: #f0f0ff; outline: 0; }
+.inv-sf__menu button[aria-selected='true'] { color: #5a5aff; font-weight: 600; }
+.inv-sf__list { left: 0; width: 100%; max-height: 280px; overflow-y: auto; padding: 4px 0; }
+.inv-sf__list::-webkit-scrollbar { width: 8px; }
+.inv-sf__list::-webkit-scrollbar-thumb { background: #d4d6d8; border-radius: 10000px; }
+.inv-sf__label { padding: 6px 8px 4px; font: 400 12px/12px var(--font-family-sans); color: #54575c; }
+.inv-sf__opt { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; min-height: 35px; padding: 8px; border: 0; background: #fff; text-align: left; color: #2a2c2f; cursor: pointer; }
+.inv-sf__opt:hover, .inv-sf__opt[data-active='true'] { background: #f0f0ff; outline: 0; }
+.inv-sf__opt-title { font: 400 16px/19px var(--font-family-sans); overflow-wrap: anywhere; }
+.inv-sf__opt-title strong { font-weight: 600; }
+.inv-sf__opt-desc { font: 400 12px/14px var(--font-family-sans); color: #54575c; overflow-wrap: anywhere; }
+.inv-sf__empty { min-height: 35px; padding: 8px; box-sizing: border-box; font: 400 16px/19px var(--font-family-sans); color: #2a2c2f; }
 
 .inv-toolbar__right { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
 .inv-switch { display: inline-flex; align-items: center; gap: 8px; font-size: 16px; line-height: 24px; color: #1d1e20; }
@@ -72,13 +118,29 @@ body.inv { background: #fbfbfe; }
 .inv-body.is-sin-filtros .inv-filters { display: none; }
 
 .inv-filters { border: 1px solid #e8e9ea; border-radius: 16px; background: #fff; overflow: hidden; position: sticky; top: calc(var(--pos-header-h, 56px) + 16px); max-height: calc(100vh - var(--pos-header-h, 56px) - 72px); overflow-y: auto; }
-.inv-filters__title { margin: 0; padding: 16px 24px 0; font-size: 20px; line-height: 24px; font-weight: 500; color: #2a2c2f; }
+/* encabezado del panel: "Filtros" + botón para ocultarlo */
+.inv-filters__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 12px 0 24px; }
+.inv-filters__title { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 20px; line-height: 24px; font-weight: 500; color: #2a2c2f; }
+.inv-fclose { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 100px; background: #fff; color: #5a5aff; cursor: pointer; transition: background .15s; }
+.inv-fclose:hover { background: #f0f0ff; }
+.inv-fclose:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
+/* botón para volver a abrir el panel: aparece junto a "Filtrar por:" cuando está oculto */
+.inv-fopen {
+  display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 4px 12px; box-sizing: border-box;
+  border: 1px solid #acacff; border-radius: 100px; background: #fff; font: 600 14px/17px var(--font-family-sans); color: #5a5aff; cursor: pointer;
+  transition: background .15s;
+}
+.inv-fopen:hover { background: #f0f0ff; }
+.inv-fopen:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
+/* número de filtros activos */
+.inv-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 100px; background: #5a5aff; color: #fff; font-size: 12px; line-height: 1; font-weight: 700; }
 .inv-filters__inner { padding: 8px 16px 16px; display: flex; flex-direction: column; }
 .inv-fgroup { padding: 8px 0; }
 .inv-fgroup + .inv-fgroup { border-top: 1px solid #e8e9ea; }
 .inv-fgroup__head { display: flex; align-items: center; justify-content: space-between; width: 100%; height: 24px; font: 500 14px/17px var(--font-family-sans); color: #2a2c2f; cursor: pointer; }
 .inv-fgroup__head .inv-ico { color: #5a5aff; transition: transform .15s; }
 .inv-fgroup__head[aria-expanded='false'] .inv-ico { transform: rotate(180deg); }
+.inv-fgroup__head--fijo { cursor: default; }
 .inv-fgroup__body { padding-top: 8px; }
 .inv-tipo { display: grid; grid-template-columns: 1fr 1fr; }
 .inv-tipo button { height: 40px; border: 1px solid #e8e9ea; background: #fff; font: 400 16px/1.2 var(--font-family-sans); color: #2a2c2f; cursor: pointer; }
@@ -106,58 +168,72 @@ body.inv { background: #fbfbfe; }
 .inv-fmore { margin: 4px 0 0 8px; }
 
 /* ---------- resultados ---------- */
-.inv-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 34px; margin-bottom: 16px; flex-wrap: wrap; }
-.inv-bar__left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; min-width: 0; }
-.inv-bar__label { font: 500 14px/17px var(--font-family-sans); color: #2a2c2f; }
+.inv-bar { position: relative; display: flex; align-items: center; gap: 8px 16px; flex-wrap: wrap; min-height: 32px; margin-bottom: 16px; }
+.inv-count { margin: 0; font-size: 16px; line-height: 24px; color: #54575c; }
+.inv-count b { font-weight: 700; color: #2a2c2f; }
+.inv-activos { display: flex; align-items: center; gap: 8px 12px; flex-wrap: wrap; min-width: 0; padding-left: 16px; border-left: 1px solid #e8e9ea; }
+.inv-activos__label { font: 500 14px/17px var(--font-family-sans); color: #2a2c2f; }
 .inv-bar__chips { display: flex; gap: 8px; flex-wrap: wrap; }
 /* Filter Chips del DS: lavanda, borde #e5e5ff, texto navy y tache */
 .inv-fchip { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 4px 8px 4px 16px; box-sizing: border-box; border: 1px solid #e5e5ff; border-radius: 32px; background: #f0f0ff; font: 400 14px/17px var(--font-family-sans); color: #0d166b; cursor: pointer; }
 .inv-fchip .inv-ico { color: #0d166b; }
 .inv-fchip:hover { border-color: #acacff; }
-.inv-sort { position: relative; display: inline-flex; align-items: center; width: 221px; max-width: 100%; }
-.inv-sort select {
-  width: 100%; height: 32px; padding: 0 40px 0 12px; border: 1px solid #d4d6d8; border-radius: 100px; background: #fff;
-  font: 400 14px/17px var(--font-family-sans); color: #2a2c2f; cursor: pointer; appearance: none; -webkit-appearance: none;
-}
-.inv-sort select:invalid, .inv-sort select.is-placeholder { color: #a1a5aa; }
-.inv-sort select:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
-.inv-sort .inv-ico { position: absolute; right: 8px; pointer-events: none; color: #2a2c2f; }
-.inv-count { margin: -8px 0 12px; font-size: 13px; color: #54575c; }
+/* Ordenar por (como Klarna): texto con flecha a la derecha del conteo, sin caja; su lista usa el #drop-down list del DS.
+   El DS no tiene un selector sin borde (SelectionInput solo trae "pill" y "tabla"), así que este es nuevo. */
+.inv-sort { position: relative; order: 9; margin-left: auto; }
+.inv-sort__btn { display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 4px; border: 0; border-radius: 8px; background: transparent; font: 400 16px/19px var(--font-family-sans); color: #2a2c2f; cursor: pointer; white-space: nowrap; }
+.inv-sort__btn:hover { color: #5a5aff; }
+.inv-sort__btn:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
+.inv-sort__btn svg { transition: transform .15s; }
+.inv-sort__btn[aria-expanded='true'] svg { transform: rotate(180deg); }
+.inv-sort__menu { position: absolute; right: 0; top: 36px; z-index: 6; display: flex; flex-direction: column; min-width: 220px; border: 1px solid #f3f3f3; border-radius: 8px; background: #fff; box-shadow: 0 11px 27px rgba(0, 0, 0, .12); overflow: hidden; }
+.inv-sort__menu button { width: 100%; min-height: 35px; padding: 8px; border: 0; background: #fff; text-align: left; font: 400 16px/19px var(--font-family-sans); color: #2a2c2f; cursor: pointer; white-space: nowrap; }
+.inv-sort__menu button:hover, .inv-sort__menu button:focus-visible { background: #f0f0ff; outline: 0; }
+.inv-sort__menu button[aria-selected='true'] { color: #5a5aff; font-weight: 600; }
 
 /* rejilla de tarjetas: 224 de ancho, 8 entre columnas, 20 entre filas */
-.inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 20px 8px; }
+.inv-results { container-type: inline-size; min-width: 0; }
+.inv-grid { display: grid; grid-template-columns: repeat(var(--inv-cols, 4), minmax(0, 1fr)); gap: 20px 8px; }
+/* 4 columnas con el panel de filtros (como el Figma, ~224 px), 5 sin él; luego 3, 2 y 1 al angostar */
+@container (max-width: 1179px) { .inv-grid { --inv-cols: 4; } }
+@container (min-width: 1180px) { .inv-grid { --inv-cols: 5; } }
+@container (max-width: 879px) { .inv-grid { --inv-cols: 3; } }
+@container (max-width: 659px) { .inv-grid { --inv-cols: 2; } }
+@container (max-width: 439px) { .inv-grid { --inv-cols: 1; } }
 .inv-card { position: relative; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .inv-card__media {
   position: relative; display: flex; align-items: center; justify-content: center; aspect-ratio: 224 / 222;
-  border-radius: 16px; background: #f7f7f7; overflow: hidden; outline-offset: 2px;
+  border-radius: 16px; background: var(--inv-card-surface); overflow: hidden; outline-offset: 2px;
 }
-.inv-card__media img { width: 73%; height: 70%; object-fit: contain; transition: transform .2s; }
+.inv-card__media img { width: 80%; height: 78%; object-fit: contain; transition: transform .2s; }
 .inv-card:hover .inv-card__media img { transform: scale(1.03); }
 .inv-card__media:focus-visible { outline: 2px solid #5a5aff; }
-.inv-tag { position: absolute; display: inline-flex; align-items: center; height: 18px; padding: 2px 8px; box-sizing: border-box; border-radius: 4px; font-size: 12px; line-height: 16px; font-weight: 600; white-space: nowrap; }
+.inv-tag { position: absolute; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; height: 18px; padding: 4px; border: 1px solid transparent; border-radius: 4px; font: 400 12px/12px var(--font-family-sans); white-space: nowrap; }
 .inv-tag--tl { top: 11px; left: 10px; }
-.inv-tag--tr { top: 10px; right: 10px; }
-.inv-tag--bl { bottom: 10px; left: 11px; }
-.inv-tag--br { bottom: 10px; right: 14px; padding: 4px; }
-.inv-tag--desc { background: #ffc6f6; color: #610052; }
-.inv-tag--activo { background: #d1ffd1; color: #174a2e; }
-.inv-tag--pausado { background: #ffebba; color: #6b4a00; }
-.inv-tag--vendido, .inv-tag--borde { background: #fff; border: 1px solid #d4d6d8; color: #2a2c2f; }
-.inv-tag--vigente { background: #dbf4ff; color: #004461; font-weight: 400; }
-.inv-tag--reactivacion { background: #ffebba; color: #6b4a00; font-weight: 400; }
-.inv-tag--urgente { background: #fff; border: 1px solid #fe9a9a; color: #a82424; }
+.inv-tag--tr { top: 11px; right: 10px; }
+.inv-tag--bl { bottom: 9px; left: 10px; }
+.inv-tag--br { bottom: 9px; right: 10px; }
+/* colores del chip de estado (DS · CardInventario) */
+.inv-tag--green { background: #d1ffd1; color: #174a2e; }
+.inv-tag--yellow { background: #ffebba; color: #614500; }
+.inv-tag--red { background: #ff8e85; color: #501111; }
+.inv-tag--pink { background: #ff98ef; color: #610052; }
+.inv-tag--blue { background: #d0f6ff; color: #004461; }
+.inv-tag--purple { background: #e5e5ff; color: #0d166b; }
+.inv-tag--gray { background: #d4d6d8; color: #2a2c2f; }
+.inv-tag--white { background: #fff; border-color: #d4d6d8; color: #2a2c2f; }
 .inv-card__check { position: absolute; top: 11px; left: 11px; width: 24px; height: 24px; padding: 2px; box-sizing: border-box; }
 .inv-card__check span { display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; box-sizing: border-box; border: 1px solid #a1a5aa; border-radius: 4px; background: #fff; }
 .inv-card.is-selected .inv-card__check span { background: #5a5aff; border-color: #5a5aff; }
 .inv-card.is-selected .inv-card__check span::after { content: ''; width: 14px; height: 14px; background: #fff; -webkit-mask: var(--inv-check) center / contain no-repeat; mask: var(--inv-check) center / contain no-repeat; }
 .inv-card.is-selected .inv-card__media { box-shadow: inset 0 0 0 2px #5a5aff; }
 .inv-card__body { display: flex; flex-direction: column; gap: 3px; padding-top: 0; min-width: 0; }
-.inv-card__title { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 14px; line-height: 20px; color: #1d1e20; }
+.inv-card__title { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 16px; line-height: 22px; color: #1d1e20; }
 .inv-card__title:hover { color: #5a5aff; }
 .inv-card__row { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 36px; }
 .inv-price { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
-.inv-price b { font-size: 18px; line-height: 24px; font-weight: 600; color: #2a2c2f; white-space: nowrap; }
-.inv-price s { font-size: 14px; line-height: 20px; color: #a1a5aa; white-space: nowrap; }
+.inv-price b { font-size: 20px; line-height: 26px; font-weight: 600; color: #2a2c2f; white-space: nowrap; }
+.inv-price s { font-size: 16px; line-height: 22px; color: #a1a5aa; white-space: nowrap; }
 .inv-more { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 100px; background: #fff; color: #5a5aff; cursor: pointer; flex-shrink: 0; transition: background .15s; }
 .inv-more:hover, .inv-more[aria-expanded='true'] { background: #f0f0ff; }
 .inv-more:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
@@ -172,7 +248,7 @@ body.inv { background: #fbfbfe; }
 .is-lista .inv-tag--bl { position: static; }
 .is-lista .inv-card__media .inv-tag--bl { display: none; }
 .is-lista .inv-card__body { flex: 1; flex-direction: row; align-items: center; gap: 16px; }
-.is-lista .inv-card__title { flex: 1; font-size: 16px; }
+.is-lista .inv-card__title { flex: 1; font-size: 18px; line-height: 24px; }
 .is-lista .inv-card__meta { display: flex; }
 .inv-card__meta { display: none; align-items: center; gap: 8px; }
 .inv-card__meta .inv-tag { position: static; }
@@ -189,7 +265,6 @@ body.inv { background: #fbfbfe; }
 
 /* menús: "Artículo" del buscador y ⋮ de cada tarjeta (#drop-down list: 152, r8, sombra 0 11 27) */
 .inv-menu { position: absolute; z-index: 35; min-width: 152px; padding: 0; border: 1px solid #fafafa; border-radius: 8px; background: #fff; box-shadow: 0 11px 27px rgba(0, 0, 0, .12); overflow: hidden; }
-.inv-menu--by { top: calc(100% + 4px); left: 0; }
 .inv-menu--card { position: fixed; }
 .inv-menu button { display: block; width: 100%; height: 35px; padding: 8px; text-align: left; font: 400 16px/19px var(--font-family-sans); color: #2a2c2f; background: #fff; cursor: pointer; white-space: nowrap; }
 .inv-menu button:hover, .inv-menu button:focus-visible { background: #f0f0ff; outline: none; }
@@ -207,19 +282,20 @@ body.inv { background: #fbfbfe; }
 /* ---------- responsivo ---------- */
 @media (max-width: 1024px) {
   .inv-body { grid-template-columns: 240px minmax(0, 1fr); }
-  .inv-search { width: 100%; }
+  .inv-sf { width: 100%; }
   .inv-toolbar__right { width: 100%; justify-content: space-between; gap: 16px; }
 }
 @media (max-width: 760px) {
   .inv-main { padding: 12px 16px 72px; }
-  .inv-title { font-size: 24px; line-height: 30px; margin-bottom: 12px; }
+  .inv-title { font-size: 24px; line-height: 30px; }
+  .inv-head { margin-bottom: 12px; }
   .inv-toolbar { padding: 12px; }
   .inv-switch { font-size: 14px; }
   .inv-body { grid-template-columns: minmax(0, 1fr); }
   .inv-filters { position: static; max-height: none; }
-  .inv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 8px; }
-  .inv-sort { width: 100%; }
-  .inv-price b { font-size: 16px; }
+  .inv-activos { padding-left: 0; border-left: 0; width: 100%; }
+  .inv-price b { font-size: 18px; line-height: 24px; }
+  .inv-price s { font-size: 14px; line-height: 20px; }
   .is-lista .inv-card__body { flex-direction: column; align-items: stretch; gap: 0; }
   .is-lista .inv-card__meta { display: none; }
   .inv-sessions__tab { padding: 8px 16px; font-size: 14px; }
