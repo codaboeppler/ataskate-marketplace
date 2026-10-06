@@ -1,5 +1,5 @@
 /* Presentación del Design System Ataskate — escenario fijo de 1600×900 que se escala a la ventana.
-   Colores, radios y espacios salen de los tokens del DS (../pos/ds). Semántica light: navy solo para texto. */
+   Colores, radios y espacios salen de los tokens del DS de Ataskate (ver referencia-ds.md del skill). Semántica light: navy solo para texto. */
 :root {
   --bg: #fbfbfe;
   --white: #fff;
@@ -12,17 +12,17 @@
   --mute: #54575c;         /* neutral-600 */
   --mute2: #71767d;        /* neutral-500 */
   --gray4: #a1a5aa;        /* neutral-400 */
-  --line: #e8e9ea;
+  --line: #e8e9ea;         /* borde suave de las tarjetas de la presentación; NO es del DS: en componentes del DS usa #D4D6D8 */
   --line2: #d4d6d8;        /* neutral-300 */
   --n100: #f4f5f5;
   --media: #f1f2f8;        /* fondo de fotos de artículo */
   --pink: #ff98ef;
   --lime: #d8ff03;
-  --cyan: #00b4de;
-  --ok-bg: #d1ffd1; --ok: #174a2e;
+  --cyan: #30d8ff;
+  --ok-bg: #effaf4; --ok: #174a2e;
   --warn-bg: #ffebba; --warn: #614500;
-  --err-bg: #ff8e85; --err: #501111; --err2: #a82424;
-  --info-bg: #d0f6ff; --info: #004461;
+  --err-bg: #ffebeb; --err: #501111; --err2: #a82424;
+  --info-bg: #ebf9ff; --info: #004461;
   --ease: cubic-bezier(.22, 1, .36, 1);
   --ease-io: cubic-bezier(.65, 0, .35, 1);
   --spring: cubic-bezier(.34, 1.56, .64, 1);
@@ -241,6 +241,14 @@ img { display: block; max-width: 100%; }
 @keyframes mdo-r { 0%, 12% { opacity: 0; transform: translateY(-60px) rotate(-12deg); } 24%, 62% { opacity: 1; transform: rotate(-4deg); } 76%, 100% { opacity: 0; transform: translateX(170px) translateY(-30px) rotate(35deg); } }
 @keyframes mdo-s { 0%, 34% { opacity: 0; transform: rotate(-8deg) scale(2); } 40%, 62% { opacity: 1; transform: rotate(-8deg) scale(1); } 70%, 100% { opacity: 0; transform: rotate(-8deg) scale(1); } }
 
+/* variantes de 3 columnas (tarjetas con mini animación y beneficios) */
+.laws--3 { grid-template-columns: repeat(3, 1fr); }
+.laws--3 .law { height: 440px; }
+.laws--3 .md { height: 210px; }
+.wins--3 { grid-template-columns: repeat(3, 1fr); }
+/* cifra de ejemplo: colores de Alerta del DS */
+.tag-ej { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 100px; background: #ffebba; color: #614500; font-size: 14px; font-weight: 600; }
+
 /* ---------- 4 · un botón ---------- */
 .btnlab { position: absolute; left: 96px; right: 96px; top: 290px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
 .btnlab__stage { position: relative; height: 470px; border-radius: 32px; background: #fff; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 30px 60px -30px rgba(13, 22, 107, .25); }
@@ -453,6 +461,7 @@ img { display: block; max-width: 100%; }
 .prod__item:nth-child(1) .prod__frame { transform: rotate(-1.5deg); }
 .prod__item:nth-child(2) .prod__frame { transform: rotate(1.5deg); }
 .prod__item:hover .prod__frame { transform: none scale(1.02); }
+.prod__shot { position: absolute; left: 0; top: 36px; width: 100%; height: calc(100% - 36px); object-fit: cover; object-position: top left; }
 .prod__frame iframe { position: absolute; left: 0; top: 36px; width: 1440px; height: 1000px; border: 0; transform: scale(.475); transform-origin: 0 0; pointer-events: none; background: var(--bg); }
 .prod__cap { margin-top: 20px; display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 600; color: var(--navy); }
 .prod__cap span { font-size: 16px; font-weight: 600; color: var(--mute); }

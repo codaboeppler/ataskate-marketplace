@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Platypi:wght@500;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="deck.css?v=6" />
+<link rel="stylesheet" href="deck.css" />
 </head>
 <body>
 <div class="deck" id="deck">
@@ -19,7 +19,7 @@
 <section class="slide cover" data-title="Portada">
   <div class="cover__blob"></div>
   <div class="cover__ring spin-slow"></div>
-  <img class="logo" src="../pos/assets/logo-ataskate.svg" alt="Ataskate" data-a="down" />
+  <img class="logo" src="assets/logo-ataskate.svg" alt="Ataskate" data-a="down" />
   <div class="cover__txt">
     <span class="kicker" data-a="up" style="--d:.2s"><i class="ic" data-i="GridView"></i>Design System</span>
     <h1 class="h1 words" style="--d:.35s">Una sola forma de diseñar <em>Ataskate</em></h1>
@@ -164,8 +164,8 @@
   <span class="kicker" data-a="up"><i class="ic" data-i="CompareArrows"></i>Antes y después</span>
   <h2 class="h2" data-a="up" style="--d:.1s; font-size:48px; line-height:56px">Arrastra para comparar</h2>
   <div class="ba" id="ba" data-a="up" style="--d:.25s">
-    <div class="ba__layer ba__bottom"><div class="ed-scale" id="baA"></div></div>
-    <div class="ba__layer ba__top"><div class="ed-scale" id="baB"></div></div>
+    <div class="ba__layer ba__bottom"><div id="baA"></div></div>
+    <div class="ba__layer ba__top"><div id="baB"></div></div>
     <div class="ba__handle"><span class="ba__lbl l">Square (recreación)</span><span class="ba__lbl r">Ataskate DS</span><span class="ba__knob"><i class="ic" data-i="CompareArrows"></i></span></div>
   </div>
   <div class="m" style="left:1330px; top:20px; width:210px;" data-a="drop" data-d=".6"><div class="bob"><img src="ilus/ilust-10-color.svg" alt="" /></div></div>
@@ -177,11 +177,11 @@
   <h2 class="h2" data-a="up" style="--d:.1s">Pantallas del Operativo, <em>hechas con el DS</em></h2>
   <div class="prod">
     <div class="prod__item" data-a="left" style="--d:.3s">
-      <div class="prod__frame"><div class="frame__bar"><i></i><i></i><i></i><span class="frame__url">Prototipo · Inventario</span></div><iframe data-src="../pos/inventario/" title="Inventario" loading="lazy" tabindex="-1"></iframe></div>
+      <div class="prod__frame"><div class="frame__bar"><i></i><i></i><i></i><span class="frame__url">Prototipo · Inventario</span></div><img class="prod__shot" src="assets/pantalla-inventario.jpg" alt="Inventario del Operativo" /></div>
       <div class="prod__cap"><i class="ic" data-i="Inventory" style="color:var(--pri)"></i>Inventario <span>· búsqueda, filtros y tarjetas del DS</span></div>
     </div>
     <div class="prod__item" data-a="right" style="--d:.45s">
-      <div class="prod__frame"><div class="frame__bar"><i></i><i></i><i></i><span class="frame__url">Prototipo · Detalles del artículo</span></div><iframe data-src="../pos/v2/" title="Detalles del artículo" loading="lazy" tabindex="-1"></iframe></div>
+      <div class="prod__frame"><div class="frame__bar"><i></i><i></i><i></i><span class="frame__url">Prototipo · Detalles del artículo</span></div><img class="prod__shot" src="assets/pantalla-detalle.jpg" alt="Detalles del artículo" /></div>
       <div class="prod__cap"><i class="ic" data-i="Search" style="color:var(--pri)"></i>Detalles del artículo <span>· breadcrumb, tabs y botones del DS</span></div>
     </div>
   </div>
@@ -204,7 +204,7 @@
   <div class="end__b">
     <h1 class="h1">Un sistema. Una voz. <em>Una experiencia.</em></h1>
     <p class="lead">Gracias. ¿Preguntas?</p>
-    <img class="end__logo" src="../pos/assets/logo-ataskate.svg" alt="Ataskate" />
+    <img class="end__logo" src="assets/logo-ataskate.svg" alt="Ataskate" />
     <div class="parade">
       <div class="m run" style="top:20px; width:150px; --dur:14s;"><img src="ilus/ilust-02-color.svg" alt="" /></div>
       <div class="m run" style="top:10px; width:130px; --dur:14s; --d:-2.4s"><img src="ilus/ilust-06-color.svg" alt="" /></div>
@@ -267,7 +267,7 @@
         <div class="ef">
           <div class="emedia-head"><span class="tx"><span class="en">Media</span><span class="es">Fotos</span></span><span class="add"><i class="ic" data-sq="plus" data-i2="Add"></i><span class="tx"><span class="en">Add other media types</span><span class="es">Agregar video</span></span></span></div>
           <div class="emedia">
-            <div class="ephoto"><img src="../pos/assets/inventario/iphone-15-pro.png" alt="" /></div>
+            <div class="ephoto"><img src="assets/iphone-15-pro.png" alt="" /></div>
             <div class="eup"><span class="eup__ic"><i class="ic" data-sq="up" data-i2="Upload"></i></span><span class="eup__t">Arrastra elementos aquí o</span><span class="eup__b"><i class="ic" data-i="Search"></i>Busca archivos</span></div>
           </div>
         </div>
@@ -286,6 +286,6 @@
   </div>
 </template>
 
-<script src="deck.js?v=5"></script>
+<script src="deck.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-/* Presentación del Design System Ataskate.
+/* Presentación con el estilo del Design System de Ataskate (plantilla del skill ataskate-presentacion).
    → / espacio avanzan (primero los pasos de la lámina, luego la siguiente lámina); ← regresa; F pantalla completa.
    Íconos: los del DS de QA (qa.ataskate.com.mx/design-system), pintados con currentColor. */
 (() => {
@@ -32,6 +32,8 @@
     Upload: 'M9 16H15V10H19L12 3L5 10H9V16ZM5 18H19V20H5V18Z',
     // chevron de trazo del Select del DS
     Chevron: { stroke: 'M7 10L12 15L17 10' },
+    // Para agregar otro ícono del DS, copia su entrada de referencias/iconos-ds.json del skill:
+    // NombreDelIcono: { viewBox: '0 0 24 24', svg: '<path d="..." fill="currentColor"></path>' },
   };
   // íconos genéricos de línea fina para la versión "Square" (no son del DS a propósito)
   const SQ = {
@@ -47,6 +49,7 @@
     if (!v) return '';
     let vb = '0 0 24 24', body;
     if (Array.isArray(v)) { vb = v[0]; body = `<path d="${v[1]}" fill="currentColor"/>`; }
+    else if (typeof v === 'object' && v.svg) { vb = v.viewBox || vb; body = v.svg; }
     else if (typeof v === 'object') body = `<path d="${v.stroke}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>`;
     else body = `<path d="${v}" fill="currentColor"/>`;
     return `<svg ${cls ? `class="${cls}" ` : ''}viewBox="${vb}" aria-hidden="true">${body}</svg>`;
@@ -96,9 +99,12 @@
     return n;
   };
   const ED_STEPS = ['t-base', 't-head', 't-fields', 't-desc', 't-vis', 't-media'];
-  const ed = mkEditor($('#edHost'));
-  mkEditor($('#baA'));
-  mkEditor($('#baB'), ED_STEPS.join(' '));
+  // cada pieza revisa que exista: se pueden borrar láminas completas sin romper la presentación.
+  // #baA / #baB solo se llenan con el editor de ejemplo si están vacíos (si pones tu HTML, se respeta).
+  const fill = (sel, cls) => { const h = $(sel); if (!tpl || !h || h.children.length) return null; h.classList.add('ed-scale'); return mkEditor(h, cls); };
+  const ed = fill('#edHost');
+  fill('#baA');
+  fill('#baB', ED_STEPS.join(' '));
 
   paintIcons(document);
 
@@ -177,7 +183,7 @@
       enter(sl, t, k) { editor(k, false); },
       step(sl, k, back) { editor(k, !back); },
     },
-    ba: { enter(sl, t) { baSweep(t); } },
+    ba: { enter(sl, t) { if (ba) baSweep(t); } },
     prod: {
       enter(sl) {
         $$('iframe[data-src]', sl).forEach((f) => {
@@ -195,7 +201,7 @@
     },
     // beneficios y, en el paso 1, el cierre con confeti
     end: {
-      enter(sl, t, k) { thanks(sl, k >= 1); },
+      enter(sl, t, k) { thanks(sl, k >= 1 || !($('.end__a', sl) && $('.end__a', sl).children.length)); },
       step(sl, k) { thanks(sl, k >= 1); },
     },
   };
@@ -254,11 +260,13 @@
   // antes / después con jalador
   const ba = $('#ba');
   let baDrag = false, baUser = false;
-  const setX = (p) => ba.style.setProperty('--x', `${Math.max(0, Math.min(100, p))}%`);
+  const setX = (p) => ba && ba.style.setProperty('--x', `${Math.max(0, Math.min(100, p))}%`);
   const fromEvent = (e) => { const r = ba.getBoundingClientRect(); setX(((e.clientX - r.left) / r.width) * 100); };
-  ba.addEventListener('pointerdown', (e) => { baDrag = true; baUser = true; ba.setPointerCapture(e.pointerId); fromEvent(e); });
-  ba.addEventListener('pointermove', (e) => { if (baDrag) fromEvent(e); });
-  ba.addEventListener('pointerup', () => { baDrag = false; });
+  if (ba) {
+    ba.addEventListener('pointerdown', (e) => { baDrag = true; baUser = true; ba.setPointerCapture(e.pointerId); fromEvent(e); });
+    ba.addEventListener('pointermove', (e) => { if (baDrag) fromEvent(e); });
+    ba.addEventListener('pointerup', () => { baDrag = false; });
+  }
   async function baSweep(t) {
     const anim = (a, b, ms) => new Promise((res) => {
       const t0 = performance.now();
@@ -283,7 +291,7 @@
     if (on) confetti();
   }
   function confetti() {
-    const c = $('#confetti'); if (c.childElementCount) return;
+    const c = $('#confetti'); if (!c || c.childElementCount) return;
     const cols = ['#5a5aff', '#ff98ef', '#d8ff03', '#30d8ff', '#acacff', '#ff8e85', '#e5e5ff'];
     let h = '';
     for (let i = 0; i < 70; i++) {
@@ -295,8 +303,8 @@
   // ---------- entrada ----------
   $('#next').addEventListener('click', next);
   $('#prev').addEventListener('click', prev);
-  $('.cover__start .pill').addEventListener('click', next);
-  $('.cover__start .pill').style.cursor = 'pointer';
+  const pill = $('.cover__start .pill');
+  if (pill) { pill.addEventListener('click', next); pill.style.cursor = 'pointer'; }
   addEventListener('keydown', (e) => {
     if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
     if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }
