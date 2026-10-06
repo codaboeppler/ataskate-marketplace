@@ -20,6 +20,8 @@ body.inv { background: #fbfbfe; }
 
 .inv-main { max-width: 1280px; margin: 0 auto; padding: 16px 24px 72px; box-sizing: border-box; }
 .inv-head { display: flex; align-items: center; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; margin-bottom: 16px; }
+/* breadcrumb del DS (estilos de .pos-main en ../pos.css) arriba del título */
+.inv-main .ds-breadcrumb + .inv-head { margin-top: 8px; }
 .inv-title { margin: 0; font-size: 28px; line-height: 34px; font-weight: 500; color: #2a2c2f; }
 .inv-head__actions { display: flex; align-items: center; gap: 8px; }
 .pos .ds-btn.inv-io { gap: 8px; }
@@ -193,7 +195,7 @@ body.inv { background: #fbfbfe; }
 
 /* rejilla de tarjetas: 224 de ancho, 8 entre columnas, 20 entre filas */
 .inv-results { container-type: inline-size; min-width: 0; }
-.inv-grid { display: grid; grid-template-columns: repeat(var(--inv-cols, 4), minmax(0, 1fr)); gap: 20px 8px; }
+.inv-grid { display: grid; grid-template-columns: repeat(var(--inv-cols, 4), minmax(0, 1fr)); gap: 20px 16px; }
 /* 4 columnas con el panel de filtros (como el Figma, ~224 px), 5 sin él; luego 3, 2 y 1 al angostar */
 @container (max-width: 1179px) { .inv-grid { --inv-cols: 4; } }
 @container (min-width: 1180px) { .inv-grid { --inv-cols: 5; } }

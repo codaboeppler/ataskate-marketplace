@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="../ds/base.css" />
 <link rel="stylesheet" href="../ds/components.css" />
 <link rel="stylesheet" href="../pos.css?v=ux53" />
-<link rel="stylesheet" href="inventario.css?v=16" />
+<link rel="stylesheet" href="inventario.css?v=18" />
 </head>
 <body class="pos inv">
 <header class="pos-header">
@@ -81,7 +81,14 @@
 
 
 <!-- Inventario (Figma "Casa de empeño (Dev)" · Entregable 13 · HU-CE-571 Comercial y HU-CE-572 Prendario) -->
-<main class="inv-main" id="invMain">
+<main class="pos-main inv-main" id="invMain">
+  <!-- Breadcrumb del DS (el mismo de la ficha del artículo) -->
+  <nav aria-label="Breadcrumb" class="ds-breadcrumb">
+    <ol class="pos-crumbs">
+      <li><a href="#" class="ds-breadcrumb__link">Home</a><span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt="" /></span></li>
+      <li><span class="ds-breadcrumb__current" aria-current="page">Inventario</span></li>
+    </ol>
+  </nav>
   <div class="inv-head">
     <h1 class="inv-title">Inventario</h1>
     <!-- importar / exportar: botones Secondary del DS con iconos action/upload y action/download -->
