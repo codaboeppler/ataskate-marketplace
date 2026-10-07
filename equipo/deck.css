@@ -673,3 +673,11 @@ img { display: block; max-width: 100%; }
 .loc__pr .ic { width: 32px; height: 32px; color: var(--pri); flex: none; }
 .loc .mcp__what { min-height: 600px; } .loc .mcp__m { width: 96px; right: 16px; bottom: 12px; }
 .map__sh--mk { grid-column: 1 / 2; }
+.map__sep { width: 1px; height: 28px; margin: 0 8px; background: var(--lav3); }
+.map__shared { grid-column: 1 / 4; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 10px 14px; border-radius: 24px; border: 2px dashed var(--lav3); background: #fdfdff; }
+.map__shared > .ic { width: 22px; height: 22px; color: var(--pri); }
+.shp { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px 0 4px; border-radius: 100px; background: #fff; border: 1px solid var(--line); }
+.shp .av { width: 28px; height: 28px; font-size: 11px; }
+.shp .av + .av { margin-left: -10px; box-shadow: 0 0 0 2px #fff; }
+.shp b { font-size: 15px; font-weight: 600; color: var(--navy); white-space: nowrap; }
+.shp em { font-style: normal; font-size: 13px; color: var(--mute2); white-space: nowrap; }
