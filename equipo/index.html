@@ -150,20 +150,20 @@ uv --version</pre></div>
   <h2 class="h2" data-a="up" style="--d:.1s; font-size:48px; line-height:56px">Dos carriles, <em>tres ambientes</em></h2>
   <div class="lanes">
     <div class="lane" data-a="left" style="--d:.25s">
-      <div class="lane__h"><span class="rol r-front">Carril 1 · Estético</span><span class="lane__tag">La mayoría hoy · rápido · solo front</span></div>
+      <div class="lane__h"><span class="rol r-front">Carril 1 · Estético</span><span class="lane__tag">La mayoría hoy · solo front</span></div>
       <ol>
-        <li><b>Diseño</b> lo hace Product Design y <b>Manuel lo aprueba</b> en Figma.<code>bmad-ux</code></li>
-        <li>El PO escribe la HU <b>-F estética</b> del entregable.<code>bmad-ticket</code></li>
-        <li>Diseño, con Claude, entrega la <b>maqueta en React</b> en un PR, <b>sin tocar servicios</b>.<code>bmad-build</code></li>
-        <li>Un <b>líder técnico de front</b> revisa y aprueba el PR.<code>bmad-code-review</code></li>
-        <li>QA revisa contra el Figma con capturas antes / después.<code>bmad-walkthrough</code></li>
+        <li>Product Design hace la <b>maqueta con Claude</b>, con el DS y el React del repo.<code>bmad-ux</code></li>
+        <li><b>Manuel revisa y aprueba</b> la maqueta.</li>
+        <li>La versión aprobada se guarda en <b>Figma, solo como versionado</b>.</li>
+        <li>Diseño <b>comparte la maqueta</b> y el PO escribe la HU -F.<code>bmad-ticket</code></li>
+        <li><b>Front la integra</b> y un líder técnico aprueba el PR; luego QA.<code>bmad-code-review</code></li>
       </ol>
     </div>
     <div class="lane" data-a="right" style="--d:.35s">
       <div class="lane__h"><span class="rol r-back">Carril 2 · Funcionalidad nueva</span><span class="lane__tag">Más pasos · no frena al carril 1</span></div>
       <ol>
-        <li>Product Design diseña y <b>Manuel aprueba</b>.<code>bmad-ux</code></li>
-        <li>El diseñador, <b>con Claude, pone el flujo en Figma</b> en su propia sección (HU-CE-…), sin editar pantallas ya maquetadas.</li>
+        <li>Mismo inicio: maqueta con Claude, <b>Manuel aprueba</b> y versión en Figma.</li>
+        <li>La funcionalidad trae <b>su propia maqueta</b>; no edita pantallas ya maquetadas.</li>
         <li>El PO escribe PRD y HUs <b>-B, -F y .1-F</b>.<code>bmad-prd</code><code>bmad-ticket</code></li>
         <li>Back prueba en local antes de QA; <b>front integra los servicios</b> en la maqueta (.1-F).<code>bmad-build</code></li>
         <li>Llega <b>apagada</b> a QA y pre prod hasta que se aprueba.</li>
@@ -184,9 +184,9 @@ uv --version</pre></div>
   <span class="kicker" data-a="up"><i class="ic" data-i="Lock"></i>Metodología · propuesta</span>
   <h2 class="h2" data-a="up" style="--d:.1s; font-size:48px; line-height:56px">Reglas para que <em>nada choque</em></h2>
   <div class="rules2">
-    <div data-a="pop" style="--d:.25s"><span class="bmflow__n">1</span><b>Una HU, una rama, un PR</b><p>Los cambios estéticos son chicos: caben en menos de un día y se revisan rápido.</p></div>
+    <div data-a="pop" style="--d:.25s"><span class="bmflow__n">1</span><b>Una HU, una rama, un PR</b><p>Cada cambio estético va en su propio PR, después de que Manuel aprueba la maqueta.</p></div>
     <div data-a="pop" style="--d:.33s"><span class="bmflow__n">2</span><b>Lo estético no toca servicios</b><p>Si un cambio visual necesita otro dato o endpoint, se pasa al carril 2.</p></div>
-    <div data-a="pop" style="--d:.41s"><span class="bmflow__n">3</span><b>Lo nuevo no edita lo maquetado</b><p>Una funcionalidad agrega pantallas o una versión nueva en su sección de Figma; no cambia una maqueta aprobada.</p></div>
+    <div data-a="pop" style="--d:.41s"><span class="bmflow__n">3</span><b>Lo nuevo no edita lo maquetado</b><p>Una funcionalidad trae su propia maqueta o una versión nueva; no cambia una maqueta aprobada.</p></div>
     <div data-a="pop" style="--d:.49s"><span class="bmflow__n">4</span><b>Lo nuevo llega apagado</b><p>Se sube a QA y pre prod detrás de un interruptor y se enciende cuando se aprueba.</p></div>
     <div data-a="pop" style="--d:.57s"><span class="bmflow__n">5</span><b>Back prueba en local</b><p>QA nunca recibe servicios sin probar; así el ambiente de QA no se rompe.</p></div>
     <div data-a="pop" style="--d:.65s"><span class="bmflow__n">6</span><b>Misma pantalla, un orden</b><p>Si dos HUs tocan la misma pantalla, el PO las ordena en el entregable: primero la estética.</p></div>
@@ -200,8 +200,8 @@ uv --version</pre></div>
   <h2 class="h2" data-a="up" style="--d:.1s; font-size:48px; line-height:56px">Un solo repositorio, <em>con todo el contexto</em></h2>
   <div class="repo">
     <div class="repo__tree" data-a="left" style="--d:.25s"><pre class="code"><b>ataskate/</b>
-├─ CLAUDE.md        <span class="c">reglas del equipo · solo líderes</span>
-├─ docs/practicas/  <span class="c">front.md y back.md · solo líderes</span>
+├─ CLAUDE.md        <span class="c">reglas generales · líderes técnicos</span>
+├─ docs/reglas/     <span class="c">diseno.md · front.md · back.md</span>
 ├─ _bmad/            <span class="c">configuración de BMAD</span>
 ├─ _bmad-output/     <span class="c">PRD, arquitectura, specs</span>
 ├─ design-system/    <span class="c">el DS en código</span>
@@ -215,32 +215,48 @@ uv --version</pre></div>
   </div>
 </section>
 
-<!-- 13 · reglas protegidas -->
+<!-- 13 · reglas protegidas por rol -->
 <section class="slide" data-title="Reglas protegidas">
   <span class="kicker" data-a="up"><i class="ic" data-i="Lock"></i>GitHub · propuesta</span>
-  <h2 class="h2" data-a="up" style="--d:.1s; font-size:48px; line-height:56px">Las reglas del código <em>solo las cambian los líderes técnicos</em></h2>
-  <p class="lead" data-a="up" style="--d:.2s; max-width:1200px">Diseño y front usan Claude todos los días, pero <b>CLAUDE.md</b> y las buenas prácticas de front y back están protegidas en tres capas.</p>
+  <h2 class="h2" data-a="up" style="--d:.1s; font-size:48px; line-height:56px">Cada rol es dueño <em>de sus reglas</em></h2>
+  <p class="lead" data-a="up" style="--d:.2s; max-width:1200px">Diseño cambia las reglas de diseño, front las de front y back las de back. Nadie más las puede cambiar, ni con Claude.</p>
   <div class="guards">
-    <div class="guard" data-a="up" style="--d:.3s"><span class="bmstep__n">1</span><h4>Claude no puede editarlas</h4><p>El repo trae la configuración de Claude Code que le prohíbe tocar esos archivos, en cualquier cuenta.</p><pre class="code"><span class="c">.claude/settings.json</span>
-"deny": [
-  "Edit(CLAUDE.md)",
-  "Edit(docs/practicas/**)",
-  "Edit(.claude/**)"
-]</pre></div>
-    <div class="guard" data-a="up" style="--d:.45s"><span class="bmstep__n">2</span><h4>Cada archivo tiene dueño</h4><p>GitHub pide la aprobación de un líder técnico para cualquier PR que los cambie.</p><pre class="code"><span class="c">.github/CODEOWNERS</span>
-CLAUDE.md              @lideres-tecnicos
-docs/practicas/front.md @lider-front
-docs/practicas/back.md  @lider-back
-.claude/               @lideres-tecnicos</pre></div>
-    <div class="guard" data-a="up" style="--d:.6s"><span class="bmstep__n">3</span><h4>Las ramas están protegidas</h4><p>Nadie fusiona directo. Cada PR necesita la aprobación de los dueños antes de llegar a QA, pre prod o prod.</p><pre class="code"><span class="c">Branch protection</span>
-✓ Require pull request
-✓ Require review from
-  Code Owners
-✓ Sin push directo</pre></div>
+    <div class="guard" data-a="up" style="--d:.3s"><span class="bmstep__n">1</span><h4>Un archivo por rol</h4><p>Las reglas que lee Claude están separadas, y cada archivo tiene dueño.</p><pre class="code"><span class="c">docs/reglas/</span>
+diseno.md  <span class="c">→ Product Design</span>
+front.md   <span class="c">→ líderes de front</span>
+back.md    <span class="c">→ líderes de back</span>
+<span class="c">CLAUDE.md  → líderes técnicos</span></pre></div>
+    <div class="guard" data-a="up" style="--d:.45s"><span class="bmstep__n">2</span><h4>Los dueños, por correo</h4><p>GitHub pide la aprobación del dueño de cada archivo; se pone el correo de su cuenta de GitHub.</p><pre class="code"><span class="c">.github/CODEOWNERS</span>
+docs/reglas/diseno.md <span class="c">correos de diseño</span>
+docs/reglas/front.md  <span class="c">correos de front</span>
+docs/reglas/back.md   <span class="c">correos de back</span>
+CLAUDE.md  .claude/   <span class="c">líderes técnicos</span></pre></div>
+    <div class="guard" data-a="up" style="--d:.6s"><span class="bmstep__n">3</span><h4>Claude pregunta y GitHub bloquea</h4><p>Claude pide permiso antes de tocar una regla; aunque alguien lo autorice, el PR no entra sin la aprobación del dueño.</p><pre class="code"><span class="c">.claude/settings.json</span>
+"ask": [ "Edit(docs/reglas/**)",
+         "Edit(CLAUDE.md)" ]
+<span class="c">Branch protection</span>
+✓ Require review from Code Owners</pre></div>
   </div>
 </section>
 
-<!-- 14 · front es clave -->
+<!-- guía MCP para diseño -->
+<section class="slide" data-title="Guía MCP">
+  <span class="kicker" data-a="up"><i class="ic" data-i="Sync"></i>Guía para Product Design</span>
+  <h2 class="h2" data-a="up" style="--d:.1s; font-size:48px; line-height:56px">Claude y Figma, <em>conectados con MCP</em></h2>
+  <div class="mcp">
+    <div class="mcp__what" data-a="left" style="--d:.25s"><span class="law__ic"><i class="ic" data-i="Info"></i></span><h4>¿Qué es MCP?</h4><p><b>Model Context Protocol</b>: un conector estándar que le da a Claude acceso a otras herramientas. Con el MCP de Figma, Claude ve tus frames, componentes y variables y puede volverlos maqueta en el React del repo.</p><p class="mcp__req">Necesitas un asiento <b>Dev o Full</b> en un plan pagado de Figma y Claude Code instalado.</p><img src="ilus/ilust-09-color.svg" alt="" class="mcp__m bob" /></div>
+    <div class="mcp__steps">
+      <div class="bmstep" data-a="up" style="--d:.35s"><span class="bmstep__n">1</span><h4>Instala Figma en Claude Code</h4><pre class="code">claude plugin install figma@claude-plugins-official</pre><p class="bmstep__or">o el servidor directo:</p><pre class="code">claude mcp add --transport http figma https://mcp.figma.com/mcp</pre></div>
+      <div class="bmstep" data-a="up" style="--d:.45s"><span class="bmstep__n">2</span><h4>Conéctalo</h4><p>En Claude escribe <code>/mcp</code>, elige <b>figma</b> → <b>Authenticate</b> y en el navegador da <b>Allow Access</b>.</p><pre class="code">Authentication successful.
+Connected to figma</pre></div>
+      <div class="bmstep" data-a="up" style="--d:.55s"><span class="bmstep__n">3</span><h4>Haz la maqueta</h4><p>Pega el link del frame y pide la maqueta con nuestro DS. Manuel la aprueba y la compartes; <b>front la integra</b>.</p><pre class="code">Haz la maqueta en React de
+este frame con nuestro DS:
+figma.com/design/…</pre></div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 · front es clave -->
 <section class="slide" data-title="Front">
   <span class="kicker" data-a="up"><i class="ic" data-i="Code"></i>El papel de front</span>
   <h2 class="h2" data-a="up" style="--d:.1s; font-size:48px; line-height:56px">Diseño entrega la maqueta. <em>Front la vuelve producto.</em></h2>
@@ -253,7 +269,7 @@ docs/practicas/back.md  @lider-back
   </div>
 </section>
 
-<!-- 15 · cierre -->
+<!-- 16 · cierre -->
 <section class="slide end" data-title="Cierre" data-hook="end">
   <div class="confetti" id="confetti"></div>
   <div class="end__a"></div>
