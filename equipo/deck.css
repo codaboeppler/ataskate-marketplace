@@ -659,3 +659,17 @@ img { display: block; max-width: 100%; }
 .mcp__steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .mcp__steps .bmstep { min-height: 560px; }
 .mcp__steps .code { font-size: 14px; }
+
+.loc { position: absolute; left: 96px; right: 96px; top: 210px; display: grid; grid-template-columns: 400px 1fr; gap: 20px; }
+.loc .mcp__what .code { margin: 4px 0 12px; padding: 12px 14px; border-radius: 12px; background: #fff; font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace; font-size: 16px; color: var(--pri); }
+.loc__flow { display: grid; gap: 16px; align-content: start; }
+.loc__zone { display: grid; gap: 12px; padding: 16px; border-radius: 24px; border: 2px dashed var(--lav3); background: #fdfdff; }
+.loc__zone > .rol { justify-self: start; }
+.loc__steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.loc__steps .bmstep { min-height: 300px; }
+.loc__zone--dev { border-style: solid; border-color: var(--line); background: #fff; }
+.loc__pr { display: flex; align-items: center; gap: 14px; font-size: 18px; line-height: 26px; color: var(--mute); }
+.loc__pr b { color: var(--navy); font-weight: 600; }
+.loc__pr .ic { width: 32px; height: 32px; color: var(--pri); flex: none; }
+.loc .mcp__what { min-height: 600px; } .loc .mcp__m { width: 96px; right: 16px; bottom: 12px; }
+.map__sh--mk { grid-column: 1 / 2; }

@@ -49,7 +49,7 @@
     </div>
   </div>
   <div class="counters" data-a="up" style="--d:1.3s">
-    <div class="counter"><b data-count="22">0</b><span>personas en el equipo</span></div>
+    <div class="counter"><b data-count="23">0</b><span>personas en el equipo</span></div>
     <div class="counter"><b data-count="12">0</b><span>en desarrollo: front, back y full stack</span></div>
     <div class="counter"><b data-count="2">0</b><span>en QA, uno compartido entre dos áreas</span></div>
     <div class="counter"><b data-count="2">0</b><span>en Product Design, compartidos entre las tres áreas</span></div>
@@ -96,6 +96,7 @@
     <div class="mapc" data-a="up" style="--d:0.35s"><h4><i class="ic" data-i="Inventory"></i>Operativa<span>7</span></h4><div class="row row--ld"><span class="av">DB</span><b>Daniel Boeppler</b><em>PO · Líder de área</em></div><div class="row"><span class="av">EV</span><b>Efren Vaquero</b><em>QA</em></div><div class="row"><span class="av">AG</span><b>Alejandra Guerra</b><em>Full stack</em></div><div class="row"><span class="av">DG</span><b>David Gomez</b><em>Full stack</em></div><div class="row"><span class="av">KR</span><b>Karla Rojas</b><em>Back end</em></div><div class="row"><span class="av">JC</span><b>Juan Carlos Romero</b><em>Product Design</em></div><div class="row"><span class="av">RO</span><b>Raul Oliva</b><em>Administrador de catálogo</em></div></div>
     <div class="mapc" data-a="up" style="--d:0.5s"><h4><i class="ic" data-i="AdminPanelSettings"></i>Administrativa<span>7</span></h4><div class="row row--ld"><span class="av">YD</span><b>Yeison Del Rio</b><em>PO · Líder de área</em></div><div class="row"><span class="av">CP</span><b>Camilo Penuela</b><em>Front end</em></div><div class="row"><span class="av">SP</span><b>Sergio Parra</b><em>Front end</em></div><div class="row"><span class="av">YD</span><b>Yazid Dau</b><em>Front end</em></div><div class="row"><span class="av">SC</span><b>Sonia Castillo</b><em>Back end</em></div><div class="row"><span class="av">IF</span><b>Ivan Flores</b><em>Back end</em></div><div class="row"><span class="av">CO</span><b>Carolina Ovalle</b><em>Product Design</em></div></div>
     <div class="mapc" data-a="up" style="--d:0.65s"><h4><i class="ic" data-i="Storefront"></i>Marketplace<span>5</span></h4><div class="row row--ld"><span class="av">LC</span><b>Lucas Canha Leite</b><em>PO · Líder de área</em></div><div class="row"><span class="av">YB</span><b>Yesid Ballesteros</b><em>Front end</em></div><div class="row"><span class="av">AI</span><b>Andre Ignorosa</b><em>Front end</em></div><div class="row"><span class="av">CC</span><b>Christian Cadena</b><em>Front end</em></div><div class="row"><span class="av">JB</span><b>Josue Balarezo</b><em>Back end</em></div></div>
+    <div class="map__sh map__sh--mk" data-a="up" style="--d:.85s"><i class="ic" data-i="CompareArrows"></i><span class="av">G</span><b>Guadalupe</b><em>Marketing transversal</em></div>
     <div class="map__sh" data-a="up" style="--d:.9s"><i class="ic" data-i="CompareArrows"></i><span class="av">JT</span><b>Jesús Torres</b><em>QA compartido entre Administrativa y Marketplace</em></div>
     <div class="map__sh map__sh--ux" data-a="up" style="--d:1s"><i class="ic" data-i="CompareArrows"></i><span class="av">JC</span><span class="av">CO</span><b>Juan Carlos Romero y Carolina Ovalle</b><em>Product Design compartido entre las tres áreas</em></div>
   </div>
@@ -152,17 +153,17 @@ uv --version</pre></div>
     <div class="lane" data-a="left" style="--d:.25s">
       <div class="lane__h"><span class="rol r-front">Carril 1 · Estético</span><span class="lane__tag">La mayoría hoy · solo front</span></div>
       <ol>
-        <li>Product Design hace la <b>maqueta con Claude</b>, con el DS y el React del repo.<code>bmad-ux</code></li>
-        <li><b>Manuel revisa y aprueba</b> la maqueta.</li>
-        <li>La versión aprobada se guarda en <b>Figma, solo como versionado</b>.</li>
-        <li>Diseño <b>comparte la maqueta</b> y el PO escribe la HU -F.<code>bmad-ticket</code></li>
-        <li><b>Front la integra</b> y un líder técnico aprueba el PR; luego QA.<code>bmad-code-review</code></li>
+        <li>Product Design hace la <b>maqueta con Claude en localhost</b>, con el DS y el React del repo.<code>bmad-ux</code></li>
+        <li>La comparte en el <b>GitHub Pages de producto</b> para que el equipo la vea.</li>
+        <li><b>Manuel la aprueba al 100%</b> y la versión se guarda en Figma (versionado).</li>
+        <li>Recién entonces va el <b>PR al repo</b> y el PO escribe la HU -F.<code>bmad-ticket</code></li>
+        <li><b>Front la integra</b>, un líder técnico aprueba el PR y entra a QA.<code>bmad-code-review</code></li>
       </ol>
     </div>
     <div class="lane" data-a="right" style="--d:.35s">
       <div class="lane__h"><span class="rol r-back">Carril 2 · Funcionalidad nueva</span><span class="lane__tag">Más pasos · no frena al carril 1</span></div>
       <ol>
-        <li>Mismo inicio: maqueta con Claude, <b>Manuel aprueba</b> y versión en Figma.</li>
+        <li>Mismo inicio: maqueta en localhost, GitHub Pages de producto, <b>Manuel aprueba al 100%</b> y versión en Figma.</li>
         <li>La funcionalidad trae <b>su propia maqueta</b>; no edita pantallas ya maquetadas.</li>
         <li>El PO escribe PRD y HUs <b>-B, -F y .1-F</b>.<code>bmad-prd</code><code>bmad-ticket</code></li>
         <li>Back prueba en local antes de QA; <b>front integra los servicios</b> en la maqueta (.1-F).<code>bmad-build</code></li>
@@ -226,11 +227,10 @@ diseno.md  <span class="c">→ Product Design</span>
 front.md   <span class="c">→ líderes de front</span>
 back.md    <span class="c">→ líderes de back</span>
 <span class="c">CLAUDE.md  → líderes técnicos</span></pre></div>
-    <div class="guard" data-a="up" style="--d:.45s"><span class="bmstep__n">2</span><h4>Los dueños, por correo</h4><p>GitHub pide la aprobación del dueño de cada archivo; se pone el correo de su cuenta de GitHub.</p><pre class="code"><span class="c">.github/CODEOWNERS</span>
-docs/reglas/diseno.md <span class="c">correos de diseño</span>
-docs/reglas/front.md  <span class="c">correos de front</span>
-docs/reglas/back.md   <span class="c">correos de back</span>
-CLAUDE.md  .claude/   <span class="c">líderes técnicos</span></pre></div>
+    <div class="guard" data-a="up" style="--d:.45s"><span class="bmstep__n">2</span><h4>Claude conoce al equipo</h4><p>El repo trae el directorio del equipo con nombre, rol y correo de GitHub. Si dices “agrega a Christian a front”, Claude pone su correo como dueño.</p><pre class="code"><span class="c">docs/equipo.md</span>
+Christian Cadena · Front · <span class="c">correo</span>
+<span class="c">.github/CODEOWNERS</span>
+docs/reglas/front.md <span class="c">correos de front</span></pre></div>
     <div class="guard" data-a="up" style="--d:.6s"><span class="bmstep__n">3</span><h4>Claude pregunta y GitHub bloquea</h4><p>Claude pide permiso antes de tocar una regla; aunque alguien lo autorice, el PR no entra sin la aprobación del dueño.</p><pre class="code"><span class="c">.claude/settings.json</span>
 "ask": [ "Edit(docs/reglas/**)",
          "Edit(CLAUDE.md)" ]
@@ -256,7 +256,31 @@ figma.com/design/…</pre></div>
   </div>
 </section>
 
-<!-- 15 · front es clave -->
+<!-- guía localhost para diseño -->
+<section class="slide" data-title="Guía localhost">
+  <span class="kicker" data-a="up"><i class="ic" data-i="Code"></i>Guía para Product Design</span>
+  <h2 class="h2" data-a="up" style="--d:.1s; font-size:48px; line-height:56px">Las maquetas viven en <em>localhost</em> hasta que Manuel las aprueba</h2>
+  <div class="loc">
+    <div class="mcp__what" data-a="left" style="--d:.25s"><span class="law__ic"><i class="ic" data-i="Info"></i></span><h4>¿Qué es localhost?</h4><p>Es <b>tu propia computadora sirviendo la página</b>. Claude la levanta y la abres en el navegador con una dirección como:</p><pre class="code">http://localhost:4400</pre><p>Solo tú la ves y nada de lo que cambies ahí afecta QA, back ni front. Es tu espacio para probar sin miedo.</p><img src="ilus/ilust-11-color.svg" alt="" class="mcp__m bob" /></div>
+    <div class="loc__flow">
+      <div class="loc__zone">
+        <span class="rol r-ux">Espacio de producto · libre</span>
+        <div class="loc__steps">
+          <div class="bmstep" data-a="up" style="--d:.35s"><span class="bmstep__n">1</span><h4>Haz la maqueta</h4><p>Pídele a Claude que la levante y la ajustas en tu navegador.</p><pre class="code">Levanta la maqueta
+en localhost</pre></div>
+          <div class="bmstep" data-a="up" style="--d:.45s"><span class="bmstep__n">2</span><h4>Compártela</h4><p>Súbela al <b>GitHub Pages de producto</b>: un link con todos los flujos para que el equipo vea los cambios.</p></div>
+          <div class="bmstep" data-a="up" style="--d:.55s"><span class="bmstep__n">3</span><h4>Manuel aprueba al 100%</h4><p>Con el link de Pages. Ajustas en localhost hasta que la apruebe y guardas la versión en Figma.</p></div>
+        </div>
+      </div>
+      <div class="loc__zone loc__zone--dev" data-a="up" style="--d:.7s">
+        <span class="rol r-back">Espacio de desarrollo · protegido</span>
+        <div class="loc__pr"><i class="ic" data-i="Lock"></i><span><b>Solo con la aprobación de Manuel</b> se abre el PR al repo real: un líder técnico lo aprueba, front integra y entra a QA → pre prod → prod.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 · front es clave -->
 <section class="slide" data-title="Front">
   <span class="kicker" data-a="up"><i class="ic" data-i="Code"></i>El papel de front</span>
   <h2 class="h2" data-a="up" style="--d:.1s; font-size:48px; line-height:56px">Diseño entrega la maqueta. <em>Front la vuelve producto.</em></h2>
@@ -269,7 +293,7 @@ figma.com/design/…</pre></div>
   </div>
 </section>
 
-<!-- 16 · cierre -->
+<!-- 17 · cierre -->
 <section class="slide end" data-title="Cierre" data-hook="end">
   <div class="confetti" id="confetti"></div>
   <div class="end__a"></div>
