@@ -1,0 +1,469 @@
+/* ============================================================
+   Generación de códigos (HU-CP-407-B) — reconstrucción estática del código de Product Design
+   Rama rama del equipo del repo del equipo: src/components/AccessCodes/** (+ preview access-codes).
+   Los valores salen de sus *.styles.ts y de los componentes del DS en src/design-system/ (tokens.ts, Colors, Typography):
+   - .cd-*  = componentes del DS tal como están en su código (Button, IconButton, Chip, Checkbox, Table, DataTable, Modal,
+              Alert, SearchFieldV2, TableFilterChip, Pagination, Tooltip, TextInput, NumberInput, Spinner) y el AppToast.
+   - .ac-*  = acomodo de la pantalla (accessCodes.styles.ts, accessCodesTable.styles.ts, accessCodesBatch.styles.ts,
+              accessCodeHistory.styles.ts).
+   El ancho de página y el padding lateral los pone .pos-main de ../pos.css (regla de Daniel: 1440 con 64 a los lados, 24 a ≤900).
+   ============================================================ */
+
+/* Arreglo local de un detalle compartido de ../pos.css: a 900 px o menos el menú es cajón, pero la regla del Administrativo
+   (:root[data-plataforma='admin'] … .pos-cuerpo { padding-left: 244px }) le gana al reset del @media y el contenido quedaba
+   recorrido 244 px (a 375 solo quedaban 131 px). Mismo selector, dentro del @media, para que gane aquí. Ver README. */
+@media (max-width: 900px) {
+  :root[data-plataforma='admin'] .pos-menu-fijo:not(.is-menu-cerrado) .pos-cuerpo { padding-left: 0; }
+}
+
+/* ---------------- Página (PageWrapper / PageHeader) ---------------- */
+.ac-page {
+  display: flex; flex-direction: column; gap: 24px;                  /* spacing[24] */
+  min-height: calc(100vh - var(--pos-header-h, 60px));
+  background: #fbfbfe;                                                /* colors.surfacePage */
+}
+.ac-page[aria-busy='true'] { cursor: progress; }
+.ac-noscript { margin: 0; font-size: 16px; color: #2a2c2f; }
+/* breadcrumb del DS (el mismo marcado del inventario, estilos de ../pos.css) */
+.ac-page .ds-breadcrumb + .ac-head { margin-top: 0; }
+.ac-crumb-btn {
+  padding: 0; border: 0; background: none; cursor: pointer;
+  font-family: var(--font-family-sans); font-size: 14px; font-weight: 600; line-height: normal; color: var(--ats-neutral-600);
+  transition: color .15s;
+}
+.ac-crumb-btn:hover { color: var(--ats-primary-300); }
+.ac-crumb-btn:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; border-radius: 2px; }
+.ac-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; width: 100%; }
+.ac-head__actions { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; }
+/* Typography "tituloDePagina": Nunito 28/33.6, 700, #1D1E20 */
+.ac-title { margin: 0; min-width: 0; overflow-wrap: anywhere; font-size: 28px; line-height: 33.6px; font-weight: 700; color: #1d1e20; }
+.ac-title:focus { outline: none; }
+
+/* ---------------- Card (accessCodes.styles.ts · Card / CardHeader / CardDivider) ----------------
+   Sin borde: solo Card-shadow y radio 16 (Patrón de COMPONENTS.md y regla de Daniel). */
+.ac-card {
+  display: flex; flex-direction: column; gap: 16px; width: 100%; min-width: 0;
+  padding: 24px; box-sizing: border-box; border-radius: 16px;
+  box-shadow: var(--pos-shadow-card, 0 2px 10px 0 rgba(0, 0, 0, .06));   /* shadows.cardHover */
+  background: #fff;
+}
+.ac-card[hidden] { display: none; }
+.ac-card__head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; width: 100%; }
+.ac-card__divider { width: 100%; margin: 0; border: none; border-top: 1px solid #d4d6d8; }
+/* Typography "subtitulos": 20/24, 600, #1D1E20 */
+.ac-h2 { margin: 0; font-size: 20px; line-height: 24px; font-weight: 600; color: #1d1e20; }
+.ac-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; min-width: 0; }
+.ac-toolbar[hidden] { display: none; }
+.ac-searchbox { width: 320px; max-width: 100%; }
+
+/* ---------------- DataTable (título, barra de selección) ---------------- */
+.cd-dt { display: flex; flex-direction: column; gap: 16px; width: 100%; min-width: 0; font-family: 'Nunito', sans-serif; }
+.cd-dt__title-row { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.cd-dt__title { margin: 0; font-size: 20px; line-height: 24px; font-weight: 600; color: #1d1e20; }
+/* barra de selección: padding 8/24, fondo surfacePage, radio 8. Corrección: en el código no envuelve y a 375 los botones
+   se salían de la tarjeta; aquí baja a otro renglón cuando no cabe. */
+.cd-dt__selection {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px;
+  padding: 8px 24px; background: #fbfbfe; border-radius: 8px; width: 100%; box-sizing: border-box;
+}
+.cd-dt__selection-info { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; flex-shrink: 0; }
+.cd-dt__count { font-size: 14px; font-weight: 600; color: #2a2c2f; }   /* tablaHeader en textBody */
+.cd-dt__deselect {
+  display: flex; align-items: center; justify-content: center; border: none; background: transparent; cursor: pointer;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; line-height: 1; color: #5a5aff;
+  padding: 8px 16px; border-radius: 9999px;
+}
+.cd-dt__deselect:hover { background: #f0f0ff; }
+.cd-dt__deselect:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
+.cd-dt__actions { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; }
+
+/* ---------------- Table / TableRow / TableCell (DS) ----------------
+   borderVariant="neutral": filas y encabezado con línea #D4D6D8; la última fila sin línea.
+   La tabla no tiene caja propia: vive dentro de la tarjeta (regla de Daniel). Con minWidth (880) hace scroll horizontal
+   dentro de su marco y muestra sombras en el borde donde hay más contenido (useHorizontalScrollShadows). */
+.cd-tframe { position: relative; width: 100%; min-width: 0; }
+.cd-tframe::before, .cd-tframe::after {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 16px; z-index: 1; pointer-events: none;
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, .06); opacity: 0; transition: opacity .15s ease;
+}
+.cd-tframe::before { left: -16px; clip-path: inset(0 -24px 0 0); }
+.cd-tframe::after { right: -16px; clip-path: inset(0 0 0 -24px); }
+.cd-tframe.is-start::before, .cd-tframe.is-end::after { opacity: 1; }
+.cd-tframe[hidden] { display: none; }
+.cd-tscroll { width: 100%; overflow-x: auto; --table-row-border: #d4d6d8; --table-header-border: #d4d6d8; }
+.cd-table { width: 100%; border-collapse: collapse; font-family: 'Nunito', sans-serif; }
+.cd-table tbody tr:last-of-type td { border-bottom: none; }
+/* TableScroll de AccessCodesTable: celdas en una sola línea */
+.ac-table th, .ac-table td { white-space: nowrap; }
+.cd-td {
+  padding: 12px 8px; border-bottom: 1px solid var(--table-row-border, #fbfbfe);
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 400; color: #2a2c2f; text-align: left; vertical-align: middle;
+}
+.cd-td:first-of-type { padding-left: 16px; }
+.cd-td:last-of-type { padding-right: 16px; }
+.cd-td--right { text-align: right; }
+.cd-th {
+  padding: 12px 8px; text-align: left; vertical-align: middle; white-space: nowrap;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600; color: #1d1e20;
+  border-bottom: 1px solid var(--table-header-border, #d4d6d8);
+}
+.cd-th:first-of-type { padding-left: 16px; }
+.cd-th:last-of-type { padding-right: 16px; }
+.cd-th--right { text-align: right; }
+.cd-th__in { display: flex; align-items: center; gap: 4px; }
+.cd-th--right .cd-th__in { justify-content: flex-end; }
+/* type="checkbox": 40 de ancho, 24 a la izquierda si es la primera celda */
+.cd-td--check, .cd-th.cd-td--check { width: 40px; padding: 12px 8px; border-bottom: 1px solid var(--table-row-border, #fbfbfe); }
+.cd-td--check:first-of-type { padding-left: 24px; }
+.cd-th.cd-td--check { border-bottom-color: var(--table-header-border, #d4d6d8); }
+/* type="text-description": padding 4/8; principal 14/1.2 #2A2C2F, descripción 12/12 #54575C a 4 */
+.cd-td--desc { padding: 4px 8px; }
+.cd-td__main { margin: 0; font-size: 14px; font-weight: 400; line-height: 1.2; color: #2a2c2f; }
+.cd-td__sub { margin: 4px 0 0; font-size: 12px; font-weight: 400; line-height: 12px; color: #54575c; }
+/* type="loading": barra con shimmer */
+.cd-td--loading { padding: 12px 8px; border-bottom: 1px solid var(--table-row-border, #d4d6d8); }
+.cd-shimmer {
+  height: 16px; width: 80%; border-radius: 8px;
+  background: linear-gradient(90deg, #f4f5f5 25%, #e8e9ea 50%, #f4f5f5 75%); background-size: 200px 100%;
+  animation: cd-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes cd-shimmer { 0% { background-position: -200px 0; } 100% { background-position: calc(200px + 100%) 0; } }
+.cd-tr { transition: background .15s ease; }
+.cd-tr--click { cursor: pointer; }
+.cd-tr--click:hover { background: #fbfbfe; }
+.cd-tr--click:focus-visible { outline: 2px solid #5a5aff; outline-offset: -2px; }
+.cd-tr--selected, .cd-tr--selected:hover { background: #f0f0ff; }
+/* fila recién enviada: se ilumina en purple50 y se desvanece en 2 s (ACCESS_CODES_HIGHLIGHT_MS) */
+.cd-tr.access-code-row--highlighted { animation: ac-highlight 2000ms ease-out forwards; }
+@keyframes ac-highlight { from { background: #f0f0ff; } to { background: transparent; } }
+@media (prefers-reduced-motion: reduce) {
+  .cd-tr.access-code-row--highlighted { animation: none; background: #f0f0ff; }
+  .cd-shimmer { animation: none; }
+}
+
+/* celdas de la pantalla (accessCodes.styles.ts) */
+.ac-inline { display: inline-flex; align-items: center; gap: 8px; }
+.ac-trunc {
+  display: inline-block; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle;
+  font-size: 14px; line-height: 16.8px; color: #2a2c2f;
+}
+.ac-txt { font-size: 14px; line-height: 16.8px; font-weight: 400; color: #2a2c2f; }   /* tablaContenido */
+.ac-txt--caption { color: #54575c; }
+/* AccessCodeGroups: el código en grupos de 3; compacto en tabla (14/400, gap 4), grande en el detalle (titulos 24/600, gap 12) */
+.ac-code {
+  display: inline-flex; gap: 12px; font-size: 24px; font-weight: 600; line-height: 28.8px; color: #1d1e20;
+  font-variant-numeric: tabular-nums; user-select: all;
+}
+.ac-code--compact { gap: 4px; font-size: 14px; font-weight: 400; line-height: 16.8px; }
+.ac-copied { font-size: 12px; line-height: 12px; color: #174a2e; }   /* labelRegular en successTitle */
+.ac-selbox { display: inline-flex; vertical-align: middle; }
+
+/* ---------------- Checkbox (DS) ---------------- */
+.cd-check { position: relative; display: inline-flex; align-items: flex-start; gap: 4px; cursor: pointer; font-family: 'Nunito', sans-serif; }
+.cd-check input { position: absolute; opacity: 0; width: 0; height: 0; margin: 0; }
+.cd-check__box {
+  width: 20px; height: 20px; border-radius: 4px; border: 1px solid #a1a5aa; background: #fff; box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #0d166b;
+  transition: border-color .15s ease-in-out, background-color .15s ease-in-out;
+}
+.cd-check__box:hover { border-color: #5a5aff; }
+.cd-check__box svg { display: none; }
+.cd-check input:checked + .cd-check__box, .cd-check input:indeterminate + .cd-check__box { border-color: #acacff; background: #e5e5ff; }
+.cd-check input:checked + .cd-check__box .cd-check__tick { display: block; }
+.cd-check input:indeterminate + .cd-check__box .cd-check__tick { display: none; }
+.cd-check input:indeterminate + .cd-check__box .cd-check__dash { display: block; }
+/* foco del checkbox (accessCodesBatch.styles.ts · SelectBox): el DS no lo trae y ella lo agregó en la pantalla */
+.cd-check input:focus-visible + .cd-check__box { outline: 2px solid #5a5aff; outline-offset: 2px; }
+
+/* ---------------- Chip (DS): status-* (18 de alto, radio 4) e informativa-* ---------------- */
+.cd-chip {
+  display: inline-flex; align-items: center; gap: 4px; box-sizing: border-box; white-space: nowrap;
+  height: 18px; padding: 4px; border-radius: 4px; border: 1px solid transparent;
+  font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 400; line-height: 12px; cursor: default;
+}
+.cd-chip--status-green { background: #d1ffd1; color: #174a2e; }
+.cd-chip--status-yellow { background: #ffebba; color: #614500; }
+.cd-chip--status-red { background: #ff8e85; color: #501111; }
+.cd-chip--status-blue { background: #d0f6ff; color: #004461; }
+.cd-chip--status-gray { background: #d4d6d8; color: #2a2c2f; }
+
+/* ---------------- Button / IconButton / Spinner (DS) ---------------- */
+.cd-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-sizing: border-box; flex-shrink: 0;
+  height: 36px; padding: 8px 16px; border-radius: 100px; border: 1px solid transparent; outline: none;
+  font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px; line-height: 20px; text-align: center; white-space: nowrap;
+  cursor: pointer; transition: all .2s ease-in-out;
+}
+.cd-btn--icon { padding-left: 8px; padding-right: 16px; }
+.cd-btn__ico { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; line-height: 0; }
+.cd-btn__txt { display: inline-flex; align-items: center; }
+.cd-btn--primary { background: #5a5aff; color: #fff; }
+.cd-btn--primary:hover, .cd-btn--primary:active { background: #0d166b; }
+.cd-btn--secondary { background: #fff; color: #5a5aff; border-color: #5a5aff; }
+.cd-btn--secondary:hover, .cd-btn--secondary:active { background: #f0f0ff; border-color: #5a5aff; }
+.cd-btn--tertiary { background: #fff; color: #5a5aff; }
+.cd-btn--tertiary:hover, .cd-btn--tertiary:active { background: #f0f0ff; }
+/* Corrección: el Button del DS pone outline:none y no dibuja foco; con teclado no se veía dónde estabas */
+.cd-btn:focus-visible, .cd-ibtn:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
+/* loading: bloquea el botón y muestra el Spinner small (24, borde 2) */
+.cd-btn.is-loading { pointer-events: none; position: relative; }
+.cd-btn:disabled { cursor: default; }
+.cd-spinner {
+  width: 24px; height: 24px; border-radius: 50%; border: 2px solid rgba(0, 0, 0, .1); border-top-color: #5a5aff;
+  animation: cd-spin .7s linear infinite; display: inline-block; flex-shrink: 0; box-sizing: border-box;
+}
+.cd-btn--primary .cd-spinner { border-top-color: #fff; }
+@keyframes cd-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+/* IconButton tertiary small: 28, padding 4, blanco, ícono #5A5AFF; hover purple50 */
+.cd-ibtn {
+  display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; flex-shrink: 0;
+  width: 28px; height: 28px; padding: 4px; border: none; border-radius: 100px; background: #fff; color: #5a5aff; cursor: pointer;
+  transition: all .2s ease-in-out;
+}
+.cd-ibtn:hover, .cd-ibtn:active { background: #f0f0ff; }
+.cd-ico { display: block; flex-shrink: 0; }
+
+/* ---------------- SearchFieldV2 (DS, variante default con botón de limpiar) ---------------- */
+.cd-search { position: relative; width: 100%; }
+.cd-search__ctrl {
+  display: grid; grid-template-columns: minmax(0, 1fr) 24px; align-items: center; gap: 8px; box-sizing: border-box;
+  width: 100%; height: 40px; padding: 0 16px; border: 1px solid transparent; border-radius: 9999px; background: #fbfbfe;
+}
+.cd-search__ctrl:hover { background: #fff; border-color: #5a5aff; }
+.cd-search__ctrl:focus-within { background: #fff; border-color: #0d166b; }
+.cd-search__input {
+  width: 100%; min-width: 0; padding: 0; border: 0; outline: 0; background: transparent; overflow: hidden; text-overflow: ellipsis;
+  font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 400; letter-spacing: .3px; line-height: 19.2px; color: #2a2c2f;
+}
+.cd-search__input::placeholder { color: #a1a5aa; }
+.cd-search__btn {
+  display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0;
+  border: 0; background: transparent; color: #5a5aff; cursor: pointer;
+}
+.cd-search__btn:focus-visible { border-radius: 100%; outline: 2px solid #5a5aff; outline-offset: 2px; }
+
+/* ---------------- TableFilterChip (DS) ---------------- */
+.cd-fchip { position: relative; display: inline-flex; }
+.cd-fchip__btn {
+  display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 4px 16px; box-sizing: border-box;
+  border-radius: 8px; border: 1px solid #d4d6d8; background: #fff; box-shadow: 0 0 4px rgba(195, 195, 195, .05); cursor: pointer;
+  font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 400; letter-spacing: .3px; color: #54575c; white-space: nowrap;
+  transition: border-color .15s ease-in-out, color .15s ease-in-out;
+}
+.cd-fchip__btn:hover, .cd-fchip__btn.is-on { border-color: #0d166b; color: #0d166b; }
+.cd-fchip__btn:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
+.cd-fchip__arrow { display: inline-flex; align-items: center; color: inherit; transition: transform .2s ease-in-out; }
+.cd-fchip__btn[aria-expanded='true'] .cd-fchip__arrow { transform: rotate(180deg); }
+.cd-fchip__menu {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 45; min-width: max(100%, 200px); box-sizing: border-box; overflow: hidden;
+  background: #fff; border: 1px solid #fbfbfe; border-radius: 8px; box-shadow: 0 11px 26.6px 0 rgba(0, 0, 0, .06);
+}
+.cd-fchip__menu[hidden] { display: none; }
+/* Corrección: en el DS las opciones son <div> sin foco; aquí son botones para poder elegir con el teclado */
+.cd-fchip__opt {
+  display: flex; align-items: center; width: 100%; padding: 8px; box-sizing: border-box; border: 0; background: #fff; cursor: pointer; text-align: left;
+  font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 400; line-height: 19.2px; letter-spacing: .3px; color: #2a2c2f; white-space: nowrap;
+  transition: background .1s ease-in-out;
+}
+.cd-fchip__opt:hover, .cd-fchip__opt:focus-visible { background: #fafafa; outline: none; }
+.cd-fchip__opt[aria-selected='true'] { font-weight: 600; }
+
+/* ---------------- Pagination (DS) ---------------- */
+.cd-pag { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.cd-pag__ctrls { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
+.cd-pag__txt { font-size: 16px; font-weight: 400; color: #2a2c2f; letter-spacing: .3px; white-space: nowrap; line-height: 1.2; }
+.cd-pag__btn {
+  display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 4px; box-sizing: border-box;
+  background: #fff; border: none; border-radius: 100px; cursor: pointer; color: #5a5aff; transition: background .15s ease-in-out, color .15s ease-in-out;
+}
+.cd-pag__btn:hover:not(:disabled) { background: #f0f0ff; color: #0d166b; }
+.cd-pag__btn:disabled { color: #d4d6d8; cursor: default; }
+.cd-pag__btn:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
+
+/* ---------------- Empty state (accessCodes.styles.ts · EmptyWrapper) ---------------- */
+.ac-empty { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 32px 16px; text-align: center; }
+.ac-empty img { display: block; width: auto; height: 150px; }
+.ac-empty__t { margin: 0; font-size: 16px; line-height: 19.2px; font-weight: 600; letter-spacing: .3px; color: #2a2c2f; }   /* textoSemiBold */
+.ac-empty__d { margin: 0; font-size: 14px; line-height: 16.8px; color: #54575c; }                                         /* caption */
+
+/* ---------------- Detalle de la empresa ---------------- */
+.ac-codebox {
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 16px; width: 100%; box-sizing: border-box;
+  padding: 16px; border-radius: 8px; background: #f7f7f7;                                            /* surfaceCardGray */
+}
+.ac-codebox__txt { font-size: 16px; line-height: 19.2px; letter-spacing: .3px; color: #2a2c2f; }
+.ac-inv { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; width: 100%; }
+.ac-inv__main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.ac-inv__meta { display: flex; flex-wrap: wrap; gap: 24px; }
+.ac-hist { display: flex; flex-direction: column; gap: 12px; min-width: 0; padding-left: 24px; border-left: 1px solid #d4d6d8; }
+.ac-hist__t { margin: 0; font-size: 16px; line-height: 19.2px; font-weight: 600; letter-spacing: .3px; color: #2a2c2f; }   /* textoBold */
+.ac-hist__list { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.ac-hist__item { display: flex; gap: 12px; align-items: flex-start; }
+.ac-hist__ico { display: inline-flex; flex-shrink: 0; }
+.ac-hist__ico--ok { color: #5a5aff; }
+.ac-hist__ico--bad { color: #a82424; }
+.ac-hist__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; overflow-wrap: anywhere; }
+.ac-hist__ev { font-size: 14px; line-height: 16.8px; color: #1d1e20; }
+.ac-hist__meta { font-size: 12px; line-height: 12px; color: #54575c; }
+.ac-hist__toggle { display: flex; }
+.ac-field { display: flex; flex-direction: column; gap: 4px; padding: 0 8px; min-width: 0; overflow-wrap: anywhere; }
+.ac-field__l { font-size: 14px; line-height: 16.8px; color: #54575c; }                          /* caption */
+.ac-field__v { font-size: 16px; line-height: 19.2px; letter-spacing: .3px; color: #1d1e20; }    /* textoRegular en textTitle */
+.ac-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 16px; width: 100%; }
+.ac-stack { display: flex; flex-direction: column; gap: 16px; width: 100%; }
+/* los avisos que no aplican no ocupan lugar (en React no se pintan) */
+.ac-stack > :empty { display: none; }
+@media (max-width: 900px) {
+  .ac-inv { grid-template-columns: 1fr; }
+  .ac-hist { padding: 16px 0 0; border-left: none; border-top: 1px solid #d4d6d8; }
+  .ac-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) { .ac-fields { grid-template-columns: 1fr; } }
+
+/* ---------------- Alert (DS) ---------------- */
+.cd-alert {
+  position: relative; display: flex; align-items: center; gap: 16px; width: 100%; max-width: 100%; min-height: 56px; box-sizing: border-box;
+  padding: 16px; border-radius: 8px; border: 1px solid transparent; overflow: hidden; font-family: 'Nunito', sans-serif;
+}
+.cd-alert--warning { background: #ffebba; }
+.cd-alert--error { background: #ffebeb; }
+.cd-alert__wrap { display: flex; align-items: flex-start; gap: 8px; flex: 1; min-width: 0; }
+.cd-alert__ico { flex-shrink: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+.cd-alert--warning .cd-alert__ico { color: #cc9200; }
+.cd-alert--error .cd-alert__ico { color: #a82424; }
+.cd-alert__content { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0; }
+.cd-alert__title { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.5; letter-spacing: .3px; }
+.cd-alert--warning .cd-alert__title { color: #614500; }
+.cd-alert--error .cd-alert__title { color: #501111; }
+.cd-alert__text { margin: 0; font-size: 16px; font-weight: 400; line-height: 1.2; letter-spacing: .3px; color: #2a2c2f; }
+.cd-alert__action { flex-shrink: 0; }
+@media (max-width: 520px) {
+  .cd-alert { flex-wrap: wrap; row-gap: 16px; }
+  .cd-alert__action { order: 1; flex-basis: 100%; padding-left: 32px; box-sizing: border-box; }
+}
+
+/* ---------------- Modal (DS, size default) ----------------
+   z-index: en la app es zIndex.modal (3) con portal; aquí va sobre el header y el menú fijo del prototipo (30–40). */
+.cd-overlay {
+  position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center;
+  padding: 24px; box-sizing: border-box; background: rgba(0, 0, 0, .5);
+}
+.cd-modal {
+  display: flex; flex-direction: column; align-items: stretch; gap: 24px; width: 100%; max-width: 606px; height: auto;
+  max-height: calc(100vh - 48px); overflow: hidden; box-sizing: border-box;
+  padding: 24px; border-radius: 24px; background: #fff; box-shadow: 0 10px 60px 0 rgba(0, 0, 0, .25);
+}
+.cd-modal:focus { outline: none; }
+.cd-modal__head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-shrink: 0; width: 100%; }
+.cd-modal__title { margin: 0; font-size: 24px; font-weight: 600; line-height: 1.2; color: #2a2c2f; }
+.cd-modal__x {
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 40px; height: 40px; padding: 8px; box-sizing: border-box;
+  border: none; border-radius: 100px; background: #fff; color: #54575c; cursor: pointer; outline: none;
+  transition: background .15s ease-in-out, color .15s ease-in-out;
+}
+.cd-modal__x:hover { background: #f4f5f5; color: #2a2c2f; }
+.cd-modal__x:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
+.cd-modal__body {
+  flex: 1; min-height: 0; overflow-y: auto;
+  font-size: 16px; font-weight: 400; line-height: 1.2; letter-spacing: .3px; color: #1d1e20;
+}
+.cd-modal__foot { display: flex; align-items: flex-start; justify-content: center; flex-wrap: wrap; gap: 16px; flex-shrink: 0; width: 100%; }
+.ac-modal-foot { display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; width: 100%; }
+.ac-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; width: 100%; }
+@media (max-width: 640px) { .ac-form-grid { grid-template-columns: 1fr; } }
+/* lote (accessCodesBatch.styles.ts) */
+.ac-batch { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+.ac-batch__p { margin: 0; font-size: 16px; line-height: 19.2px; letter-spacing: .3px; color: #2a2c2f; }
+.ac-batch__label { margin: 0; font-size: 12px; line-height: 12px; font-weight: 700; color: #2a2c2f; }   /* labelBold en textBody */
+.ac-batch__list { max-height: calc(40px * 5); overflow-y: auto; margin: 0; padding: 8px 16px 8px 24px; background: #fbfbfe; border-radius: 8px; }
+.ac-batch__list li { font-size: 14px; line-height: 16.8px; color: #2a2c2f; }
+.ac-batch__list li + li { margin-top: 4px; }
+
+/* ---------------- TextInput / NumberInput (DS) ---------------- */
+.cd-input { display: flex; flex-direction: column; gap: 4px; width: 100%; min-width: 0; }
+.cd-input__lrow { display: flex; align-items: center; gap: 4px; padding: 0 8px; }
+/* label 14/1.2 #1D1E20; en el código va en 500, que la app no carga (se ve como 400): aquí 400, como se ve */
+.cd-input__label { font-size: 14px; font-weight: 400; line-height: 1.2; color: #1d1e20; }
+.cd-input__opt { font-size: 14px; font-weight: 400; color: #71767d; }
+.cd-input__field {
+  width: 100%; height: 40px; box-sizing: border-box; padding: 8px 12px; border-radius: 100px; border: 1px solid #d4d6d8; background: #fff;
+  font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 400; letter-spacing: .3px; color: #2a2c2f; outline: none;
+  transition: border-color .2s ease-in-out;
+}
+.cd-input__field::placeholder { color: #a1a5aa; }
+.cd-input__field:hover { border-color: #5a5aff; }
+.cd-input__field:focus { border-color: #0d166b; }
+.cd-input.is-error .cd-input__field, .cd-input.is-error .cd-input__field:focus { border-color: #a82424; }
+/* NumberInput: el borde va en el contenedor; teléfono con prefijo de país */
+.cd-num {
+  position: relative; display: flex; align-items: stretch; height: 40px; box-sizing: border-box; overflow: hidden;
+  border-radius: 100px; border: 1px solid #d4d6d8; background: #fff; transition: border-color .2s ease-in-out;
+}
+.cd-num:hover { border-color: #5a5aff; }
+.cd-num:focus-within { border-color: #0d166b; }
+.cd-input.is-error .cd-num { border-color: #a82424; }
+.cd-num__prefix { display: flex; align-items: center; gap: 6px; padding: 0 12px; border-right: 1px solid #d4d6d8; flex-shrink: 0; background: #fff; }
+.cd-num__prefix span { font-size: 16px; color: #2a2c2f; letter-spacing: .3px; white-space: nowrap; }
+.cd-num__flag { width: 28px; height: 28px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+.cd-num__field {
+  flex: 1; min-width: 0; box-sizing: border-box; padding: 0 12px; border: none; outline: none; background: transparent;
+  font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 400; letter-spacing: .3px; color: #2a2c2f;
+}
+.cd-num__field::placeholder { color: #a1a5aa; }
+.cd-input.is-error .cd-num__field { color: #a82424; }
+.cd-input.is-error .cd-num__field::placeholder { color: #a82424; }
+.cd-input__help { display: flex; align-items: center; gap: 4px; padding: 2px 8px; font-size: 14px; font-weight: 400; line-height: 1.4; color: #54575c; }
+.cd-input.is-error .cd-input__help { color: #a82424; }
+.cd-input__help[hidden] { display: none; }
+
+/* ---------------- Tooltip (DS) ----------------
+   En la app sale por portal sobre el ancla; aquí es un solo globo fijo que el JS coloca arriba del ancla y mantiene dentro de la pantalla. */
+.cd-tip {
+  position: fixed; z-index: 55; width: max-content; max-width: min(267px, calc(100vw - 16px)); box-sizing: border-box;
+  padding: 8px; border-radius: 8px; background: #0d166b; color: #fff; pointer-events: none;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 400; line-height: 1.2; white-space: normal; word-break: break-word;
+  box-shadow: 0 11px 26.6px 0 rgba(0, 0, 0, .06); opacity: 0; transition: opacity .15s ease-in-out;
+}
+.cd-tip.is-on { opacity: 1; }
+.cd-tip[hidden] { display: none; }
+.cd-tip__arrow { position: absolute; top: 100%; width: 16px; height: 8px; transform: translateX(-50%); display: block; }
+
+/* ---------------- AppToast (src/components/General/Atoms/AppToast) ----------------
+   530 de ancho, padding 16, radio 8, ícono 20 y barra de tiempo de 3 (4 s, ACCESS_CODE_TOAST_DURATION).
+   En la app va a 20/20 de la esquina; aquí va bajo el header fijo, como los demás avisos del prototipo.
+   Corrección: a 375 los 530 se salían de la pantalla; aquí no pasan de 100vw − 32. */
+.cd-toasts {
+  position: fixed; z-index: 60; top: calc(var(--pos-header-h, 60px) + 16px); right: 16px;
+  display: flex; flex-direction: column; align-items: flex-end; pointer-events: none;
+}
+.cd-toast {
+  position: relative; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  width: min(530px, calc(100vw - 32px)); box-sizing: border-box; margin: 8px 0; padding: 16px; border-radius: 8px; overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .1); pointer-events: auto; animation: cd-toast-in .3s ease-in-out;
+}
+@keyframes cd-toast-in { from { transform: translateY(-20px); opacity: 0; } to { transform: none; opacity: 1; } }
+.cd-toast--success { background: #e4f7ec; }
+.cd-toast--error { background: #ffe6e6; }
+.cd-toast--warning { background: #fff5db; }
+.cd-toast--info { background: #dbf4ff; }
+.cd-toast__row { display: flex; align-items: flex-start; gap: 8px; min-width: 0; flex: 1; }
+.cd-toast__ico { flex-shrink: 0; width: 20px; height: 20px; }
+.cd-toast--success .cd-toast__ico { color: #309c60; }
+.cd-toast--error .cd-toast__ico { color: #a82424; }
+.cd-toast--warning .cd-toast__ico { color: #cc9200; }
+.cd-toast--info .cd-toast__ico { color: #008fcc; }
+.cd-toast__msg { margin: 0; font-size: 16px; font-weight: 400; line-height: 1.2; color: #2a2c2f; white-space: normal; overflow-wrap: anywhere; }
+/* Corrección: en la app el cierre es una imagen con onClick (sin foco); aquí es un botón */
+.cd-toast__x {
+  flex-shrink: 0; align-self: center; display: flex; width: 24px; height: 24px; padding: 0; border: 0; background: none; color: #2a2c2f; cursor: pointer;
+}
+.cd-toast__x:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; border-radius: 4px; }
+.cd-toast__timer { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; transform-origin: left center; animation: cd-toast-timer linear forwards; }
+.cd-toast--success .cd-toast__timer { background: #309c60; }
+.cd-toast--error .cd-toast__timer { background: #a82424; }
+.cd-toast--warning .cd-toast__timer { background: #cc9200; }
+.cd-toast--info .cd-toast__timer { background: #008fcc; }
+@keyframes cd-toast-timer { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+@media (prefers-reduced-motion: reduce) { .cd-toast, .cd-toast__timer { animation: none; } }
+
+.ac-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }

@@ -1,0 +1,159 @@
+/* Home del Administrativo: NewAdminHome del repo del equipo (origin/develop), bandera HU-CP-400-F, datos HU-CP-400.1-F.
+   Medidas de su código y del DS (tokens.ts, Colors/colors.ts, Typography/typography.ts y los *.styles.ts de Chip, IconButton,
+   Avatar y Spinner). Las tarjetas son NewCardShell: blancas, radio 16 (borderRadius.md), padding 24, separación 16 y sombra
+   0 2px 10px #0000000F (la Card-shadow), sin borde. Los controles (chips) sí llevan borde. */
+
+.home-admin { background: #fbfbfe; }   /* colors.surfacePage */
+
+/* página: el ancho y los 64/24 a los lados los pone .pos-main; arriba y abajo, los 24 de su ContainerFlex */
+.pos-main.ha-main { padding-top: 24px; padding-bottom: 24px; }
+
+/* ---------- Tipografía del DS (Typography/typography.ts) ---------- */
+.ha-t, .ha-th, .ha-tc, .ha-lb, .ha-lr, .ha-sub { margin: 0; font-family: 'Nunito', sans-serif; }
+.ha-t   { font-size: 16px; line-height: 19.2px; font-weight: 600; letter-spacing: .3px; color: #1d1e20; }  /* textoBold + textTitle */
+.ha-th  { font-size: 14px; line-height: 16.8px; font-weight: 700; color: #1d1e20; }                    /* tablaHeader */
+.ha-tc  { font-size: 14px; line-height: 16.8px; font-weight: 400; color: #2a2c2f; }                    /* tablaContenido + textBody */
+.ha-lb  { font-size: 12px; line-height: 12px; font-weight: 700; color: #54575c; }                      /* labelBold */
+.ha-lr  { font-size: 12px; line-height: 12px; font-weight: 400; color: #54575c; }                      /* labelRegular + textCaptions */
+.ha-sub { font-size: 20px; line-height: 24px; font-weight: 600; color: #1d1e20; }                      /* subtitulos */
+.ha-c-primary { color: #5a5aff; }   /* buttonPrimary */
+.ha-c-title { color: #1d1e20; }     /* textTitle */
+.ha-c-cap { color: #54575c; }       /* textCaptions */
+.ha-c-ok { color: #309c60; }        /* successIcon (#309C60 en su código) */
+
+/* ---------- Mampostería (NewCardMasonry) ----------
+   Columnas = máx(1, piso((ancho + 16) / (360 + 16))); la tarjeta i va a la columna i mod n. Sin JS queda una cuadrícula
+   con el mismo mínimo de 360. */
+.ha-masonry { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(360px, 100%), 1fr)); gap: 16px; align-items: start; }
+.ha-masonry.is-cols { display: flex; align-items: flex-start; justify-content: flex-start; gap: 16px; }
+.ha-col { flex: none; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 16px; }
+
+/* ---------- Tarjeta (NewCardShell) y encabezado (NewCardHeader) ---------- */
+.ha-card {
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 16px;
+  width: 100%; box-sizing: border-box; padding: 24px; border-radius: 16px; background: #fff; box-shadow: 0 2px 10px #0000000f;
+}
+.ha-head { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
+.ha-head__txt { display: flex; flex-direction: column; align-items: flex-start; width: max-content; }
+/* IconButton del DS en small: 28 × 28, padding 4, radio 100, fondo blanco, ícono ArrowForward de 20 en #5A5AFF; hover primary50 */
+.ha-go {
+  flex: none; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 4px; box-sizing: border-box;
+  border-radius: 100px; background: #fff; color: #5a5aff; transition: all .2s ease-in-out;
+}
+.ha-go:hover, .ha-go:active { background: #f0f0ff; }
+.ha-go:focus-visible, .ha-add:focus-visible, .ha-link:focus-visible, .ha-choice:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
+.ha-go svg, .ha-add svg { display: block; }
+
+/* NewCardDivider: línea de 1 px borderDefault */
+.ha-hr { flex: none; width: 100%; height: 1px; box-sizing: border-box; border-bottom: 1px solid #d4d6d8; }
+
+/* filas genéricas de su código: ContainerFlex en fila, extremos separados, centrado vertical.
+   El gap de 8 no está en su código: sin él, a 375 "en linea" y "-$500.00" quedan pegados */
+.ha-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; }
+.ha-pila { display: flex; flex-direction: column; align-items: flex-start; width: 100%; }
+.ha-inline { display: flex; align-items: center; gap: 8px; width: max-content; }
+.ha-inline svg { flex: none; display: block; }
+
+/* NewCardLinkRow: enlaces de 14/700 en #5A5AFF, uno debajo de otro, separación 24 y padding 8 */
+.ha-links { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; width: 100%; padding: 8px; box-sizing: border-box; }
+.ha-link {
+  width: max-content; cursor: pointer; text-decoration: none; border-radius: 2px;
+  font-family: 'Nunito', sans-serif; font-size: 14px; line-height: 16.8px; font-weight: 700; color: #5a5aff;
+}
+/* ds/base.css trae `a:hover { color: var(--text-link-hover) }` (0,1,1) y pintaba de navy flechas, "+" y enlaces.
+   En React el IconButton solo cambia el fondo a primary50 y LinkRow/WarningRow tienen color fijo buttonPrimary sin hover */
+.ha-go:hover, .ha-go:active, .ha-add:hover, .ha-add:active, .ha-link:hover, .ha-link:active { color: #5a5aff; }
+
+/* NewCardStatRow: columnas iguales con separador #D4D6D899 a la derecha de la primera (y de la de en medio cuando son tres) */
+.ha-stats { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; margin: 0; }
+.ha-stat { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; width: 100%; }
+.ha-stat dt, .ha-stat dd { margin: 0; }
+.ha-stat--sep { border-right: 1px solid #d4d6d899; }
+
+/* NewCardTable: cuadrícula por fila (gap 8), celdas de ancho justo con padding 8.
+   Ojo, igual que en su código: la columna "align right" queda a la izquierda de su pista, porque la celda mide fit-content. */
+.ha-tabla { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.ha-tr { display: grid; grid-template-columns: var(--cols); gap: 8px; width: 100%; }
+.ha-td { display: flex; justify-content: flex-start; align-items: center; width: fit-content; padding: 8px; box-sizing: border-box; }
+.ha-td--der { justify-content: flex-end; }
+
+/* NewCardWarningRow: WarningIcon de 18 en warningIcon #CC9200, mensaje 14 y acción 14/700 #5A5AFF */
+.ha-avisos { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; }
+.ha-avisos--mt { margin-top: 8px; }
+.ha-aviso { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; }
+.ha-aviso__msg { display: flex; justify-content: flex-start; align-items: center; gap: 8px; width: max-content; }
+.ha-aviso__msg svg { flex: none; display: block; color: #cc9200; }
+
+/* ---------- Chips del DS (Chip/chip.styles.ts) ---------- */
+/* status-*: 18 de alto, radio 4, padding 4, 12/12, borde de 1 */
+.ha-chip {
+  display: inline-flex; align-items: center; gap: 4px; height: 18px; box-sizing: border-box; padding: 4px; border-radius: 4px;
+  font-family: 'Nunito', sans-serif; font-size: 12px; line-height: 12px; font-weight: 400; white-space: nowrap; cursor: default;
+}
+.ha-chip--white { background: #fff; border: 1px solid #d4d6d8; color: #2a2c2f; }      /* status-white */
+.ha-chip--green { background: #d1ffd1; border: 1px solid transparent; color: #174a2e; } /* status-green */
+.ha-chip--gray { background: #d4d6d8; border: 1px solid transparent; color: #2a2c2f; }  /* status-gray */
+/* choice: 36 de alto, radio 8, padding 8/12, 14; elegido primary50 con borde primary300, 600 y texto primary400 */
+.ha-choice {
+  display: inline-flex; align-items: center; gap: 8px; height: 36px; box-sizing: border-box; padding: 8px 12px; margin: 0;
+  border: 1px solid #d4d6d8; border-radius: 8px; background: #fff; cursor: pointer; user-select: none;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 400; color: #2a2c2f;
+  transition: background .15s ease-in-out, border-color .15s ease-in-out, color .15s ease-in-out;
+}
+.ha-choice[aria-pressed='true'] { background: #f0f0ff; border-color: #5a5aff; font-weight: 600; color: #0d166b; }
+.ha-choice:hover { background: #f0f0ff; border-color: #5a5aff; color: #5a5aff; font-weight: 600; filter: drop-shadow(4px 4px 2px rgba(90, 90, 255, .16)); }
+
+/* ---------- Facturación y suscripción ---------- */
+.ha-box { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; padding: 8px; box-sizing: border-box; border-radius: 8px; background: #fbfbfe; }
+.ha-pago { display: flex; justify-content: space-between; align-items: center; width: 100%; box-sizing: border-box; padding: 8px 12px; border-radius: 8px; background: #effaf4; }
+.ha-pago .ha-th { color: #174a2e; }   /* successTitle */
+.ha-pago svg { color: #309c60; }      /* successIcon */
+.ha-tarjeta { display: flex; justify-content: flex-start; align-items: center; gap: 24px; width: 100%; }
+.ha-tarjeta svg { color: #2a2c2f; }   /* buttonIcon */
+
+/* ---------- Diseño de marca ---------- */
+.ha-marca { display: flex; justify-content: flex-start; align-items: center; gap: 24px; width: 100%; }
+.ha-marca__enlace { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 60%; padding: 8px; box-sizing: border-box; border-right: 1px solid #d4d6d899; }
+.ha-marca__url { display: flex; justify-content: flex-start; align-items: center; width: 100%; overflow: hidden; cursor: pointer; }
+.ha-marca__estado { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; }
+
+/* ---------- Usuarios: Avatar (placeholder, 32) y AvatarGroup del DS ---------- */
+.ha-users { display: flex; justify-content: flex-start; align-items: center; flex-wrap: wrap; gap: 16px; width: 100%; margin: 0; padding: 0; list-style: none; }
+.ha-user { display: flex; flex-direction: column; align-items: center; gap: 8px; width: max-content; }
+.ha-av {
+  position: relative; flex-shrink: 0; display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+  width: 32px; height: 32px; box-sizing: border-box; padding: 9px 6px; border-radius: 50%; overflow: hidden; background: #ebf9ff;
+  font-family: 'Nunito', sans-serif; font-size: 14px; line-height: 1.2; font-weight: 600; color: #1d1e20;
+}
+.ha-avg { position: relative; display: inline-flex; align-items: center; padding-right: 16px; }
+.ha-avg .ha-av { margin-right: -16px; }
+/* el "Agregar" es un IconButton small: blanco con el + de 18 en #5A5AFF (el IconButton del DS ignora la variante) */
+.ha-add {
+  display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 4px; box-sizing: border-box;
+  border-radius: 100px; background: #fff; color: #5a5aff; transition: all .2s ease-in-out;
+}
+.ha-add:hover, .ha-add:active { background: #f0f0ff; }
+
+/* ---------- Precio de venta vs precio de mercado ---------- */
+.ha-barra { display: flex; justify-content: center; align-items: center; width: 100%; height: 8px; min-height: 8px; border-radius: 9999px; overflow: hidden; }
+.ha-barra span { height: 100%; min-height: 8px; }
+.ha-segs { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; margin: 16px 0 0; padding: 0; list-style: none; }
+.ha-seg { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; width: 100%; }
+.ha-dot { flex: none; display: block; width: 8px; height: 8px; border-radius: 100%; }
+
+/* ---------- Tabuladores ---------- */
+.ha-tabtop { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+.ha-chips { display: flex; justify-content: center; align-items: center; gap: 8px; width: max-content; }
+.ha-mercado { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; width: max-content; }
+[data-tabla] { width: 100%; }
+.ha-cargando { display: flex; justify-content: center; align-items: center; width: 100%; height: 200px; }
+/* Spinner del DS en medium: 40, borde 3 rgba(0,0,0,.1) con el arco en #5A5AFF, 0.7 s por vuelta */
+.ha-spinner { display: inline-block; flex-shrink: 0; width: 40px; height: 40px; box-sizing: border-box; border-radius: 50%; border: 3px solid rgba(0, 0, 0, .1); border-top-color: #5a5aff; animation: ha-giro .7s linear infinite; }
+@keyframes ha-giro { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* a 375 la fila de chips y precio de mercado no cabe en todas las tarjetas: se deja envolver para no desbordar */
+@media (max-width: 420px) {
+  .ha-tabtop { flex-wrap: wrap; gap: 12px 8px; }
+}
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

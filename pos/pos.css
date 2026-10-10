@@ -14,7 +14,7 @@
   --pos-warning-surface: #ffebba;       /* feedback/warning/surface */
   --pos-text-title: #1d1e20;            /* text/title */
   --pos-table-line: var(--ats-neutral-300); /* border/default #D4D6D8 */
-  --pos-shadow-card: 0 2px 10px 0 rgba(0, 0, 0, 0.06);  /* Card-shadow */
+  --pos-shadow-card: 0 2px 10px 0 rgba(0, 0, 0, 0.06);  /* Card-shadow: tarjetas y contenedores van sin borde, solo con esta sombra (regla de Product Design, 2026-10-08) */
   --pos-shadow-popup: 0 10px 60px 0 rgba(0, 0, 0, 0.25); /* Pop ups */
 }
 
@@ -67,6 +67,9 @@ body.pos {
 /* chip activo (su panel está abierto): navy con el ícono y el número en blanco */
 .pos-hbtn[aria-expanded='true'], .pos-hbtn[aria-expanded='true']:hover { background: var(--ats-primary-400); color: var(--color-base-white); }
 .pos-hbtn[aria-expanded='true'] img { filter: brightness(0) invert(1); }
+/* el botón de menú no se pinta navy al abrir el menú lateral: se taparía el logo (Figma lo deja plano) */
+.pos-menu.pos-hbtn[aria-expanded='true'], .pos-menu.pos-hbtn[aria-expanded='true']:hover { background: transparent; }
+.pos-menu.pos-hbtn[aria-expanded='true'] img { filter: none; }
 /* punto de estado de la caja (flujo abierto): 12, verde, en la esquina del chip */
 .pos-hbtn__status { position: absolute; top: 0; right: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--ats-success-green-200); }
 /* carrito: ícono 24 + cantidad 16 bold */
@@ -130,7 +133,8 @@ body.pos {
 .pos-caja__tile dd { margin: 0; font-size: 16px; line-height: 24px; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); }
 
 /* ---------------- Página ---------------- */
-.pos-main { max-width: 1280px; margin: 0 auto; padding: 16px 24px 16px; }
+/* ancho de pantalla del Operativo (HU-CE-618/619/620): máximo 1440 con el padding adentro (útil 1312) y 64 a los lados; 24 a 900 px o menos */
+.pos-main { max-width: 1440px; margin: 0 auto; padding: 16px 64px 16px; }
 .pos-main .ds-breadcrumb { display: block; padding: 0; font-size: 14px; font-weight: var(--font-weight-semibold); line-height: normal; letter-spacing: normal; }
 .pos-crumbs { display: flex; align-items: center; flex-wrap: wrap; gap: var(--spacing-1); list-style: none; margin: 0; padding: 4px 0; }
 .pos-crumbs li { display: inline-flex; align-items: center; gap: var(--spacing-1); }
@@ -384,9 +388,9 @@ body.pos {
 .pos-plazos .ds-modal__body > * { flex-shrink: 0; }  /* que hagan scroll, no que se aplasten */
 .pos-plazos .ds-modal__footer { padding: 0; border: 0; justify-content: center; align-items: center; gap: var(--spacing-4); }
 
-.pos-plan { position: relative; border-radius: var(--radius-md); overflow: hidden; background: var(--surface-foreground); box-shadow: none; transition: box-shadow .15s; }
-.pos-plan::before { content: ''; position: absolute; inset: 0; border: 1px solid var(--ats-neutral-300); border-radius: inherit; pointer-events: none; z-index: 2; }
-.pos-plan:hover { box-shadow: var(--pos-shadow-card); }
+.pos-plan { position: relative; border-radius: var(--radius-md); overflow: hidden; background: var(--surface-foreground); box-shadow: var(--pos-shadow-card); }
+/* sin borde: el aro solo aparece (violeta) en el plan elegido */
+.pos-plan::before { content: ''; position: absolute; inset: 0; border: 1px solid transparent; border-radius: inherit; pointer-events: none; z-index: 2; }
 .pos-plan:has(input:checked)::before { border-color: var(--ats-primary-300); }
 .pos-plan__row { display: flex; align-items: center; gap: 16px; padding: var(--spacing-3); border-radius: var(--radius-md); background: var(--surface-foreground); cursor: pointer; }
 .pos-plan__name { flex: 1 0 0; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-1) var(--spacing-2); }
@@ -552,7 +556,7 @@ body.pos {
   .pos-brand__logo { flex: 0 1 auto; min-width: 0; height: auto; }
   .pos-brand__role { flex: none; }
   .pos-navpanel { right: var(--spacing-3); }
-  .pos-main { padding: 12px 16px; }
+  .pos-main { padding-top: 12px; padding-bottom: 12px; }
   .pos-related__head { flex-wrap: wrap; }
   .pos-related__title h2 { font-size: 20px; line-height: 1.2; }
   .pos .ds-tabs__list { overflow-x: auto; scrollbar-width: none; }
@@ -669,3 +673,137 @@ body.pos {
   .pos-hbtn--plain { height: 32px; min-width: 32px; padding: 4px; }
   .pos-profile img { display: none; }
 }
+
+/* a 900 px o menos el padding lateral pasa de golpe a 24 (va al final para ganarle a las reglas responsivas de arriba) */
+@media (max-width: 900px) {
+  .pos-main { padding-left: 24px; padding-right: 24px; }
+}
+
+/* ---------- Menú lateral (botón de menú del header) ----------
+   Operativo: Figma HU-CE-617-F "POS Operativo - Menú lateral" (Menu Op, 200 de ancho). Administrativo: MenuAdmin del DS (244).
+   Medidas del MenuAdmin del DS: fondo purple10 #FAFAFF, borde derecho 0.5 purple100, padding 16/8, filas de 8 con radio 8 y gap 8,
+   ícono 16, texto 16/19.2 #2A2C2F; agrupador 14/16.8 con flecha de 24 que gira; hover con texto #5A5AFF. Lo abre ./menu-op.js. */
+.pos-side {
+  position: fixed; z-index: 35; top: var(--pos-header-h, 56px); left: 0; bottom: 0; width: 200px;
+  box-sizing: border-box; display: flex; flex-direction: column; gap: 40px; padding: 16px 8px; overflow-y: auto;
+  background: #fafaff; border-right: .5px solid #e5e5ff; box-shadow: var(--pos-shadow-card);
+}
+.pos-side[hidden] { display: none; }
+.pos-side[data-modo='admin'] { width: 244px; }
+.pos-side__groups { display: flex; flex-direction: column; align-items: stretch; }
+.pos-side__item, .pos-side__foot, .pos-side__ghead {
+  display: flex; align-items: center; gap: 8px; width: 100%; box-sizing: border-box; padding: 8px; margin: 0;
+  border: 0; border-radius: 8px; background: transparent; cursor: pointer; text-align: left; text-decoration: none;
+  font-family: var(--font-family-sans); color: #2a2c2f;
+}
+.pos-side__item, .pos-side__foot { font-size: 16px; line-height: 19.2px; font-weight: 400; }
+.pos-side__item:hover, .pos-side__foot:hover { color: #5a5aff; }
+.pos-side__item:focus-visible, .pos-side__foot:focus-visible, .pos-side__ghead:focus-visible { outline: 2px solid #5a5aff; outline-offset: -2px; }
+/* elegido: en el Operativo, fondo lila y texto oscuro (Figma); en el Administrativo, purple100 y texto #5A5AFF (MenuAdmin) */
+.pos-side__item.is-active { background: #f0f0ff; color: #2a2c2f; }
+.pos-side[data-modo='admin'] .pos-side__item.is-active { background: #e5e5ff; color: #5a5aff; }
+.pos-side__ico { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; color: inherit; }
+.pos-side__txt { flex: 1 0 0; min-width: 0; }
+.pos-side__ghead { font-size: 14px; line-height: 16.8px; font-weight: 400; }
+.pos-side__glabel { flex: 1 0 0; }
+.pos-side__chev { flex: none; display: inline-flex; color: #2a2c2f; transition: transform .15s ease-in-out; }
+.pos-side__group.is-open .pos-side__chev { transform: rotate(180deg); }
+.pos-side__gitems { display: none; flex-direction: column; }
+.pos-side__group.is-open .pos-side__gitems { display: flex; }
+.pos-side__footer { margin-top: auto; display: flex; flex-direction: column; gap: 4px; }
+.pos-side__foot.is-emphasis { color: #5a5aff; }
+
+/* ---------- Tuerquita: HeaderMenu del DS ----------
+   260 de ancho, fondo primary50 #F0F0FF, radio 8, sombra 0 11 26.6 rgba(0,0,0,.06). Usuario sobre blanco (padding 16, avatar 32,
+   nombre 16/1.5 700 #1D1E20, correo 12/12 #54575C); cuentas sobre lila (8/24, gap 16, 14/1.2, hover #E5E5FF);
+   "Agregar sucursal" y "Cerrar sesión" sobre blanco (8/16; fila 8 con radio 4, 16/1.2 #2A2C2F, hover #FAFAFA). */
+.pos-navpanel.pos-hm {
+  width: min(260px, calc(100vw - 24px)); display: flex; flex-direction: column; overflow: hidden;
+  border-radius: 8px; background: #f0f0ff; box-shadow: 0 11px 26.6px 0 rgba(0, 0, 0, .06);
+}
+.pos-hm__av { flex: none; width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--ats-info-blue-50); color: #2a2c2f; font-size: 14px; font-weight: var(--font-weight-semibold); }
+.pos-hm__user { display: flex; align-items: center; gap: 8px; padding: 16px; background: #fff; }
+.pos-hm__info { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.pos-hm__info b { font-size: 16px; line-height: 1.5; font-weight: 700; letter-spacing: .3px; color: #1d1e20; white-space: nowrap; }
+.pos-hm__info small { font-size: 12px; line-height: 12px; color: #54575c; overflow: hidden; text-overflow: ellipsis; }
+.pos-hm__cuentas { display: flex; flex-direction: column; }
+.pos-hm__cuenta {
+  display: flex; align-items: center; gap: 16px; width: 100%; box-sizing: border-box; padding: 8px 24px; border: 0; background: none;
+  cursor: pointer; text-align: left; font-family: var(--font-family-sans); font-size: 14px; line-height: 1.2; font-weight: 400; color: #1d1e20; transition: background .15s;
+}
+.pos-hm__cuenta:hover, .pos-hm__cuenta.is-actual { background: #e5e5ff; }
+.pos-hm__cuenta.is-actual { cursor: default; }
+.pos-hm__nombre { white-space: nowrap; }
+.pos-hm__items { display: flex; flex-direction: column; padding: 8px 16px; background: #fff; }
+.pos-hm__items--fin { padding-top: 0; }
+.pos-hm__item {
+  display: flex; align-items: center; gap: 8px; width: 100%; box-sizing: border-box; padding: 8px; border: 0; border-radius: 4px; background: #fff;
+  cursor: pointer; text-align: left; font-family: var(--font-family-sans); font-size: 16px; line-height: 1.2; font-weight: 400; letter-spacing: .3px; color: #2a2c2f; transition: background .15s;
+}
+.pos-hm__item span { flex: 1; }
+.pos-hm__item svg { flex: none; color: #2a2c2f; }
+.pos-hm__item:hover { background: #fafafa; }
+.pos-hm__cuenta:focus-visible, .pos-hm__item:focus-visible { outline: 2px solid #5a5aff; outline-offset: -2px; }
+/* pastilla del header: Operativo #3DFF3D, Admin #FF98EF (HeaderAdminBar del DS) */
+:root[data-plataforma='admin'] .pos-brand__role { background: #ff98ef; }
+
+/* ---------- Header del Administrativo (HeaderAdminBar del DS, versión Admin) ----------
+   60 de alto, padding 8/24, fondo primary50. Buscador de 550×40 blanco con borde #D4D6D8 y radio 100, lupa de 20 a la izquierda.
+   Botones de ícono blancos y redondos (padding 8, ícono 20 #2A2C2F, hover neutral100). Avatar con flecha de 16 a 4 de distancia. */
+:root:not([data-plataforma='admin']) .pos-admin-solo, :root[data-plataforma='admin'] .pos-op-solo { display: none !important; }
+:root[data-plataforma='admin'] .pos-header { height: 60px; padding: 8px 24px; background: #f0f0ff; }
+.pos-admin-search {
+  display: flex; align-items: center; gap: 8px; box-sizing: border-box; width: min(550px, 40vw); height: 40px; flex-shrink: 0;
+  margin: 0; padding: 0 16px; border: 1px solid #d4d6d8; border-radius: 100px; background: #fff; color: #a1a5aa;
+}
+.pos-admin-search svg { flex: none; }
+.pos-admin-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font-family: var(--font-family-sans); font-size: 16px; color: #2a2c2f; }
+.pos-admin-search input::placeholder { color: #a1a5aa; }
+.pos-admin-search:focus-within { border-color: #0d166b; }
+.pos-admin-ico { color: #2a2c2f; }
+.pos-admin-ico:hover { background: #f3f3f3; }
+.pos-admin-avatar { display: flex; align-items: center; gap: 4px; padding: 0; border: 0; background: none; cursor: pointer; color: #2a2c2f; }
+.pos-admin-avatar:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; border-radius: 100px; }
+/* en el Administrativo la tuerca no se ve, pero sigue en el layout (navbar.js cierra el panel si su botón deja de existir);
+   el avatar la acciona por dentro */
+:root[data-plataforma='admin'] #posAjustes.pos-op-solo {
+  display: flex !important; position: absolute !important; width: 1px; height: 1px; padding: 0; overflow: hidden;
+  clip-path: inset(50%); opacity: 0; pointer-events: none;
+}
+/* el panel de la tuerca respeta [hidden] (.pos-navpanel.pos-hm le gana en especificidad a .pos-navpanel[hidden]) */
+.pos-navpanel.pos-hm[hidden] { display: none; }
+
+/* ---------- Menú lateral fijo (Home y pantallas del Administrativo) ----------
+   La página lleva body.pos-menu-fijo y envuelve todo lo que va debajo del header en .pos-cuerpo; en escritorio el menú queda
+   abierto a la izquierda y .pos-cuerpo se recorre su ancho (200 Operativo, 244 Administrativo). A 900 px o menos es cajón. */
+.pos-menu-fijo .pos-side { box-shadow: none; }
+.pos-menu-fijo:not(.is-menu-cerrado) .pos-cuerpo { padding-left: 200px; }
+:root[data-plataforma='admin'] .pos-menu-fijo:not(.is-menu-cerrado) .pos-cuerpo { padding-left: 244px; }
+@media (max-width: 900px) { .pos-menu-fijo:not(.is-menu-cerrado) .pos-cuerpo { padding-left: 0; } }
+/* Administrativo en pantallas angostas: el buscador baja a su propio renglón (como en el Operativo) y el menú fijo es cajón,
+   así que el contenido no se recorre (la regla del Administrativo pesa más que la general de arriba) */
+@media (max-width: 1024px) {
+  .pos-admin-search { flex: 1 1 0; width: auto; margin: 0 12px; }
+}
+@media (max-width: 840px) {
+  :root[data-plataforma='admin'] .pos-header { height: auto; flex-wrap: wrap; row-gap: 8px; }
+  .pos-admin-search { order: 3; flex: 1 0 100%; margin: 0; }
+}
+@media (max-width: 900px) {
+  :root[data-plataforma='admin'] .pos-menu-fijo:not(.is-menu-cerrado) .pos-cuerpo { padding-left: 0; }
+}
+
+/* ---------- Breadcrumb y título de pantalla: iguales en todos los flujos ----------
+   Medidas del Inventario: el breadcrumb del DS (27 de alto) empieza a 16 del header; 8 abajo va la fila del título
+   (alto mínimo 36, título 28/34 a 500 #2A2C2F, centrado con sus botones) y 16 abajo empieza el contenido.
+   Clientes y Cliente nuevo (Product Design), Configura tu empresa (el equipo), Plazos (el equipo) y las pantallas de Product Design
+   traían otras medidas; aquí se igualan sin tocar su estructura. */
+.inv-title, .cli-title, .cn-title, .cte .t-page, .ac-title, .tb-title, .t-titulo-pagina {
+  margin: 0; font-size: 28px !important; line-height: 34px !important; font-weight: 500 !important; color: #2a2c2f !important; letter-spacing: normal;
+}
+.ac-head, .tb-head { min-height: 36px; align-items: center; }
+/* Generación de códigos separaba todo a 24: el breadcrumb queda a 8 del título y las secciones a 16, como en el Inventario */
+#acMain.ac-page { gap: 16px; }
+#acMain.ac-page > .ds-breadcrumb + .ac-head, #tbMain.tb-page > .ds-breadcrumb + .tb-head { margin-top: -8px; }
+/* el breadcrumb mide lo mismo en todas las pantallas (27, como en el Inventario), aunque el módulo no traiga los separadores de 24 */
+.pos-main nav.ds-breadcrumb { min-height: 27px; display: flex; align-items: center; }

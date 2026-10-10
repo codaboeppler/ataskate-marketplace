@@ -1,0 +1,882 @@
+
+/* ==========================================================================
+   Plazos (Administrativo) · maqueta de el equipo (rama del equipo, commit 67a179d82,
+   _bmad-output/.../ux-plazos-2026-10-09/.working/plazos-flujo.html) traída al
+   prototipo del POS, con el listado puesto al día con su commit 0c4d4b518
+   (listado migrado al DS: ListCard, Tree, SearchFieldV2, TableFilterChip, Table).
+   - Todo va bajo .plz (el <main> del módulo y la capa de overlays) para no tocar
+     el header ni el menú compartidos (../pos.css, ../menu-op.js).
+   - Los valores de componente son los de su maqueta (DS de QA); los colores
+     apuntan a los tokens de ../ds/primitives.css y ../pos.css.
+   - Layout de Daniel: ancho y padding los da main.pos-main (1440 con 64/24);
+     tarjetas sin borde, solo Card-shadow (--pos-shadow-card) y radio 16.
+   ========================================================================== */
+.plz {
+  /* colors.* (mismo hex que su maqueta; alias de los tokens de ../ds y ../pos.css) */
+  --surface-page: var(--pos-surface-page, #FBFBFE);      /* colors.surfacePage */
+  --surface-card: var(--ats-white, #FFFFFF);             /* colors.surfaceCard */
+  --surface-empty: #EFF0F0;                              /* colors.surfaceEmpty (no está en ../ds) */
+  --border-default: var(--ats-neutral-300, #D4D6D8);     /* colors.borderDefault */
+  --border-hover: var(--ats-primary-300, #5A5AFF);       /* colors.borderHover */
+  --border-active: var(--ats-primary-400, #0D166B);      /* colors.borderActive */
+  --text-title: var(--pos-text-title, #1D1E20);          /* colors.textTitle */
+  --text-body: var(--ats-neutral-700, #2A2C2F);          /* colors.textBody */
+  --text-captions: var(--ats-neutral-600, #54575C);      /* colors.textCaptions */
+  --text-placeholder: var(--ats-neutral-400, #A1A5AA);   /* colors.textPlaceholder */
+  --text-button: var(--ats-white, #FFFFFF);              /* colors.textButton */
+  --button-primary: var(--ats-primary-300, #5A5AFF);     /* colors.buttonPrimary */
+  --button-link: var(--ats-primary-400, #0D166B);        /* colors.buttonLink */
+  --button-destructive: var(--ats-error-red-200, #A82424); /* colors.buttonDestructive */
+  --button-icon: var(--ats-neutral-700, #2A2C2F);        /* colors.buttonIcon */
+  --purple10: var(--ats-primary-10, #FAFAFF);            /* colors.purple10 */
+  --purple50: var(--ats-primary-50, #F0F0FF);            /* colors.purple50 */
+  --purple100: var(--ats-primary-100, #E5E5FF);          /* colors.purple100 */
+  --purple200: var(--ats-primary-200, #ACACFF);          /* colors.purple200 */
+  --neutral50: var(--ats-neutral-50, #FAFAFA);           /* colors.neutral50 */
+  --neutral100: var(--ats-neutral-100, #F4F5F5);         /* colors.neutral100 */
+  --neutral200: #E8E9EA;                                 /* colors.neutral200 (no está en ../ds) */
+  --neutral500: var(--ats-neutral-500, #71767D);         /* colors.neutral500 */
+  --success-surface: var(--ats-success-green-50, #EFFAF4); --success-icon: var(--ats-success-green-200, #309C60); --success-title: var(--ats-success-green-300, #174A2E);
+  --error-surface: var(--ats-error-red-50, #FFEBEB);       --error-icon: var(--ats-error-red-200, #A82424);     --error-title: var(--ats-error-red-300, #501111);
+  --warning-surface: var(--pos-warning-surface, #FFEBBA);  --warning-icon: var(--ats-alert-yellow-200, #CC9200); --warning-title: var(--ats-alert-yellow-300, #614500);
+  --info-surface: var(--ats-info-blue-50, #EBF9FF);        --info-icon: var(--ats-info-blue-200, #008FCC);      --info-title: var(--ats-info-blue-300, #004461);
+  --ill-blue100: var(--ats-cyan-100, #D0F6FF);           /* colors.illustrationBlue100 */
+  --ill-pink100: var(--ats-pink-300, #FF98EF);           /* colors.illustrationPink100 */
+
+  /* spacing[*] */
+  --sp-4: 4px; --sp-8: 8px; --sp-12: 12px; --sp-16: 16px;
+  --sp-24: 24px; --sp-32: 32px; --sp-48: 48px; --sp-64: 64px;
+
+  /* borderRadius.* */
+  --r-xs: 4px; --r-sm: 8px; --r-md: 16px; --r-lg: 24px; --r-pill: 100px;
+
+  /* shadows.* */
+  --shadow-card: var(--pos-shadow-card, 0 2px 10px 0 rgba(0,0,0,.06)); /* shadows.cardHover = Card-shadow */
+  --shadow-dropdown: 0 4px 16px rgba(0,0,0,.12);  /* shadows.dropdown */
+  --shadow-popup: 0 8px 32px rgba(0,0,0,.16);     /* shadows.popup (FixedActionFooter) */
+  /* alto del header compartido (lo mide ../menu-op.js); de ahí salen las posiciones sticky y fijas */
+  --plz-top: calc(var(--pos-header-h, 60px) + var(--sp-16));
+  /* ancho del menú lateral fijo del Administrativo (MenuAdmin, ../pos.css) */
+  --plz-menu: 244px;
+}
+
+/* al saltar a una sección (AnchorMenu) el título no queda bajo el header ni bajo la barra de secciones */
+html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
+/* route() enfoca el <main> en cada pantalla (lectores de pantalla); sin anillo alrededor de todo el contenido */
+.pos-main.plz:focus { outline: none; }
+.plz {
+  font-family: var(--font-family-sans, Nunito, sans-serif);
+  font-size: 16px; line-height: normal; /* como en su maqueta (../ds/base.css pone 1.5 al body) */
+  color: var(--text-body);
+  -webkit-font-smoothing: antialiased;
+}
+.plz h1, .plz h2, .plz h3, .plz p, .plz ol, .plz ul, .plz fieldset, .plz legend { margin: 0; padding: 0; }
+.plz h2[tabindex="-1"]:focus { outline: 0; }
+.plz fieldset { border: 0; min-width: 0; }
+.plz ol, .plz ul { list-style: none; }
+.plz button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+.plz input { font: inherit; }
+.plz svg { display: block; flex-shrink: 0; }
+.plz [hidden] { display: none !important; }
+.plz .sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+/* Regla [Producto]: foco visible de 2 px en todo lo que se presiona */
+.plz button:focus-visible, .plz a:focus-visible, .plz [role="tab"]:focus-visible, .plz [role="treeitem"]:focus-visible, .plz [role="menuitem"]:focus-visible, .plz [role="option"]:focus-visible, .plz .ds-table tbody tr[tabindex]:focus-visible {
+  outline: 2px solid var(--button-primary); outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Tipografía (typography.*)
+   ========================================================================== */
+.plz .t-titulo-pagina { font-size: 28px; line-height: 33.6px; font-weight: 700; color: var(--text-title); }
+.plz .t-titulos { font-size: 24px; line-height: 28.8px; font-weight: 600; color: var(--text-title); }
+.plz .t-subtitulos { font-size: 20px; line-height: 24px;   font-weight: 600; color: var(--text-title); }
+.plz .t-texto-bold { font-size: 16px; line-height: 19.2px; font-weight: 600; color: var(--text-body); letter-spacing: .3px; }
+.plz .t-texto { font-size: 16px; line-height: 19.2px; font-weight: 400; color: var(--text-body); letter-spacing: .3px; }
+.plz .t-caption { font-size: 14px; line-height: 16.8px; font-weight: 400; color: var(--text-captions); }
+.plz .t-label { font-size: 12px; line-height: 12px;   font-weight: 400; color: var(--text-captions); }
+.plz .t-label-bold { font-size: 12px; line-height: 12px;   font-weight: 700; color: var(--text-captions); }
+.plz .t-tabla { font-size: 14px; line-height: 16.8px; font-weight: 400; color: var(--text-body); }
+
+/* ==========================================================================
+   DS · Button / IconButton
+   ========================================================================== */
+.plz .ds-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--sp-8);
+  height: 36px; padding: 7px var(--sp-16);
+  border: 1px solid transparent; border-radius: var(--r-pill);
+  font-size: 14px; line-height: 20px; font-weight: 700; white-space: nowrap;
+  transition: background-color .2s ease-in-out, color .2s ease-in-out, border-color .2s ease-in-out;
+}
+.plz .ds-btn svg { width: 20px; height: 20px; }
+.plz .ds-btn--icon-left { padding-left: 7px; }
+.plz .ds-btn--icon-right { padding-right: 7px; }
+.plz .ds-btn--icon-right svg { width: 16px; height: 16px; margin: 0 2px; }
+.plz .ds-btn--primary { background: var(--button-primary); color: var(--text-button); }
+.plz .ds-btn--primary:hover, .plz .ds-btn--primary:active { background: var(--button-link); }
+.plz .ds-btn--secondary { background: var(--surface-card); color: var(--button-primary); border-color: var(--button-primary); }
+.plz .ds-btn--secondary:hover { background: var(--purple50); }
+.plz .ds-btn--tertiary { background: var(--surface-card); color: var(--button-primary); }
+.plz .ds-btn--tertiary:hover { background: var(--purple50); }
+.plz .ds-btn--destructive { background: var(--button-destructive); color: var(--text-button); }
+.plz .ds-btn--destructive:hover { background: var(--error-title); }
+.plz .ds-btn[aria-busy="true"] { pointer-events: none; padding-left: var(--sp-16); }
+.plz .ds-btn[aria-busy="true"] > svg { display: none; }
+.plz .ds-btn--full { width: 100%; }
+
+.plz .ds-icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; padding: var(--sp-8); border-radius: var(--r-pill);
+  background: var(--surface-card); color: var(--button-primary);
+  transition: background-color .2s ease-in-out;
+}
+.plz .ds-icon-btn:hover, .plz .ds-icon-btn[aria-expanded="true"] { background: var(--purple50); }
+.plz .ds-icon-btn svg { width: 20px; height: 20px; }
+.plz .ds-icon-btn--sm { width: 28px; height: 28px; padding: var(--sp-4); }
+
+/* Acción de texto suelta [Producto] */
+.plz .text-action {
+  display: inline-flex; align-items: center; gap: var(--sp-4);
+  font-size: 14px; line-height: 16.8px; font-weight: 400; color: var(--button-primary);
+}
+.plz .text-action:hover { text-decoration: underline; text-underline-offset: 3px; }
+.plz .text-action svg { width: 20px; height: 20px; }
+
+/* ==========================================================================
+   DS · Spinner
+   ========================================================================== */
+.plz .ds-spinner {
+  display: inline-block; width: 40px; height: 40px; border-radius: 50%;
+  border: 3px solid rgba(0,0,0,.1); border-top-color: var(--button-primary);
+  animation: spin .7s linear infinite;
+}
+.plz .ds-spinner--sm { width: 24px; height: 24px; border-width: 2px; }
+.plz .ds-spinner--white { border-color: rgba(255,255,255,.3); border-top-color: #FFFFFF; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.plz .state-loading { display: flex; flex-direction: column; align-items: center; gap: var(--sp-16); padding: var(--sp-48) var(--sp-16); }
+
+/* ==========================================================================
+   DS · Breadcrumb
+   ========================================================================== */
+/* Mismo marcado que ../inventario (nav.ds-breadcrumb > ol.pos-crumbs); sus estilos viven en ../pos.css. */
+
+/* ==========================================================================
+   DS · Campos (TextInput, NumberInput, Select, Search) · reglas 4.0
+   ========================================================================== */
+.plz .ds-field { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
+.plz .ds-field__label {
+  display: flex; gap: var(--sp-4); padding: 0 var(--sp-8);
+  font-size: 14px; line-height: 16.8px; font-weight: 400; color: var(--text-title);
+}
+.plz .ds-field__optional { color: var(--neutral500); }
+.plz .ds-input, .plz .ds-select {
+  width: 100%; height: 40px; padding: var(--sp-8) var(--sp-12);
+  border: 1px solid var(--border-default); border-radius: var(--r-pill);
+  background: var(--surface-card); color: var(--text-body);
+  font-size: 16px; line-height: 19.2px; letter-spacing: .3px; outline: 0;
+  transition: border-color .2s ease-in-out;
+}
+/* ../ds/components.css le pone flex: 1 al input (en su campo con envoltura); aquí el campo es una columna y lo estiraba */
+.plz .ds-input, .plz .ds-select { flex: 0 1 auto; }
+.plz .ds-input::placeholder { color: var(--text-placeholder); }
+.plz .ds-input:hover, .plz .ds-select:hover { border-color: var(--border-hover); }
+.plz .ds-input:focus, .plz .ds-select:focus, .plz .ds-select[aria-expanded="true"] { border-color: var(--border-active); }
+.plz .ds-input[aria-invalid="true"], .plz .ds-select[aria-invalid="true"] { border-color: var(--error-icon); }
+.plz .ds-input[aria-invalid="true"]:hover, .plz .ds-select[aria-invalid="true"]:hover { border-color: var(--border-hover); }
+.plz .ds-input[readonly] { background: var(--neutral50); color: var(--text-placeholder); }
+.plz .ds-input--table { height: 32px; padding: var(--sp-4) var(--sp-12); font-size: 14px; line-height: 16.8px; letter-spacing: 0; }
+.plz .ds-input-wrap { position: relative; }
+.plz .ds-input-wrap > .ds-input { padding-right: 40px; }
+.plz .ds-input-wrap > .ds-input__icon { position: absolute; right: 12px; top: 10px; width: 20px; height: 20px; color: var(--purple200); pointer-events: none; }
+.plz .ds-help { padding: 2px var(--sp-8); font-size: 14px; line-height: 1.4; color: var(--text-captions); }
+.plz .ds-error { display: flex; align-items: flex-start; gap: var(--sp-4); padding: 2px var(--sp-8); font-size: 14px; line-height: 1.4; color: var(--error-icon); }
+.plz .ds-error svg { width: 16px; height: 16px; margin-top: 2px; }
+.plz .ds-error:empty { display: none; }
+.plz .ds-field:has(.ds-error:not(:empty)) .ds-help { display: none; }
+
+/* SelectionInput: disparador + panel (el <select> queda oculto como fuente de datos) */
+.plz .ds-selectbtn {
+  position: relative; display: flex; align-items: center; width: 100%; height: 40px; padding: var(--sp-8) 40px var(--sp-8) var(--sp-12);
+  border: 1px solid var(--border-default); border-radius: var(--r-pill); background: var(--surface-card);
+  font-size: 16px; line-height: 19.2px; letter-spacing: .3px; color: var(--text-body); text-align: left; transition: border-color .2s ease-in-out;
+}
+.plz .ds-selectbtn:hover { border-color: var(--border-hover); }
+.plz .ds-selectbtn:focus-visible { outline: 0; border-color: var(--border-active); }
+.plz .ds-selectbtn[aria-expanded="true"] { border-color: var(--border-active); }
+.plz .ds-selectbtn__text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.plz .ds-selectbtn > svg { position: absolute; right: 12px; top: 50%; width: 16px; height: 16px; margin-top: -8px; transition: transform .2s; }
+.plz .ds-selectbtn[aria-expanded="true"] > svg { transform: rotate(180deg); }
+.plz .ds-selectbtn--table { height: 32px; padding: var(--sp-4) 32px var(--sp-4) var(--sp-12); font-size: 14px; letter-spacing: 0; }
+.plz .ds-listbox {
+  position: fixed; z-index: 1410; max-height: 240px; overflow: auto; padding: var(--sp-8) 0; margin: 0; /* sobre el modal (abre dentro del lateral) */
+  background: var(--surface-card); border-radius: var(--r-md); box-shadow: var(--shadow-dropdown);
+}
+.plz .ds-listbox [role="option"] {
+  display: flex; align-items: center; min-height: 40px; padding: var(--sp-8) var(--sp-16);
+  font-size: 14px; line-height: 16.8px; color: var(--text-body); cursor: pointer; outline: 0;
+}
+.plz .ds-listbox [role="option"]:hover, .plz .ds-listbox [role="option"]:focus-visible { background: var(--purple50); }
+.plz .ds-listbox [role="option"][aria-selected="true"] { background: var(--purple100); }
+/* Select nativo con la apariencia del DS (respaldo si no hay JS) */
+.plz .ds-select {
+  appearance: none; -webkit-appearance: none; padding-right: 40px; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%2371767D' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
+}
+.plz .ds-select--table { height: 32px; padding: var(--sp-4) 32px var(--sp-4) var(--sp-12); font-size: 14px; letter-spacing: 0; }
+
+/* SearchFieldV2 (variant="default") */
+.plz .ds-search { position: relative; }
+.plz .ds-search .ds-input {
+  padding: 0 48px 0 var(--sp-16); background: var(--surface-page); border-color: transparent;
+}
+.plz .ds-search .ds-input:hover { background: var(--surface-card); border-color: var(--border-hover); }
+.plz .ds-search .ds-input:focus { background: var(--surface-card); border-color: var(--border-active); }
+.plz .ds-search__btn {
+  position: absolute; right: 16px; top: 8px; width: 24px; height: 24px;
+  display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--button-primary);
+}
+.plz .ds-search__btn svg { width: 24px; height: 24px; }
+.plz .ds-search__btn--clear svg { width: 24px; height: 24px; }
+.plz .ds-search__btn--clear:hover { color: var(--button-link); }
+.plz span.ds-search__btn { pointer-events: none; } /* lupa decorativa (buscador del detalle) */
+/* buscador del panel del árbol: SearchFieldV2 con autocompletado (lista de resultados) */
+.plz .ds-search__list {
+  position: absolute; top: 44px; left: 0; z-index: 3; width: 100%; box-sizing: border-box;
+  display: flex; flex-direction: column; max-height: 280px; overflow-y: auto; padding: var(--sp-8) 0;
+  background: var(--surface-card); border: 1px solid var(--neutral200); border-radius: var(--r-sm); box-shadow: var(--shadow-dropdown);
+}
+.plz .ds-search__opt {
+  display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-4); width: 100%;
+  padding: var(--sp-8) var(--sp-16); text-align: left; color: var(--text-title);
+}
+.plz .ds-search__opt:hover, .plz .ds-search__opt[aria-selected="true"] { background: var(--purple10); }
+.plz .ds-search__opt-label { font-size: 16px; line-height: 19.2px; font-weight: 400; letter-spacing: .3px; overflow-wrap: anywhere; }
+.plz .ds-search__opt-label strong { font-weight: 600; }
+.plz .ds-search__opt-desc { font-size: 12px; line-height: 12px; font-weight: 400; color: var(--text-captions); overflow-wrap: anywhere; }
+.plz .ds-search__skeleton { display: flex; flex-direction: column; gap: var(--sp-8); padding: var(--sp-8) var(--sp-16); }
+.plz .ds-search__skeleton span {
+  display: block; height: 16px; border-radius: var(--r-xs);
+  background: linear-gradient(90deg, var(--neutral200) 25%, var(--neutral100) 50%, var(--neutral200) 75%);
+  background-size: 200% 100%; animation: plz-search-skeleton 1.5s ease-in-out infinite;
+}
+.plz .ds-search__skeleton span:nth-child(2) { width: 82%; }
+.plz .ds-search__skeleton span:nth-child(3) { width: 68%; }
+@keyframes plz-search-skeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .plz .ds-search__skeleton span { animation: none; background-position: 0 0; } }
+.plz .ds-search__empty { display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: flex-start; gap: var(--sp-12); padding: var(--sp-8) var(--sp-16); }
+.plz .ds-search__empty > svg { width: 24px; height: 24px; color: var(--warning-icon); }
+.plz .ds-search__empty > span { display: flex; flex-direction: column; gap: var(--sp-8); }
+.plz .ds-search__empty strong { font-size: 16px; line-height: 19.2px; font-weight: 600; color: var(--warning-title); }
+.plz .ds-search__empty > span > span { font-size: 16px; line-height: 19.2px; font-weight: 400; color: var(--text-body); }
+
+/* Campo con unidad: número + select en la misma fila */
+.plz .field-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-16); }
+.plz .field-row--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.plz .field-combo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-8); }
+
+/* ==========================================================================
+   DS · Switch / Checkbox / Radio
+   ========================================================================== */
+.plz .ds-switch { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; line-height: 16.8px; letter-spacing: .3px; color: var(--text-title); }
+.plz .ds-switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.plz .ds-switch__track {
+  position: relative; width: 48px; height: 24px; border-radius: var(--r-pill); flex-shrink: 0;
+  background: var(--neutral50); box-shadow: inset 0 0 4px rgba(0,0,0,.1); transition: background-color .2s ease-in-out;
+  padding: 0; /* ../ds/components.css le pone 2px */
+}
+.plz .ds-switch__knob {
+  position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--text-captions); box-shadow: 1px 1px 4px rgba(212,214,216,.88);
+  display: flex; align-items: center; justify-content: center; transition: left .2s;
+}
+.plz .ds-switch__knob svg { width: 10px; height: 10px; color: #FFFFFF; }
+.plz .ds-switch__knob .on { display: none; width: 12px; height: 9px; }
+.plz .ds-switch input:checked + .ds-switch__track { background: var(--purple100); }
+.plz .ds-switch input:checked + .ds-switch__track .ds-switch__knob { left: 26px; background: var(--button-primary); box-shadow: 1px 1px 4px rgba(172,172,255,.88); }
+.plz .ds-switch input:checked + .ds-switch__track .on { display: block; }
+.plz .ds-switch input:checked + .ds-switch__track .off { display: none; }
+.plz .ds-switch:hover .ds-switch__knob { background: var(--button-icon); }
+.plz .ds-switch:hover input:checked + .ds-switch__track .ds-switch__knob { background: var(--button-link); }
+.plz .ds-switch input:focus-visible + .ds-switch__track { outline: 2px solid var(--button-primary); outline-offset: 2px; }
+
+.plz .ds-check, .plz .ds-radio { position: relative; display: inline-flex; gap: var(--sp-4); cursor: pointer; font-size: 14px; line-height: 16.8px; color: var(--text-body); }
+.plz .ds-check { align-items: flex-start; }
+.plz .ds-radio { align-items: center; }
+.plz .ds-check input, .plz .ds-radio input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.plz .ds-check__box {
+  width: 20px; height: 20px; flex-shrink: 0; border-radius: var(--r-xs);
+  border: 1px solid var(--text-placeholder); background: var(--surface-card);
+  display: flex; align-items: center; justify-content: center; color: var(--button-link);
+}
+.plz .ds-check__box svg { width: 12px; height: 10px; display: none; }
+.plz .ds-check__box .dash { display: none; width: 12px; height: 2px; background: var(--button-link); border-radius: 1px; }
+.plz .ds-check:hover .ds-check__box { border-color: var(--border-hover); }
+.plz .ds-check input:checked + .ds-check__box { background: var(--purple100); border-color: var(--purple200); }
+.plz .ds-check input:checked + .ds-check__box svg { display: block; }
+.plz .ds-check input:indeterminate + .ds-check__box { background: var(--purple100); border-color: var(--purple200); }
+.plz .ds-check input:indeterminate + .ds-check__box .dash { display: block; }
+.plz .ds-check input:focus-visible + .ds-check__box { outline: 2px solid var(--button-primary); outline-offset: 2px; }
+.plz .ds-check[data-error="true"] .ds-check__box { border-color: var(--error-icon); }
+.plz .ds-check__text { display: flex; flex-direction: column; gap: var(--sp-4); padding-top: 2px; }
+.plz .ds-check__sub { font-size: 12px; line-height: 12px; color: var(--text-captions); }
+
+.plz .ds-radio__circle {
+  width: 20px; height: 20px; flex-shrink: 0; border-radius: 50%;
+  border: 1px solid var(--border-default); background: var(--surface-card);
+  display: flex; align-items: center; justify-content: center;
+}
+.plz .ds-radio__circle::after { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--button-link); transform: scale(0); }
+.plz .ds-radio::after { content: ""; position: absolute; inset: -12px; }
+.plz .ds-radio:hover .ds-radio__circle { border-color: var(--border-hover); }
+.plz .ds-radio input:checked + .ds-radio__circle { border-color: var(--text-body); }
+.plz .ds-radio input:checked + .ds-radio__circle::after { transform: scale(1); }
+.plz .ds-radio input:focus-visible + .ds-radio__circle { outline: 2px solid var(--button-primary); outline-offset: 2px; }
+.plz .ds-radio[data-error="true"] .ds-radio__circle { border-color: var(--error-icon); }
+.plz .radio-group { display: flex; flex-direction: column; gap: var(--sp-16); }
+.plz .radio-option { display: flex; flex-direction: column; gap: var(--sp-4); }
+.plz .radio-option__sub { padding-left: 24px; font-size: 12px; line-height: 12px; color: var(--text-captions); }
+.plz .check-group { display: flex; flex-wrap: wrap; gap: var(--sp-12) var(--sp-24); }
+
+/* ==========================================================================
+   DS · Chips (status, informativa tabla, filter) · TableFilterChip
+   ========================================================================== */
+.plz .chip-status {
+  display: inline-flex; align-items: center; gap: var(--sp-4); height: 18px;
+  padding: var(--sp-4); border: 1px solid transparent; border-radius: var(--r-xs);
+  font-size: 12px; line-height: 12px; white-space: nowrap;
+}
+.plz .chip-status--blue { background: var(--ill-blue100); color: var(--info-title); }
+.plz .chip-status--purple { background: var(--purple100); color: var(--button-link); }
+.plz .chip-status--gray { background: var(--border-default); color: var(--text-body); }
+.plz .chip-status--white { background: var(--surface-card); border-color: var(--border-default); color: var(--text-body); }
+.plz .chip-info {
+  display: inline-flex; align-items: center; gap: var(--sp-4); height: 20px; padding: var(--sp-4) var(--sp-8);
+  border-radius: var(--r-sm); font-size: 12px; line-height: 12px; color: var(--text-body); white-space: nowrap;
+}
+.plz .chip-info--blue { background: var(--info-surface); }
+.plz .chip-info--gray { background: var(--neutral200); }
+
+.plz .chip-filter {
+  display: inline-flex; align-items: center; gap: var(--sp-8); height: 36px; padding: var(--sp-8);
+  border: 1px solid var(--purple100); border-radius: var(--r-sm);
+  background: var(--purple50); color: var(--button-link); font-size: 14px; line-height: 16.8px;
+}
+.plz .chip-filter:hover { background: var(--purple100); border-color: transparent; }
+.plz .chip-filter > svg { width: 20px; height: 20px; }
+.plz .chip-filter__x { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--button-link); }
+.plz .chip-filter__x:hover { background: rgba(0,0,0,.08); }
+.plz .chip-filter__x svg { width: 18px; height: 18px; }
+.plz .chip-filter__x:focus-visible { outline-offset: 1px; }
+
+.plz .ds-filter-chip { position: relative; }
+.plz .ds-filter-chip__btn {
+  display: inline-flex; align-items: center; gap: var(--sp-8); height: 40px; padding: var(--sp-4) var(--sp-16);
+  border: 1px solid var(--border-default); border-radius: var(--r-sm); background: var(--surface-card);
+  box-shadow: 0 0 4px rgba(195,195,195,.05); font-size: 16px; letter-spacing: .3px; color: var(--text-captions);
+}
+.plz .ds-filter-chip__btn:hover, .plz .ds-filter-chip__btn[data-active="true"], .plz .ds-filter-chip__btn[aria-expanded="true"] { border-color: var(--button-link); color: var(--button-link); }
+.plz .ds-filter-chip__btn svg { width: 20px; height: 20px; }
+.plz .ds-filter-chip__btn .caret { transition: transform .2s; }
+.plz .ds-filter-chip__btn[aria-expanded="true"] .caret { transform: rotate(180deg); }
+.plz .ds-filter-chip__list {
+  position: absolute; top: calc(100% + 8px); left: 0; right: auto; z-index: 25; min-width: max(100%, 200px); padding: 0;
+  /* lista del TableFilterChip: es parte del control y en el DS de QA lleva este borde (verificado 2026-10-09).
+     El DS de la rama de el equipo dice 1px solid #FBFBFE (colors.surfacePage): se queda el de QA, por decidir. */
+  background: var(--surface-card); border: 1px solid var(--border-default); border-radius: var(--r-sm);
+  box-shadow: 0px 11px 26.6px 0px rgba(0,0,0,.06); overflow: hidden;
+}
+.plz .ds-filter-chip__list [role="option"] {
+  display: flex; align-items: center; gap: var(--sp-8); width: 100%; padding: var(--sp-8);
+  font-size: 16px; line-height: 19.2px; font-weight: 400; letter-spacing: .3px; color: var(--text-body);
+  background: var(--surface-card); text-align: left; white-space: nowrap; cursor: pointer;
+}
+/* la opción elegida no se distingue (TableFilterChip); aria-selected se conserva */
+.plz .ds-filter-chip__list [role="option"]:hover, .plz .ds-filter-chip__list [role="option"]:focus-visible { background: var(--neutral50); outline: 0; }
+
+/* ==========================================================================
+   DS · TabsButton (segmentado) · Tabs (subrayado)
+   ========================================================================== */
+/* FullWidthTabsButton: a todo el ancho del panel, segmentos a partes iguales */
+.plz .ds-tabs-button { display: flex; width: 100%; overflow: hidden; border-radius: var(--r-sm); }
+.plz .ds-tabs-button__tab {
+  flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: center; gap: var(--sp-8);
+  height: 40px; padding: 0 var(--sp-8);
+  border: 1px solid var(--border-default); border-left-width: 0; background: var(--surface-card);
+  font-size: 16px; letter-spacing: .3px; color: var(--text-captions); white-space: nowrap; transition: all .15s;
+}
+/* el contenedor recorta (overflow hidden): el anillo de foco va hacia adentro para que se vea */
+.plz .ds-tabs-button__tab:focus-visible { outline-offset: -2px; }
+.plz .ds-tabs-button__tab:first-child { border-left-width: 1px; border-radius: var(--r-sm) 0 0 var(--r-sm); }
+.plz .ds-tabs-button__tab:last-child { border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+.plz .ds-tabs-button__tab:hover { background: var(--purple50); color: var(--text-body); }
+.plz .ds-tabs-button__tab svg { width: 20px; height: 20px; }
+.plz .ds-tabs-button__tab[aria-selected="true"] {
+  background: var(--purple50); border: 1px solid var(--purple200); color: var(--text-body); font-weight: 600; letter-spacing: 0;
+}
+
+.plz .ds-tabs { display: flex; flex-direction: row; gap: 0; height: 40px; border-bottom: 1.2px solid var(--border-default); overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+.plz .ds-tabs::-webkit-scrollbar { display: none; }
+.plz .ds-tabs__tab {
+  display: block; flex-shrink: 0; height: 40px; padding: var(--sp-8) var(--sp-16); margin-bottom: -1.2px;
+  font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--text-body); white-space: nowrap;
+  border-bottom: 1.2px solid transparent; transition: color .15s, border-color .15s;
+}
+.plz .ds-tabs__tab:hover { color: var(--button-primary); border-bottom-color: var(--button-primary); }
+.plz .ds-tabs__tab[aria-selected="true"] { color: var(--button-primary); font-weight: 600; letter-spacing: normal; border-bottom-color: var(--button-primary); }
+
+/* ==========================================================================
+   DS · Tree (árbol con nodos) y FormTree
+   ========================================================================== */
+.plz .ds-tree { display: flex; flex-direction: column; gap: 2px; }
+.plz .ds-tree__node {
+  display: flex; align-items: center; gap: var(--sp-8); width: 100%; padding: var(--sp-8);
+  border-radius: 12px; background: var(--surface-card); text-align: left; cursor: pointer; transition: background .15s;
+}
+.plz .ds-tree__node:hover { background: var(--neutral50); }
+.plz .ds-tree__node[aria-selected="true"], .plz .ds-tree__node[aria-selected="true"]:hover { background: var(--purple50); }
+.plz .ds-tree__toggle {
+  width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--button-link);
+}
+.plz .ds-tree__toggle:hover { background: var(--neutral100); }
+.plz .ds-tree__toggle svg { width: 20px; height: 20px; transition: transform .2s; }
+.plz .ds-tree__toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+.plz .ds-tree__spacer { width: 28px; flex-shrink: 0; }
+/* chevron del Tree del DS (ChevronDown de trazo): botón blanco de 28 con padding 4 (el FormTree no cambia) */
+.plz .ds-tree .ds-tree__toggle { flex-shrink: 0; padding: var(--sp-4); border-radius: var(--r-pill); background: var(--surface-card); }
+.plz .ds-tree .ds-tree__toggle:hover { background: var(--neutral100); }
+.plz .ds-tree__label { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.plz .ds-tree__title { font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--text-title); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.plz .ds-tree__meta { font-size: 12px; line-height: 12px; color: var(--text-placeholder); white-space: nowrap; }
+
+.plz .ds-formtree { display: flex; flex-direction: column; gap: var(--sp-8); }
+.plz .ds-formtree__label { font-size: 16px; line-height: 19.2px; font-weight: 600; color: var(--text-title); }
+.plz .ds-formtree__box { display: flex; flex-direction: column; gap: var(--sp-8); padding: var(--sp-16); background: var(--surface-empty); border-radius: var(--r-sm); }
+.plz .ds-formtree__box[data-error="true"] { box-shadow: inset 0 0 0 1px var(--error-icon); }
+.plz .ds-formtree__all {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--sp-8);
+  min-height: 56px; padding: var(--sp-8) var(--sp-16); background: var(--surface-card); border-radius: var(--r-sm);
+}
+.plz .ds-formtree__list { display: flex; flex-direction: column; gap: 2px; background: var(--surface-card); border-radius: var(--r-sm); padding: var(--sp-8); max-height: 280px; overflow: auto; }
+.plz .ds-formtree__row { display: flex; align-items: center; gap: var(--sp-8); padding: var(--sp-4) var(--sp-8); border-radius: 12px; }
+.plz .ds-formtree__row:hover { background: var(--neutral50); }
+.plz .ds-formtree__row .ds-tree__toggle { color: var(--button-primary); }
+
+/* ==========================================================================
+   DS · Table (borderVariant="neutral") + celdas
+   ========================================================================== */
+.plz .table-wrap { position: relative; overflow-x: auto; min-width: 0; }
+.plz .ds-table { width: 100%; border-collapse: collapse; font: inherit; }
+/* ../ds/components.css pinta encabezado gris y filas cebra; la tabla del DS de QA va en blanco con solo líneas de fila */
+.plz .ds-table thead, .plz .ds-table tbody tr { background: none; transition: none; }
+.plz .ds-table th {
+  padding: var(--sp-12) var(--sp-8); border-bottom: 1px solid var(--border-default);
+  font-size: 14px; line-height: 16.8px; font-weight: 600; color: var(--text-title); text-align: left; white-space: nowrap;
+}
+.plz .ds-table td {
+  padding: var(--sp-12) var(--sp-8); border-bottom: 1px solid var(--border-default);
+  font-size: 14px; line-height: 16.8px; color: var(--text-body); vertical-align: middle;
+}
+.plz .ds-table th:first-child, .plz .ds-table td:first-child { padding-left: var(--sp-16); }
+.plz .ds-table th:last-child, .plz .ds-table td:last-child { padding-right: var(--sp-16); }
+.plz .ds-table tbody tr:last-child > * { border-bottom: 0; }
+.plz .ds-table tbody tr.is-clickable { cursor: pointer; transition: background .15s; }
+.plz .ds-table tbody tr.is-clickable:hover { background: var(--surface-page); }
+.plz .ds-table tbody tr.is-clickable:focus-visible { outline-offset: -2px; }
+/* encabezado de fila (Nombre): texto normal, como la celda text del DS */
+.plz .ds-table tbody th { font-weight: 400; color: var(--text-body); white-space: normal; }
+.plz .ds-table .cell-actions { width: 1%; white-space: nowrap; text-align: center; padding-top: var(--sp-4); padding-bottom: var(--sp-4); }
+.plz .ds-table .cell-actions > div { display: inline-flex; align-items: center; gap: var(--sp-4); }
+.plz .cell-desc { display: flex; flex-direction: column; gap: var(--sp-4); align-items: flex-start; }
+.plz .cell-desc__main { color: var(--text-title); }
+.plz .cell-desc__sub { font-size: 12px; line-height: 12px; color: var(--text-captions); }
+.plz .cell-desc__link { font-size: 12px; line-height: 12px; color: var(--button-primary); }
+.plz .cell-desc__link:hover { text-decoration: underline; text-underline-offset: 3px; }
+.plz .nowrap { white-space: nowrap; }
+/* celdas del listado (commit 0c4d4b518) */
+.plz .cell-stack { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-4); }
+.plz .ds-table td.cell-text-desc { padding: var(--sp-4) var(--sp-8); }
+.plz .cell-text-desc > p { margin: 0; font-size: 14px; line-height: 1.2; color: var(--text-body); }
+.plz .adic-trigger { font-size: 14px; line-height: 16.8px; font-weight: 400; color: var(--button-link); text-decoration: underline; cursor: pointer; }
+/* IconButton en la última celda (iconButtonCellStyles) */
+.plz .ds-table td.cell-iconbtn { width: 40px; padding: var(--sp-12) var(--sp-16) var(--sp-12) 0; text-align: center; }
+/* carga: filas con shimmer, sin overlay */
+.plz .skeleton {
+  width: 80%; height: 16px; border-radius: var(--r-sm);
+  background: linear-gradient(90deg, var(--neutral100) 25%, var(--neutral200) 50%, var(--neutral100) 75%);
+  background-size: 200px 100%; animation: plz-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes plz-shimmer { 0% { background-position: -200px 0; } 100% { background-position: calc(200px + 100%) 0; } }
+/* fila vacía (TableCell type="empty") */
+.plz .ds-table td.cell-empty { padding: var(--sp-32) var(--sp-16); text-align: center; }
+.plz .empty-state { display: flex; flex-direction: column; align-items: center; gap: var(--sp-12); padding: var(--sp-32) var(--sp-16); text-align: center; }
+.plz .empty-state img { display: block; width: auto; }
+/* el error de carga va como Alert dentro de la tabla, pegado a la izquierda */
+.plz .cell-empty .ds-alert { max-width: 566px; text-align: left; }
+/* Table del DS con minWidth: hace scroll dentro de su marco, con sombras donde hay más contenido (como ../tabuladores) */
+.plz .table-frame { position: relative; width: 100%; min-width: 0; }
+.plz .table-frame::before, .plz .table-frame::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 16px; z-index: 1; pointer-events: none;
+  box-shadow: 0 2px 10px 0 rgba(0,0,0,.06); opacity: 0; transition: opacity .15s;
+}
+.plz .table-frame::before { left: -16px; clip-path: inset(0 -24px 0 0); }
+.plz .table-frame::after { right: -16px; clip-path: inset(0 0 0 -24px); }
+.plz .table-frame.is-start::before, .plz .table-frame.is-end::after { opacity: 1; }
+.plz .ds-table--plazos { min-width: 880px; }
+/* Ajuste del marco: con el árbol abierto la tabla no cabe a 1440 ni a 1280 (mínimo de 880 como en React).
+   La columna de acciones se queda fija a la derecha para que el ⋮ siempre se vea; la sombra de "hay más"
+   pasa del borde de la tabla al borde izquierdo de esa columna. */
+.plz .ds-table--plazos th:last-child, .plz .ds-table--plazos td.cell-iconbtn { position: sticky; right: 0; background: var(--surface-card); z-index: 1; }
+.plz .ds-table--plazos tbody tr.is-clickable:hover td.cell-iconbtn { background: var(--surface-page); }
+.plz .ds-table--plazos td.cell-iconbtn:has(.ds-menu:not([hidden])) { z-index: 25; } /* el menú abierto queda sobre el resto, como antes */
+.plz .table-frame:has(.ds-table--plazos)::after { content: none; }
+.plz .ds-table--plazos th:last-child::before, .plz .ds-table--plazos td.cell-iconbtn::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 16px; pointer-events: none;
+  box-shadow: 0 2px 10px 0 rgba(0,0,0,.06); clip-path: inset(0 100% 0 -24px); opacity: 0; transition: opacity .15s;
+}
+.plz .table-frame.is-end .ds-table--plazos th:last-child::before, .plz .table-frame.is-end .ds-table--plazos td.cell-iconbtn::before { opacity: 1; }
+
+/* ==========================================================================
+   DS · Pagination
+   ========================================================================== */
+.plz .ds-pagination { display: flex; align-items: center; justify-content: center; gap: var(--sp-8); min-height: 40px; padding: var(--sp-8) 0; }
+.plz .ds-pagination__group { display: flex; gap: var(--sp-4); }
+.plz .ds-pagination button { width: 28px; height: 28px; padding: var(--sp-4); border-radius: 50%; color: var(--button-primary); display: inline-flex; align-items: center; justify-content: center; }
+.plz .ds-pagination button:hover:not([disabled]) { background: var(--purple50); color: var(--button-link); }
+.plz .ds-pagination button[disabled] { color: var(--border-default); cursor: default; }
+.plz .ds-pagination button svg { width: 20px; height: 20px; }
+.plz .ds-pagination__text { font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--text-body); }
+
+/* ==========================================================================
+   DS · Menú ⋮ (panel del Select) · ButtonSelect
+   ========================================================================== */
+.plz .menu-wrap { position: relative; display: inline-flex; }
+.plz .ds-menu {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 25; min-width: 232px; padding: var(--sp-8) 0;
+  background: var(--surface-card); border-radius: var(--r-md); box-shadow: var(--shadow-dropdown);
+  display: flex; flex-direction: column; text-align: left;
+}
+.plz .ds-menu--left { right: auto; left: 0; }
+.plz .ds-menu [role="menuitem"] {
+  display: flex; align-items: center; gap: var(--sp-8); min-height: 40px; padding: var(--sp-8) var(--sp-16);
+  font-size: 14px; line-height: 16.8px; color: var(--text-body); text-align: left; white-space: nowrap;
+}
+.plz .ds-menu [role="menuitem"] svg { width: 20px; height: 20px; color: var(--button-primary); }
+/* menú ⋮ de el equipo (RowMenuPanel / RowMenuOption): 192 de ancho mínimo, opciones de 40 e íconos del color del texto.
+   "Agregar condición" (.ds-menu--left) no cambia. */
+.plz .ds-menu:not(.ds-menu--left) { min-width: 192px; border: 0; }
+.plz .ds-menu:not(.ds-menu--left) [role="menuitem"] { box-sizing: border-box; height: 40px; min-height: 0; }
+.plz .ds-menu:not(.ds-menu--left) [role="menuitem"] svg { color: currentColor; }
+.plz .ds-menu [role="menuitem"]:hover, .plz .ds-menu [role="menuitem"]:focus-visible { background: var(--purple50); outline: 0; }
+.plz .ds-menu [role="menuitem"][aria-disabled="true"] { color: var(--text-placeholder); cursor: not-allowed; background: none; }
+.plz .ds-menu [role="menuitem"][aria-disabled="true"] svg { color: var(--text-placeholder); }
+
+/* ==========================================================================
+   DS · Tooltip
+   ========================================================================== */
+.plz .ds-tooltip {
+  /* en bloque como el Tooltip del DS: ../ds/components.css lo hace inline-flex y ../pos.css lo centra,
+     y así el título del tooltip grande quedaba a un lado de la lista */
+  display: block;
+  position: fixed; z-index: 1420; max-width: 267px; padding: var(--sp-8);
+  background: var(--button-link); color: #FFFFFF; border-radius: var(--r-sm);
+  font-size: 14px; line-height: 1.2; box-shadow: 0 11px 26.6px rgba(0,0,0,.06);
+  pointer-events: none; opacity: 0; transition: opacity .15s;
+}
+.plz .ds-tooltip.is-open { opacity: 1; }
+.plz .ds-tooltip::after {
+  content: ""; position: absolute; left: var(--arrow-x, 50%); bottom: -8px; transform: translateX(-50%);
+  border: 8px solid transparent; border-bottom: 0; border-top-color: var(--button-link);
+}
+.plz .ds-tooltip ul { display: flex; flex-direction: column; gap: var(--sp-4); }
+/* Tooltip size="large" y position="bottom" (intereses adicionales) */
+.plz .ds-tooltip--large { width: max-content; max-width: 320px; padding: 10px 14px; }
+.plz .ds-tooltip--bottom::after { top: -8px; bottom: auto; border: 8px solid transparent; border-top: 0; border-bottom-color: var(--button-link); }
+.plz .tip-title { display: block; margin-bottom: var(--sp-4); font-weight: 700; }
+.plz .tip-list { display: flex; flex-direction: column; gap: var(--sp-8); }
+.plz .tip-item { display: flex; flex-direction: column; gap: 2px; }
+.plz .tip-item__name { font-weight: 700; }
+.plz .info-trigger { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--text-placeholder); }
+.plz .info-trigger svg { width: 16px; height: 16px; }
+
+/* ==========================================================================
+   DS · Alert · Toast
+   ========================================================================== */
+.plz .ds-alert {
+  display: flex; align-items: center; gap: var(--sp-16); min-height: 56px; padding: var(--sp-16);
+  border-radius: var(--r-sm); width: 100%;
+  border: 0; overflow: visible; /* sin la franja inferior ni el overflow de ../ds/components.css */
+}
+.plz .ds-alert > svg { width: 24px; height: 24px; flex-shrink: 0; }
+.plz .ds-alert__body { flex: 1; display: flex; flex-direction: column; gap: var(--sp-8); min-width: 0; font-size: 16px; line-height: normal; color: inherit; }
+.plz .ds-alert__title { font-size: 16px; line-height: 1.5; font-weight: 700; letter-spacing: .3px; }
+.plz .ds-alert__text { font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--text-body); }
+.plz .ds-alert--info { background: var(--info-surface); }    .plz .ds-alert--info > svg { color: var(--info-icon); }       .plz .ds-alert--info .ds-alert__title { color: var(--info-title); }
+.plz .ds-alert--error { background: var(--error-surface); }   .plz .ds-alert--error > svg { color: var(--error-icon); }     .plz .ds-alert--error .ds-alert__title { color: var(--error-title); }
+.plz .ds-alert--warning { background: var(--warning-surface); } .plz .ds-alert--warning > svg { color: var(--warning-icon); } .plz .ds-alert--warning .ds-alert__title { color: var(--warning-title); }
+.plz .ds-alert--success { background: var(--success-surface); } .plz .ds-alert--success > svg { color: var(--success-icon); } .plz .ds-alert--success .ds-alert__title { color: var(--success-title); }
+
+.plz .toast-region {
+  position: fixed; top: var(--plz-top); right: 16px; z-index: 1430; display: flex; flex-direction: column; gap: var(--sp-8);
+  width: min(512px, calc(100vw - 32px)); pointer-events: none;
+}
+.plz .ds-toast {
+  position: relative; display: flex; align-items: flex-start; gap: var(--sp-16); padding: var(--sp-16);
+  border-radius: var(--r-sm); overflow: hidden; box-shadow: -2px 2px 10.6px rgba(0,0,0,.08); pointer-events: auto;
+  box-sizing: border-box; min-width: 0; max-width: none; /* ../pos.css le pone 320–480 y content-box: a 375 px se salía */
+}
+.plz .ds-toast > svg { width: 24px; height: 24px; flex-shrink: 0; }
+.plz .ds-toast__body { flex: 1; display: flex; flex-direction: column; gap: var(--sp-8); min-width: 0; }
+.plz .ds-toast__title { font-size: 16px; line-height: 1.5; font-weight: 700; letter-spacing: .3px; }
+.plz .ds-toast__text { font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--text-body); }
+.plz .ds-toast__close { width: 36px; height: 36px; padding: var(--sp-8); border-radius: 50%; background: var(--surface-card); color: var(--button-primary); flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; }
+.plz .ds-toast__close:hover { background: var(--neutral100); }
+.plz .ds-toast__close svg { width: 20px; height: 20px; }
+.plz .ds-toast__timer { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; transform-origin: left; animation: toast-timer 5s linear forwards; }
+.plz .ds-toast:hover .ds-toast__timer, .plz .ds-toast:focus-within .ds-toast__timer { animation-play-state: paused; }
+@keyframes toast-timer { to { transform: scaleX(0); } }
+.plz .ds-toast--success { background: var(--success-surface); } .plz .ds-toast--success > svg { color: var(--success-icon); } .plz .ds-toast--success .ds-toast__title { color: var(--success-title); } .plz .ds-toast--success .ds-toast__timer { background: var(--success-icon); }
+.plz .ds-toast--error { background: var(--error-surface); }   .plz .ds-toast--error > svg { color: var(--error-icon); }     .plz .ds-toast--error .ds-toast__title { color: var(--error-title); }     .plz .ds-toast--error .ds-toast__timer { background: var(--error-icon); }
+
+/* ==========================================================================
+   DS · Modal (centrado y lateral)
+   ========================================================================== */
+.plz .ds-overlay {
+  position: fixed; inset: 0; z-index: 1400; padding: var(--sp-24); /* tapa también el header y el menú lateral */
+  display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.5);
+}
+/* con un modal abierto, las pestañas de flujos y comentarios (../demo.js, ../comentarios.js) quedan por encima, como en la V1 */
+:where(body:has(.plz .ds-overlay)) .demo-rail { z-index: 1401; }
+:where(body:has(.plz .ds-overlay)) .demo-menu { z-index: 1402; }
+.plz .ds-overlay--side { padding: 0; justify-content: flex-end; align-items: stretch; background: rgba(0,0,0,.25); }
+.plz .ds-modal {
+  width: 100%; max-width: 606px; max-height: calc(100vh - 48px);
+  display: flex; flex-direction: column; gap: var(--sp-24); padding: var(--sp-24);
+  background: var(--surface-card); border-radius: var(--r-lg); box-shadow: 0 10px 60px rgba(0,0,0,.25);
+  border: 0; animation: none; overflow: visible; /* ../ds/components.css le pone borde, animación de entrada y overflow */
+}
+.plz .ds-modal--side { max-width: 400px; max-height: none; height: 100vh; border-radius: var(--r-md) 0 0 var(--r-md); }
+.plz .ds-modal__head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-16); }
+.plz .ds-modal__title { font-size: 24px; line-height: 1.2; font-weight: 600; color: var(--text-body); }
+.plz .ds-modal__x { width: 40px; height: 40px; padding: var(--sp-8); border-radius: 50%; color: var(--text-captions); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.plz .ds-modal__x:hover { background: var(--neutral100); color: var(--text-body); }
+.plz .ds-modal__x svg { width: 24px; height: 24px; }
+.plz .ds-modal--side .ds-modal__x { color: var(--text-body); }
+.plz .ds-modal__body { overflow-y: auto; overflow-x: hidden; padding: 4px; margin: -4px; font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--text-title); display: flex; flex-direction: column; gap: var(--sp-16); }
+.plz .ds-modal--side .ds-modal__body { flex: 1; }
+.plz .modal-copy { display: flex; flex-direction: column; gap: var(--sp-8); }
+.plz .ds-modal__foot { display: flex; justify-content: center; gap: var(--sp-16); }
+.plz .ds-modal--side .ds-modal__foot > .ds-btn { flex: 1; }
+
+/* ==========================================================================
+   DS · AnchorMenu · FixedActionFooter
+   ========================================================================== */
+/* AnchorMenu: control de navegación; el borde, el radio 100 y la sombra son los del DS de QA (verificado 2026-10-09) */
+.plz .ds-anchor {
+  display: inline-flex; align-items: center; gap: 0; max-width: 100%; overflow-x: auto; height: 45px; padding: 0 var(--sp-4);
+  background: var(--surface-card); border: 1px solid var(--border-default); border-radius: var(--r-pill); box-shadow: 0 2px 7px rgba(0,0,0,.1);
+  scrollbar-width: none;
+}
+.plz .ds-anchor::-webkit-scrollbar { display: none; }
+.plz .ds-anchor a {
+  flex-shrink: 0; padding: 14px var(--sp-16); border-radius: var(--r-pill); line-height: 1;
+  font-size: 16px; color: var(--text-body); text-decoration: none; white-space: nowrap; transition: background-color .15s, color .15s;
+}
+.plz .ds-anchor a:hover { background: var(--purple50); color: var(--button-link); }
+.plz .ds-anchor a[aria-current="true"] { padding: var(--sp-8) var(--sp-16); line-height: 19.2px; background: var(--purple50); color: var(--button-link); font-weight: 600; }
+
+.plz .ds-footer {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; /* bajo el header (30) y el menú lateral (35) */
+  background: var(--purple10); backdrop-filter: blur(4px); box-shadow: var(--shadow-popup);
+}
+/* con el menú lateral fijo abierto, la barra empieza en su borde */
+@media (min-width: 901px) { .pos-menu-fijo:not(.is-menu-cerrado) .plz .ds-footer { left: var(--plz-menu); } }
+.plz .ds-footer__inner {
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--sp-16);
+  box-sizing: border-box; max-width: 1440px; min-height: 68px; margin: 0 auto; padding: var(--sp-16) var(--sp-64);
+}
+.plz .ds-footer__lead { grid-column: 2; font-size: 16px; line-height: 19.2px; letter-spacing: .3px; color: var(--text-body); text-align: center; }
+.plz .ds-footer__lead strong { font-weight: 600; }
+.plz .ds-footer__actions { grid-column: 3; justify-self: end; display: flex; gap: var(--sp-12); }
+
+
+/* ==========================================================================
+   Layout de pantallas (composición; solo tokens del DS)
+   ========================================================================== */
+/* sin max-width ni padding lateral propios: los da main.pos-main (1440 con 64 a los lados; 24 a 900 px o menos) */
+.plz .page { display: flex; flex-direction: column; padding-bottom: var(--sp-32); }
+.plz .page--form { padding-bottom: calc(68px + var(--sp-32)); }
+.plz .page > .ds-breadcrumb { margin-bottom: var(--sp-8); }
+.plz .title-row { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-16); flex-wrap: wrap; margin-bottom: var(--sp-16); }
+.plz .title-row__text { display: flex; flex-direction: column; gap: var(--sp-8); min-width: 0; }
+.plz .title-row__heading { display: flex; align-items: center; gap: var(--sp-12); flex-wrap: wrap; }
+.plz .title-row__actions { display: flex; align-items: center; gap: var(--sp-8); }
+.plz .stack { display: flex; flex-direction: column; gap: var(--sp-16); }
+.plz .stack-24 { display: flex; flex-direction: column; gap: var(--sp-24); }
+/* listado: 24 entre el encabezado, la card del listado y la de sugeridos (PageMain) */
+.plz .title-row--list { margin-bottom: var(--sp-24); }
+
+/* Tarjetas y contenedores sin borde: solo Card-shadow y radio 16 (regla de Product Design, 2026-10-08) */
+.plz .card {
+  background: var(--surface-card); border-radius: var(--r-md); box-shadow: var(--shadow-card);
+}
+.plz .card--pad { padding: var(--sp-24); }
+.plz .card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--sp-16); flex-wrap: wrap; }
+.plz .card__titles { display: flex; flex-direction: column; gap: var(--sp-4); }
+.plz .section-sub { font-size: 16px; line-height: 19.2px; font-weight: 600; color: var(--text-title); letter-spacing: .3px; }
+.plz .divider { height: 1px; background: var(--border-default); border: 0; margin: 0; }
+
+/* Listado (ListCard): árbol y tabla en una sola card de al menos el 70 % del alto de la ventana.
+   Sin overflow hidden, para no recortar la lista del chip de filtro; radio 16 y Card-shadow de .card. */
+.plz .workspace { display: flex; flex-direction: row; align-items: stretch; gap: 0; padding: 0; min-height: 70vh; }
+/* SidebarPanel: panel del árbol como en Tabuladores, sin card ni sombra y con borde derecho */
+.plz .tree-panel {
+  position: relative; display: flex; flex-direction: column; align-items: center; flex: 0 0 auto;
+  width: 304px; min-width: 0; padding: 0; box-sizing: border-box; /* calc(64 × 4 + 48), con el borde */
+  border-right: 1px solid var(--border-default); border-radius: var(--r-md) 0 0 var(--r-md); background: var(--surface-card);
+}
+/* SidebarScroll: ocupa todo el alto del panel (lo marca la tabla) y hace scroll si el árbol es más alto */
+.plz .tree-panel__scroll {
+  position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box;
+  display: flex; flex-direction: column; gap: var(--sp-12); padding: var(--sp-12); overflow-y: auto;
+}
+.plz .tree-panel__body { display: flex; flex-direction: column; gap: var(--sp-12); padding: 0 var(--sp-16) var(--sp-16); }
+/* plegado (CollapsedToggle): riel con "Abrir panel" que se lee de abajo hacia arriba, centrado en vertical */
+.plz .is-collapsed .tree-panel { width: auto; padding: var(--sp-12); }
+.plz .tree-panel__rail { display: flex; align-items: center; justify-content: center; flex: 1; writing-mode: vertical-rl; transform: rotate(180deg); }
+/* el botón del DS mide 36 de grueso también en vertical: sus medidas van en lógicas (block = ancho en el riel) */
+.plz .tree-panel__rail .ds-btn { height: auto; block-size: 36px; inline-size: auto; padding: 0; padding-inline: 8px 16px; }
+.plz .tree-panel__rail .ds-btn svg { transform: rotate(180deg); } /* OpenPanelIcon */
+/* columna de la tabla (ContentColumn / ContentHeader / ActiveFiltersBar / TableArea) */
+.plz .plazos { display: flex; flex-direction: column; flex: 1; min-width: 0; padding: var(--sp-16); }
+.plz .plazos__head { display: flex; flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--sp-16); padding: var(--sp-8) var(--sp-16); }
+.plz .filters-applied { display: flex; align-items: center; gap: var(--sp-8); flex-wrap: wrap; padding: var(--sp-8) var(--sp-16); }
+.plz .plazos__body { display: flex; flex-direction: column; gap: var(--sp-16); width: 100%; padding: var(--sp-8); box-sizing: border-box; }
+/* card de sugeridos: título y subtítulo con 8 entre sí */
+.plz .sug-head { display: flex; flex-direction: column; gap: var(--sp-8); }
+/* notas de maqueta agrupadas: el grupo se va con ellas */
+body:not(.show-notes) .plz .design-notes { display: none; }
+.plz .state-error { padding: var(--sp-16); }
+.plz .empty {
+  display: flex; flex-direction: column; align-items: center; gap: var(--sp-16); text-align: center;
+  padding: var(--sp-48) var(--sp-24);
+}
+.plz .empty__msg { font-size: 14px; line-height: 20px; font-weight: 600; color: var(--text-captions); max-width: 420px; }
+.plz .empty__sub { font-size: 14px; line-height: 16.8px; color: var(--text-captions); max-width: 420px; }
+
+/* Detalle */
+.plz .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--sp-16) var(--sp-24); padding: var(--sp-24); }
+.plz .kv { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
+.plz .kv__k { font-size: 12px; line-height: 12px; font-weight: 700; color: var(--text-captions); }
+.plz .kv__v { font-size: 16px; line-height: 19.2px; letter-spacing: .3px; color: var(--text-body); }
+.plz .kv__v small { display: block; margin-top: var(--sp-4); font-size: 12px; line-height: 12px; letter-spacing: 0; color: var(--text-captions); }
+.plz .detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-16); }
+.plz .list-plain { display: flex; flex-direction: column; gap: var(--sp-12); }
+.plz .list-plain li { display: flex; justify-content: space-between; gap: var(--sp-16); font-size: 14px; line-height: 16.8px; }
+.plz .list-plain li span:first-child { color: var(--text-captions); }
+.plz .list-plain li span:last-child { color: var(--text-body); text-align: right; }
+
+/* Formulario */
+.plz .form-layout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: var(--sp-24); align-items: start; }
+.plz .form-anchor { position: sticky; top: var(--plz-top); z-index: 2; margin-bottom: var(--sp-16); }
+.plz .form-cards { display: flex; flex-direction: column; gap: var(--sp-24); }
+.plz .form-card { display: flex; flex-direction: column; gap: var(--sp-16); padding: var(--sp-24); }
+.plz .form-card > .card__titles { margin-bottom: var(--sp-8); }
+.plz .form-block { display: flex; flex-direction: column; gap: var(--sp-16); }
+.plz .form-block + .form-block { padding-top: var(--sp-16); border-top: 1px solid var(--border-default); }
+.plz .switch-row { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-16); flex-wrap: wrap; }
+.plz .ranges { display: flex; flex-direction: column; gap: var(--sp-8); }
+.plz .ranges .ds-table td { padding-top: var(--sp-8); padding-bottom: var(--sp-8); }
+.plz .ranges__from { font-size: 14px; color: var(--text-body); white-space: nowrap; }
+.plz .item-list { display: flex; flex-direction: column; gap: var(--sp-8); }
+.plz .item {
+  display: flex; align-items: center; gap: var(--sp-16); padding: var(--sp-12) var(--sp-16);
+  border-radius: var(--r-md); background: var(--surface-card); box-shadow: var(--shadow-card);
+}
+.plz .item__body { flex: 1; display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
+.plz .item__title { display: flex; align-items: center; gap: var(--sp-8); flex-wrap: wrap; font-size: 16px; line-height: 19.2px; font-weight: 600; color: var(--text-title); letter-spacing: .3px; }
+.plz .item__sub { font-size: 14px; line-height: 16.8px; color: var(--text-captions); }
+.plz .item__actions { display: flex; gap: var(--sp-4); }
+.plz .condition { display: flex; flex-direction: column; gap: var(--sp-12); padding: var(--sp-16); border-radius: var(--r-md); background: var(--surface-card); box-shadow: var(--shadow-card); }
+.plz .condition__head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-8); }
+
+.plz .sim { position: sticky; top: calc(var(--plz-top) + 61px); display: flex; flex-direction: column; gap: var(--sp-16); padding: var(--sp-24); }
+.plz .sim__result { display: flex; flex-direction: column; gap: var(--sp-12); padding: var(--sp-16); background: var(--purple50); border-radius: var(--r-sm); }
+.plz .sim__total { display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-8); padding-top: var(--sp-12); border-top: 1px solid var(--purple100); }
+.plz .sim__total span:first-child { font-size: 16px; font-weight: 600; color: var(--text-title); letter-spacing: .3px; }
+.plz .sim__total span:last-child { font-size: 20px; line-height: 24px; font-weight: 600; color: var(--text-title); }
+.plz .sim .list-plain li span:first-child { color: var(--text-body); }
+
+/* ==========================================================================
+   Herramientas de la maqueta (no son producto)
+   Panel de estados y notas de diseño. Se quitan al pasar a React.
+   ========================================================================== */
+.plz .demo-toggle {
+  position: fixed; left: 16px; bottom: 16px; z-index: 21;
+}
+@media (min-width: 901px) { .pos-menu-fijo:not(.is-menu-cerrado) .plz .demo-toggle { left: calc(var(--plz-menu) + 16px); } }
+body.has-footer .plz .demo-toggle { bottom: 84px; }
+.plz .demo-panel {
+  position: absolute; left: 0; bottom: calc(100% + 8px); width: 300px; padding: var(--sp-16);
+  display: flex; flex-direction: column; gap: var(--sp-12);
+  background: var(--surface-card); border-radius: var(--r-md); box-shadow: var(--shadow-dropdown);
+}
+.plz .demo-panel .ds-select { height: 32px; padding: var(--sp-4) 32px var(--sp-4) var(--sp-12); font-size: 14px; letter-spacing: 0; }
+.plz .demo-panel .ds-field__label { padding: 0; }
+.plz .demo-panel__title { font-size: 14px; font-weight: 700; color: var(--text-title); }
+.plz .design-note {
+  display: flex; gap: var(--sp-8); padding: var(--sp-8) var(--sp-12);
+  border: 1px dashed var(--purple200); border-radius: var(--r-sm); background: var(--purple10);
+  font-size: 12px; line-height: 16px; color: var(--button-link);
+}
+.plz .design-note::before { content: "Nota de maqueta"; flex-shrink: 0; font-weight: 700; }
+body:not(.show-notes) .plz .design-note { display: none; }
+
+/* Cortes de su maqueta (725 y 992 de la ventana) llevados al área útil del prototipo:
+   con el menú lateral fijo (más de 900 px) el área útil es la ventana − 244 − 128 de padding;
+   a 900 px o menos el menú es cajón y el área útil es la ventana − 48.
+   - Formulario + Simulación lado a lado desde ~880 px útiles  → ventana ≥ 1252.
+   - Detalle en dos columnas desde ~760 px útiles               → ventana ≥ 1132.
+   - Árbol arriba de la tabla con menos de ~725 px útiles       → ventana ≤ 724, o 901–1096 con el menú fijo.
+   - El árbol abierto ya no se pliega solo: con la tabla de 880 px mínimos, por debajo de ~1604 px de ventana
+     (menú fijo incluido) la tabla hace scroll horizontal dentro de la card. */
+@media (max-width: 1251px) {
+  .plz .form-layout { grid-template-columns: minmax(0, 1fr); }
+  .plz .sim { position: static; }
+}
+@media (max-width: 1131px) {
+  .plz .detail-grid { grid-template-columns: minmax(0, 1fr); }
+}
+/* barra fija del formulario: lo que mide la barra (ventana, o ventana − 244 con el menú fijo) */
+@media (max-width: 1144px) {
+  .plz .ds-footer__inner { grid-template-columns: minmax(0, 1fr) auto; }
+  .plz .ds-footer__lead { grid-column: 1; text-align: left; font-size: 14px; }
+  .plz .ds-footer__actions { grid-column: 2; }
+}
+@media (max-width: 900px) {
+  .plz .ds-footer__inner { padding-left: var(--sp-24); padding-right: var(--sp-24); }
+  /* con el padding de 24 px la lista del chip de filtro abre hacia la izquierda para no salirse de la ventana */
+  .plz .ds-filter-chip__list { left: auto; right: 0; }
+}
+@media (max-width: 724px), (min-width: 901px) and (max-width: 1096px) {
+  /* el árbol va arriba de la tabla: con 304 de árbol y 880 de tabla, la columna quedaría casi en 0 */
+  .plz .workspace { flex-direction: column; }
+  .plz .tree-panel { width: 100%; align-items: stretch; border-right: 0; border-bottom: 1px solid var(--border-default); border-radius: var(--r-md) var(--r-md) 0 0; }
+  .plz .tree-panel__scroll { position: static; } /* el panel mide lo que su contenido */
+  .plz .is-collapsed .tree-panel { padding: var(--sp-8) var(--sp-16); }
+  .plz .tree-panel__rail { writing-mode: horizontal-tb; transform: none; justify-content: flex-start; }
+}
+@media (max-width: 724px) {
+  .plz .page--form { padding-bottom: calc(120px + var(--sp-32)); }
+  .plz .field-row, .plz .field-row--3 { grid-template-columns: minmax(0, 1fr); }
+  .plz .form-card { padding: var(--sp-16); }
+  .plz .ds-footer__inner { grid-template-columns: minmax(0, 1fr); padding: var(--sp-12) var(--sp-24); gap: var(--sp-8); }
+  .plz .ds-footer__lead { grid-column: 1; text-align: center; }
+  .plz .ds-footer__actions { grid-column: 1; justify-self: stretch; }
+  .plz .ds-footer__actions .ds-btn { flex: 1; }
+  body.has-footer .plz .demo-toggle { bottom: 136px; }
+  .plz .ds-modal--side { max-width: 100%; border-radius: 0; }
+  .plz .summary { padding: var(--sp-16); }
+}

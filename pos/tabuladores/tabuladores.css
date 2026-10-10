@@ -1,0 +1,195 @@
+/* ============================================================
+   Detalles de tabulador (HU-CP-377-F) — reconstrucción estática del código de Product Design
+   Rama rama del equipo del repo del equipo: src/components/MetalTabulator/TabulatorDetails/NewTabulatorDetails/**.
+   Los valores salen de newTabulatorDetails.styles.ts / .constants.ts (DETAILS_LAYOUT) y de los componentes del DS
+   en src/design-system/ (Button, Chip, Table, TabsButton, Tooltip, Modal; tokens, Colors, Typography):
+   - .cd-*  = componentes del DS tal como están en su código
+   - .tb-*  = acomodo de la pantalla
+   El ancho de página y el padding lateral los pone .pos-main de ../pos.css (regla de Daniel: 1440 con 64 a los lados, 24 a ≤900).
+   ============================================================ */
+
+/* Arreglo local de un detalle compartido de ../pos.css: a 900 px o menos el menú es cajón, pero la regla del Administrativo
+   (:root[data-plataforma='admin'] … .pos-cuerpo { padding-left: 244px }) le gana al reset del @media y el contenido quedaba
+   recorrido 244 px. Mismo selector, dentro del @media, para que gane aquí. Ver README. */
+@media (max-width: 900px) {
+  :root[data-plataforma='admin'] .pos-menu-fijo:not(.is-menu-cerrado) .pos-cuerpo { padding-left: 0; }
+}
+
+/* ---------------- Página (pageStyles / headerRowStyles / pageTitleStyles) ---------------- */
+/* Corrección: en el código el contenedor lleva overflow-x: hidden (escondía lo que se salía en vez de evitarlo); aquí no hace falta */
+.tb-page { display: flex; flex-direction: column; gap: 16px; background: #fbfbfe; box-sizing: border-box; width: 100%; }
+.tb-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.tb-title { margin: 0; min-width: 0; overflow-wrap: anywhere; font-size: 28px; line-height: 33.6px; font-weight: 700; color: #1d1e20; letter-spacing: normal; }
+/* detailsGridStyles: columna principal + panel de 300 (DETAILS_LAYOUT.SIDE_PANEL_WIDTH); una columna a 900 */
+.tb-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+.tb-col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+@media (max-width: 900px) {
+  .tb-head { flex-direction: column; align-items: flex-start; }
+  .tb-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------------- Card (cardStyles / cardHeaderStyles) ----------------
+   Sin borde: solo Card-shadow y radio 16 (Patrón de COMPONENTS.md y regla de Daniel). */
+.tb-card {
+  display: flex; flex-direction: column; align-items: stretch; gap: 16px; min-width: 0; box-sizing: border-box;
+  padding: 24px; border-radius: 16px; background: #fff; box-shadow: var(--pos-shadow-card, 0 2px 10px 0 rgba(0, 0, 0, .06));
+}
+.tb-card__head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tb-title-help { display: flex; align-items: center; gap: 4px; }
+
+/* TypographyText: span con el token de tipografía y 3 px a la derecha (así se separan las palabras de la regla) */
+.tb-t { width: fit-content; height: fit-content; margin-right: 3px; font-family: 'Nunito', sans-serif; }
+.tb-t--subtitulos { font-size: 20px; line-height: 24px; font-weight: 600; letter-spacing: normal; color: #1d1e20; }
+.tb-t--bold { font-size: 16px; line-height: 19.2px; font-weight: 600; letter-spacing: .3px; color: #2a2c2f; }      /* textoBold */
+.tb-t--regular { font-size: 16px; line-height: 19.2px; font-weight: 400; letter-spacing: .3px; color: #2a2c2f; }   /* textoRegular */
+.tb-t--caption { font-size: 14px; line-height: 16.8px; font-weight: 400; letter-spacing: normal; color: #54575c; } /* caption en textCaptions */
+.tb-t--replaced { color: #54575c; text-decoration: line-through; }
+
+/* ---------------- GeneralInfoCard (definitionList*) ---------------- */
+.tb-dl { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; margin: 0; }
+.tb-dl__item { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.tb-dl dt { margin: 0; font-size: 14px; line-height: 16.8px; font-weight: 400; color: #54575c; }   /* caption */
+.tb-dl dd { margin: 0; }
+
+/* ---------------- UnitPriceHeader ---------------- */
+.tb-unit { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+.tb-tiles { display: flex; gap: 8px; }
+.tb-tile { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 120px; padding: 8px; box-sizing: border-box; border-radius: 8px; background: #fafafa; }
+
+/* ---------------- TabsButton (DS) ---------------- */
+.cd-tabs { display: inline-flex; overflow: hidden; border-radius: 8px; }
+.cd-tab {
+  flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 16px; box-sizing: border-box; white-space: nowrap;
+  border: 1px solid #d4d6d8; border-left: none; background: #fff; cursor: pointer; transition: all .15s;
+  font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 400; letter-spacing: .3px; color: #54575c;
+}
+.cd-tab:first-child { border-left: 1px solid #d4d6d8; border-radius: 8px 0 0 8px; }
+.cd-tab:last-child { border-radius: 0 8px 8px 0; }
+.cd-tab[aria-selected='true'] { border-color: #acacff; border-left: 1px solid #acacff; background: #f0f0ff; font-weight: 600; letter-spacing: 0; color: #2a2c2f; }
+.cd-tab:hover { background: #f0f0ff; color: #2a2c2f; }
+.cd-tab:focus-visible { outline: 2px solid #5a5aff; outline-offset: -2px; }
+
+/* ---------------- Table (DS, borderVariant="neutral") ----------------
+   Sin caja propia dentro de la tarjeta (regla de Daniel). Con minWidth 560 (DETAILS_LAYOUT.PURITY_TABLE_MIN_WIDTH) hace scroll
+   horizontal dentro de su marco, con sombras en el borde donde hay más contenido (useHorizontalScrollShadows del DS). */
+.cd-tframe { position: relative; width: 100%; min-width: 0; }
+.cd-tframe::before, .cd-tframe::after {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 16px; z-index: 1; pointer-events: none;
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, .06); opacity: 0; transition: opacity .15s ease;
+}
+.cd-tframe::before { left: -16px; clip-path: inset(0 -24px 0 0); }
+.cd-tframe::after { right: -16px; clip-path: inset(0 0 0 -24px); }
+.cd-tframe.is-start::before, .cd-tframe.is-end::after { opacity: 1; }
+.cd-tscroll { width: 100%; overflow-x: auto; --table-row-border: #d4d6d8; --table-header-border: #d4d6d8; }
+.cd-table { width: 100%; border-collapse: collapse; font-family: 'Nunito', sans-serif; }
+.cd-table tbody tr:last-of-type td { border-bottom: none; }
+.cd-td {
+  padding: 12px 8px; border-bottom: 1px solid var(--table-row-border, #fbfbfe);
+  font-size: 14px; font-weight: 400; color: #2a2c2f; text-align: left; vertical-align: middle;
+}
+.cd-td:first-of-type { padding-left: 16px; }
+.cd-td:last-of-type { padding-right: 16px; }
+.cd-td--right { text-align: right; white-space: nowrap; }
+.cd-th {
+  padding: 12px 8px; text-align: left; vertical-align: middle; white-space: nowrap;
+  font-size: 14px; font-weight: 600; color: #1d1e20; border-bottom: 1px solid var(--table-header-border, #d4d6d8);
+}
+.cd-th:first-of-type { padding-left: 16px; }
+.cd-th:last-of-type { padding-right: 16px; }
+.cd-th__in { display: flex; align-items: center; gap: 4px; }
+.cd-th--right { text-align: right; }
+.cd-th--right .cd-th__in { justify-content: flex-end; }
+.cd-tr { transition: background .15s ease; }
+.tb-purity { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+
+/* ---------------- Automatización y ubicaciones (rule* / branch*) ---------------- */
+.tb-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.tb-rule { display: block; padding: 8px 0; border-bottom: 1px solid #d4d6d8; }
+.tb-rule:last-of-type, .tb-branch:last-of-type { border-bottom: none; }
+.tb-rule .tb-t { display: inline; }
+.tb-branch { display: flex; flex-direction: column; gap: 4px; padding: 8px 0; border-bottom: 1px solid #d4d6d8; min-width: 0; }
+.tb-branch__row { display: flex; align-items: center; gap: 4px; min-width: 0; }
+.tb-trunc { display: block; min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ícono de ayuda (InfoIcon 16 en textPlaceholder) dentro del Tooltip del DS.
+   Corrección: en el código el ícono no recibe foco y el tooltip solo sale con el mouse; aquí es un botón que lo abre con teclado */
+.tb-help {
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%;
+  background: none; color: #a1a5aa; cursor: help;
+}
+.tb-help:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
+.cd-ico { display: block; flex-shrink: 0; }
+
+/* ---------------- Chip (DS) ---------------- */
+.cd-chip {
+  display: inline-flex; align-items: center; gap: 4px; box-sizing: border-box; white-space: nowrap; border: 1px solid transparent; cursor: default;
+  font-family: 'Nunito', sans-serif;
+}
+/* status-*: 18 de alto, radio 4, 12/12 */
+.cd-chip--status-green, .cd-chip--status-gray { height: 18px; padding: 4px; border-radius: 4px; font-size: 12px; font-weight: 400; line-height: 12px; }
+.cd-chip--status-green { background: #d1ffd1; color: #174a2e; }
+.cd-chip--status-gray { background: #d4d6d8; color: #2a2c2f; }
+/* informativa-blue: 35 de alto, radio 8, padding 0/8, 16/1.2 */
+.cd-chip--informativa-blue { height: 35px; padding: 0 8px; border-radius: 8px; font-size: 16px; font-weight: 400; line-height: 1.2; background: #ebf9ff; color: #2a2c2f; }
+
+/* ---------------- Button (DS) ---------------- */
+.cd-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-sizing: border-box; flex-shrink: 0;
+  height: 36px; padding: 8px 16px; border-radius: 100px; border: 1px solid transparent; outline: none;
+  font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px; line-height: 20px; text-align: center; white-space: nowrap;
+  cursor: pointer; transition: all .2s ease-in-out;
+}
+.cd-btn__txt { display: inline-flex; align-items: center; }
+.cd-btn--primary { background: #5a5aff; color: #fff; }
+.cd-btn--primary:hover, .cd-btn--primary:active { background: #0d166b; }
+.cd-btn--secondary { background: #fff; color: #5a5aff; border-color: #5a5aff; }
+.cd-btn--secondary:hover, .cd-btn--secondary:active { background: #f0f0ff; }
+.cd-btn--tertiary { background: #fff; color: #5a5aff; }
+.cd-btn--tertiary:hover, .cd-btn--tertiary:active { background: #f0f0ff; }
+/* Corrección: el Button del DS pone outline:none y no dibuja foco */
+.cd-btn:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
+.cd-btn.is-loading { pointer-events: none; }
+.cd-btn:disabled { cursor: default; }
+.cd-spinner {
+  width: 24px; height: 24px; border-radius: 50%; border: 2px solid rgba(0, 0, 0, .1); border-top-color: #5a5aff;
+  animation: cd-spin .7s linear infinite; display: inline-block; flex-shrink: 0; box-sizing: border-box;
+}
+.cd-btn--primary .cd-spinner { border-top-color: #fff; }
+@keyframes cd-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* ---------------- Modal (DS, size default) ----------------
+   Su TabulatorArchiveConfirmModal no usa el Modal del DS (ancho fijo de 606, a 375 se salía de la pantalla). Aquí va con el Modal
+   del DS, que ya trae los mismos valores (padding 24, radio 24, gap 24, sombra 0 10 60) pero con max-width 606 y width 100%. */
+.cd-overlay {
+  position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center;
+  padding: 24px; box-sizing: border-box; background: rgba(0, 0, 0, .5);
+}
+.cd-modal {
+  display: flex; flex-direction: column; align-items: stretch; gap: 24px; width: 100%; max-width: 606px;
+  max-height: calc(100vh - 48px); overflow: hidden; box-sizing: border-box;
+  padding: 24px; border-radius: 24px; background: #fff; box-shadow: 0 10px 60px 0 rgba(0, 0, 0, .25);
+}
+.cd-modal__head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-shrink: 0; width: 100%; }
+.cd-modal__title { margin: 0; font-size: 24px; font-weight: 600; line-height: 1.2; color: #2a2c2f; }
+.cd-modal__x {
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 40px; height: 40px; padding: 8px; box-sizing: border-box;
+  border: none; border-radius: 100px; background: #fff; color: #54575c; cursor: pointer; outline: none; transition: background .15s ease-in-out, color .15s ease-in-out;
+}
+.cd-modal__x:hover { background: #f4f5f5; color: #2a2c2f; }
+.cd-modal__x:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
+.cd-modal__body { flex: 1; min-height: 0; overflow-y: auto; font-size: 16px; font-weight: 400; line-height: 1.2; letter-spacing: .3px; color: #1d1e20; }
+.cd-modal__body p { margin: 0; }
+.cd-modal__foot { display: flex; align-items: flex-start; justify-content: center; flex-wrap: wrap; gap: 16px; flex-shrink: 0; width: 100%; }
+
+/* ---------------- Tooltip (DS) ---------------- */
+.cd-tip {
+  position: fixed; z-index: 55; width: max-content; max-width: min(267px, calc(100vw - 16px)); box-sizing: border-box;
+  padding: 8px; border-radius: 8px; background: #0d166b; color: #fff; pointer-events: none;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 400; line-height: 1.2; white-space: normal; word-break: break-word;
+  box-shadow: 0 11px 26.6px 0 rgba(0, 0, 0, .06); opacity: 0; transition: opacity .15s ease-in-out;
+}
+.cd-tip.is-on { opacity: 1; }
+.cd-tip[hidden] { display: none; }
+.cd-tip__arrow { position: absolute; width: 16px; height: 8px; transform: translateX(-50%); display: block; }
+.cd-tip__arrow--top { top: 100%; }
+.cd-tip__arrow--bottom { bottom: 100%; transform: translateX(-50%) rotate(180deg); }

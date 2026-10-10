@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ataskate POS — Detalles de tabulador</title>
+<meta name="description" content="Ataskate POS (Administrativo): detalle del tabulador de metales rediseñado (HU-CP-377-F, Product Design)." />
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../ds/primitives.css" />
+<link rel="stylesheet" href="../ds/semantic.css" />
+<link rel="stylesheet" href="../ds/elevation.css" />
+<link rel="stylesheet" href="../ds/base.css" />
+<link rel="stylesheet" href="../ds/components.css" />
+<link rel="stylesheet" href="../pos.css?v=ux65" />
+<link rel="stylesheet" href="tabuladores.css?v=1" />
+</head>
+<!-- Detalles de tabulador (HU-CP-377-F). Reconstrucción estática del código de Product Design (rama del equipo de AtaskateFrontend):
+     src/components/MetalTabulator/TabulatorDetails/NewTabulatorDetails/** (página Operational/MetalTabulator/TabulatorDetails). Ver README.md. -->
+<body class="pos pos-menu-fijo" data-plataforma-fija="admin">
+<header class="pos-header">
+  <div class="pos-header__menu">
+    <button class="pos-hbtn pos-hbtn--plain pos-menu" type="button" aria-label="Menú">
+      <img src="../assets/menu.svg" width="24" height="24" alt="" />
+    </button>
+    <a class="pos-brand" href="./" aria-label="Ataskate · Operativo">
+      <img class="pos-brand__logo" src="../assets/logo-ataskate.svg" alt="ataskate" />
+      <span class="pos-brand__role">Operativo</span>
+    </a>
+  </div>
+
+  <form class="pos-search" role="search" onsubmit="return false">
+    <input class="pos-search__input" type="search" placeholder="Buscar" aria-label="Buscar en el Operativo" />
+    <button class="pos-search__go" type="submit" aria-label="Buscar"><img src="../assets/search.svg" width="24" height="24" alt="" /></button>
+  </form>
+
+  <div class="pos-header__ctas">
+    <button class="pos-hbtn pos-hide-sm" type="button" aria-label="Notificaciones">
+      <img src="../assets/notification.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-hide-xs" type="button" id="posCaja" aria-label="Flujo de fondos · caja abierta" aria-haspopup="dialog" aria-expanded="false" aria-controls="posCajaPanel">
+      <img src="../assets/pos-terminal.svg" width="24" height="24" alt="" />
+      <span class="pos-hbtn__status" aria-hidden="true"></span>
+    </button>
+    <button class="pos-hbtn pos-hide-sm" type="button" id="posAjustes" aria-label="Configuración" aria-haspopup="menu" aria-expanded="false" aria-controls="posAjustesMenu">
+      <img src="../assets/settings.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-cart" type="button" id="posCart" aria-label="Carrito, 0 artículos">
+      <img src="../assets/cart.svg" width="24" height="24" alt="" />
+      <span id="posCartN">0</span>
+    </button>
+    <button class="pos-hbtn pos-profile" type="button" aria-label="RP · Cambiar de usuario">
+      <span class="ds-avatar">RP</span>
+      <img src="../assets/sync.svg" width="24" height="24" alt="" />
+    </button>
+  </div>
+</header>
+
+<!-- paneles del Header (HU-CE-595-F / 573-F): se anclan bajo la barra; los abre y cierra ../navbar.js -->
+<div class="pos-navpanel pos-caja" id="posCajaPanel" role="dialog" aria-labelledby="posCajaTitulo" hidden>
+  <div class="pos-caja__head">
+    <h2 id="posCajaTitulo">Flujo de fondos</h2>
+    <button class="ds-btn ds-btn--primary pos-caja__btn" type="button">Cerrar flujo</button>
+    <button class="pos-caja__x" type="button" aria-label="Cerrar"><img src="../assets/navbar/close.svg" alt="" /></button>
+  </div>
+  <dl class="pos-caja__tiles">
+    <div class="pos-caja__tile"><dt>Saldo total</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Ingresos</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Salidas</dt><dd>$8,038</dd></div>
+  </dl>
+</div>
+<div class="pos-navpanel pos-ajustes" id="posAjustesMenu" role="menu" aria-label="Configuración · sesión de Omar, omar.man@gmail.com" hidden>
+  <div class="pos-ajustes__user" role="presentation">
+    <img src="../assets/navbar/menu-avatar.png" alt="" />
+    <span><b>Omar</b><small>omar.man@gmail.com</small></span>
+  </div>
+  <button class="pos-ajustes__item pos-ajustes__item--plat" type="button" role="menuitem"><img src="../assets/navbar/menu-admin.png" alt="" />Ir a Administrativo</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/sync.svg" alt="" />Sucursal Polanco</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/navbar/logout.svg" alt="" />Cerrar sesión</button>
+</div>
+
+<!-- todo lo que va debajo del header va dentro de .pos-cuerpo (se recorre el ancho del menú fijo) -->
+<div class="pos-cuerpo">
+  <!-- NewTabulatorDetails.tsx: columna con separación de 16 (breadcrumb, título + Archivar, rejilla de tarjetas).
+       El ancho y el padding los pone .pos-main (1440 con 64 a los lados, 24 a 900 px o menos). Los datos salen de tabuladores.js. -->
+  <main class="pos-main tb-page" id="tbMain">
+    <nav aria-label="Breadcrumb" class="ds-breadcrumb">
+      <ol class="pos-crumbs">
+        <li><a href="../home/" class="ds-breadcrumb__link">Home</a><span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt="" /></span></li>
+        <li><a href="#" class="ds-breadcrumb__link" data-noop>Tabulador</a><span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt="" /></span></li>
+        <li><span class="ds-breadcrumb__current" aria-current="page">Detalles de tabulador</span></li>
+      </ol>
+    </nav>
+
+    <div class="tb-head">
+      <h1 class="tb-title" id="tbTitle"></h1>
+      <button type="button" class="cd-btn cd-btn--secondary" id="tbArchivar"><span class="cd-btn__txt"></span></button>
+    </div>
+
+    <div class="tb-grid">
+      <div class="tb-col">
+        <!-- GeneralInfoCard -->
+        <section class="tb-card" aria-label="Datos generales">
+          <dl class="tb-dl" id="tbGeneral"></dl>
+        </section>
+        <!-- UnitPriceHeader + PurityTable -->
+        <section class="tb-card" aria-label="Precios por pureza">
+          <div class="tb-unit">
+            <div class="cd-tabs" role="tablist" aria-label="Unidad" id="tbUnidad"></div>
+            <div class="tb-tiles" id="tbTiles"></div>
+          </div>
+          <div class="cd-tframe" data-tframe>
+            <div class="cd-tscroll">
+              <table class="cd-table" style="min-width:560px" id="tbTabla"></table>
+            </div>
+          </div>
+        </section>
+      </div>
+      <aside class="tb-col" aria-label="Automatización y ubicaciones">
+        <!-- AutomationCard -->
+        <section class="tb-card" aria-labelledby="tabulator-automation-title">
+          <div class="tb-card__head">
+            <span class="tb-title-help">
+              <span class="tb-t tb-t--subtitulos" id="tabulator-automation-title">Automatización</span>
+              <button type="button" class="tb-help" data-tip="Configura hasta 4 reglas que ajusten tus precios base automáticamente según el comportamiento del mercado." aria-label="Configura hasta 4 reglas que ajusten tus precios base automáticamente según el comportamiento del mercado."><span data-ico="Info"></span></button>
+            </span>
+            <span class="cd-chip cd-chip--informativa-blue" id="tbReglasN"></span>
+          </div>
+          <ul class="tb-list" id="tbReglas"></ul>
+        </section>
+        <!-- LocationsCard -->
+        <section class="tb-card" aria-labelledby="tabulator-locations-title">
+          <div class="tb-card__head">
+            <span class="tb-t tb-t--subtitulos" id="tabulator-locations-title">Ubicaciones</span>
+            <span class="cd-chip cd-chip--informativa-blue" id="tbSucN"></span>
+          </div>
+          <ul class="tb-list" id="tbSucursales"></ul>
+        </section>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<!-- modal de archivar (portal) y tooltip -->
+<div id="tbModales"></div>
+
+<script src="tabuladores.js?v=1"></script>
+<script src="../navbar.js?v=3"></script>
+<script src="../menu-op.js?v=11"></script>
+<script src="../demo.js?v=11"></script>
+<script src="../comentarios.js?v=5"></script>
+</body>
+</html>

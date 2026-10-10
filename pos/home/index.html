@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ataskate POS — Inicio</title>
+<meta name="description" content="Ataskate POS (Operativo): Home Operativo 3.0 por widgets (Figma Entregable 15)." />
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../ds/primitives.css" />
+<link rel="stylesheet" href="../ds/semantic.css" />
+<link rel="stylesheet" href="../ds/elevation.css" />
+<link rel="stylesheet" href="../ds/base.css" />
+<link rel="stylesheet" href="../ds/components.css" />
+<link rel="stylesheet" href="../pos.css?v=ux65" />
+<link rel="stylesheet" href="home.css?v=2" />
+</head>
+<body class="pos home pos-menu-fijo" data-plataforma-fija="op">
+<header class="pos-header">
+  <div class="pos-header__menu">
+    <button class="pos-hbtn pos-hbtn--plain pos-menu" type="button" aria-label="Menú">
+      <img src="../assets/menu.svg" width="24" height="24" alt="" />
+    </button>
+    <a class="pos-brand" href="./" aria-label="Ataskate · Operativo">
+      <img class="pos-brand__logo" src="../assets/logo-ataskate.svg" alt="ataskate" />
+      <span class="pos-brand__role">Operativo</span>
+    </a>
+  </div>
+
+  <form class="pos-search" role="search" onsubmit="return false">
+    <input class="pos-search__input" type="search" placeholder="Buscar" aria-label="Buscar en el Operativo" />
+    <button class="pos-search__go" type="submit" aria-label="Buscar"><img src="../assets/search.svg" width="24" height="24" alt="" /></button>
+  </form>
+
+  <div class="pos-header__ctas">
+    <button class="pos-hbtn pos-hide-sm" type="button" aria-label="Notificaciones">
+      <img src="../assets/notification.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-hide-xs" type="button" id="posCaja" aria-label="Flujo de fondos · caja abierta" aria-haspopup="dialog" aria-expanded="false" aria-controls="posCajaPanel">
+      <img src="../assets/pos-terminal.svg" width="24" height="24" alt="" />
+      <span class="pos-hbtn__status" aria-hidden="true"></span>
+    </button>
+    <button class="pos-hbtn pos-hide-sm" type="button" id="posAjustes" aria-label="Configuración" aria-haspopup="menu" aria-expanded="false" aria-controls="posAjustesMenu">
+      <img src="../assets/settings.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-cart" type="button" id="posCart" aria-label="Carrito, 0 artículos">
+      <img src="../assets/cart.svg" width="24" height="24" alt="" />
+      <span id="posCartN">0</span>
+    </button>
+    <button class="pos-hbtn pos-profile" type="button" aria-label="RP · Cambiar de usuario">
+      <span class="ds-avatar">RP</span>
+      <img src="../assets/sync.svg" width="24" height="24" alt="" />
+    </button>
+  </div>
+</header>
+
+<!-- paneles del Header (HU-CE-595-F / 573-F): se anclan bajo la barra; los abre y cierra ../navbar.js -->
+<div class="pos-navpanel pos-caja" id="posCajaPanel" role="dialog" aria-labelledby="posCajaTitulo" hidden>
+  <div class="pos-caja__head">
+    <h2 id="posCajaTitulo">Flujo de fondos</h2>
+    <button class="ds-btn ds-btn--primary pos-caja__btn" type="button">Cerrar flujo</button>
+    <button class="pos-caja__x" type="button" aria-label="Cerrar"><img src="../assets/navbar/close.svg" alt="" /></button>
+  </div>
+  <dl class="pos-caja__tiles">
+    <div class="pos-caja__tile"><dt>Saldo total</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Ingresos</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Salidas</dt><dd>$8,038</dd></div>
+  </dl>
+</div>
+<div class="pos-navpanel pos-ajustes" id="posAjustesMenu" role="menu" aria-label="Configuración · sesión de Omar, omar.man@gmail.com" hidden>
+  <div class="pos-ajustes__user" role="presentation">
+    <img src="../assets/navbar/menu-avatar.png" alt="" />
+    <span><b>Omar</b><small>omar.man@gmail.com</small></span>
+  </div>
+  <button class="pos-ajustes__item pos-ajustes__item--plat" type="button" role="menuitem"><img src="../assets/navbar/menu-admin.png" alt="" />Ir a Administrativo</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/sync.svg" alt="" />Sucursal Polanco</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/navbar/logout.svg" alt="" />Cerrar sesión</button>
+</div>
+
+
+
+<!-- Home Operativo 3.0 (Figma "Casa de empeño (Dev)", página "Entregable 15", secciones HU-CE-610 a 615).
+     El menú lateral queda fijo a la izquierda, como en el frame; es el de HU-CE-617-F (../menu-op.js). -->
+<div class="pos-cuerpo home-cuerpo">
+<div class="home-suc">
+  <label class="home-suc__sel"><span class="sr-only">Sucursal</span>
+    <select aria-label="Sucursal"><option>Todas las sucursales</option><option>Sucursal Centro</option><option>Sucursal Polanco</option></select>
+    <svg class="" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M5.7 9.6998L7.1 8.2998L11.7 12.8998L16.3 8.2998L17.7 9.6998L11.7 15.6998L5.7 9.6998Z" fill="currentColor"></path></svg>
+  </label>
+  <span class="home-suc__chip">12 sucursales</span>
+  <span class="home-suc__nota">Los widgets muestran datos agregados</span>
+</div>
+<main class="pos-main home-main" id="homeMain">
+  <h1 class="sr-only">Inicio</h1>
+  <div class="home-grid">
+    <div class="home-col">
+<article class="hw"><div class="hw__head"><h2 class="hw__t">Requiere atención</h2><a class="hw__go" href="#" aria-label="Ir a Requiere atención"><svg class="" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"></path></svg></a></div>
+<ul class="hw__rows hw__rows--ico">
+<li><span class="hw__ico hw__ico--alerta"><svg class="" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M5 21C4.45 21 3.97917 20.8042 3.5875 20.4125C3.19583 20.0208 3 19.55 3 19V5C3 4.45 3.19583 3.97917 3.5875 3.5875C3.97917 3.19583 4.45 3 5 3H19C19.1333 3 19.2583 3.0125 19.375 3.0375C19.4917 3.0625 19.6083 3.1 19.725 3.15L17.875 5H5V19H19V12.35L21 10.35V19C21 19.55 20.8042 20.0208 20.4125 20.4125C20.0208 20.8042 19.55 21 19 21H5ZM11.525 17L5.875 11.35L7.275 9.95L11.525 14.2L20.7 5.025L22.125 6.4L11.525 17Z" fill="currentColor"></path></svg></span><span class="hw__lbl">Artículos por aceptar</span><b>3</b></li>
+<li><span class="hw__ico hw__ico--alerta"><svg class="" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M5 8H19V6H5V8ZM5 22C4.45 22 3.97917 21.8042 3.5875 21.4125C3.19583 21.0208 3 20.55 3 20V6C3 5.45 3.19583 4.97917 3.5875 4.5875C3.97917 4.19583 4.45 4 5 4H6V2H8V4H16V2H18V4H19C19.55 4 20.0208 4.19583 20.4125 4.5875C20.8042 4.97917 21 5.45 21 6V11.675C20.6833 11.525 20.3583 11.4 20.025 11.3C19.6917 11.2 19.35 11.125 19 11.075V10H5V20H11.3C11.4167 20.3667 11.5542 20.7167 11.7125 21.05C11.8708 21.3833 12.0583 21.7 12.275 22H5ZM18 23C16.6167 23 15.4375 22.5125 14.4625 21.5375C13.4875 20.5625 13 19.3833 13 18C13 16.6167 13.4875 15.4375 14.4625 14.4625C15.4375 13.4875 16.6167 13 18 13C19.3833 13 20.5625 13.4875 21.5375 14.4625C22.5125 15.4375 23 16.6167 23 18C23 19.3833 22.5125 20.5625 21.5375 21.5375C20.5625 22.5125 19.3833 23 18 23ZM19.675 20.375L20.375 19.675L18.5 17.8V15H17.5V18.2L19.675 20.375Z" fill="currentColor"></path></svg></span><span class="hw__lbl">Órdenes con recolección hoy</span><b>5</b></li>
+<li><span class="hw__ico"><svg class="" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M6 22C5.45 22 4.97917 21.8042 4.5875 21.4125C4.19583 21.0208 4 20.55 4 20V4C4 3.45 4.19583 2.97917 4.5875 2.5875C4.97917 2.19583 5.45 2 6 2H14L20 8V20C20 20.55 19.8042 21.0208 19.4125 21.4125C19.0208 21.8042 18.55 22 18 22H6ZM13 9V4H6V20H18V9H13Z" fill="currentColor"></path></svg></span><span class="hw__lbl">Contratos por vencer</span><b>24</b></li>
+<li><span class="hw__ico"><svg class="" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M9 14H19L15.55 9.5L13.25 12.5L11.7 10.5L9 14ZM8 18C7.45 18 6.97917 17.8042 6.5875 17.4125C6.19583 17.0208 6 16.55 6 16V4C6 3.45 6.19583 2.97917 6.5875 2.5875C6.97917 2.19583 7.45 2 8 2H20C20.55 2 21.0208 2.19583 21.4125 2.5875C21.8042 2.97917 22 3.45 22 4V16C22 16.55 21.8042 17.0208 21.4125 17.4125C21.0208 17.8042 20.55 18 20 18H8ZM8 16H20V4H8V16ZM4 22C3.45 22 2.97917 21.8042 2.5875 21.4125C2.19583 21.0208 2 20.55 2 20V6H4V20H18V22H4Z" fill="currentColor"></path></svg></span><span class="hw__lbl">Artículos sin imágenes</span><b>12</b></li>
+</ul></article>
+<article class="hw"><div class="hw__head"><h2 class="hw__t">Ingresos</h2><a class="hw__go" href="#gestion-efectivo" aria-label="Ir a Ingresos"><svg class="" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"></path></svg></a></div>
+<p class="hw__hoy"><small>Hoy</small> <b>$43,018.00</b> <span class="hw__chip hw__chip--ok"><svg class="" viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M3.4 18L2 16.6L9.4 9.15L13.4 13.15L18.6 8H16V6H22V12H20V9.4L13.4 16L9.4 12L3.4 18Z" fill="currentColor"></path></svg>+0.8% vs ayer</span></p>
+<div class="hw__bar" aria-hidden="true"><span style="--c:#D5A4FF;flex:9900"></span><span style="--c:#FF7235;flex:5000"></span><span style="--c:#BDDF00;flex:8318"></span><span style="--c:#30D8FF;flex:9900"></span><span style="--c:#610052;flex:9900"></span></div>
+<ul class="hw__rows"><li><i class=hw__dot style=--c:#D5A4FF></i><span class="hw__lbl">Refrendos</span><b>$9,900.00</b></li><li><i class=hw__dot style=--c:#FF7235></i><span class="hw__lbl">Desempeños</span><b>$5,000.00</b></li><li><i class=hw__dot style=--c:#BDDF00></i><span class="hw__lbl">Ventas en línea</span><b>$8,318.00</b></li><li><i class=hw__dot style=--c:#30D8FF></i><span class="hw__lbl">Apartados</span><b>$9,900.00</b></li><li><i class=hw__dot style=--c:#610052></i><span class="hw__lbl">Otros</span><b>$9,900.00</b></li></ul>
+</article>
+<article class="hw"><div class="hw__head"><h2 class="hw__t">Flujo de caja</h2><a class="hw__go" href="#gestion-efectivo" aria-label="Ir a Flujo de caja"><svg class="" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"></path></svg></a></div>
+<dl class="hw__kpis"><div><dt>Saldo inicial</dt><dd>$3,100.00</dd></div><div><dt>Saldo actual</dt><dd>$23,218.00</dd></div><div><dt>Diferencias</dt><dd class="hw__neg">-$900.00</dd></div></dl>
+<div class="hw__bar" aria-hidden="true"><span style="--c:#0D166B;flex:8318"></span><span style="--c:#ACACFF;flex:9900"></span><span style="--c:#D5A4FF;flex:9900"></span><span style="--c:#F059E1;flex:5000"></span></div>
+<ul class="hw__rows"><li><i class=hw__dot style=--c:#0D166B></i><span class="hw__lbl">Efectivo</span><b>$8,318.00</b></li><li><i class=hw__dot style=--c:#ACACFF></i><span class="hw__lbl">Tarjeta</span><b>$9,900.00</b></li><li><i class=hw__dot style=--c:#D5A4FF></i><span class="hw__lbl">Transferencias</span><b>$9,900.00</b></li><li><i class=hw__dot style=--c:#F059E1></i><span class="hw__lbl">Wallet</span><b>$5,000.00</b></li></ul>
+</article>
+<article class="hw"><div class="hw__head"><h2 class="hw__t">Tabuladores</h2><a class="hw__go" href="#" aria-label="Ir a Tabuladores"><svg class="" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"></path></svg></a></div>
+<div class="hw__tabrow"><div class="hw__tabs" role="tablist" aria-label="Metal"><button type="button" role="tab" aria-selected="true" data-metal="oro">Oro</button><button type="button" role="tab" aria-selected="false" data-metal="plata">Plata</button></div>
+<p class="hw__mercado"><small>Precio mercado hoy</small><span data-precio>$1,744.46 <small>24K/g</small></span></p></div>
+<table class="hw__tabla"><thead><tr><th>Pureza</th><th>Precio (g)</th></tr></thead><tbody data-tabla>
+<tr><td>22K</td><td>$1,385.70</td></tr><tr><td>18K</td><td>$1,039.43</td></tr><tr><td>14K</td><td>$776.28</td></tr><tr><td>10K</td><td>$578.30</td></tr></tbody></table>
+</article></div>
+    <div class="home-col">
+<article class="hw"><div class="hw__head"><h2 class="hw__t">En almoneda</h2><a class="hw__go" href="#" aria-label="Ir a En almoneda"><svg class="" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"></path></svg></a></div>
+<div class="hw__donarow"><div class="hw__dona"><svg viewBox="0 0 128 128" width="128" height="128" aria-hidden="true"><g transform="rotate(-90 64 64)"><circle r="52" cx="64" cy="64" fill="none" stroke="#610052" stroke-width="14" stroke-linecap="round" stroke-dasharray="124.7 202.0" stroke-dashoffset="0.0"/><circle r="52" cx="64" cy="64" fill="none" stroke="#F07C81" stroke-width="14" stroke-linecap="round" stroke-dasharray="75.7 251.0" stroke-dashoffset="-130.7"/><circle r="52" cx="64" cy="64" fill="none" stroke="#D5A4FF" stroke-width="14" stroke-linecap="round" stroke-dasharray="59.3 267.4" stroke-dashoffset="-212.4"/><circle r="52" cx="64" cy="64" fill="none" stroke="#779000" stroke-width="14" stroke-linecap="round" stroke-dasharray="26.7 300.1" stroke-dashoffset="-277.7"/><circle r="52" cx="64" cy="64" fill="none" stroke="#BDDF00" stroke-width="14" stroke-linecap="round" stroke-dasharray="10.3 316.4" stroke-dashoffset="-310.4"/></g></svg><span><b>1,000</b>Artículos</span></div>
+<ul class="hw__ley"><li><i class="hw__dot" style="--c:#610052"></i>Electrónicos: 40%</li><li><i class="hw__dot" style="--c:#F07C81"></i>Juguetes: 25%</li><li><i class="hw__dot" style="--c:#D5A4FF"></i>Joyas: 20%</li><li><i class="hw__dot" style="--c:#779000"></i>Herramientas: 10%</li><li><i class="hw__dot" style="--c:#BDDF00"></i>Otros: 5%</li></ul></div>
+</article>
+<article class="hw"><div class="hw__head"><h2 class="hw__t">Envejecimiento de inventario</h2><a class="hw__go" href="#" aria-label="Ir a Envejecimiento de inventario"><svg class="" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"></path></svg></a></div>
+<div class="hw__env"><small>Electrónicos</small><div class="hw__bar" aria-hidden="true"><span style="--c:#0081C8;flex:30"></span><span style="--c:#F0A900;flex:35"></span><span style="--c:#FF7235;flex:20"></span><span style="--c:#9A131D;flex:15"></span></div>
+<small>Joyas</small><div class="hw__bar" aria-hidden="true"><span style="--c:#0081C8;flex:30"></span><span style="--c:#F0A900;flex:15"></span><span style="--c:#FF7235;flex:45"></span><span style="--c:#9A131D;flex:10"></span></div></div>
+<ul class="hw__ley hw__ley--fila"><li><i class="hw__dot" style="--c:#0081C8"></i>0–90 días</li><li><i class="hw__dot" style="--c:#F0A900"></i>91–120 días</li><li><i class="hw__dot" style="--c:#FF7235"></i>121–180 días</li><li><i class="hw__dot" style="--c:#9A131D"></i>&gt;180 días</li></ul>
+</article>
+<article class="hw"><div class="hw__head"><h2 class="hw__t">Empeños</h2><a class="hw__go" href="#" aria-label="Ir a Empeños"><svg class="" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"></path></svg></a></div>
+<ol class="hw__semana" aria-label="Empeños de la semana"><li><span style="height:30%"></span><small>M</small></li><li><span style="height:46%"></span><small>M</small></li><li><span style="height:58%"></span><small>J</small></li><li><span style="height:50%"></span><small>V</small></li><li><span style="height:36%"></span><small>S</small></li><li><span style="height:62%"></span><small>D</small></li><li class=is-hoy><span style="height:84%"></span><small>Hoy</small></li></ol>
+<dl class="hw__kpis hw__kpis--2"><div><dt>Hoy</dt><dd>7 <span class="hw__chip hw__chip--ok"><svg class="" viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M3.4 18L2 16.6L9.4 9.15L13.4 13.15L18.6 8H16V6H22V12H20V9.4L13.4 16L9.4 12L3.4 18Z" fill="currentColor"></path></svg>+4% vs ayer</span></dd></div><div><dt>Prestado hoy</dt><dd>$13,000.00</dd></div><div><dt>Esta semana</dt><dd>41</dd></div><div><dt>Prestado esta semana</dt><dd>$76,140.00</dd></div></dl>
+</article>
+<article class="hw"><div class="hw__head"><h2 class="hw__t">Depositaria</h2><a class="hw__go" href="#" aria-label="Ir a Depositaria"><svg class="" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"></path></svg></a></div>
+<div class="hw__donarow"><div class="hw__dona"><svg viewBox="0 0 128 128" width="128" height="128" aria-hidden="true"><g transform="rotate(-90 64 64)"><circle r="52" cx="64" cy="64" fill="none" stroke="#610052" stroke-width="14" stroke-linecap="round" stroke-dasharray="92.0 234.7" stroke-dashoffset="0.0"/><circle r="52" cx="64" cy="64" fill="none" stroke="#F059E1" stroke-width="14" stroke-linecap="round" stroke-dasharray="75.7 251.0" stroke-dashoffset="-98.0"/><circle r="52" cx="64" cy="64" fill="none" stroke="#D5A4FF" stroke-width="14" stroke-linecap="round" stroke-dasharray="59.3 267.4" stroke-dashoffset="-179.7"/><circle r="52" cx="64" cy="64" fill="none" stroke="#30D8FF" stroke-width="14" stroke-linecap="round" stroke-dasharray="43.0 283.7" stroke-dashoffset="-245.0"/><circle r="52" cx="64" cy="64" fill="none" stroke="#BDDF00" stroke-width="14" stroke-linecap="round" stroke-dasharray="26.7 300.1" stroke-dashoffset="-294.1"/></g></svg><span><b>320</b>Prendas</span></div>
+<ul class="hw__ley"><li><i class="hw__dot" style="--c:#610052"></i>Electrónicos: 30%</li><li><i class="hw__dot" style="--c:#F059E1"></i>Metales: 25%</li><li><i class="hw__dot" style="--c:#D5A4FF"></i>Joyas: 20%</li><li><i class="hw__dot" style="--c:#30D8FF"></i>Televisiones: 15%</li><li><i class="hw__dot" style="--c:#BDDF00"></i>Otros: 10%</li></ul></div>
+</article>
+<article class="hw"><div class="hw__head"><h2 class="hw__t">Vencimiento de contratos</h2><a class="hw__go" href="#" aria-label="Ir a Vencimiento de contratos"><svg class="" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"></path></svg></a></div>
+<div class="hw__bar" aria-hidden="true"><span style="--c:#9A131D;flex:14"></span><span style="--c:#FF7235;flex:10"></span><span style="--c:#9095A4;flex:9"></span></div>
+<ul class="hw__rows"><li><i class=hw__dot style=--c:#9A131D></i><span class="hw__lbl">Vencen hoy<span class="hw__accion"><svg class="" viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M3.4 18L2 16.6L9.4 9.15L13.4 13.15L18.6 8H16V6H22V12H20V9.4L13.4 16L9.4 12L3.4 18Z" fill="currentColor"></path></svg>Acción</span></span><b>14</b></li><li><i class=hw__dot style=--c:#FF7235></i><span class="hw__lbl">Próximos a vencer</span><b>10</b></li><li><i class=hw__dot style=--c:#9095A4></i><span class="hw__lbl">Reactivaciones</span><b>9</b></li></ul>
+</article></div>
+    <div class="home-col">
+<article class="hw"><div class="hw__head"><h2 class="hw__t">Descuentos</h2><a class="hw__go" href="#" aria-label="Ir a Descuentos"><svg class="" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"></path></svg></a></div>
+<table class="hw__tabla"><thead><tr><th>Campaña</th><th>Descuento</th></tr></thead><tbody>
+<tr><td>Buen Fin<small>Electrónicos +2 · hasta 30 nov</small></td><td>-25%</td></tr>
+<tr><td>Black Friday<small>Ropa y calzado +3 · hasta 28 nov</small></td><td>-30%</td></tr>
+<tr><td>Cyber Monday<small>Tecnología +4 · hasta 1 dic</small></td><td>-20%</td></tr></tbody></table>
+</article>
+<article class="hw"><div class="hw__head"><h2 class="hw__t">Plazos</h2><a class="hw__go" href="#" aria-label="Ir a Plazos"><svg class="" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"></path></svg></a></div>
+<table class="hw__tabla hw__tabla--3"><thead><tr><th>Categoría</th><th>Duración</th><th>Interés</th></tr></thead><tbody>
+<tr><td>Electrónicos</td><td>30 días</td><td>2.5-3.5%</td></tr><tr><td>Juguetes</td><td>45 días</td><td>3.0-4.0%</td></tr><tr><td>Herramientas</td><td>60 días</td><td>4.0-5.0%</td></tr></tbody></table>
+</article>
+<article class="hw"><div class="hw__head"><h2 class="hw__t">Estatus de órdenes</h2><a class="hw__go" href="#" aria-label="Ir a Estatus de órdenes"><svg class="" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"></path></svg></a></div>
+<div class="hw__bar" aria-hidden="true"><span style="--c:#BDDF00;flex:8"></span><span style="--c:#FF7235;flex:2"></span><span style="--c:#0081C8;flex:12"></span></div>
+<ul class="hw__rows"><li><i class=hw__dot style=--c:#BDDF00></i><span class="hw__lbl">Por enviar</span><b>8</b></li><li><i class=hw__dot style=--c:#FF7235></i><span class="hw__lbl">En preparación</span><b>2</b></li><li><i class=hw__dot style=--c:#0081C8></i><span class="hw__lbl">Nuevas</span><b>12</b></li></ul>
+</article>
+<article class="hw"><div class="hw__head"><h2 class="hw__t">Tienda en línea</h2><a class="hw__go" href="#" aria-label="Ir a Tienda en línea"><svg class="" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"></path></svg></a></div>
+<div class="hw__tabrow"><p class="hw__mercado hw__mercado--izq"><small>Cobrado en línea</small><span>$168,900.00</span></p>
+<div class="hw__tabs" role="tablist" aria-label="Periodo"><button type="button" role="tab" aria-selected="true">7 días</button><button type="button" role="tab" aria-selected="false">30 días</button></div></div>
+<div class="hw__bar" aria-hidden="true"><span style="--c:#D5A4FF;flex:86400"></span><span style="--c:#FF7235;flex:58200"></span><span style="--c:#228B59;flex:24300"></span></div>
+<ul class="hw__rows"><li><i class=hw__dot style=--c:#D5A4FF></i><span class="hw__lbl">Refrendos y desempeños</span><b>$86,400.00</b></li><li><i class=hw__dot style=--c:#FF7235></i><span class="hw__lbl">Ventas</span><b>$58,200.00</b></li><li><i class=hw__dot style=--c:#228B59></i><span class="hw__lbl">Apartados</span><b>$24,300.00</b></li></ul>
+</article>
+<article class="hw"><div class="hw__head"><h2 class="hw__t">Inventario en transferencia</h2><a class="hw__go" href="#" aria-label="Ir a Inventario en transferencia"><svg class="" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"></path></svg></a></div>
+<div class="hw__bar" aria-hidden="true"><span style="--c:#F0A900;flex:14"></span><span style="--c:#0081C8;flex:9"></span></div>
+<ul class="hw__rows"><li><i class=hw__dot style=--c:#F0A900></i><span class="hw__lbl">Por aceptar<span class="hw__accion"><svg class="" viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M3.4 18L2 16.6L9.4 9.15L13.4 13.15L18.6 8H16V6H22V12H20V9.4L13.4 16L9.4 12L3.4 18Z" fill="currentColor"></path></svg>Acción</span></span><b>14</b></li><li><i class=hw__dot style=--c:#0081C8></i><span class="hw__lbl">En tránsito</span><b>9</b></li></ul>
+</article></div>
+  </div>
+</main>
+</div>
+
+<script src="home.js?v=1"></script>
+<script src="../navbar.js?v=3"></script>
+<script src="../menu-op.js?v=11"></script>
+<script src="../demo.js?v=11"></script>
+<script src="../comentarios.js?v=5"></script>
+</body>
+</html>

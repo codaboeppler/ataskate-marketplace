@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ataskate POS — Inicio Administrativo</title>
+<meta name="description" content="Ataskate POS (Administrativo): Home del Administrativo por tarjetas (NewAdminHome, HU-CP-400-F / HU-CP-400.1-F)." />
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../ds/primitives.css" />
+<link rel="stylesheet" href="../ds/semantic.css" />
+<link rel="stylesheet" href="../ds/elevation.css" />
+<link rel="stylesheet" href="../ds/base.css" />
+<link rel="stylesheet" href="../ds/components.css" />
+<link rel="stylesheet" href="../pos.css?v=ux65" />
+<link rel="stylesheet" href="home-admin.css?v=1" />
+</head>
+<!-- data-plataforma-fija: "admin" para módulos del Administrativo, "op" para el Operativo -->
+<body class="pos home-admin pos-menu-fijo" data-plataforma-fija="admin">
+<header class="pos-header">
+  <div class="pos-header__menu">
+    <button class="pos-hbtn pos-hbtn--plain pos-menu" type="button" aria-label="Menú">
+      <img src="../assets/menu.svg" width="24" height="24" alt="" />
+    </button>
+    <a class="pos-brand" href="./" aria-label="Ataskate · Operativo">
+      <img class="pos-brand__logo" src="../assets/logo-ataskate.svg" alt="ataskate" />
+      <span class="pos-brand__role">Operativo</span>
+    </a>
+  </div>
+
+  <form class="pos-search" role="search" onsubmit="return false">
+    <input class="pos-search__input" type="search" placeholder="Buscar" aria-label="Buscar en el Operativo" />
+    <button class="pos-search__go" type="submit" aria-label="Buscar"><img src="../assets/search.svg" width="24" height="24" alt="" /></button>
+  </form>
+
+  <div class="pos-header__ctas">
+    <button class="pos-hbtn pos-hide-sm" type="button" aria-label="Notificaciones">
+      <img src="../assets/notification.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-hide-xs" type="button" id="posCaja" aria-label="Flujo de fondos · caja abierta" aria-haspopup="dialog" aria-expanded="false" aria-controls="posCajaPanel">
+      <img src="../assets/pos-terminal.svg" width="24" height="24" alt="" />
+      <span class="pos-hbtn__status" aria-hidden="true"></span>
+    </button>
+    <button class="pos-hbtn pos-hide-sm" type="button" id="posAjustes" aria-label="Configuración" aria-haspopup="menu" aria-expanded="false" aria-controls="posAjustesMenu">
+      <img src="../assets/settings.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-cart" type="button" id="posCart" aria-label="Carrito, 0 artículos">
+      <img src="../assets/cart.svg" width="24" height="24" alt="" />
+      <span id="posCartN">0</span>
+    </button>
+    <button class="pos-hbtn pos-profile" type="button" aria-label="RP · Cambiar de usuario">
+      <span class="ds-avatar">RP</span>
+      <img src="../assets/sync.svg" width="24" height="24" alt="" />
+    </button>
+  </div>
+</header>
+
+<!-- paneles del Header (HU-CE-595-F / 573-F): se anclan bajo la barra; los abre y cierra ../navbar.js -->
+<div class="pos-navpanel pos-caja" id="posCajaPanel" role="dialog" aria-labelledby="posCajaTitulo" hidden>
+  <div class="pos-caja__head">
+    <h2 id="posCajaTitulo">Flujo de fondos</h2>
+    <button class="ds-btn ds-btn--primary pos-caja__btn" type="button">Cerrar flujo</button>
+    <button class="pos-caja__x" type="button" aria-label="Cerrar"><img src="../assets/navbar/close.svg" alt="" /></button>
+  </div>
+  <dl class="pos-caja__tiles">
+    <div class="pos-caja__tile"><dt>Saldo total</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Ingresos</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Salidas</dt><dd>$8,038</dd></div>
+  </dl>
+</div>
+<div class="pos-navpanel pos-ajustes" id="posAjustesMenu" role="menu" aria-label="Configuración · sesión de Omar, omar.man@gmail.com" hidden>
+  <div class="pos-ajustes__user" role="presentation">
+    <img src="../assets/navbar/menu-avatar.png" alt="" />
+    <span><b>Omar</b><small>omar.man@gmail.com</small></span>
+  </div>
+  <button class="pos-ajustes__item pos-ajustes__item--plat" type="button" role="menuitem"><img src="../assets/navbar/menu-admin.png" alt="" />Ir a Administrativo</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/sync.svg" alt="" />Sucursal Polanco</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/navbar/logout.svg" alt="" />Cerrar sesión</button>
+</div>
+
+<!-- Home del Administrativo: NewAdminHome del repo del equipo (origin/develop), detrás de la bandera HU-CP-400-F;
+     los datos de cada tarjeta llegan con HU-CP-400.1-F. Diez tarjetas en mampostería (NewCardMasonry: columnas de 360 mínimo,
+     separación 16, reparto en orden 1-2-3, 1-2-3…). Sin breadcrumb ni título visible, como en su código. -->
+<div class="pos-cuerpo">
+<main class="pos-main ha-main" id="haMain">
+  <h1 class="sr-only">Inicio</h1>
+  <div class="ha-masonry" id="haMasonry">
+
+<!-- 1 · Facturación y suscripción (BillingSubscriptionCard) -->
+<article class="ha-card" aria-labelledby="ha-t-billing">
+  <div class="ha-head"><div class="ha-head__txt"><h2 class="ha-t" id="ha-t-billing">Facturación y suscripción</h2></div>
+    <a class="ha-go" href="#" aria-label="Ir a Facturación y suscripción"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"/></svg></a></div>
+  <div class="ha-box">
+    <h3 class="ha-lb ha-c-primary">Ingresos por línea de negocio</h3>
+    <div class="ha-row"><span class="ha-tc">Casa de empeño</span><span class="ha-tc">$145,000.00</span></div>
+    <div class="ha-row"><span class="ha-tc">Comercializadora</span><span class="ha-tc">$100,000.00</span></div>
+    <div class="ha-row"><span class="ha-tc ha-c-title">Sub-total</span><span class="ha-tc ha-c-title">$245,000.00</span></div>
+  </div>
+  <div class="ha-hr" aria-hidden="true"></div>
+  <div class="ha-box">
+    <h3 class="ha-lb ha-c-primary">Comisiones</h3>
+    <div class="ha-row"><div class="ha-pila"><span class="ha-tc">1% sobre transacciones en linea</span></div><span class="ha-tc">-$500.00</span></div>
+    <div class="ha-row"><div class="ha-pila"><span class="ha-tc">Plan profesional</span><span class="ha-lr">1 sucursales</span></div><span class="ha-tc">-$299.00</span></div>
+  </div>
+  <div class="ha-hr" aria-hidden="true"></div>
+  <div class="ha-row"><span class="ha-th">Neto a depositar</span><span class="ha-sub ha-c-ok">$244,201.00</span></div>
+  <div class="ha-pago">
+    <span class="ha-inline"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M5 22C4.45 22 3.979 21.8043 3.587 21.413C3.19567 21.021 3 20.55 3 20V6C3 5.45 3.19567 4.97933 3.587 4.588C3.979 4.196 4.45 4 5 4H6V2H8V4H16V2H18V4H19C19.55 4 20.021 4.196 20.413 4.588C20.8043 4.97933 21 5.45 21 6V20C21 20.55 20.8043 21.021 20.413 21.413C20.021 21.8043 19.55 22 19 22H5ZM5 20H19V10H5V20ZM5 8H19V6H5V8Z" fill="currentColor"/></svg><span class="ha-th">Próximo pago/cobro</span></span>
+    <span class="ha-th">25/10/2026</span>
+  </div>
+  <div class="ha-tarjeta">
+    <span class="ha-inline"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M22 6V18C22 18.55 21.8043 19.021 21.413 19.413C21.021 19.8043 20.55 20 20 20H4C3.45 20 2.97933 19.8043 2.588 19.413C2.196 19.021 2 18.55 2 18V6C2 5.45 2.196 4.97933 2.588 4.588C2.97933 4.196 3.45 4 4 4H20C20.55 4 21.021 4.196 21.413 4.588C21.8043 4.97933 22 5.45 22 6ZM4 8H20V6H4V8ZM4 12V18H20V12H4Z" fill="currentColor"/></svg><span class="ha-tc">BBVA •••• 4471</span></span>
+    <span class="ha-chip ha-chip--white">Predeterminada</span>
+  </div>
+  <div class="ha-hr" aria-hidden="true"></div>
+  <div class="ha-links"><a class="ha-link" href="#">Cambiar plan</a><a class="ha-link" href="#">Recibos de pago</a></div>
+</article>
+
+<!-- 2 · Diseño de marca (BrandDesignCard) -->
+<article class="ha-card" aria-labelledby="ha-t-marca">
+  <div class="ha-head"><div class="ha-head__txt"><h2 class="ha-t" id="ha-t-marca">Diseño de marca</h2></div>
+    <a class="ha-go" href="../empresa/#tienda" aria-label="Ir a Diseño de marca"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"/></svg></a></div>
+  <div class="ha-marca">
+    <div class="ha-marca__enlace"><span class="ha-lr">Enlace a tienda</span><div class="ha-marca__url"><span class="ha-th ha-c-primary">ataskate.com/empenos-fernandez</span></div></div>
+    <div class="ha-marca__estado"><span class="ha-lr">Estado</span><span class="ha-chip ha-chip--green">Publicada</span></div>
+  </div>
+  <div class="ha-avisos">
+    <div class="ha-aviso"><span class="ha-aviso__msg"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M1 21L12 2L23 21H1ZM4.45 19H19.55L12 6L4.45 19ZM12 18C12.2833 18 12.5208 17.9042 12.7125 17.7125C12.9042 17.5208 13 17.2833 13 17C13 16.7167 12.9042 16.4792 12.7125 16.2875C12.5208 16.0958 12.2833 16 12 16C11.7167 16 11.4792 16.0958 11.2875 16.2875C11.0958 16.4792 11 16.7167 11 17C11 17.2833 11.0958 17.5208 11.2875 17.7125C11.4792 17.9042 11.7167 18 12 18ZM11 15H13V10H11V15Z" fill="currentColor"/></svg><span class="ha-tc">Banner principal sin imagen</span></span><a class="ha-link" href="../empresa/#tienda">Agregar</a></div>
+    <div class="ha-hr" aria-hidden="true"></div>
+    <div class="ha-aviso"><span class="ha-aviso__msg"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M1 21L12 2L23 21H1ZM4.45 19H19.55L12 6L4.45 19ZM12 18C12.2833 18 12.5208 17.9042 12.7125 17.7125C12.9042 17.5208 13 17.2833 13 17C13 16.7167 12.9042 16.4792 12.7125 16.2875C12.5208 16.0958 12.2833 16 12 16C11.7167 16 11.4792 16.0958 11.2875 16.2875C11.0958 16.4792 11 16.7167 11 17C11 17.2833 11.0958 17.5208 11.2875 17.7125C11.4792 17.9042 11.7167 18 12 18ZM11 15H13V10H11V15Z" fill="currentColor"/></svg><span class="ha-tc">Página de contacto vacía</span></span><a class="ha-link" href="../empresa/#tienda">Editar diseño</a></div>
+  </div>
+</article>
+
+<!-- 3 · Plazos (InstallmentsCard) -->
+<article class="ha-card" aria-labelledby="ha-t-plazos">
+  <div class="ha-head"><div class="ha-head__txt"><h2 class="ha-t" id="ha-t-plazos">Plazos</h2></div>
+    <a class="ha-go" href="../plazos/" aria-label="Ir a Plazos"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"/></svg></a></div>
+  <dl class="ha-stats">
+    <div class="ha-stat ha-stat--sep"><dt class="ha-th ha-c-cap">Sin plazo</dt><dd class="ha-tc">8 categorías</dd></div>
+    <div class="ha-stat"><dt class="ha-th ha-c-cap">Inactivos</dt><dd class="ha-tc">2</dd></div>
+  </dl>
+  <div class="ha-hr" aria-hidden="true"></div>
+  <div class="ha-tabla" role="table" aria-label="Plazos" style="--cols: 1.4fr 1fr 1fr">
+    <div class="ha-tr" role="row"><span class="ha-td" role="columnheader"><span class="ha-th ha-c-cap">Nombre</span></span><span class="ha-td" role="columnheader"><span class="ha-th ha-c-cap">Duración</span></span><span class="ha-td ha-td--der" role="columnheader"><span class="ha-th ha-c-cap">Interés</span></span></div>
+    <div class="ha-hr" aria-hidden="true"></div>
+    <div class="ha-tr" role="row"><span class="ha-td" role="cell"><span class="ha-tc">Oro 30 días</span></span><span class="ha-td" role="cell"><span class="ha-tc">30 días</span></span><span class="ha-td ha-td--der" role="cell"><span class="ha-tc">5%</span></span></div>
+    <div class="ha-hr" aria-hidden="true"></div>
+    <div class="ha-tr" role="row"><span class="ha-td" role="cell"><span class="ha-tc">Celulares 15 días</span></span><span class="ha-td" role="cell"><span class="ha-tc">15 días</span></span><span class="ha-td ha-td--der" role="cell"><span class="ha-tc">8%</span></span></div>
+    <div class="ha-hr" aria-hidden="true"></div>
+    <div class="ha-tr" role="row"><span class="ha-td" role="cell"><span class="ha-tc">Motos 3 meses</span></span><span class="ha-td" role="cell"><span class="ha-tc">3 meses</span></span><span class="ha-td ha-td--der" role="cell"><span class="ha-tc">6%</span></span></div>
+  </div>
+</article>
+
+<!-- 4 · Usuarios (UsersCard): 3 visibles, el resto en AvatarGroup y "N más" = total − 3 -->
+<article class="ha-card" aria-labelledby="ha-t-usuarios">
+  <div class="ha-head"><div class="ha-head__txt"><h2 class="ha-t" id="ha-t-usuarios">Usuarios</h2></div>
+    <a class="ha-go" href="../empresa/#usuarios" aria-label="Ir a Usuarios"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"/></svg></a></div>
+  <ul class="ha-users">
+    <li class="ha-user"><span class="ha-av" aria-hidden="true"><span>C</span></span><span class="ha-lr">Carlos</span></li>
+    <li class="ha-user"><span class="ha-av" aria-hidden="true"><span>M</span></span><span class="ha-lr">María</span></li>
+    <li class="ha-user"><span class="ha-av" aria-hidden="true"><span>J</span></span><span class="ha-lr">Jorge</span></li>
+    <li class="ha-user"><span class="ha-avg" aria-hidden="true"><span class="ha-av" style="z-index:1"><span>A</span></span><span class="ha-av" style="z-index:2"><span>L</span></span><span class="ha-av" style="z-index:3"><span>R</span></span></span><span class="ha-lr">9 más</span></li>
+    <li class="ha-user"><a class="ha-add" href="../empresa/#usuarios" aria-label="Agregar usuario"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M11 19V13H5V11H11V5H13V11H19V13H13V19H11Z" fill="currentColor"/></svg></a><span class="ha-lr" aria-hidden="true">Agregar</span></li>
+  </ul>
+</article>
+
+<!-- 5 · Ubicaciones (LocationsCard) -->
+<article class="ha-card" aria-labelledby="ha-t-ubicaciones">
+  <div class="ha-head"><div class="ha-head__txt"><h2 class="ha-t" id="ha-t-ubicaciones">Ubicaciones</h2></div>
+    <a class="ha-go" href="../empresa/#ubicaciones" aria-label="Ir a Ubicaciones"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"/></svg></a></div>
+  <dl class="ha-stats">
+    <div class="ha-stat ha-stat--sep"><dt class="ha-th ha-c-cap">Sucursales</dt><dd class="ha-tc">14</dd></div>
+    <div class="ha-stat ha-stat--sep"><dt class="ha-th ha-c-cap">Bodegas</dt><dd class="ha-tc">6</dd></div>
+    <div class="ha-stat"><dt class="ha-th ha-c-cap">Grupos</dt><dd class="ha-tc">3</dd></div>
+  </dl>
+  <div class="ha-hr" aria-hidden="true"></div>
+  <div class="ha-tabla" role="table" aria-label="Grupos de ubicaciones" style="--cols: 1fr 80px">
+    <div class="ha-tr" role="row"><span class="ha-td" role="columnheader"><span class="ha-th ha-c-cap">Grupo</span></span><span class="ha-td ha-td--der" role="columnheader"><span class="ha-th ha-c-cap">Sucursales</span></span></div>
+    <div class="ha-hr" aria-hidden="true"></div>
+    <div class="ha-tr" role="row"><span class="ha-td" role="cell"><span class="ha-pila"><span class="ha-tc">Regional Centro</span><span class="ha-lr">2 bodegas</span></span></span><span class="ha-td ha-td--der" role="cell"><span class="ha-tc">6</span></span></div>
+    <div class="ha-hr" aria-hidden="true"></div>
+    <div class="ha-tr" role="row"><span class="ha-td" role="cell"><span class="ha-pila"><span class="ha-tc">Regional Norte</span><span class="ha-lr">2 bodegas</span></span></span><span class="ha-td ha-td--der" role="cell"><span class="ha-tc">4</span></span></div>
+    <div class="ha-hr" aria-hidden="true"></div>
+    <div class="ha-tr" role="row"><span class="ha-td" role="cell"><span class="ha-pila"><span class="ha-tc">Regional Sur</span><span class="ha-lr">2 bodegas</span></span></span><span class="ha-td ha-td--der" role="cell"><span class="ha-tc">4</span></span></div>
+  </div>
+</article>
+
+<!-- 6 · Dispositivos conectados (DevicesCard) -->
+<article class="ha-card" aria-labelledby="ha-t-dispositivos">
+  <div class="ha-head"><div class="ha-head__txt"><h2 class="ha-t" id="ha-t-dispositivos">Dispositivos conectados</h2></div>
+    <a class="ha-go" href="#" aria-label="Ir a Dispositivos conectados"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"/></svg></a></div>
+  <dl class="ha-stats">
+    <div class="ha-stat ha-stat--sep"><dt class="ha-th ha-c-cap">Con acceso</dt><dd class="ha-tc">112</dd></div>
+    <div class="ha-stat"><dt class="ha-th ha-c-cap">Inactivos</dt><dd class="ha-tc">9</dd></div>
+  </dl>
+  <div class="ha-hr" aria-hidden="true"></div>
+  <div class="ha-tabla" role="table" aria-label="Dispositivos por sucursal" style="--cols: 1fr 110px">
+    <div class="ha-tr" role="row"><span class="ha-td" role="columnheader"><span class="ha-th ha-c-cap">Sucursal</span></span><span class="ha-td ha-td--der" role="columnheader"><span class="ha-th ha-c-cap">Dispositivo</span></span></div>
+    <div class="ha-hr" aria-hidden="true"></div>
+    <div class="ha-tr" role="row"><span class="ha-td" role="cell"><span class="ha-tc">San Juanico</span></span><span class="ha-td ha-td--der" role="cell"><span class="ha-tc">6</span></span></div>
+    <div class="ha-hr" aria-hidden="true"></div>
+    <div class="ha-tr" role="row"><span class="ha-td" role="cell"><span class="ha-tc">Sucursal norte</span></span><span class="ha-td ha-td--der" role="cell"><span class="ha-tc">4</span></span></div>
+    <div class="ha-hr" aria-hidden="true"></div>
+    <div class="ha-tr" role="row"><span class="ha-td" role="cell"><span class="ha-tc">Sucursal Roma</span></span><span class="ha-td ha-td--der" role="cell"><span class="ha-chip ha-chip--gray">Sin dispositivos</span></span></div>
+  </div>
+  <div class="ha-aviso"><span class="ha-aviso__msg"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M1 21L12 2L23 21H1ZM4.45 19H19.55L12 6L4.45 19ZM12 18C12.2833 18 12.5208 17.9042 12.7125 17.7125C12.9042 17.5208 13 17.2833 13 17C13 16.7167 12.9042 16.4792 12.7125 16.2875C12.5208 16.0958 12.2833 16 12 16C11.7167 16 11.4792 16.0958 11.2875 16.2875C11.0958 16.4792 11 16.7167 11 17C11 17.2833 11.0958 17.5208 11.2875 17.7125C11.4792 17.9042 11.7167 18 12 18ZM11 15H13V10H11V15Z" fill="currentColor"/></svg><span class="ha-tc">3 sucursales sin dispositivo</span></span><a class="ha-link" href="#">Asignar</a></div>
+</article>
+
+<!-- 7 · Estados de conservación (ConservationStatusCard) -->
+<article class="ha-card" aria-labelledby="ha-t-conservacion">
+  <div class="ha-head"><div class="ha-head__txt"><h2 class="ha-t" id="ha-t-conservacion">Estados de conservación</h2></div>
+    <a class="ha-go" href="../empresa/#catalogo-empenos" aria-label="Ir a Estados de conservación"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"/></svg></a></div>
+  <dl class="ha-stats">
+    <div class="ha-stat ha-stat--sep"><dt class="ha-th ha-c-cap">Activos</dt><dd class="ha-tc">3</dd></div>
+    <div class="ha-stat"><dt class="ha-th ha-c-cap">Inactivos</dt><dd class="ha-tc">1</dd></div>
+  </dl>
+  <div class="ha-hr" aria-hidden="true"></div>
+  <div class="ha-tabla" role="table" aria-label="Estados de conservación" style="--cols: 1fr 110px">
+    <div class="ha-tr" role="row"><span class="ha-td" role="columnheader"><span class="ha-th ha-c-cap">Estado</span></span><span class="ha-td ha-td--der" role="columnheader"><span class="ha-th ha-c-cap">% de valuación</span></span></div>
+    <div class="ha-hr" aria-hidden="true"></div>
+    <div class="ha-tr" role="row"><span class="ha-td" role="cell"><span class="ha-tc">Excelente</span></span><span class="ha-td ha-td--der" role="cell"><span class="ha-tc">90%</span></span></div>
+    <div class="ha-hr" aria-hidden="true"></div>
+    <div class="ha-tr" role="row"><span class="ha-td" role="cell"><span class="ha-tc">Bueno</span></span><span class="ha-td ha-td--der" role="cell"><span class="ha-tc">75%</span></span></div>
+    <div class="ha-hr" aria-hidden="true"></div>
+    <div class="ha-tr" role="row"><span class="ha-td" role="cell"><span class="ha-tc">Regular</span></span><span class="ha-td ha-td--der" role="cell"><span class="ha-tc">60%</span></span></div>
+    <div class="ha-hr" aria-hidden="true"></div>
+    <div class="ha-tr" role="row"><span class="ha-td" role="cell"><span class="ha-tc">Malo</span></span><span class="ha-td ha-td--der" role="cell"><span class="ha-chip ha-chip--gray">Inactivo</span></span></div>
+  </div>
+</article>
+
+<!-- 8 · Precio de venta vs precio de mercado (MarketPriceCard, tarjeta RISK_MANAGEMENT) -->
+<article class="ha-card" aria-labelledby="ha-t-mercado">
+  <div class="ha-head"><div class="ha-head__txt"><h2 class="ha-t" id="ha-t-mercado">Precio de venta vs precio de mercado</h2></div>
+    <a class="ha-go" href="#" aria-label="Ir a Precio de venta vs precio de mercado"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"/></svg></a></div>
+  <span class="ha-tc">412 artículos</span>
+  <div class="ha-barra" role="img" aria-label="412 artículos: 12 arriba del mercado, 10 debajo del mercado y 390 dentro de rango">
+    <span style="width:2.9126%;background:#A82424"></span><span style="width:2.4272%;background:#CC9200"></span><span style="width:94.6602%;background:#309C60"></span>
+  </div>
+  <ul class="ha-segs">
+    <li class="ha-seg"><div class="ha-row"><span class="ha-inline"><i class="ha-dot" style="background:#A82424"></i><span class="ha-tc">Arriba del mercado</span></span><span class="ha-tc">12 artículos</span></div><div class="ha-hr" aria-hidden="true"></div></li>
+    <li class="ha-seg"><div class="ha-row"><span class="ha-inline"><i class="ha-dot" style="background:#CC9200"></i><span class="ha-tc">Debajo del mercado</span></span><span class="ha-tc">10 artículos</span></div><div class="ha-hr" aria-hidden="true"></div></li>
+    <li class="ha-seg"><div class="ha-row"><span class="ha-inline"><i class="ha-dot" style="background:#309C60"></i><span class="ha-tc">Dentro de rango</span></span><span class="ha-tc">390 artículos</span></div></li>
+  </ul>
+  <div class="ha-links"><a class="ha-link" href="#">Ver en inventario</a><a class="ha-link" href="#">Cambiar porcentaje</a></div>
+</article>
+
+<!-- 9 · Apartados (LayawaysCard, tarjeta RESERVATIONS) -->
+<article class="ha-card" aria-labelledby="ha-t-apartados">
+  <div class="ha-head"><div class="ha-head__txt"><h2 class="ha-t" id="ha-t-apartados">Apartados</h2></div>
+    <a class="ha-go" href="#" aria-label="Ir a Apartados"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"/></svg></a></div>
+  <dl class="ha-stats">
+    <div class="ha-stat ha-stat--sep"><dt class="ha-th ha-c-cap">Artículos apartables</dt><dd class="ha-tc">801</dd></div>
+    <div class="ha-stat ha-stat--sep"><dt class="ha-th ha-c-cap">Vigentes</dt><dd class="ha-tc">3</dd></div>
+    <div class="ha-stat"><dt class="ha-th ha-c-cap">Pausados</dt><dd class="ha-tc">1</dd></div>
+  </dl>
+  <div class="ha-avisos ha-avisos--mt">
+    <div class="ha-aviso"><span class="ha-aviso__msg"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M1 21L12 2L23 21H1ZM4.45 19H19.55L12 6L4.45 19ZM12 18C12.2833 18 12.5208 17.9042 12.7125 17.7125C12.9042 17.5208 13 17.2833 13 17C13 16.7167 12.9042 16.4792 12.7125 16.2875C12.5208 16.0958 12.2833 16 12 16C11.7167 16 11.4792 16.0958 11.2875 16.2875C11.0958 16.4792 11 16.7167 11 17C11 17.2833 11.0958 17.5208 11.2875 17.7125C11.4792 17.9042 11.7167 18 12 18ZM11 15H13V10H11V15Z" fill="currentColor"/></svg><span class="ha-tc">1 apartado(s) sin vigencia</span></span><a class="ha-link" href="#">Definir</a></div>
+    <div class="ha-hr" aria-hidden="true"></div>
+    <div class="ha-aviso"><span class="ha-aviso__msg"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M1 21L12 2L23 21H1ZM4.45 19H19.55L12 6L4.45 19ZM12 18C12.2833 18 12.5208 17.9042 12.7125 17.7125C12.9042 17.5208 13 17.2833 13 17C13 16.7167 12.9042 16.4792 12.7125 16.2875C12.5208 16.0958 12.2833 16 12 16C11.7167 16 11.4792 16.0958 11.2875 16.2875C11.0958 16.4792 11 16.7167 11 17C11 17.2833 11.0958 17.5208 11.2875 17.7125C11.4792 17.9042 11.7167 18 12 18ZM11 15H13V10H11V15Z" fill="currentColor"/></svg><span class="ha-tc">4 categorías sin apartados</span></span><a class="ha-link" href="#">Asignar</a></div>
+  </div>
+</article>
+
+<!-- 10 · Tabuladores (TabulatorsCard): chips Oro / Plata (Chip "choice"); al cambiar de metal se vuelve a pedir la tabla -->
+<article class="ha-card" aria-labelledby="ha-t-tabuladores" id="haTabuladores">
+  <div class="ha-head"><div class="ha-head__txt"><h2 class="ha-t" id="ha-t-tabuladores">Tabuladores</h2></div>
+    <a class="ha-go" href="../tabuladores/" aria-label="Ir a Tabuladores"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M12 20L10.575 18.6L16.175 13H4V11H16.175L10.575 5.4L12 4L20 12L12 20Z" fill="currentColor"/></svg></a></div>
+  <div class="ha-tabtop">
+    <div class="ha-chips" role="group" aria-label="Metal">
+      <button class="ha-choice" type="button" aria-pressed="true" data-metal="1">Oro</button>
+      <button class="ha-choice" type="button" aria-pressed="false" data-metal="2">Plata</button>
+    </div>
+    <div class="ha-mercado"><span class="ha-lr">Precio mercado hoy</span><span class="ha-th ha-c-title" data-precio>$74,250.13 24K/oz</span></div>
+  </div>
+  <div data-tabla aria-live="polite">
+    <div class="ha-tabla" role="table" aria-label="Precios por pureza" style="--cols: 1fr 130px">
+      <div class="ha-tr" role="row"><span class="ha-td" role="columnheader"><span class="ha-th ha-c-cap">Pureza</span></span><span class="ha-td ha-td--der" role="columnheader"><span class="ha-th ha-c-cap">Precio (oz)</span></span></div>
+      <div class="ha-hr" aria-hidden="true"></div>
+      <div class="ha-tr" role="row"><span class="ha-td" role="cell"><span class="ha-tc">22K</span></span><span class="ha-td ha-td--der" role="cell"><span class="ha-tc">$43,100.00</span></span></div>
+      <div class="ha-hr" aria-hidden="true"></div>
+      <div class="ha-tr" role="row"><span class="ha-td" role="cell"><span class="ha-tc">18K</span></span><span class="ha-td ha-td--der" role="cell"><span class="ha-tc">$32,330.00</span></span></div>
+      <div class="ha-hr" aria-hidden="true"></div>
+      <div class="ha-tr" role="row"><span class="ha-td" role="cell"><span class="ha-tc">14K</span></span><span class="ha-td ha-td--der" role="cell"><span class="ha-tc">$24,145.00</span></span></div>
+      <div class="ha-hr" aria-hidden="true"></div>
+      <div class="ha-tr" role="row"><span class="ha-td" role="cell"><span class="ha-tc">10K</span></span><span class="ha-td ha-td--der" role="cell"><span class="ha-tc">$17,987.00</span></span></div>
+    </div>
+  </div>
+</article>
+
+  </div>
+</main>
+</div>
+
+<script src="home-admin.js?v=1"></script>
+<script src="../navbar.js?v=3"></script>
+<script src="../menu-op.js?v=11"></script>
+<script src="../demo.js?v=11"></script>
+<script src="../comentarios.js?v=5"></script>
+</body>
+</html>

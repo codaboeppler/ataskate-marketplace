@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ataskate POS — Configura tu empresa</title>
+<meta name="description" content="Ataskate POS (Administrativo): Configura tu empresa — guía de configuración inicial, datos de empresa, roles, usuarios y horarios. Prototipo de el equipo." />
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../ds/primitives.css" />
+<link rel="stylesheet" href="../ds/semantic.css" />
+<link rel="stylesheet" href="../ds/elevation.css" />
+<link rel="stylesheet" href="../ds/base.css" />
+<link rel="stylesheet" href="../ds/components.css" />
+<link rel="stylesheet" href="../pos.css?v=ux65" />
+<link rel="stylesheet" href="empresa.css?v=2" />
+</head>
+<!-- data-plataforma-fija: "admin" para módulos del Administrativo, "op" para el Operativo -->
+<body class="pos pos-menu-fijo" data-plataforma-fija="admin">
+<header class="pos-header">
+  <div class="pos-header__menu">
+    <button class="pos-hbtn pos-hbtn--plain pos-menu" type="button" aria-label="Menú">
+      <img src="../assets/menu.svg" width="24" height="24" alt="" />
+    </button>
+    <a class="pos-brand" href="./" aria-label="Ataskate · Operativo">
+      <img class="pos-brand__logo" src="../assets/logo-ataskate.svg" alt="ataskate" />
+      <span class="pos-brand__role">Operativo</span>
+    </a>
+  </div>
+
+  <form class="pos-search" role="search" onsubmit="return false">
+    <input class="pos-search__input" type="search" placeholder="Buscar" aria-label="Buscar en el Operativo" />
+    <button class="pos-search__go" type="submit" aria-label="Buscar"><img src="../assets/search.svg" width="24" height="24" alt="" /></button>
+  </form>
+
+  <div class="pos-header__ctas">
+    <button class="pos-hbtn pos-hide-sm" type="button" aria-label="Notificaciones">
+      <img src="../assets/notification.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-hide-xs" type="button" id="posCaja" aria-label="Flujo de fondos · caja abierta" aria-haspopup="dialog" aria-expanded="false" aria-controls="posCajaPanel">
+      <img src="../assets/pos-terminal.svg" width="24" height="24" alt="" />
+      <span class="pos-hbtn__status" aria-hidden="true"></span>
+    </button>
+    <button class="pos-hbtn pos-hide-sm" type="button" id="posAjustes" aria-label="Configuración" aria-haspopup="menu" aria-expanded="false" aria-controls="posAjustesMenu">
+      <img src="../assets/settings.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-cart" type="button" id="posCart" aria-label="Carrito, 0 artículos">
+      <img src="../assets/cart.svg" width="24" height="24" alt="" />
+      <span id="posCartN">0</span>
+    </button>
+    <button class="pos-hbtn pos-profile" type="button" aria-label="RP · Cambiar de usuario">
+      <span class="ds-avatar">RP</span>
+      <img src="../assets/sync.svg" width="24" height="24" alt="" />
+    </button>
+  </div>
+</header>
+
+<!-- paneles del Header (HU-CE-595-F / 573-F): se anclan bajo la barra; los abre y cierra ../navbar.js -->
+<div class="pos-navpanel pos-caja" id="posCajaPanel" role="dialog" aria-labelledby="posCajaTitulo" hidden>
+  <div class="pos-caja__head">
+    <h2 id="posCajaTitulo">Flujo de fondos</h2>
+    <button class="ds-btn ds-btn--primary pos-caja__btn" type="button">Cerrar flujo</button>
+    <button class="pos-caja__x" type="button" aria-label="Cerrar"><img src="../assets/navbar/close.svg" alt="" /></button>
+  </div>
+  <dl class="pos-caja__tiles">
+    <div class="pos-caja__tile"><dt>Saldo total</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Ingresos</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Salidas</dt><dd>$8,038</dd></div>
+  </dl>
+</div>
+<div class="pos-navpanel pos-ajustes" id="posAjustesMenu" role="menu" aria-label="Configuración · sesión de Omar, omar.man@gmail.com" hidden>
+  <div class="pos-ajustes__user" role="presentation">
+    <img src="../assets/navbar/menu-avatar.png" alt="" />
+    <span><b>Omar</b><small>omar.man@gmail.com</small></span>
+  </div>
+  <button class="pos-ajustes__item pos-ajustes__item--plat" type="button" role="menuitem"><img src="../assets/navbar/menu-admin.png" alt="" />Ir a Administrativo</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/sync.svg" alt="" />Sucursal Polanco</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/navbar/logout.svg" alt="" />Cerrar sesión</button>
+</div>
+
+
+
+<!-- todo lo que va debajo del header va dentro de .pos-cuerpo (se recorre el ancho del menú fijo).
+     .cte = módulo "Configura tu empresa" de el equipo (rama del equipo, commit 51ad42fb0): sus estilos y variables viven solo aquí adentro. -->
+<div class="pos-cuerpo cte">
+  <!-- controles del prototipo de el equipo (no son parte del producto): cambiar de pantalla, notas de diseño, datos de ejemplo, reiniciar.
+       Ya no van en una barra negra arriba: ../demo.js los pone en la pestaña "Prototipo" del riel izquierdo. -->
+  <div class="proto" data-proto-panel="Prototipo" aria-label="Controles del prototipo">
+    <div class="proto-in">
+      <b>Controles del prototipo</b>
+      <label for="proto-screen">Pantalla</label>
+      <select id="proto-screen" aria-label="Ir a pantalla"></select>
+      <span class="sep"></span>
+      <label for="proto-notes"><input type="checkbox" id="proto-notes"><span class="mini-switch"></span>Notas de diseño</label>
+      <span class="sep"></span>
+      <button type="button" id="proto-fill">Llenar con datos de ejemplo</button>
+      <button type="button" id="proto-reset">Reiniciar</button>
+    </div>
+  </div>
+
+  <!-- breadcrumb del DS + título de la pantalla + contenido: lo pinta empresa.js -->
+  <main class="pos-main" id="app"></main>
+  <div id="toasts" aria-live="polite"></div>
+  <div id="layer"></div>
+</div>
+
+<script src="empresa.js?v=2"></script>
+<script src="../navbar.js?v=3"></script>
+<script src="../menu-op.js?v=11"></script>
+<script src="../demo.js?v=11"></script>
+<script src="../comentarios.js?v=5"></script>
+</body>
+</html>

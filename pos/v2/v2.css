@@ -39,10 +39,10 @@
 /* el mejor apartado no es una tarjeta: es el contenido del panel, igual que Compra */
 .pos-plan.v2-plan--mejor { display: flex; flex-direction: column; gap: var(--spacing-4); overflow: visible; border-radius: 0; background: none; }
 .pos-plan.v2-plan--mejor::before { content: none; }
-.pos-plan.v2-plan--mejor:hover { box-shadow: none; }
+.pos-plan.v2-plan--mejor { box-shadow: none; }
 .v2-plan--mejor .v2-plan__name { margin-top: calc(var(--spacing-2) * -1); }
 /* calendario del mejor apartado: fila desplegable con el mismo borde y encabezado que las de "Otros apartados" */
-.v2-cal { border: 1px solid var(--ats-neutral-300); border-radius: var(--radius-md); overflow: hidden; background: var(--surface-foreground); }
+.v2-cal { border-radius: var(--radius-md); overflow: hidden; background: var(--surface-foreground); box-shadow: var(--pos-shadow-card); }
 .v2-cal__ico { flex: none; display: inline-flex; color: var(--ats-primary-300); }
 .v2-cal__ico svg { width: 20px; height: 20px; }
 .v2-cal__txt { flex: 1 1 auto; min-width: 0; font-size: 16px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
@@ -66,7 +66,8 @@
 .v2-plan__det { display: none; flex-direction: column; gap: var(--spacing-3); padding: 0 var(--spacing-4) var(--spacing-4); }
 .v2-plan.is-open .v2-plan__det { display: flex; }
 /* dentro de una fila abierta el calendario va siempre a la vista, con su borde */
-.v2-plan__det .pos-plan__table { display: block; border: 1px solid var(--ats-neutral-300); overflow: hidden; }
+/* dentro de la tarjeta la tabla va sin caja propia, igual que en el calendario de pagos: solo las líneas de las filas */
+.v2-plan__det .pos-plan__table { display: block; overflow: hidden; }
 
 /* la tabla va completa en la página (sin el scroll interno del popup) */
 .v2-plan .pos-plan__table { max-height: none; }

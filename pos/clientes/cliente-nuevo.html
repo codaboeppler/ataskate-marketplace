@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ataskate POS — Cliente nuevo</title>
+<meta name="description" content="Ataskate POS (Operativo): alta de cliente nuevo con búsqueda previa, secciones tipo Cotizador, documentos, cámara y huellas. Prototipo de Product Design." />
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../ds/primitives.css" />
+<link rel="stylesheet" href="../ds/semantic.css" />
+<link rel="stylesheet" href="../ds/elevation.css" />
+<link rel="stylesheet" href="../ds/base.css" />
+<link rel="stylesheet" href="../ds/components.css" />
+<link rel="stylesheet" href="../pos.css?v=ux65" />
+<link rel="stylesheet" href="cliente-nuevo.css?v=1" />
+</head>
+<!-- Operativo: el menú lateral es cajón (se abre con la hamburguesa), igual que en ../inventario/ -->
+<body class="pos cn-page" data-plataforma-fija="op">
+<header class="pos-header">
+  <div class="pos-header__menu">
+    <button class="pos-hbtn pos-hbtn--plain pos-menu" type="button" aria-label="Menú">
+      <img src="../assets/menu.svg" width="24" height="24" alt="" />
+    </button>
+    <a class="pos-brand" href="./" aria-label="Ataskate · Operativo">
+      <img class="pos-brand__logo" src="../assets/logo-ataskate.svg" alt="ataskate" />
+      <span class="pos-brand__role">Operativo</span>
+    </a>
+  </div>
+
+  <form class="pos-search" role="search" onsubmit="return false">
+    <input class="pos-search__input" type="search" placeholder="Buscar" aria-label="Buscar en el Operativo" />
+    <button class="pos-search__go" type="submit" aria-label="Buscar"><img src="../assets/search.svg" width="24" height="24" alt="" /></button>
+  </form>
+
+  <div class="pos-header__ctas">
+    <button class="pos-hbtn pos-hide-sm" type="button" aria-label="Notificaciones">
+      <img src="../assets/notification.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-hide-xs" type="button" id="posCaja" aria-label="Flujo de fondos · caja abierta" aria-haspopup="dialog" aria-expanded="false" aria-controls="posCajaPanel">
+      <img src="../assets/pos-terminal.svg" width="24" height="24" alt="" />
+      <span class="pos-hbtn__status" aria-hidden="true"></span>
+    </button>
+    <button class="pos-hbtn pos-hide-sm" type="button" id="posAjustes" aria-label="Configuración" aria-haspopup="menu" aria-expanded="false" aria-controls="posAjustesMenu">
+      <img src="../assets/settings.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-cart" type="button" id="posCart" aria-label="Carrito, 0 artículos">
+      <img src="../assets/cart.svg" width="24" height="24" alt="" />
+      <span id="posCartN">0</span>
+    </button>
+    <button class="pos-hbtn pos-profile" type="button" aria-label="RP · Cambiar de usuario">
+      <span class="ds-avatar">RP</span>
+      <img src="../assets/sync.svg" width="24" height="24" alt="" />
+    </button>
+  </div>
+</header>
+
+<!-- paneles del Header (HU-CE-595-F / 573-F): se anclan bajo la barra; los abre y cierra ../navbar.js -->
+<div class="pos-navpanel pos-caja" id="posCajaPanel" role="dialog" aria-labelledby="posCajaTitulo" hidden>
+  <div class="pos-caja__head">
+    <h2 id="posCajaTitulo">Flujo de fondos</h2>
+    <button class="ds-btn ds-btn--primary pos-caja__btn" type="button">Cerrar flujo</button>
+    <button class="pos-caja__x" type="button" aria-label="Cerrar"><img src="../assets/navbar/close.svg" alt="" /></button>
+  </div>
+  <dl class="pos-caja__tiles">
+    <div class="pos-caja__tile"><dt>Saldo total</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Ingresos</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Salidas</dt><dd>$8,038</dd></div>
+  </dl>
+</div>
+<div class="pos-navpanel pos-ajustes" id="posAjustesMenu" role="menu" aria-label="Configuración · sesión de Omar, omar.man@gmail.com" hidden>
+  <div class="pos-ajustes__user" role="presentation">
+    <img src="../assets/navbar/menu-avatar.png" alt="" />
+    <span><b>Omar</b><small>omar.man@gmail.com</small></span>
+  </div>
+  <button class="pos-ajustes__item pos-ajustes__item--plat" type="button" role="menuitem"><img src="../assets/navbar/menu-admin.png" alt="" />Ir a Administrativo</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/sync.svg" alt="" />Sucursal Polanco</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/navbar/logout.svg" alt="" />Cerrar sesión</button>
+</div>
+
+
+
+<!-- íconos de producción y del DS que usa el formulario (<use href="#…">) -->
+<!-- Íconos originales de producción (/_next/static/media/*.svg) y del DS -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-cal" viewBox="0 0 24 24"><path d="M5 22C4.45 22 3.979 21.8043 3.587 21.413C3.19567 21.021 3 20.55 3 20V6C3 5.45 3.19567 4.97933 3.587 4.588C3.979 4.196 4.45 4 5 4H6V2H8V4H16V2H18V4H19C19.55 4 20.021 4.196 20.413 4.588C20.8043 4.97933 21 5.45 21 6V20C21 20.55 20.8043 21.021 20.413 21.413C20.021 21.8043 19.55 22 19 22H5ZM5 20H19V10H5V20ZM5 8H19V6H5V8Z" fill="#ACACFF"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 12 12"><path d="M5.33366 11.3332V5.89984L3.60033 7.63317L2.66699 6.6665L6.00033 3.33317L9.33366 6.6665L8.40033 7.63317L6.66699 5.89984V11.3332H5.33366ZM0.666992 3.99984V1.99984C0.666992 1.63317 0.797659 1.31939 1.05899 1.0585C1.31988 0.79717 1.63366 0.666504 2.00033 0.666504H10.0003C10.367 0.666504 10.681 0.79717 10.9423 1.0585C11.2032 1.31939 11.3337 1.63317 11.3337 1.99984V3.99984H10.0003V1.99984H2.00033V3.99984H0.666992Z" fill="currentColor"/></symbol>
+  <symbol id="i-mag" viewBox="0 0 24 24"><path d="M19.6 21L13.3 14.7C12.8 15.1 12.225 15.4167 11.575 15.65C10.925 15.8833 10.2333 16 9.5 16C7.68333 16 6.146 15.371 4.888 14.113C3.62933 12.8543 3 11.3167 3 9.5C3 7.68333 3.62933 6.14567 4.888 4.887C6.146 3.629 7.68333 3 9.5 3C11.3167 3 12.8543 3.629 14.113 4.887C15.371 6.14567 16 7.68333 16 9.5C16 10.2333 15.8833 10.925 15.65 11.575C15.4167 12.225 15.1 12.8 14.7 13.3L21 19.6L19.6 21ZM9.5 14C10.75 14 11.8127 13.5627 12.688 12.688C13.5627 11.8127 14 10.75 14 9.5C14 8.25 13.5627 7.18733 12.688 6.312C11.8127 5.43733 10.75 5 9.5 5C8.25 5 7.18733 5.43733 6.312 6.312C5.43733 7.18733 5 8.25 5 9.5C5 10.75 5.43733 11.8127 6.312 12.688C7.18733 13.5627 8.25 14 9.5 14Z" fill="#5A5AFF"/></symbol>
+  <symbol id="i-id" viewBox="0 0 24 24"><path d="M14 13H19V11H14V13ZM14 10H19V8H14V10ZM5 16H13V15.45C13 14.7 12.6333 14.1042 11.9 13.6625C11.1667 13.2208 10.2 13 9 13C7.8 13 6.83333 13.2208 6.1 13.6625C5.36667 14.1042 5 14.7 5 15.45V16ZM9 12C9.55 12 10.0208 11.8042 10.4125 11.4125C10.8042 11.0208 11 10.55 11 10C11 9.45 10.8042 8.97917 10.4125 8.5875C10.0208 8.19583 9.55 8 9 8C8.45 8 7.97917 8.19583 7.5875 8.5875C7.19583 8.97917 7 9.45 7 10C7 10.55 7.19583 11.0208 7.5875 11.4125C7.97917 11.8042 8.45 12 9 12ZM4 20C3.45 20 2.97917 19.8042 2.5875 19.4125C2.19583 19.0208 2 18.55 2 18V6C2 5.45 2.19583 4.97917 2.5875 4.5875C2.97917 4.19583 3.45 4 4 4H20C20.55 4 21.0208 4.19583 21.4125 4.5875C21.8042 4.97917 22 5.45 22 6V18C22 18.55 21.8042 19.0208 21.4125 19.4125C21.0208 19.8042 20.55 20 20 20H4ZM4 18H20V6H4V18Z" fill="#2A2C2F"/></symbol>
+  <symbol id="i-addr" viewBox="0 0 24 24"><path d="M6 22C5.45 22 4.97917 21.8042 4.5875 21.4125C4.19583 21.0208 4 20.55 4 20V4C4 3.45 4.19583 2.97917 4.5875 2.5875C4.97917 2.19583 5.45 2 6 2H14L20 8V20C20 20.55 19.8042 21.0208 19.4125 21.4125C19.0208 21.8042 18.55 22 18 22H6ZM13 9V4H6V20H18V9H13Z" fill="#2A2C2F"/></symbol>
+  <symbol id="i-income" viewBox="0 0 24 24"><path d="M4 20C3.45 20 2.97917 19.8042 2.5875 19.4125C2.19583 19.0208 2 18.55 2 18V6C2 5.45 2.19583 4.97917 2.5875 4.5875C2.97917 4.19583 3.45 4 4 4H10L12 6H20C20.55 6 21.0208 6.19583 21.4125 6.5875C21.8042 6.97917 22 7.45 22 8H11.175L9.175 6H4V18L6.4 10H23.5L20.925 18.575C20.7917 19.0083 20.5458 19.3542 20.1875 19.6125C19.8292 19.8708 19.4333 20 19 20H4ZM6.1 18H19L20.8 12H7.9L6.1 18Z" fill="#1C1B1F"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M5.7002 9.70005L7.10019 8.30005L11.7002 12.9L16.3002 8.30005L17.7002 9.70005L11.7002 15.7L5.7002 9.70005Z" fill="#2A2C2F"/></symbol>
+  <symbol id="i-down-p" viewBox="0 0 24 24"><path d="M5.7002 9.70005L7.10019 8.30005L11.7002 12.9L16.3002 8.30005L17.7002 9.70005L11.7002 15.7L5.7002 9.70005Z" fill="#5A5AFF"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><path d="M11.95 18C12.3 18 12.596 17.879 12.838 17.637C13.0793 17.3957 13.2 17.1 13.2 16.75C13.2 16.4 13.0793 16.1043 12.838 15.863C12.596 15.621 12.3 15.5 11.95 15.5C11.6 15.5 11.304 15.621 11.062 15.863C10.8207 16.1043 10.7 16.4 10.7 16.75C10.7 17.1 10.8207 17.3957 11.062 17.637C11.304 17.879 11.6 18 11.95 18ZM12.1 7.7C12.5667 7.7 12.9417 7.829 13.225 8.087C13.5083 8.34567 13.65 8.68333 13.65 9.1C13.65 9.38333 13.5543 9.67067 13.363 9.962C13.171 10.254 12.9 10.5583 12.55 10.875C12.05 11.3083 11.6833 11.725 11.45 12.125C11.2167 12.525 11.1 12.925 11.1 13.325C11.1 13.5583 11.1877 13.754 11.363 13.912C11.5377 14.0707 11.7417 14.15 11.975 14.15C12.2083 14.15 12.4167 14.0667 12.6 13.9C12.7833 13.7333 12.9 13.525 12.95 13.275C13 12.9917 13.1127 12.7293 13.288 12.488C13.4627 12.246 13.75 11.9333 14.15 11.55C14.6667 11.0667 15.0293 10.625 15.238 10.225C15.446 9.825 15.55 9.38333 15.55 8.9C15.55 8.05 15.2293 7.354 14.588 6.812C13.946 6.27067 13.1167 6 12.1 6C11.4 6 10.7793 6.13333 10.238 6.4C9.696 6.66667 9.275 7.075 8.975 7.625C8.85833 7.84167 8.81667 8.054 8.85 8.262C8.88333 8.47067 9 8.64167 9.2 8.775C9.41667 8.90833 9.65433 8.95 9.913 8.9C10.171 8.85 10.3833 8.70833 10.55 8.475C10.7333 8.225 10.9543 8.03333 11.213 7.9C11.471 7.76667 11.7667 7.7 12.1 7.7ZM12 22C10.6333 22 9.34167 21.7373 8.125 21.212C6.90833 20.6873 5.846 19.975 4.938 19.075C4.02933 18.175 3.31267 17.1167 2.788 15.9C2.26267 14.6833 2 13.3833 2 12C2 10.6167 2.26267 9.31667 2.788 8.1C3.31267 6.88333 4.02933 5.825 4.938 4.925C5.846 4.025 6.90833 3.31233 8.125 2.787C9.34167 2.26233 10.6333 2 12 2C13.4 2 14.7083 2.26233 15.925 2.787C17.1417 3.31233 18.2 4.025 19.1 4.925C20 5.825 20.7083 6.88333 21.225 8.1C21.7417 9.31667 22 10.6167 22 12C22 13.3833 21.7417 14.6833 21.225 15.9C20.7083 17.1167 20 18.175 19.1 19.075C18.2 19.975 17.1417 20.6873 15.925 21.212C14.7083 21.7373 13.4 22 12 22ZM12 20C14.2333 20 16.125 19.221 17.675 17.663C19.225 16.1043 20 14.2167 20 12C20 9.78333 19.225 7.89567 17.675 6.337C16.125 4.779 14.2333 4 12 4C9.81667 4 7.93733 4.779 6.362 6.337C4.78733 7.89567 4 9.78333 4 12C4 14.2167 4.78733 16.1043 6.362 17.663C7.93733 19.221 9.81667 20 12 20Z" fill="#5A5AFF"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 20 20"><path d="M9.16406 15.8334V10.8334H4.16406V9.16675H9.16406V4.16675H10.8307V9.16675H15.8307V10.8334H10.8307V15.8334H9.16406Z" fill="#5A5AFF"/></symbol>
+  <symbol id="i-add" viewBox="0 0 24 24"><path d="M11 19V13H5V11H11V5H13V11H19V13H13V19H11Z" fill="#5A5AFF"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M14.6 5.99994L16 7.39994L11.4 11.9999L16 16.5999L14.6 17.9999L8.6 11.9999L14.6 5.99994Z" fill="#5A5AFF"/></symbol>
+  <symbol id="i-err" viewBox="0 0 16 17"><path d="M4.26634 13.1666L3.33301 12.2333L7.06634 8.49992L3.33301 4.76659L4.26634 3.83325L7.99967 7.56659L11.733 3.83325L12.6663 4.76659L8.93301 8.49992L12.6663 12.2333L11.733 13.1666L7.99967 9.43325L4.26634 13.1666Z" fill="#A82424"/></symbol>
+  <symbol id="i-fp" viewBox="0 0 20 20"><path d="M2.70846 8.04167C2.61124 7.97222 2.55235 7.88528 2.53179 7.78083C2.51068 7.67694 2.54179 7.56944 2.62512 7.45833C3.48624 6.27778 4.56596 5.36111 5.86429 4.70833C7.16318 4.05556 8.54874 3.72917 10.021 3.72917C11.4932 3.72917 12.8821 4.045 14.1876 4.67667C15.4932 5.30889 16.5835 6.22222 17.4585 7.41667C17.5557 7.54167 17.5868 7.65278 17.5518 7.75C17.5173 7.84722 17.4585 7.93056 17.3751 8C17.2918 8.06944 17.1946 8.10056 17.0835 8.09333C16.9723 8.08667 16.8751 8.02778 16.7918 7.91667C16.0279 6.83333 15.0454 6.00333 13.8443 5.42667C12.6426 4.85056 11.3682 4.5625 10.021 4.5625C8.67374 4.5625 7.40985 4.85056 6.22929 5.42667C5.04874 6.00333 4.06957 6.83333 3.29179 7.91667C3.20846 8.04167 3.11124 8.11111 3.00012 8.125C2.88901 8.13889 2.79179 8.11111 2.70846 8.04167ZM12.3751 18.3125C10.9307 17.9514 9.75012 17.2325 8.83346 16.1558C7.91679 15.0797 7.45846 13.7639 7.45846 12.2083C7.45846 11.5139 7.70846 10.9306 8.20846 10.4583C8.70846 9.98611 9.31262 9.75 10.021 9.75C10.7293 9.75 11.3335 9.98611 11.8335 10.4583C12.3335 10.9306 12.5835 11.5139 12.5835 12.2083C12.5835 12.6667 12.7571 13.0522 13.1043 13.365C13.4515 13.6772 13.8612 13.8333 14.3335 13.8333C14.8057 13.8333 15.2085 13.6772 15.5418 13.365C15.8751 13.0522 16.0418 12.6667 16.0418 12.2083C16.0418 10.5972 15.4515 9.24306 14.271 8.14583C13.0904 7.04861 11.6807 6.5 10.0418 6.5C8.4029 6.5 6.99318 7.04861 5.81262 8.14583C4.63207 9.24306 4.04179 10.5903 4.04179 12.1875C4.04179 12.5208 4.07318 12.9375 4.13596 13.4375C4.19818 13.9375 4.34735 14.5208 4.58346 15.1875C4.62512 15.3125 4.62179 15.4236 4.57346 15.5208C4.52457 15.6181 4.44457 15.6875 4.33346 15.7292C4.22235 15.7708 4.11457 15.7672 4.01012 15.7183C3.90624 15.67 3.83346 15.5903 3.79179 15.4792C3.58346 14.9375 3.43429 14.3992 3.34429 13.8642C3.25374 13.3297 3.20846 12.7778 3.20846 12.2083C3.20846 10.3611 3.87874 8.8125 5.21929 7.5625C6.55929 6.3125 8.15985 5.6875 10.021 5.6875C11.896 5.6875 13.5071 6.3125 14.8543 7.5625C16.2015 8.8125 16.8751 10.3611 16.8751 12.2083C16.8751 12.9028 16.6287 13.4828 16.136 13.9483C15.6426 14.4133 15.0418 14.6458 14.3335 14.6458C13.6251 14.6458 13.0176 14.4133 12.511 13.9483C12.0037 13.4828 11.7501 12.9028 11.7501 12.2083C11.7501 11.75 11.5801 11.3644 11.2401 11.0517C10.8996 10.7394 10.4932 10.5833 10.021 10.5833C9.54874 10.5833 9.14235 10.7394 8.80179 11.0517C8.46179 11.3644 8.29179 11.75 8.29179 12.2083C8.29179 13.5556 8.69124 14.6806 9.49012 15.5833C10.2885 16.4861 11.3196 17.1181 12.5835 17.4792C12.7085 17.5208 12.7918 17.5903 12.8335 17.6875C12.8751 17.7847 12.8821 17.8889 12.8543 18C12.8265 18.0972 12.771 18.1806 12.6876 18.25C12.6043 18.3194 12.5001 18.3403 12.3751 18.3125ZM5.41679 3.6875C5.30568 3.75694 5.19457 3.77417 5.08346 3.73917C4.97235 3.70472 4.88901 3.63194 4.83346 3.52083C4.7779 3.40972 4.76401 3.30889 4.79179 3.21833C4.81957 3.12833 4.88901 3.04861 5.00012 2.97917C5.7779 2.5625 6.5904 2.24306 7.43762 2.02083C8.28485 1.79861 9.14596 1.6875 10.021 1.6875C10.9098 1.6875 11.7779 1.795 12.6251 2.01C13.4723 2.22556 14.2918 2.53472 15.0835 2.9375C15.2085 3.00694 15.2815 3.09028 15.3026 3.1875C15.3232 3.28472 15.3126 3.38194 15.271 3.47917C15.2293 3.57639 15.1598 3.65278 15.0626 3.70833C14.9654 3.76389 14.8473 3.75694 14.7085 3.6875C13.9723 3.3125 13.2118 3.02417 12.4268 2.8225C11.6423 2.62139 10.8404 2.52083 10.021 2.52083C9.2154 2.52083 8.42374 2.61444 7.64596 2.80167C6.86818 2.98944 6.12512 3.28472 5.41679 3.6875ZM7.87512 18.0208C7.05568 17.1597 6.42735 16.2811 5.99012 15.385C5.55235 14.4894 5.33346 13.4306 5.33346 12.2083C5.33346 10.9444 5.79179 9.87833 6.70846 9.01C7.62512 8.14222 8.72929 7.70833 10.021 7.70833C11.3126 7.70833 12.4237 8.14222 13.3543 9.01C14.2848 9.87833 14.7501 10.9444 14.7501 12.2083C14.7501 12.3333 14.7118 12.4339 14.6351 12.51C14.559 12.5867 14.4585 12.625 14.3335 12.625C14.2223 12.625 14.1251 12.5867 14.0418 12.51C13.9585 12.4339 13.9168 12.3333 13.9168 12.2083C13.9168 11.1667 13.5312 10.295 12.7601 9.59333C11.9896 8.89222 11.0765 8.54167 10.021 8.54167C8.9654 8.54167 8.05901 8.89222 7.30179 9.59333C6.54512 10.295 6.16679 11.1667 6.16679 12.2083C6.16679 13.3333 6.36124 14.2881 6.75012 15.0725C7.13901 15.8575 7.70846 16.6458 8.45846 17.4375C8.54179 17.5208 8.58346 17.6181 8.58346 17.7292C8.58346 17.8403 8.54179 17.9375 8.45846 18.0208C8.37512 18.1042 8.2779 18.1458 8.16679 18.1458C8.05568 18.1458 7.95846 18.1042 7.87512 18.0208ZM14.1668 16.6042C12.9307 16.6042 11.8576 16.1875 10.9476 15.3542C10.0382 14.5208 9.58346 13.4722 9.58346 12.2083C9.58346 12.0972 9.62151 12 9.69762 11.9167C9.77429 11.8333 9.87512 11.7917 10.0001 11.7917C10.1251 11.7917 10.226 11.8333 10.3026 11.9167C10.3787 12 10.4168 12.0972 10.4168 12.2083C10.4168 13.25 10.7918 14.1042 11.5418 14.7708C12.2918 15.4375 13.1668 15.7708 14.1668 15.7708C14.2501 15.7708 14.3682 15.7639 14.521 15.75C14.6737 15.7361 14.8335 15.7153 15.0001 15.6875C15.1251 15.6597 15.2329 15.6769 15.3235 15.7392C15.4135 15.8019 15.4723 15.8958 15.5001 16.0208C15.5279 16.1319 15.5071 16.2292 15.4376 16.3125C15.3682 16.3958 15.2779 16.4514 15.1668 16.4792C14.9168 16.5486 14.6982 16.5869 14.511 16.5942C14.3232 16.6008 14.2085 16.6042 14.1668 16.6042Z" fill="currentColor"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 75 108"><path d="M45.2731 101.549L45.427 91.3644L52.9168 85.6802C54.4045 84.5433 55.687 83.217 56.713 81.7012C56.713 81.7012 59.124 75.2591 63.9975 70.7118C66.1521 68.7223 66.5625 65.7854 67.332 63.8907C68.1528 61.7591 69.3327 59.7223 70.7177 57.8275L74.5652 52.7118C75.3347 51.6696 74.9243 50.2012 73.6931 49.6328C71.1281 48.496 68.0502 48.6854 65.6904 50.1539C62.0994 52.3802 58.9701 55.1749 56.5078 58.4433L55.4305 59.8644C54.3532 61.2854 52.3012 61.7591 50.6083 60.9539L50.9674 46.7907L52.3012 10.2223C52.3525 8.56439 51.5317 7.00123 50.044 6.00649C48.8128 5.20123 47.2225 5.05912 45.8887 5.67491C44.5549 6.24333 43.6829 7.42754 43.5803 8.80123L39.3224 41.7223C39.2711 42.0539 38.9633 42.2433 38.6042 42.196C38.3477 42.1486 38.1938 41.9591 38.1938 41.7223L36.347 16.996L35.5775 3.5907C35.321 2.12228 34.295 0.890701 32.8073 0.32228C31.2684 -0.246141 29.5755 -0.0566676 28.2417 0.843332L27.8826 1.08017C26.754 1.88544 26.0358 3.11702 26.0358 4.4907L26.1897 41.4854C26.1897 41.7223 25.9845 41.9591 25.728 42.0065L25.2663 42.1012L22.0857 10.4118C21.5214 6.19596 18.8539 5.34333 17.1097 5.53281C14.1856 5.86439 13.057 7.42754 12.9544 10.2696C12.6979 18.5591 13.8265 42.3854 13.9804 45.4644C13.9804 45.6539 13.8778 45.8433 13.6726 45.9381L13.1083 46.2223L7.41404 20.0749C6.38805 18.0854 3.72047 17.3749 1.71979 18.5118C0.129501 19.4118 -0.0757065 20.6433 -0.0244064 22.8696C-0.0244064 22.8696 3.00227 47.4539 3.82307 52.2381L6.23415 84.0223C6.59325 86.1065 7.51664 88.096 9.00433 89.7065L10.7485 91.6486L10.8511 101.359C10.5946 103.917 12.4414 106.238 15.109 106.759C22.4448 108.228 29.9859 108.322 37.3217 107.138L40.8614 106.57C43.3751 106.049 45.2731 103.964 45.2731 101.549Z" fill="currentColor"/></symbol>
+  <symbol id="i-bighand" viewBox="0 0 226 349"><path d="M136.56 328.30L137.02 295.37L159.36 276.99C163.80 273.32 167.62 269.03 170.68 264.13C170.68 264.13 177.88 243.30 192.41 228.60C198.84 222.17 200.06 212.68 202.36 206.55C204.81 199.66 208.33 193.07 212.46 186.95L223.94 170.41C226.23 167.04 225.01 162.29 221.33 160.46C213.68 156.78 204.50 157.39 197.46 162.14C186.75 169.34 177.42 178.37 170.07 188.94L166.86 193.53C163.65 198.13 157.52 199.66 152.47 197.06L153.55 151.27L157.52 33.04C157.68 27.68 155.23 22.63 150.79 19.41C147.12 16.81 142.38 16.35 138.40 18.34C134.42 20.18 131.82 24.01 131.51 28.45L118.81 134.88C118.66 135.95 117.74 136.57 116.67 136.41C115.90 136.26 115.44 135.65 115.44 134.88L109.93 54.94L107.64 11.60C106.87 6.86 103.81 2.87 99.38 1.04C94.78 -0.79 89.73 -0.18 85.76 2.72L84.69 3.49C81.32 6.09 79.18 10.07 79.18 14.51L79.64 134.12C79.64 134.88 79.02 135.65 78.26 135.80L76.88 136.11L67.39 33.66C65.71 20.03 57.75 17.27 52.55 17.88C43.83 18.95 40.46 24.01 40.16 33.20C39.39 60.00 42.76 137.03 43.22 146.98C43.22 147.59 42.91 148.20 42.30 148.51L40.61 149.43L23.63 64.90C20.57 58.46 12.61 56.17 6.64 59.84C1.90 62.75 1.29 66.73 1.44 73.93C1.44 73.93 10.47 153.41 12.92 168.88L20.11 271.63C21.18 278.37 23.93 284.80 28.37 290.01L33.58 296.29L33.88 327.68C33.12 335.950 38.63 343.46 46.58 345.14C68.46 349.89 90.96 350.19 112.84 346.37L123.40 344.53C130.90 342.84 136.56 336.11 136.56 328.30Z" fill="#CBCED1"/></symbol>
+  <symbol id="i-del" viewBox="0 0 24 24"><path d="M7.80775 20.8845C7.30908 20.8845 6.88308 20.7079 6.52975 20.3547C6.17658 20.0014 6 19.5754 6 19.0768V6.3845H5V4.8845H9.5V4H15.5V4.8845H20V6.3845H19V19.0768C19 19.5819 18.825 20.0095 18.475 20.3595C18.125 20.7095 17.6974 20.8845 17.1923 20.8845H7.80775ZM17.5 6.3845H7.5V19.0768C7.5 19.1666 7.52883 19.2403 7.5865 19.298C7.64417 19.3557 7.71792 19.3845 7.80775 19.3845H17.1923C17.2692 19.3845 17.3398 19.3524 17.4038 19.2883C17.4679 19.2243 17.5 19.1538 17.5 19.0768V6.3845ZM9.904 17.3845H11.4037V8.3845H9.904V17.3845ZM13.5962 17.3845H15.096V8.3845H13.5962V17.3845Z" fill="#5A5AFF"/></symbol>
+  <symbol id="i-kebab" viewBox="0 0 24 24"><path d="M12 20C11.45 20 10.9793 19.8043 10.588 19.413C10.196 19.021 10 18.55 10 18C10 17.45 10.196 16.979 10.588 16.587C10.9793 16.1957 11.45 16 12 16C12.55 16 13.021 16.1957 13.413 16.587C13.8043 16.979 14 17.45 14 18C14 18.55 13.8043 19.021 13.413 19.413C13.021 19.8043 12.55 20 12 20ZM12 14C11.45 14 10.9793 13.804 10.588 13.412C10.196 13.0207 10 12.55 10 12C10 11.45 10.196 10.979 10.588 10.587C10.9793 10.1957 11.45 10 12 10C12.55 10 13.021 10.1957 13.413 10.587C13.8043 10.979 14 11.45 14 12C14 12.55 13.8043 13.0207 13.413 13.412C13.021 13.804 12.55 14 12 14ZM12 8C11.45 8 10.9793 7.804 10.588 7.412C10.196 7.02067 10 6.55 10 6C10 5.45 10.196 4.97933 10.588 4.588C10.9793 4.196 11.45 4 12 4C12.55 4 13.021 4.196 13.413 4.588C13.8043 4.97933 14 5.45 14 6C14 6.55 13.8043 7.02067 13.413 7.412C13.021 7.804 12.55 8 12 8Z" fill="currentColor"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="currentColor"/></symbol>
+  <symbol id="i-pos" viewBox="96 156 24 24"><path d="M108 178C106.617 178 105.317 177.737 104.1 177.212C102.883 176.687 101.825 175.975 100.925 175.075C100.025 174.175 99.3127 173.117 98.788 171.9C98.2627 170.683 98 169.383 98 168C98 166.617 98.2627 165.317 98.788 164.1C99.3127 162.883 100.025 161.825 100.925 160.925C101.825 160.025 102.883 159.312 104.1 158.787C105.317 158.262 106.617 158 108 158C109.383 158 110.683 158.262 111.9 158.787C113.117 159.312 114.175 160.025 115.075 160.925C115.975 161.825 116.687 162.883 117.212 164.1C117.737 165.317 118 166.617 118 168C118 169.383 117.737 170.683 117.212 171.9C116.687 173.117 115.975 174.175 115.075 175.075C114.175 175.975 113.117 176.687 111.9 177.212C110.683 177.737 109.383 178 108 178ZM106.6 172.6L113.65 165.55L112.25 164.15L106.6 169.8L103.75 166.95L102.35 168.35L106.6 172.6Z" fill="currentColor"/></symbol>
+  <symbol id="i-neg" viewBox="48 156 24 24"><path d="M60 178C58.6167 178 57.3167 177.737 56.1 177.212C54.8833 176.687 53.825 175.975 52.925 175.075C52.025 174.175 51.3127 173.117 50.788 171.9C50.2627 170.683 50 169.383 50 168C50 166.617 50.2627 165.317 50.788 164.1C51.3127 162.883 52.025 161.825 52.925 160.925C53.825 160.025 54.8833 159.312 56.1 158.787C57.3167 158.262 58.6167 158 60 158C61.3833 158 62.6833 158.262 63.9 158.787C65.1167 159.312 66.175 160.025 67.075 160.925C67.975 161.825 68.6873 162.883 69.212 164.1C69.7373 165.317 70 166.617 70 168C70 169.383 69.7373 170.683 69.212 171.9C68.6873 173.117 67.975 174.175 67.075 175.075C66.175 175.975 65.1167 176.687 63.9 177.212C62.6833 177.737 61.3833 178 60 178ZM56.4 173L60 169.4L63.6 173L65 171.6L61.4 168L65 164.4L63.6 163L60 166.6L56.4 163L55 164.4L58.6 168L55 171.6L56.4 173Z" fill="currentColor"/></symbol>
+  <symbol id="i-uptop" viewBox="0 0 24 24"><g fill="none" stroke="#5A5AFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 7.5V5.2c0-.4.3-.7.7-.7h11.6c.4 0 .7.3.7.7v2.3"/><path d="M12 20V9.5M7.8 13.6 12 9.4l4.2 4.2"/></g></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M6 9.5h9a2 2 0 0 1 2 2V19a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7.5a2 2 0 0 1 2-2zm0 2V19h9v-7.5H6zm1 6.5 2.2-2.8 1.6 1.9 1.7-2.1L15 18H7zM9.5 3.5c3.9-1.4 8.3.4 10 4.1l1.2-.7.3 4-3.6-1.7 1.3-.8c-1.3-2.7-4.4-4-7.2-3.1z" fill="#5A5AFF"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M9.54998 18.0001L3.84998 12.3001L5.27498 10.8751L9.54998 15.1501L18.725 5.9751L20.15 7.4001L9.54998 18.0001Z" fill="currentColor"/></symbol>
+  <symbol id="i-chevr" viewBox="0 0 24 24"><path d="M9.4 18L8 16.6L12.6 12L8 7.4L9.4 6L15.4 12L9.4 18Z" fill="#D4D6D8"/></symbol>
+  <!-- DS Formatos -->
+  <symbol id="f-pdf" viewBox="0 0 16 19"><path d="M11 0V5H16L11 0Z" fill="#FF837A"/><path d="M11 5H16V17C16 18.1 15.1 19 14 19H2C.9 19 0 18.1 0 17V2C0 .9.9 0 2 0H11V5Z" fill="#A82424"/><text x="8" y="15" font-size="4.6" font-weight="800" fill="#fff" text-anchor="middle" font-family="Nunito,sans-serif">PDF</text></symbol>
+  <symbol id="f-jpg" viewBox="0 0 16 19"><path d="M11 0V5H16L11 0Z" fill="#FF98EF"/><path d="M11 5H16V17C16 18.1 15.1 19 14 19H2C.9 19 0 18.1 0 17V2C0 .9.9 0 2 0H11V5Z" fill="#FF6AE8"/><text x="8" y="15" font-size="4.6" font-weight="800" fill="#fff" text-anchor="middle" font-family="Nunito,sans-serif">JPG</text></symbol>
+  <symbol id="f-png" viewBox="0 0 16 19"><path d="M11 0V5H16L11 0Z" fill="#30D8FF"/><path d="M11 5H16V17C16 18.1 15.1 19 14 19H2C.9 19 0 18.1 0 17V2C0 .9.9 0 2 0H11V5Z" fill="#008FCC"/><text x="8" y="15" font-size="4.6" font-weight="800" fill="#fff" text-anchor="middle" font-family="Nunito,sans-serif">PNG</text></symbol>
+  <symbol id="flag-mx" viewBox="0 0 24 24"><rect width="8" height="24" fill="#006847"/><rect x="8" width="8" height="24" fill="#fff"/><rect x="16" width="8" height="24" fill="#CE1126"/><circle cx="12" cy="12" r="2.2" fill="#8C6239"/></symbol>
+</svg>
+
+<!-- Cliente nuevo (propuesta v3 de Product Design · rama del equipo, commit 8f7723ad6) -->
+<div class="pos-cuerpo">
+  <main class="pos-main cn-main" id="cnMain">
+  <nav aria-label="Breadcrumb" class="ds-breadcrumb">
+    <ol class="pos-crumbs">
+      <li><a href="../home/" class="ds-breadcrumb__link">Home</a><span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt="" /></span></li>
+      <li><a href="./" class="ds-breadcrumb__link">Clientes</a><span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt="" /></span></li>
+      <li><span class="ds-breadcrumb__current" aria-current="page">Cliente nuevo</span></li>
+    </ol>
+  </nav>
+  <div class="headrow">
+    <h1 class="cn-title">Cliente nuevo</h1>
+    <div class="proto" role="group" aria-label="Controles del prototipo">
+      <span>Prototipo:</span>
+      <button type="button" id="demoLookup">Buscar cliente existente</button>
+      <button type="button" id="demoFill">Llenar con datos de ejemplo</button>
+      <label><input type="checkbox" id="demoFail"> Simular error al guardar</label>
+      <label><input type="checkbox" id="demoDup"> Simular cliente ya registrado</label>
+      <label><input type="checkbox" id="demoReader"> Simular lector desconectado</label>
+    </div>
+  </div>
+
+  <div class="layout qcard">
+    <!-- Columna de secciones (patrón Cotizador de empeño: Listado + contenido en una sola card) -->
+    <aside class="qside" aria-label="Secciones del cliente">
+      <div class="qside-h"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12q-1.65 0-2.825-1.175T8 8t1.175-2.825T12 4t2.825 1.175T16 8t-1.175 2.825T12 12Zm-8 8v-2.8q0-.85.438-1.563T5.6 14.55q1.55-.775 3.15-1.163T12 13t3.25.388t3.15 1.162q.725.375 1.163 1.088T20 17.2V20Zm2-2h12v-.8q0-.275-.137-.5t-.363-.35q-1.35-.675-2.725-1.012T12 15t-2.775.338T6.5 16.35q-.225.125-.363.35T6 17.2Zm6-8q.825 0 1.413-.587T14 8t-.587-1.412T12 6t-1.412.588T10 8t.588 1.413T12 10Zm0-2Zm0 10Z" fill="currentColor"/></svg><span>Secciones del cliente</span></div>
+      <!-- Card única del cliente (patrón card de contrato del Cotizador) + DS CircularProgressIndicator -->
+      <div class="qcli">
+        <div class="qcli-h">
+          <button type="button" class="qcli-tg" id="qToggle" aria-expanded="false" aria-controls="sSecs" aria-label="Mostrar secciones"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 10L12 15L17 10" stroke="#5A5AFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="qcli-tx"><p class="qcli-t" id="qName">Cliente nuevo</p><p class="qcli-s" id="qCount">Datos completados: 0 de 11</p></div>
+          <span class="cpi" role="progressbar" aria-label="Avance del registro" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="qRing"><svg width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="11.5" fill="none" stroke="#D4D6D8" stroke-width="3"/><circle class="cpi-v" cx="13" cy="13" r="11.5" fill="none" stroke="#0D166B" stroke-width="3" stroke-linecap="round" stroke-dasharray="72.257" stroke-dashoffset="72.257" transform="rotate(-90 13 13)"/></svg></span>
+        </div>
+      <ul class="qlist" id="sSecs" hidden>
+        <li><a href="#s-contacto" data-cpi="contacto"><span class="dot" data-n="1">1</span><span class="qt">Información de contacto</span><span class="tag gray" data-sumtag="contacto">Pendiente</span></a></li>
+        <li><a href="#s-personal" data-cpi="personal"><span class="dot" data-n="2">2</span><span class="qt">Datos personales</span><span class="tag gray" data-sumtag="personal">Pendiente</span></a></li>
+        <li><a href="#s-direccion" data-cpi="direccion"><span class="dot" data-n="3">3</span><span class="qt">Dirección</span><span class="tag gray" data-sumtag="direccion">Pendiente</span></a></li>
+        <li><a href="#s-ident" data-cpi="ident"><span class="dot" data-n="4">4</span><span class="qt">Identificación</span><span class="tag gray" data-sumtag="ident">Pendiente</span></a></li>
+        <li><a href="#s-cotitular" data-cpi="cotitular"><span class="dot" data-n="5">5</span><span class="qt">Cotitular o Beneficiario</span><span class="tag gray" data-sumtag="cotitular">Pendiente</span></a></li>
+        <li><a href="#s-bio" data-cpi="bio"><span class="dot" data-n="6">6</span><span class="qt">Biometría</span><span class="tag gray" data-sumtag="bio">Pendiente</span></a></li>
+      </ul>
+      </div>
+    </aside>
+    <form class="formcol qmain" id="form" novalidate autocomplete="off">
+      <div id="formAlert" hidden></div>
+      <fieldset id="fs" class="formcol">
+
+      <!-- 1 · Información de contacto (5) -->
+      <section class="sec" id="s-contacto" data-sec="contacto">
+        <div class="sec-h qsh"><span class="qsh-t"><span class="sec-ic"><svg class="i-pend" width="20" height="20" viewBox="2112 104 24 24" aria-hidden="true"><path d="M2124 126C2122.62 126 2121.32 125.737 2120.1 125.212C2118.88 124.687 2117.83 123.975 2116.93 123.075C2116.03 122.175 2115.31 121.117 2114.79 119.9C2114.26 118.683 2114 117.383 2114 116C2114 114.617 2114.26 113.317 2114.79 112.1C2115.31 110.883 2116.03 109.825 2116.93 108.925C2117.83 108.025 2118.88 107.312 2120.1 106.787C2121.32 106.262 2122.62 106 2124 106C2125.38 106 2126.68 106.262 2127.9 106.787C2129.12 107.312 2130.18 108.025 2131.08 108.925C2131.98 109.825 2132.69 110.883 2133.21 112.1C2133.74 113.317 2134 114.617 2134 116C2134 117.383 2133.74 118.683 2133.21 119.9C2132.69 121.117 2131.98 122.175 2131.08 123.075C2130.18 123.975 2129.12 124.687 2127.9 125.212C2126.68 125.737 2125.38 126 2124 126ZM2127.3 120.7L2128.7 119.3L2125 115.6V111H2123V116.4L2127.3 120.7Z" fill="#008FCC"/></svg><svg class="i-ok" width="20" height="20" viewBox="96 156 24 24" aria-hidden="true"><path d="M108 178C106.617 178 105.317 177.737 104.1 177.212C102.883 176.687 101.825 175.975 100.925 175.075C100.025 174.175 99.3127 173.117 98.788 171.9C98.2627 170.683 98 169.383 98 168C98 166.617 98.2627 165.317 98.788 164.1C99.3127 162.883 100.025 161.825 100.925 160.925C101.825 160.025 102.883 159.312 104.1 158.787C105.317 158.262 106.617 158 108 158C109.383 158 110.683 158.262 111.9 158.787C113.117 159.312 114.175 160.025 115.075 160.925C115.975 161.825 116.687 162.883 117.212 164.1C117.737 165.317 118 166.617 118 168C118 169.383 117.737 170.683 117.212 171.9C116.687 173.117 115.975 174.175 115.075 175.075C114.175 175.975 113.117 176.687 111.9 177.212C110.683 177.737 109.383 178 108 178ZM106.6 172.6L113.65 165.55L112.25 164.15L106.6 169.8L103.75 166.95L102.35 168.35L106.6 172.6Z" fill="#309C60"/></svg></span><span class="sec-t">Información de contacto</span></span><span class="sec-sub">Completa para poder contactar al cliente</span></div>
+        <div class="g">
+          <div class="fld"><label class="lbl" for="name">Nombre</label><input class="in" id="name" data-req data-sec="contacto" data-label="Nombre"><span class="ferr" hidden></span></div>
+          <div class="fld"><label class="lbl" for="lastName">Apellido paterno</label><input class="in" id="lastName" data-req data-sec="contacto" data-label="Apellido paterno"><span class="ferr" hidden></span></div>
+          <div class="fld"><label class="lbl" for="secondLastName">Apellido materno <span class="opt">(opcional)</span></label><input class="in" id="secondLastName"></div>
+          <div class="fld"><label class="lbl" for="email">Correo electrónico</label><input class="in" id="email" type="email" data-req data-kind="email" data-sec="contacto" data-label="Correo electrónico"><span class="ferr" hidden></span></div>
+          <div class="fld"><label class="lbl dob" for="phone">Teléfono</label><div class="doble" data-box="phone"><button type="button" class="pre" aria-label="Lada +52"><svg class="flag"><use href="#flag-mx"/></svg>+52</button><input id="phone" inputmode="tel" data-req data-kind="phone" data-sec="contacto" data-label="Teléfono"></div><span class="ferr" hidden></span></div>
+        </div>
+      </section>
+
+      <!-- 2 · Datos personales (8) -->
+      <section class="sec" id="s-personal" data-sec="personal">
+        <div class="sec-h qsh"><span class="qsh-t"><span class="sec-ic"><svg class="i-pend" width="20" height="20" viewBox="2112 104 24 24" aria-hidden="true"><path d="M2124 126C2122.62 126 2121.32 125.737 2120.1 125.212C2118.88 124.687 2117.83 123.975 2116.93 123.075C2116.03 122.175 2115.31 121.117 2114.79 119.9C2114.26 118.683 2114 117.383 2114 116C2114 114.617 2114.26 113.317 2114.79 112.1C2115.31 110.883 2116.03 109.825 2116.93 108.925C2117.83 108.025 2118.88 107.312 2120.1 106.787C2121.32 106.262 2122.62 106 2124 106C2125.38 106 2126.68 106.262 2127.9 106.787C2129.12 107.312 2130.18 108.025 2131.08 108.925C2131.98 109.825 2132.69 110.883 2133.21 112.1C2133.74 113.317 2134 114.617 2134 116C2134 117.383 2133.74 118.683 2133.21 119.9C2132.69 121.117 2131.98 122.175 2131.08 123.075C2130.18 123.975 2129.12 124.687 2127.9 125.212C2126.68 125.737 2125.38 126 2124 126ZM2127.3 120.7L2128.7 119.3L2125 115.6V111H2123V116.4L2127.3 120.7Z" fill="#008FCC"/></svg><svg class="i-ok" width="20" height="20" viewBox="96 156 24 24" aria-hidden="true"><path d="M108 178C106.617 178 105.317 177.737 104.1 177.212C102.883 176.687 101.825 175.975 100.925 175.075C100.025 174.175 99.3127 173.117 98.788 171.9C98.2627 170.683 98 169.383 98 168C98 166.617 98.2627 165.317 98.788 164.1C99.3127 162.883 100.025 161.825 100.925 160.925C101.825 160.025 102.883 159.312 104.1 158.787C105.317 158.262 106.617 158 108 158C109.383 158 110.683 158.262 111.9 158.787C113.117 159.312 114.175 160.025 115.075 160.925C115.975 161.825 116.687 162.883 117.212 164.1C117.737 165.317 118 166.617 118 168C118 169.383 117.737 170.683 117.212 171.9C116.687 173.117 115.975 174.175 115.075 175.075C114.175 175.975 113.117 176.687 111.9 177.212C110.683 177.737 109.383 178 108 178ZM106.6 172.6L113.65 165.55L112.25 164.15L106.6 169.8L103.75 166.95L102.35 168.35L106.6 172.6Z" fill="#309C60"/></svg></span><span class="sec-t">Datos personales</span></span><span class="sec-sub">Completa para identificar al cliente</span></div>
+        <div class="g-personal">
+          <div class="fld photo-fld">
+            <span class="lbl" style="padding-left:8px">Foto del cliente</span>
+            <div id="photoHost"></div>
+            <button type="button" class="btn sec sm cam-btn" id="camBtn" aria-label="Tomar foto del cliente con la cámara"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 17.5q1.875 0 3.188-1.312Q16.5 14.875 16.5 13q0-1.875-1.312-3.188Q13.875 8.5 12 8.5q-1.875 0-3.188 1.312Q7.5 11.125 7.5 13q0 1.875 1.312 3.188Q10.125 17.5 12 17.5Zm0-2q-1.05 0-1.775-.725Q9.5 14.05 9.5 13q0-1.05.725-1.775Q10.95 10.5 12 10.5q1.05 0 1.775.725Q14.5 11.95 14.5 13q0 1.05-.725 1.775Q13.05 15.5 12 15.5ZM4 21q-.825 0-1.412-.587Q2 19.825 2 19V7q0-.825.588-1.412Q3.175 5 4 5h3.15L9 3h6l1.85 2H20q.825 0 1.413.588Q22 6.175 22 7v12q0 .825-.587 1.413Q20.825 21 20 21Zm0-2h16V7h-4.05l-1.825-2h-4.25L8.05 7H4v12Zm8-6Z" fill="currentColor"/></svg>Tomar foto</button>
+            <span class="fhelp" id="photoHelp">1 imagen, JPG o PNG.</span>
+            <span class="ferr" id="photoErr" hidden></span>
+          </div>
+          <div class="g c2">
+          <div class="fld"><label class="lbl sel" for="civil">Estado civil</label><select class="in" id="civil" required data-req data-sec="personal" data-label="Estado civil"><option value="" disabled selected>Selecciona</option><option>Soltero(a)</option><option>Casado(a)</option><option>Divorciado(a)</option><option>Viudo(a)</option><option>Unión libre</option></select><span class="ferr" hidden></span></div>
+          <div class="fld"><label class="lbl sel" for="gender">Género <span class="opt">(Opcional)</span></label><select class="in" id="gender" required><option value="" disabled selected>Selecciona</option><option>Femenino</option><option>Masculino</option><option>Prefiero no decir</option></select></div>
+          <div class="fld"><label class="lbl sel" for="nat">Nacionalidad</label><select class="in" id="nat" required data-req data-sec="personal" data-label="Nacionalidad"><option value="" disabled selected>Selecciona una nacionalidad</option><option>Mexicana</option><option>Canadiense</option><option>Estadounidense</option></select><span class="ferr" hidden></span></div>
+          <div class="fld"><label class="lbl dob" for="dob">Fecha de nacimiento</label><div class="date" data-box="dob"><input id="dob" data-req data-kind="date" data-sec="personal" data-label="Fecha de nacimiento" type="text" placeholder="DD/MM/AAAA" inputmode="numeric" maxlength="10" autocomplete="off" data-date><button type="button" class="cal-btn" aria-label="Abrir calendario" aria-haspopup="dialog"><svg width="24" height="24"><use href="#i-cal"/></svg></button></div><span class="ferr" hidden></span></div>
+          <div class="fld"><label class="lbl" for="curp">CURP</label><input class="in" id="curp" maxlength="18" data-req data-kind="curp" data-sec="personal" data-label="CURP"><span class="fhelp fnote" data-count="curp">0 de 18 caracteres</span><span class="ferr" hidden></span></div>
+          <div class="fld"><label class="lbl" for="rfc">R.F.C</label><input class="in" id="rfc" maxlength="13" data-req data-kind="rfc" data-sec="personal" data-label="R.F.C"><span class="fhelp fnote" data-count="rfc">0 de 13 caracteres</span><span class="ferr" hidden></span></div>
+          <div class="fld s2"><label class="lbl sel" for="activity">Actividad económica</label><select class="in" id="activity" required data-req data-sec="personal" data-label="Actividad económica"><option value="" disabled selected>Selecciona</option><option>Comercio</option><option>Empleado(a)</option><option>Servicios profesionales</option><option>Hogar</option></select><span class="ferr" hidden></span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3 · Dirección domiciliaria (Buscar + 9) -->
+      <section class="sec" id="s-direccion" data-sec="direccion">
+        <div class="sec-h qsh"><span class="qsh-t"><span class="sec-ic"><svg class="i-pend" width="20" height="20" viewBox="2112 104 24 24" aria-hidden="true"><path d="M2124 126C2122.62 126 2121.32 125.737 2120.1 125.212C2118.88 124.687 2117.83 123.975 2116.93 123.075C2116.03 122.175 2115.31 121.117 2114.79 119.9C2114.26 118.683 2114 117.383 2114 116C2114 114.617 2114.26 113.317 2114.79 112.1C2115.31 110.883 2116.03 109.825 2116.93 108.925C2117.83 108.025 2118.88 107.312 2120.1 106.787C2121.32 106.262 2122.62 106 2124 106C2125.38 106 2126.68 106.262 2127.9 106.787C2129.12 107.312 2130.18 108.025 2131.08 108.925C2131.98 109.825 2132.69 110.883 2133.21 112.1C2133.74 113.317 2134 114.617 2134 116C2134 117.383 2133.74 118.683 2133.21 119.9C2132.69 121.117 2131.98 122.175 2131.08 123.075C2130.18 123.975 2129.12 124.687 2127.9 125.212C2126.68 125.737 2125.38 126 2124 126ZM2127.3 120.7L2128.7 119.3L2125 115.6V111H2123V116.4L2127.3 120.7Z" fill="#008FCC"/></svg><svg class="i-ok" width="20" height="20" viewBox="96 156 24 24" aria-hidden="true"><path d="M108 178C106.617 178 105.317 177.737 104.1 177.212C102.883 176.687 101.825 175.975 100.925 175.075C100.025 174.175 99.3127 173.117 98.788 171.9C98.2627 170.683 98 169.383 98 168C98 166.617 98.2627 165.317 98.788 164.1C99.3127 162.883 100.025 161.825 100.925 160.925C101.825 160.025 102.883 159.312 104.1 158.787C105.317 158.262 106.617 158 108 158C109.383 158 110.683 158.262 111.9 158.787C113.117 159.312 114.175 160.025 115.075 160.925C115.975 161.825 116.687 162.883 117.212 164.1C117.737 165.317 118 166.617 118 168C118 169.383 117.737 170.683 117.212 171.9C116.687 173.117 115.975 174.175 115.075 175.075C114.175 175.975 113.117 176.687 111.9 177.212C110.683 177.737 109.383 178 108 178ZM106.6 172.6L113.65 165.55L112.25 164.15L106.6 169.8L103.75 166.95L102.35 168.35L106.6 172.6Z" fill="#309C60"/></svg></span><span class="sec-t">Dirección domiciliaria</span></span><span class="sec-sub">Busca o captura la dirección donde vive el cliente</span></div>
+        <div id="addrSaved" hidden></div>
+        <div id="addrEntry" style="display:flex;flex-direction:column;gap:8px">
+          <div class="srch">
+            <label for="addrSearch" class="sr">Buscar dirección</label>
+            <div class="srch-box" data-box="addr"><input id="addrSearch" placeholder="Buscar" autocomplete="off"><span><svg width="24" height="24"><use href="#i-mag"/></svg></span></div>
+            <div class="dd" id="addrDD" hidden></div>
+          </div>
+          <span class="ferr" id="addrErr" hidden></span>
+          <div style="display:flex;justify-content:flex-end"><button type="button" class="lnk" id="manualToggle" aria-expanded="false">Agregar dirección de forma manual <svg width="24" height="24" id="manualChev"><use href="#i-down-p"/></svg></button></div>
+          <div id="manual" hidden style="display:flex;flex-direction:column;gap:16px">
+            <div class="g">
+              <div class="fld"><label class="lbl sel" for="a-pais">País</label><select class="in" id="a-pais" disabled><option>México</option></select></div>
+              <div class="fld"><label class="lbl sel" for="a-nombre">Nombre</label><select class="in" id="a-nombre" required data-areq><option value="" disabled selected>Selecciona</option><option>Casa</option><option>Trabajo</option></select><span class="ferr" hidden></span></div>
+              <div class="fld"><label class="lbl" for="a-cp">Código postal</label><input class="in" id="a-cp" inputmode="numeric" data-areq><span class="ferr" hidden></span></div>
+              <div class="fld"><label class="lbl" for="a-calle">Calle</label><input class="in" id="a-calle" data-areq><span class="ferr" hidden></span></div>
+              <div class="fld"><label class="lbl" for="a-ext">No. exterior</label><input class="in" id="a-ext" data-areq><span class="ferr" hidden></span></div>
+              <div class="fld"><label class="lbl" for="a-int">No. interior <span class="opt">(opcional)</span></label><input class="in" id="a-int"></div>
+              <div class="fld"><label class="lbl sel" for="a-col">Colonia</label><select class="in" id="a-col" required data-areq><option value="" disabled selected>Selecciona</option><option>Roma Norte</option><option>Condesa</option></select><span class="ferr" hidden></span></div>
+              <div class="fld"><label class="lbl sel" for="a-mun">Alcaldía o municipio</label><select class="in" id="a-mun" required data-areq><option value="" disabled selected>Selecciona</option><option>Cuauhtémoc</option><option>Benito Juárez</option></select><span class="ferr" hidden></span></div>
+              <div class="fld"><label class="lbl sel" for="a-edo">Estado</label><select class="in" id="a-edo" required data-areq><option value="" disabled selected>Selecciona</option><option>Ciudad de México</option><option>Estado de México</option></select><span class="ferr" hidden></span></div>
+            </div>
+            <div class="row-end"><button type="button" class="btn sec" id="addrCancel">Cancelar</button><button type="button" class="btn pri" id="addrSave">Guardar dirección</button></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 · Identificación (6 + 3 + 1) -->
+      <section class="sec" id="s-ident" data-sec="ident">
+        <div class="sec-h qsh"><span class="qsh-t"><span class="sec-ic"><svg class="i-pend" width="20" height="20" viewBox="2112 104 24 24" aria-hidden="true"><path d="M2124 126C2122.62 126 2121.32 125.737 2120.1 125.212C2118.88 124.687 2117.83 123.975 2116.93 123.075C2116.03 122.175 2115.31 121.117 2114.79 119.9C2114.26 118.683 2114 117.383 2114 116C2114 114.617 2114.26 113.317 2114.79 112.1C2115.31 110.883 2116.03 109.825 2116.93 108.925C2117.83 108.025 2118.88 107.312 2120.1 106.787C2121.32 106.262 2122.62 106 2124 106C2125.38 106 2126.68 106.262 2127.9 106.787C2129.12 107.312 2130.18 108.025 2131.08 108.925C2131.98 109.825 2132.69 110.883 2133.21 112.1C2133.74 113.317 2134 114.617 2134 116C2134 117.383 2133.74 118.683 2133.21 119.9C2132.69 121.117 2131.98 122.175 2131.08 123.075C2130.18 123.975 2129.12 124.687 2127.9 125.212C2126.68 125.737 2125.38 126 2124 126ZM2127.3 120.7L2128.7 119.3L2125 115.6V111H2123V116.4L2127.3 120.7Z" fill="#008FCC"/></svg><svg class="i-ok" width="20" height="20" viewBox="96 156 24 24" aria-hidden="true"><path d="M108 178C106.617 178 105.317 177.737 104.1 177.212C102.883 176.687 101.825 175.975 100.925 175.075C100.025 174.175 99.3127 173.117 98.788 171.9C98.2627 170.683 98 169.383 98 168C98 166.617 98.2627 165.317 98.788 164.1C99.3127 162.883 100.025 161.825 100.925 160.925C101.825 160.025 102.883 159.312 104.1 158.787C105.317 158.262 106.617 158 108 158C109.383 158 110.683 158.262 111.9 158.787C113.117 159.312 114.175 160.025 115.075 160.925C115.975 161.825 116.687 162.883 117.212 164.1C117.737 165.317 118 166.617 118 168C118 169.383 117.737 170.683 117.212 171.9C116.687 173.117 115.975 174.175 115.075 175.075C114.175 175.975 113.117 176.687 111.9 177.212C110.683 177.737 109.383 178 108 178ZM106.6 172.6L113.65 165.55L112.25 164.15L106.6 169.8L103.75 166.95L102.35 168.35L106.6 172.6Z" fill="#309C60"/></svg></span><span class="sec-t">Identificación</span></span><span class="sec-sub">Carga su identificación y sus comprobantes</span></div>
+        <div class="acc open" data-acc>
+          <button type="button" aria-expanded="true"><svg width="24" height="24"><use href="#i-id"/></svg>Identificación oficial <span class="tag gray" data-acctag="id">0 de 2 archivos</span><svg class="chev" width="24" height="24"><use href="#i-down"/></svg></button>
+          <div class="body">
+            <div class="g c4">
+              <div class="fld"><label class="lbl sel" for="idType">Tipo de identificación oficial</label><select class="in" id="idType" required><option value="" disabled selected></option><option>INE</option><option>Pasaporte</option><option>Cédula profesional</option></select></div>
+              <div class="fld"><label class="lbl" for="idNum">Número de documento</label><input class="in" id="idNum"></div>
+              <div class="fld"><label class="lbl dob" for="idExp">Expedición:</label><div class="date"><input id="idExp" type="text" placeholder="DD/MM/AAAA" inputmode="numeric" maxlength="10" autocomplete="off" data-date><button type="button" class="cal-btn" aria-label="Abrir calendario" aria-haspopup="dialog"><svg width="24" height="24"><use href="#i-cal"/></svg></button></div></div>
+              <div class="fld"><label class="lbl dob" for="idVig">Vigencia:</label><div class="date" data-box="idVig"><input id="idVig" type="text" placeholder="DD/MM/AAAA" inputmode="numeric" maxlength="10" autocomplete="off" data-date><button type="button" class="cal-btn" aria-label="Abrir calendario" aria-haspopup="dialog"><svg width="24" height="24"><use href="#i-cal"/></svg></button></div><span class="ferr" id="idVigErr" hidden></span></div>
+            </div>
+            <div class="pair">
+              <div class="fld"><span class="lbl" id="t-idFront" style="padding-left:0;font-weight:700">Frente de la identificación</span><p class="dz-help" id="h-idFront">Sube una imagen de la parte frontal de la identificación del cliente, donde aparecen su fotografía y sus datos personales.</p><div data-file="idFront"></div></div>
+              <div class="fld"><span class="lbl" id="t-idBack" style="padding-left:0;font-weight:700">Reverso de la identificación</span><p class="dz-help" id="h-idBack">Sube una imagen de la parte trasera de la identificación del cliente, donde aparecen el código QR y otros datos de identificación.</p><div data-file="idBack"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="acc" data-acc>
+          <button type="button" aria-expanded="false"><svg width="24" height="24"><use href="#i-addr"/></svg>Comprobante de domicilio <span class="tag gray" data-acctag="dom">Sin archivo</span><svg class="chev" width="24" height="24"><use href="#i-down"/></svg></button>
+          <div class="body">
+            <div class="g c2">
+              <div class="fld"><label class="lbl sel" for="domType">Tipo de comprobante de domicilio</label><select class="in" id="domType" required><option value="" disabled selected>Selecciona</option><option>Recibo de luz</option><option>Recibo de agua</option><option>Estado de cuenta</option></select></div>
+              <div class="fld"><label class="lbl dob" for="domVig">Vigencia:</label><div class="date"><input id="domVig" type="text" placeholder="DD/MM/AAAA" inputmode="numeric" maxlength="10" autocomplete="off" data-date><button type="button" class="cal-btn" aria-label="Abrir calendario" aria-haspopup="dialog"><svg width="24" height="24"><use href="#i-cal"/></svg></button></div></div>
+            </div>
+            <div class="fld"><span class="lbl" style="padding-left:0;font-weight:700">Ingresa comprobante</span><div data-file="domFile"></div></div>
+          </div>
+        </div>
+        <div class="acc" data-acc>
+          <button type="button" aria-expanded="false"><svg width="24" height="24"><use href="#i-income"/></svg>Comprobante de ingresos <span class="help-ic" tabindex="0" onclick="event.stopPropagation()"><svg width="24" height="24"><use href="#i-help"/></svg><span class="tip" role="tooltip">Documento que respalde los ingresos del cliente.</span></span> <span class="tag gray" data-acctag="ing">Sin archivo</span><svg class="chev" width="24" height="24"><use href="#i-down"/></svg></button>
+          <div class="body">
+            <div class="fld"><span class="lbl" style="padding-left:0;font-weight:700">Ingresa comprobante</span><div data-file="ingFile"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 · Cotitular o Beneficiario (8) -->
+      <section class="sec" id="s-cotitular" data-sec="cotitular">
+        <div class="sec-h qsh"><span class="qsh-t"><span class="sec-ic"><svg class="i-pend" width="20" height="20" viewBox="2112 104 24 24" aria-hidden="true"><path d="M2124 126C2122.62 126 2121.32 125.737 2120.1 125.212C2118.88 124.687 2117.83 123.975 2116.93 123.075C2116.03 122.175 2115.31 121.117 2114.79 119.9C2114.26 118.683 2114 117.383 2114 116C2114 114.617 2114.26 113.317 2114.79 112.1C2115.31 110.883 2116.03 109.825 2116.93 108.925C2117.83 108.025 2118.88 107.312 2120.1 106.787C2121.32 106.262 2122.62 106 2124 106C2125.38 106 2126.68 106.262 2127.9 106.787C2129.12 107.312 2130.18 108.025 2131.08 108.925C2131.98 109.825 2132.69 110.883 2133.21 112.1C2133.74 113.317 2134 114.617 2134 116C2134 117.383 2133.74 118.683 2133.21 119.9C2132.69 121.117 2131.98 122.175 2131.08 123.075C2130.18 123.975 2129.12 124.687 2127.9 125.212C2126.68 125.737 2125.38 126 2124 126ZM2127.3 120.7L2128.7 119.3L2125 115.6V111H2123V116.4L2127.3 120.7Z" fill="#008FCC"/></svg><svg class="i-ok" width="20" height="20" viewBox="96 156 24 24" aria-hidden="true"><path d="M108 178C106.617 178 105.317 177.737 104.1 177.212C102.883 176.687 101.825 175.975 100.925 175.075C100.025 174.175 99.3127 173.117 98.788 171.9C98.2627 170.683 98 169.383 98 168C98 166.617 98.2627 165.317 98.788 164.1C99.3127 162.883 100.025 161.825 100.925 160.925C101.825 160.025 102.883 159.312 104.1 158.787C105.317 158.262 106.617 158 108 158C109.383 158 110.683 158.262 111.9 158.787C113.117 159.312 114.175 160.025 115.075 160.925C115.975 161.825 116.687 162.883 117.212 164.1C117.737 165.317 118 166.617 118 168C118 169.383 117.737 170.683 117.212 171.9C116.687 173.117 115.975 174.175 115.075 175.075C114.175 175.975 113.117 176.687 111.9 177.212C110.683 177.737 109.383 178 108 178ZM106.6 172.6L113.65 165.55L112.25 164.15L106.6 169.8L103.75 166.95L102.35 168.35L106.6 172.6Z" fill="#309C60"/></svg></span><span class="sec-t">Cotitular o Beneficiario</span></span><span class="sec-sub">Agrega a quien también pueda operar sus contratos (opcional)</span></div>
+        <div id="coList" style="display:flex;flex-direction:column;gap:8px"></div>
+        <div id="coForm" hidden style="display:flex;flex-direction:column;gap:16px">
+          <div class="g">
+            <div class="fld"><label class="lbl" for="c-name">Nombre</label><input class="in" id="c-name" data-creq><span class="ferr" hidden></span></div>
+            <div class="fld"><label class="lbl" for="c-ln">Apellido paterno</label><input class="in" id="c-ln" data-creq><span class="ferr" hidden></span></div>
+            <div class="fld"><label class="lbl" for="c-ln2">Apellido materno <span class="opt">(opcional)</span></label><input class="in" id="c-ln2"></div>
+            <div class="fld"><label class="lbl" for="c-email">Correo electrónico <span class="opt">(opcional)</span></label><input class="in" id="c-email" type="email"></div>
+            <div class="fld"><label class="lbl dob" for="c-phone">Teléfono <span class="opt">(opcional)</span></label><div class="doble"><button type="button" class="pre" aria-label="Lada +52"><svg class="flag"><use href="#flag-mx"/></svg>+52</button><input id="c-phone" inputmode="tel"></div></div>
+            <div class="fld"><label class="lbl sel" for="c-idtype">Tipo de identificación oficial <span class="opt">(Opcional)</span></label><select class="in" id="c-idtype" required><option value="" disabled selected>Selecciona</option><option>INE</option><option>Pasaporte</option></select></div>
+            <div class="fld"><label class="lbl" for="c-idnum">Número de documento <span class="opt">(opcional)</span></label><input class="in" id="c-idnum"></div>
+            <div class="fld"><label class="lbl sel" for="c-rel">Parentesco</label><select class="in" id="c-rel" required data-creq><option value="" disabled selected>Selecciona</option><option>Cónyuge</option><option>Hijo(a)</option><option>Padre / Madre</option><option>Hermano(a)</option></select><span class="ferr" hidden></span></div>
+          </div>
+          <div class="row-end"><button type="button" class="btn ter" id="coCancel">Cancelar</button><button type="button" class="btn sec" id="coSave">Guardar</button></div>
+        </div>
+        <button type="button" class="lnk-add" id="coAdd"><svg width="20" height="20"><use href="#i-plus"/></svg>Agregar</button>
+      </section>
+
+      <!-- 6 · Registro de huellas -->
+      <section class="sec" id="s-bio" data-sec="bio">
+        <div class="sec-h qsh"><span class="qsh-t"><span class="sec-ic"><svg class="i-pend" width="20" height="20" viewBox="2112 104 24 24" aria-hidden="true"><path d="M2124 126C2122.62 126 2121.32 125.737 2120.1 125.212C2118.88 124.687 2117.83 123.975 2116.93 123.075C2116.03 122.175 2115.31 121.117 2114.79 119.9C2114.26 118.683 2114 117.383 2114 116C2114 114.617 2114.26 113.317 2114.79 112.1C2115.31 110.883 2116.03 109.825 2116.93 108.925C2117.83 108.025 2118.88 107.312 2120.1 106.787C2121.32 106.262 2122.62 106 2124 106C2125.38 106 2126.68 106.262 2127.9 106.787C2129.12 107.312 2130.18 108.025 2131.08 108.925C2131.98 109.825 2132.69 110.883 2133.21 112.1C2133.74 113.317 2134 114.617 2134 116C2134 117.383 2133.74 118.683 2133.21 119.9C2132.69 121.117 2131.98 122.175 2131.08 123.075C2130.18 123.975 2129.12 124.687 2127.9 125.212C2126.68 125.737 2125.38 126 2124 126ZM2127.3 120.7L2128.7 119.3L2125 115.6V111H2123V116.4L2127.3 120.7Z" fill="#008FCC"/></svg><svg class="i-ok" width="20" height="20" viewBox="96 156 24 24" aria-hidden="true"><path d="M108 178C106.617 178 105.317 177.737 104.1 177.212C102.883 176.687 101.825 175.975 100.925 175.075C100.025 174.175 99.3127 173.117 98.788 171.9C98.2627 170.683 98 169.383 98 168C98 166.617 98.2627 165.317 98.788 164.1C99.3127 162.883 100.025 161.825 100.925 160.925C101.825 160.025 102.883 159.312 104.1 158.787C105.317 158.262 106.617 158 108 158C109.383 158 110.683 158.262 111.9 158.787C113.117 159.312 114.175 160.025 115.075 160.925C115.975 161.825 116.687 162.883 117.212 164.1C117.737 165.317 118 166.617 118 168C118 169.383 117.737 170.683 117.212 171.9C116.687 173.117 115.975 174.175 115.075 175.075C114.175 175.975 113.117 176.687 111.9 177.212C110.683 177.737 109.383 178 108 178ZM106.6 172.6L113.65 165.55L112.25 164.15L106.6 169.8L103.75 166.95L102.35 168.35L106.6 172.6Z" fill="#309C60"/></svg></span><span class="sec-t">Registro de huellas</span></span><span class="sec-sub">Selecciona la mano y después el dedo que vas a registrar.</span></div>
+        <div class="fpw">
+          <div class="fp" id="fp">
+            <div>
+              <p class="fp-step"><span class="dot" id="fpStep1">1</span>Elige la mano</p>
+              <div class="hands">
+                <div class="hand-w"><div class="hand" role="button" tabindex="0" data-hand="izq" aria-pressed="false"><span class="hl">Mano izquierda</span><svg width="75" height="108" viewBox="0 0 75 108"><use href="#i-hand"/></svg></div><span class="hand-c" data-hc="izq">Sin huellas</span></div>
+                <div class="hand-w"><div class="hand" role="button" tabindex="0" data-hand="der" aria-pressed="false"><span class="hl">Mano derecha</span><svg width="75" height="108" viewBox="0 0 75 108" style="transform:scaleX(-1)"><use href="#i-hand"/></svg></div><span class="hand-c" data-hc="der">Sin huellas</span></div>
+              </div>
+            </div>
+            <div class="fpanel empty" id="fpanel">Elige una mano para ver sus dedos.</div>
+          </div>
+          <div class="fp-reg" id="fpReg" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <!-- Ver más Información → Información laboral (6) -->
+      <section class="sec" id="s-laboral">
+        <div style="display:flex;padding:8px;gap:4px"><button type="button" class="lnk" id="moreToggle" aria-expanded="false" style="padding:0">Ver más Información <svg width="24" height="24" id="moreChev"><use href="#i-down-p"/></svg></button></div>
+        <div id="more" hidden style="display:flex;flex-direction:column;gap:16px">
+          <span class="sec-t">Información laboral</span>
+          <div class="g">
+            <div class="fld"><label class="lbl sel" for="l-sit">Situación laboral <span class="opt">(Opcional)</span></label><select class="in" id="l-sit" required><option value="" disabled selected>Selecciona</option><option>Empleado(a)</option><option>Independiente</option></select></div>
+            <div class="fld"><label class="lbl sel" for="l-ant">Antigüedad <span class="opt">(Opcional)</span></label><select class="in" id="l-ant" required><option value="" disabled selected>Selecciona</option><option>Menos de 1 año</option><option>1 a 3 años</option><option>Más de 3 años</option></select></div>
+            <div class="fld"><label class="lbl" for="l-ing">Ingreso mensual <span class="opt">(opcional)</span></label><input class="in" id="l-ing" inputmode="decimal" maxlength="13" placeholder="$"></div>
+            <div class="fld"><label class="lbl" for="l-emp">Nombre de la empresa <span class="opt">(opcional)</span></label><input class="in" id="l-emp"></div>
+            <div class="fld"><label class="lbl dob" for="l-tel">Teléfono de la empresa <span class="opt">(opcional)</span></label><div class="doble"><button type="button" class="pre" aria-label="Lada +52"><svg class="flag"><use href="#flag-mx"/></svg>+52</button><input id="l-tel" inputmode="tel"></div></div>
+            <div class="fld"><label class="lbl" for="l-puesto">Puesto <span class="opt">(opcional)</span></label><input class="in" id="l-puesto"></div>
+          </div>
+        </div>
+      </section>
+      </fieldset>
+
+      <!-- DS FixedActionFooter: leadingContent al centro · secondary + primary a la derecha -->
+      <div class="actions-card fafooter">
+        <p class="fa-lead" id="hint" aria-live="polite">Faltan 11 datos obligatorios.</p>
+        <div class="fa-acts">
+          <button type="button" class="btn sec sm" data-cancel>Cancelar</button>
+          <button type="submit" class="btn pri sm" data-save>Guardar cliente</button>
+        </div>
+      </div>
+    </form>
+
+  </div>
+  </main>
+</div>
+
+<!-- pestañas de sesión al pie (las mismas de ../inventario/ · Figma: Top Container · "Ventana principal" + "+") -->
+<nav class="cli-sessions" aria-label="Sesiones de trabajo">
+  <span class="cli-sessions__tab" aria-current="page">Ventana principal<span class="cli-sessions__help" title="Cada pestaña es una sesión de trabajo con su propio carrito"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke="#D4D6D8" stroke-width="1.67"/><path d="M8 7.6C8.3 6.8 9.1 6.4 10 6.4c1.1 0 1.9.7 1.9 1.6 0 1.3-1.9 1.5-1.9 3" stroke="#D4D6D8" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="13.9" r="1" fill="#D4D6D8"/></svg></span></span>
+  <button class="cli-sessions__add" type="button" aria-label="Abrir otra sesión" title="Abrir otra sesión"><svg width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></button>
+</nav>
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+
+<script src="cliente-nuevo.js?v=1"></script>
+<script src="../navbar.js?v=3"></script>
+<script src="../menu-op.js?v=11"></script>
+<script src="../demo.js?v=11"></script>
+<script src="../comentarios.js?v=5"></script>
+</body>
+</html>

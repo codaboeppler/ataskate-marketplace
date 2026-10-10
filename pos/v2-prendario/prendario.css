@@ -32,8 +32,7 @@
 .pr .v2-panel .pos-plazos__notas { margin-top: calc(var(--spacing-2) * -1); }
 
 /* ---------------- Historial de movimientos ----------------
-   Reutiliza la tabla del calendario de apartados (.pos-plan): tres columnas iguales, sin tarjeta que se levante al pasar el cursor. */
-.pr-historial.pos-plan:hover { box-shadow: none; }
+   Reutiliza la tabla del calendario de apartados (.pos-plan): tres columnas iguales, con la misma sombra de tarjeta. */
 @media (max-width: 480px) {
   /* la fecha baja de renglón en vez de pisar la columna de al lado */
   .pr .pos-plan .ds-table th:first-child, .pr .pos-plan .ds-table td:first-child { white-space: normal; }
@@ -56,7 +55,7 @@
    Celda de artículo: 4 de padding vertical (fila de 51), miniatura 42 con radio 4 a 8 del texto, nombre 14 y detalle 12 separados 4. La fila de la prenda que se está viendo va seleccionada (#F0F0FF). */
 .pr-prendas__wrap {
   position: relative;
-  border: 1px solid var(--ats-neutral-300); border-radius: var(--radius-md); overflow-x: auto;
+  border-radius: var(--radius-md); box-shadow: var(--pos-shadow-card); overflow-x: auto;
   background: var(--surface-foreground); scrollbar-width: thin;
 }
 .pr-prendas__wrap:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
@@ -115,7 +114,7 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 16px); }
 .pr-cliente:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
 
 /* titular del contrato, debajo de las prendas: tarjeta blanca con avatar de iniciales, correo y teléfono */
-.pr-titular { margin-top: var(--spacing-4); display: flex; align-items: center; gap: var(--spacing-5); flex-wrap: wrap; padding: var(--spacing-4) var(--spacing-5); border: 1px solid var(--ats-neutral-300); border-radius: var(--radius-md); background: #fff; }
+.pr-titular { margin-top: var(--spacing-4); display: flex; align-items: center; gap: var(--spacing-5); flex-wrap: wrap; padding: var(--spacing-4) var(--spacing-5); border-radius: var(--radius-md); background: #fff; box-shadow: var(--pos-shadow-card); }
 .pr-titular__who { display: flex; align-items: center; gap: var(--spacing-3); min-width: 240px; }
 .pr-titular__av { flex: none; width: 48px; height: 48px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--ats-primary-100); color: var(--ats-primary-400); font-size: 18px; font-weight: var(--font-weight-semibold); }
 .pr-titular__who div { display: flex; flex-direction: column; gap: 2px; }
