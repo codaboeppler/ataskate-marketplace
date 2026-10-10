@@ -716,7 +716,7 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 .plz .stack { display: flex; flex-direction: column; gap: var(--sp-16); }
 .plz .stack-24 { display: flex; flex-direction: column; gap: var(--sp-24); }
 /* listado: 24 entre el encabezado, la card del listado y la de sugeridos (PageMain) */
-.plz .title-row--list { margin-bottom: var(--sp-24); }
+.plz .title-row--list { margin-bottom: var(--sp-16); }   /* 16 del título al contenido, como en Inventario; entre bloques sigue a 24, como en su código */
 
 /* Tarjetas y contenedores sin borde: solo Card-shadow y radio 16 (regla de Product Design, 2026-10-08) */
 .plz .card {

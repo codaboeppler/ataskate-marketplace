@@ -195,7 +195,7 @@ const ui = {
     `<button type="button" class="ds-icon-btn${size ? ' ds-icon-btn--' + size : ''}" aria-label="${esc(label)}" ${attrs}>${icon(name)}</button>`,
   /* Breadcrumb del DS con el marcado de los demás módulos (estilos en ../pos.css); siempre empieza en Home,
      que en el Administrativo es su inicio (INICIO.admin de ../menu-op.js) */
-  breadcrumb: items => { const all = [{ label: 'Home', href: '../empresa/' }, ...items]; return `<nav class="ds-breadcrumb" aria-label="Breadcrumb"><ol class="pos-crumbs">${all.map((it, i) => i < all.length - 1
+  breadcrumb: items => { const all = [{ label: 'Home', href: '../home/' }, ...items];   /* Home siempre lleva al Home con widgets */ return `<nav class="ds-breadcrumb" aria-label="Breadcrumb"><ol class="pos-crumbs">${all.map((it, i) => i < all.length - 1
     ? `<li><a href="${it.href}" class="ds-breadcrumb__link">${esc(it.label)}</a><span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt=""></span></li>`
     : `<li><span class="ds-breadcrumb__current" aria-current="page">${esc(it.label)}</span></li>`).join('')}</ol></nav>`; },
   /* Chip status del DS: es de solo lectura y lleva role="status" (Chip.tsx) */
