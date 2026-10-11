@@ -98,6 +98,8 @@
 .cte .card-h { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
 .cte .card-h .ttl { display:flex; flex-direction:column; gap:4px; }
 .cte .divider { height:1px; background:var(--ds-border); border:0; margin:0; }
+/* dentro de una tarjeta la línea va de orilla a orilla (como las secciones de Cliente nuevo): se come el padding de 24 */
+.cte .card > .divider { margin:0 -24px; }
 /* tarjeta lavanda del avance: sin borde y con la misma Card-shadow que las demás (antes iba sin sombra) */
 .cte .wash { background:var(--color-primary-50); box-shadow:var(--ds-shadow-card); }
 .cte .stack { display:flex; flex-direction:column; gap:16px; min-width:0; }

@@ -43,6 +43,8 @@ const SUCURSALES = [
 ];
 
 // ---------- Clientes (datos ficticios para el prototipo) ----------
+// fotos de algunos clientes (por NUC): retratos generados con IA, no son personas reales; el resto conserva sus iniciales (DS Avatar)
+const FOTOS = { 1131: 'mariana', 1129: 'luis', 1127: 'anasofia', 1124: 'jorge', 1120: 'daniela', 1118: 'carlos', 1112: 'miguel', 1109: 'fernanda', 1101: 'paola', 1098: 'hector', 1094: 'gabriela', 1083: 'andres' };
 const CLIENTES = [
   ['Mariana', 'Gómez Ruiz', 1131, 'Mexicana', 'mariana.gomez@ejemplo.com', '5512345678', 'Excelente'],
   ['Luis Alberto', 'Hernández Soto', 1129, 'Mexicana', 'luis.hdz@ejemplo.com', '8187654321', 'Bueno'],
@@ -64,7 +66,7 @@ const CLIENTES = [
   ['Tomás', 'Delgado Paz', 1076, 'Mexicana', 'tomas.dp@ejemplo.com', '6671239876', 'Regular'],
   ['Ximena', 'Cabrera Luna', 1072, 'Mexicana', 'ximena.cl@ejemplo.com', '4441234567', 'Nuevo'],
   ['Diego', 'Santos Ibarra', 1069, 'Mexicana', 'diego.si@ejemplo.com', '8711239876', 'Bueno'],
-].map((r, i) => ({ id: 'c' + r[2], name: r[0], last: r[1], nuc: r[2], nat: r[3], email: r[4], phone: r[5], score: r[6] }));
+].map((r, i) => ({ id: 'c' + r[2], name: r[0], last: r[1], nuc: r[2], nat: r[3], email: r[4], phone: r[5], score: r[6], foto: FOTOS[r[2]] }));
 
 const RED_EMPRESAS = ['Empeños del Río', 'Monte Cristo', 'Prestamos Norte', 'Casa Lux', '—'];
 const RED = Array.from({ length: 36 }, (_, i) => {
@@ -155,6 +157,8 @@ function hl(text, q) {
   return esc(text.slice(0, i)) + `<strong class="hlq">${esc(text.slice(i, i + q.length))}</strong>` + esc(text.slice(i + q.length));
 }
 const initials = c => (c.name[0] + (c.last[0] || '')).toUpperCase();
+// contenido del DS Avatar: la foto del cliente si la tiene, si no sus iniciales
+const avatar = c => c.foto ? `<img src="assets/clientes/${c.foto}.jpg" alt="" width="64" height="64" loading="lazy">` : initials(c);
 function scoreTag(s) { return s === 'Nuevo' ? '<span class="cap">Cliente nuevo</span>' : `<span class="stag ${SCORE_TAG[s] || 'gray'}">${esc(s)}</span>`; }
 function cliLoad() { st.cli.loading = true; st.cli.page = 1; render(); clearTimeout(cliLoad.t); cliLoad.t = setTimeout(() => { st.cli.loading = false; render(); }, 380); }
 // pestañas de sesión al pie, iguales a las de ../inventario/ (Figma: Top Container · "Ventana principal" + "+")
@@ -176,7 +180,7 @@ function clientsScreen() {
   const head = `<thead><tr><th>Cliente</th><th>Nacionalidad</th><th>Correo electrónico</th><th>Teléfono</th><th>Score</th>${red ? '<th>Casa de empeño</th>' : ''}<th class="ib"><span class="sr">Acciones</span></th></tr></thead>`;
   const skel = Array.from({ length: Math.min(PER_PAGE, Math.max(3, slice.length)) }, () => `<tr>${Array.from({ length: ncol - 1 }, () => '<td class="load"><span class="shim"></span></td>').join('')}<td class="ib"></td></tr>`).join('');
   const rowsH = slice.map(x => `<tr class="crow ${x.id === c.fresh ? 'fresh' : ''}" data-act="cliopen" data-v="${x.id}" tabindex="0" aria-label="Ver ${esc(x.name + ' ' + x.last)}">
-      <td class="user"><div class="u"><span class="avatar">${initials(x)}</span><div class="tx"><p class="m">${hl(x.name + ' ' + x.last, c.q)}${x.id === c.fresh ? ' <span class="stag green">Nuevo</span>' : ''}</p><p class="d">${red ? 'NUC en su casa' : 'NUC'}: ${hl(String(x.nuc), c.q)}</p></div></div></td>
+      <td class="user"><div class="u"><span class="avatar${x.foto ? ' foto' : ''}">${avatar(x)}</span><div class="tx"><p class="m">${hl(x.name + ' ' + x.last, c.q)}${x.id === c.fresh ? ' <span class="stag green">Nuevo</span>' : ''}</p><p class="d">${red ? 'NUC en su casa' : 'NUC'}: ${hl(String(x.nuc), c.q)}</p></div></div></td>
       <td>${esc(x.nat)}</td>
       <td class="mail" title="${esc(x.email)}">${hl(x.email, c.q)}</td>
       <td class="num">${hl(x.phone, c.q)}</td>
@@ -380,7 +384,7 @@ function clientProfileScreen() {
     <div class="cli-head"><h1 class="cli-title">Perfil de cliente</h1></div>
     <section class="cp-card cp-head">
       <div class="cp-top">
-        <span class="cp-av">${initials(c)}</span>
+        <span class="cp-av${c.foto ? ' foto' : ''}">${avatar(c)}</span>
         <div class="cp-who">
           <div class="cp-name"><h2>${esc(c.name + ' ' + c.last)}</h2>${c.score === 'Nuevo' ? '<span class="stag gray">Cliente nuevo</span>' : `<span class="stag ${SCORE_TAG[c.score] || 'gray'}">${esc(c.score)}</span>`}</div>
           <ul class="cp-meta">
