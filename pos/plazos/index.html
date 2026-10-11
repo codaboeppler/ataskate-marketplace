@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="../ds/base.css" />
 <link rel="stylesheet" href="../ds/components.css" />
 <link rel="stylesheet" href="../pos.css?v=ux65" />
-<link rel="stylesheet" href="plazos.css?v=3" />
+<link rel="stylesheet" href="plazos.css?v=5" />
 </head>
 <!-- data-plataforma-fija: "admin" para módulos del Administrativo, "op" para el Operativo -->
 <!-- Las "Notas de maqueta" de el equipo están apagadas (Daniel pidió quitarlas); se prenden desde "Estados de la maqueta" › "Mostrar notas de maqueta" -->
@@ -85,8 +85,8 @@
 
 <!-- todo lo que va debajo del header va dentro de .pos-cuerpo (se recorre el ancho del menú fijo) -->
 <div class="pos-cuerpo">
-  <!-- Plazos (maqueta de el equipo, rama del equipo, commits 67a179d82 + 0c4d4b518). ./plazos.js pinta aquí cada pantalla según el hash:
-       #/plazos · #/plazos/nuevo[?sugerencia=] · #/plazos/:id[?tab=] · #/plazos/:id/editar[?copia=1] -->
+  <!-- Plazos (maqueta de el equipo, rama del equipo, commits 67a179d82 + 0c4d4b518 + vista previa d9539b65b). ./plazos.js pinta aquí cada pantalla según el hash:
+       #/plazos · #/plazos/nuevo[?sugerencia=901|902] · #/plazos/:id · #/plazos/:id/editar (ids numéricos) -->
   <main class="pos-main plz" id="main" tabindex="-1"></main>
 </div>
 
@@ -96,17 +96,16 @@
 <div id="modal-root"></div>
 <div class="ds-tooltip" id="tooltip" role="tooltip"></div>
 
-<!-- Herramientas de la maqueta -->
+<!-- Herramientas de la maqueta: ../demo.js las cuelga como otra pestaña del riel izquierdo ("Estados de la maqueta"), igual que en Configura tu empresa -->
 <div class="demo-toggle">
-  <button class="ds-btn ds-btn--secondary" type="button" id="demo-btn" aria-expanded="false" aria-controls="demo-panel">Estados de la maqueta</button>
-  <div class="demo-panel" id="demo-panel" hidden>
+  <div class="demo-panel" id="demo-panel" data-proto-panel="Estados de la maqueta" hidden>
     <p class="demo-panel__title">Solo para revisar la maqueta</p>
     <label class="ds-field"><span class="ds-field__label">Carga de datos</span>
       <select class="ds-select" id="demo-load">
-        <option value="ok">Con datos</option>
-        <option value="loading">Cargando</option>
-        <option value="error">Error al cargar</option>
-        <option value="empty">Sin plazos</option>
+        <option value="data">Con datos</option>
+        <option value="empty">Vacío</option>
+        <option value="slow">Carga lenta</option>
+        <option value="error">Error</option>
       </select>
     </label>
     <label class="ds-field"><span class="ds-field__label">Acciones (guardar, activar, duplicar)</span>
@@ -123,8 +122,8 @@
 
 <script src="../navbar.js?v=3"></script>
 <script src="../menu-op.js?v=11"></script>
-<script src="../demo.js?v=10"></script>
+<script src="../demo.js?v=12"></script>
 <script src="../comentarios.js?v=5"></script>
-<script src="plazos.js?v=3"></script>
+<script src="plazos.js?v=5"></script>
 </body>
 </html>

@@ -10,6 +10,9 @@
      apuntan a los tokens de ../ds/primitives.css y ../pos.css.
    - Layout de Daniel: ancho y padding los da main.pos-main (1440 con 64/24);
      tarjetas sin borde, solo Card-shadow (--pos-shadow-card) y radio 16.
+   - Desde la vista previa d9539b65b: detalle sin pestañas (patrón CompanyDetail),
+     formulario sin AnchorMenu ni barra fija y piezas nuevas del DS (FormTree,
+     DobleInput, AutoMultiSelect, ButtonSelect, Chip informativa de 35).
    ========================================================================== */
 .plz {
   /* colors.* (mismo hex que su maqueta; alias de los tokens de ../ds y ../pos.css) */
@@ -60,7 +63,7 @@
   --plz-menu: 244px;
 }
 
-/* al saltar a una sección (AnchorMenu) el título no queda bajo el header ni bajo la barra de secciones */
+/* al llevar el foco a una card con error (scrollIntoView block "start") el título no queda bajo el header */
 html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 /* route() enfoca el <main> en cada pantalla (lectores de pantalla); sin anillo alrededor de todo el contenido */
 .pos-main.plz:focus { outline: none; }
@@ -90,7 +93,7 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 /* ==========================================================================
    Tipografía (typography.*)
    ========================================================================== */
-.plz .t-titulo-pagina { font-size: 28px; line-height: 33.6px; font-weight: 700; color: var(--text-title); }
+/* el título de página (.t-titulo-pagina) lo da ../pos.css (28/34 a 500): aquí no se sobreescribe */
 .plz .t-titulos { font-size: 24px; line-height: 28.8px; font-weight: 600; color: var(--text-title); }
 .plz .t-subtitulos { font-size: 20px; line-height: 24px;   font-weight: 600; color: var(--text-title); }
 .plz .t-texto-bold { font-size: 16px; line-height: 19.2px; font-weight: 600; color: var(--text-body); letter-spacing: .3px; }
@@ -155,7 +158,6 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 .plz .ds-spinner--sm { width: 24px; height: 24px; border-width: 2px; }
 .plz .ds-spinner--white { border-color: rgba(255,255,255,.3); border-top-color: #FFFFFF; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.plz .state-loading { display: flex; flex-direction: column; align-items: center; gap: var(--sp-16); padding: var(--sp-48) var(--sp-16); }
 
 /* ==========================================================================
    DS · Breadcrumb
@@ -168,7 +170,7 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 .plz .ds-field { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
 .plz .ds-field__label {
   display: flex; gap: var(--sp-4); padding: 0 var(--sp-8);
-  font-size: 14px; line-height: 16.8px; font-weight: 400; color: var(--text-title);
+  font-size: 14px; line-height: 16.8px; font-weight: 500; color: var(--text-title); /* TextInput del DS: 14 a 500 */
 }
 .plz .ds-field__optional { color: var(--neutral500); }
 .plz .ds-input, .plz .ds-select {
@@ -191,6 +193,7 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 .plz .ds-input-wrap > .ds-input { padding-right: 40px; }
 .plz .ds-input-wrap > .ds-input__icon { position: absolute; right: 12px; top: 10px; width: 20px; height: 20px; color: var(--purple200); pointer-events: none; }
 .plz .ds-help { padding: 2px var(--sp-8); font-size: 14px; line-height: 1.4; color: var(--text-captions); }
+.plz .ds-help:empty { display: none; }
 .plz .ds-error { display: flex; align-items: flex-start; gap: var(--sp-4); padding: 2px var(--sp-8); font-size: 14px; line-height: 1.4; color: var(--error-icon); }
 .plz .ds-error svg { width: 16px; height: 16px; margin-top: 2px; }
 .plz .ds-error:empty { display: none; }
@@ -256,31 +259,16 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 .plz .ds-search__opt-label { font-size: 16px; line-height: 19.2px; font-weight: 400; letter-spacing: .3px; overflow-wrap: anywhere; }
 .plz .ds-search__opt-label strong { font-weight: 600; }
 .plz .ds-search__opt-desc { font-size: 12px; line-height: 12px; font-weight: 400; color: var(--text-captions); overflow-wrap: anywhere; }
-.plz .ds-search__skeleton { display: flex; flex-direction: column; gap: var(--sp-8); padding: var(--sp-8) var(--sp-16); }
-.plz .ds-search__skeleton span {
-  display: block; height: 16px; border-radius: var(--r-xs);
-  background: linear-gradient(90deg, var(--neutral200) 25%, var(--neutral100) 50%, var(--neutral200) 75%);
-  background-size: 200% 100%; animation: plz-search-skeleton 1.5s ease-in-out infinite;
-}
-.plz .ds-search__skeleton span:nth-child(2) { width: 82%; }
-.plz .ds-search__skeleton span:nth-child(3) { width: 68%; }
-@keyframes plz-search-skeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-@media (prefers-reduced-motion: reduce) { .plz .ds-search__skeleton span { animation: none; background-position: 0 0; } }
 .plz .ds-search__empty { display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: flex-start; gap: var(--sp-12); padding: var(--sp-8) var(--sp-16); }
 .plz .ds-search__empty > svg { width: 24px; height: 24px; color: var(--warning-icon); }
 .plz .ds-search__empty > span { display: flex; flex-direction: column; gap: var(--sp-8); }
 .plz .ds-search__empty strong { font-size: 16px; line-height: 19.2px; font-weight: 600; color: var(--warning-title); }
 .plz .ds-search__empty > span > span { font-size: 16px; line-height: 19.2px; font-weight: 400; color: var(--text-body); }
 
-/* Campo con unidad: número + select en la misma fila */
-.plz .field-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-16); }
-.plz .field-row--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.plz .field-combo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-8); }
-
 /* ==========================================================================
    DS · Switch / Checkbox / Radio
    ========================================================================== */
-.plz .ds-switch { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; line-height: 16.8px; letter-spacing: .3px; color: var(--text-title); }
+.plz .ds-switch { position: relative; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; line-height: 16.8px; letter-spacing: .3px; color: var(--text-title); }
 .plz .ds-switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .plz .ds-switch__track {
   position: relative; width: 48px; height: 24px; border-radius: var(--r-pill); flex-shrink: 0;
@@ -301,6 +289,9 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 .plz .ds-switch:hover .ds-switch__knob { background: var(--button-icon); }
 .plz .ds-switch:hover input:checked + .ds-switch__track .ds-switch__knob { background: var(--button-link); }
 .plz .ds-switch input:focus-visible + .ds-switch__track { outline: 2px solid var(--button-primary); outline-offset: 2px; }
+/* Switch labelPosition="top" (modal de interés): etiqueta 14 a 500 arriba, 6 de separación */
+.plz .ds-switch--top { flex-direction: column; align-items: flex-start; gap: 6px; }
+.plz .ds-switch__toplabel { font-size: 14px; line-height: 1.2; font-weight: 500; letter-spacing: .3px; color: var(--text-title); }
 
 .plz .ds-check, .plz .ds-radio { position: relative; display: inline-flex; gap: var(--sp-4); cursor: pointer; font-size: 14px; line-height: 16.8px; color: var(--text-body); }
 .plz .ds-check { align-items: flex-start; }
@@ -322,6 +313,7 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 .plz .ds-check[data-error="true"] .ds-check__box { border-color: var(--error-icon); }
 .plz .ds-check__text { display: flex; flex-direction: column; gap: var(--sp-4); padding-top: 2px; }
 .plz .ds-check__sub { font-size: 12px; line-height: 12px; color: var(--text-captions); }
+.plz .ds-check--lg { font-size: 16px; line-height: 19.2px; letter-spacing: .3px; } /* Checkbox labelSize="large" */
 
 .plz .ds-radio__circle {
   width: 20px; height: 20px; flex-shrink: 0; border-radius: 50%;
@@ -335,10 +327,6 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 .plz .ds-radio input:checked + .ds-radio__circle::after { transform: scale(1); }
 .plz .ds-radio input:focus-visible + .ds-radio__circle { outline: 2px solid var(--button-primary); outline-offset: 2px; }
 .plz .ds-radio[data-error="true"] .ds-radio__circle { border-color: var(--error-icon); }
-.plz .radio-group { display: flex; flex-direction: column; gap: var(--sp-16); }
-.plz .radio-option { display: flex; flex-direction: column; gap: var(--sp-4); }
-.plz .radio-option__sub { padding-left: 24px; font-size: 12px; line-height: 12px; color: var(--text-captions); }
-.plz .check-group { display: flex; flex-wrap: wrap; gap: var(--sp-12) var(--sp-24); }
 
 /* ==========================================================================
    DS · Chips (status, informativa tabla, filter) · TableFilterChip
@@ -358,6 +346,14 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 }
 .plz .chip-info--blue { background: var(--info-surface); }
 .plz .chip-info--gray { background: var(--neutral200); }
+/* Chip informativa grande del DS (chip.styles.ts isInformativa): 35 de alto, radio 8, padding 0 8, 16/1.2 */
+.plz .chip-inf {
+  display: inline-flex; align-items: center; gap: var(--sp-4); height: 35px; padding: 0 var(--sp-8); box-sizing: border-box;
+  border-radius: var(--r-sm); font-size: 16px; line-height: 1.2; font-weight: 400; color: var(--text-body); white-space: nowrap;
+}
+.plz .chip-inf--blue { background: var(--info-surface); }     /* informativa-blue: "Sugerido" y contadores de Segmentación */
+.plz .chip-inf--gray { background: var(--border-default); }   /* informativa-gray: valores de Cliente objetivo */
+.plz .chip-inf--purple { background: var(--purple100); }      /* informativa-purple: tasa de la Simulación */
 
 .plz .chip-filter {
   display: inline-flex; align-items: center; gap: var(--sp-8); height: 36px; padding: var(--sp-8);
@@ -417,16 +413,6 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
   background: var(--purple50); border: 1px solid var(--purple200); color: var(--text-body); font-weight: 600; letter-spacing: 0;
 }
 
-.plz .ds-tabs { display: flex; flex-direction: row; gap: 0; height: 40px; border-bottom: 1.2px solid var(--border-default); overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
-.plz .ds-tabs::-webkit-scrollbar { display: none; }
-.plz .ds-tabs__tab {
-  display: block; flex-shrink: 0; height: 40px; padding: var(--sp-8) var(--sp-16); margin-bottom: -1.2px;
-  font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--text-body); white-space: nowrap;
-  border-bottom: 1.2px solid transparent; transition: color .15s, border-color .15s;
-}
-.plz .ds-tabs__tab:hover { color: var(--button-primary); border-bottom-color: var(--button-primary); }
-.plz .ds-tabs__tab[aria-selected="true"] { color: var(--button-primary); font-weight: 600; letter-spacing: normal; border-bottom-color: var(--button-primary); }
-
 /* ==========================================================================
    DS · Tree (árbol con nodos) y FormTree
    ========================================================================== */
@@ -451,18 +437,34 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 .plz .ds-tree__title { font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--text-title); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .plz .ds-tree__meta { font-size: 12px; line-height: 12px; color: var(--text-placeholder); white-space: nowrap; }
 
-.plz .ds-formtree { display: flex; flex-direction: column; gap: var(--sp-8); }
+/* FormTree del DS (formTree.styles.ts + TreeItem variant="card"): buscador con ampliar, lista gris con
+   "Seleccionar todas…" y nodos blancos de 56 con sangría 8 o 18 + 20 × nivel */
+.plz .ds-formtree { display: flex; flex-direction: column; gap: var(--sp-8); width: 100%; min-width: 0; }
 .plz .ds-formtree__label { font-size: 16px; line-height: 19.2px; font-weight: 600; color: var(--text-title); }
-.plz .ds-formtree__box { display: flex; flex-direction: column; gap: var(--sp-8); padding: var(--sp-16); background: var(--surface-empty); border-radius: var(--r-sm); }
-.plz .ds-formtree__box[data-error="true"] { box-shadow: inset 0 0 0 1px var(--error-icon); }
-.plz .ds-formtree__all {
-  display: flex; align-items: center; justify-content: space-between; gap: var(--sp-8);
-  min-height: 56px; padding: var(--sp-8) var(--sp-16); background: var(--surface-card); border-radius: var(--r-sm);
+.plz .ds-formtree__search-row { display: flex; align-items: center; gap: var(--sp-16); width: 100%; }
+.plz .ds-formtree__search { flex: 1 1 auto; min-width: 0; }
+.plz .ds-formtree__divider { width: 1px; height: 24px; flex-shrink: 0; background: var(--border-default); }
+.plz .ds-formtree__search-row .ds-icon-btn svg { width: 24px; height: 24px; }
+.plz .ds-formtree__list { display: flex; flex-direction: column; gap: var(--sp-8); padding: var(--sp-16); box-sizing: border-box; background: var(--surface-empty); border-radius: var(--r-sm); overflow-y: auto; }
+.plz .ds-formtree__all { display: flex; align-items: center; min-height: 56px; padding: var(--sp-8) var(--sp-8) var(--sp-8) 44px; box-sizing: border-box; background: var(--surface-card); border-radius: var(--r-sm); }
+.plz .ds-formtree__nodes { display: contents; }
+.plz .ft-node {
+  display: flex; align-items: center; gap: var(--sp-8); width: 100%; min-height: 56px; box-sizing: border-box;
+  padding: var(--sp-8); border-radius: var(--r-sm); background: var(--surface-card); transition: background .15s ease;
 }
-.plz .ds-formtree__list { display: flex; flex-direction: column; gap: 2px; background: var(--surface-card); border-radius: var(--r-sm); padding: var(--sp-8); max-height: 280px; overflow: auto; }
-.plz .ds-formtree__row { display: flex; align-items: center; gap: var(--sp-8); padding: var(--sp-4) var(--sp-8); border-radius: 12px; }
-.plz .ds-formtree__row:hover { background: var(--neutral50); }
-.plz .ds-formtree__row .ds-tree__toggle { color: var(--button-primary); }
+.plz .ft-node:hover { background: var(--neutral50); }
+.plz .ft-node__chev {
+  display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: var(--sp-4); flex-shrink: 0;
+  border-radius: var(--r-pill); background: var(--surface-card); color: var(--button-primary); transition: transform .2s ease;
+}
+.plz .ft-node__chev:hover { background: var(--neutral100); }
+.plz .ft-node__chev[aria-expanded="true"] { transform: rotate(180deg); }
+.plz .ft-node__chev svg { width: 20px; height: 20px; }
+.plz .ft-node__spacer { display: block; width: 28px; flex-shrink: 0; }
+.plz .ft-node__check { display: flex; align-items: center; flex-shrink: 0; padding: 2px; }
+.plz .ft-node__text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.plz .ft-node__label { font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--text-title); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.plz .ft-node__sub { font-size: 12px; line-height: 12px; color: var(--text-placeholder); white-space: nowrap; }
 
 /* ==========================================================================
    DS · Table (borderVariant="neutral") + celdas
@@ -550,7 +552,7 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 .plz .ds-pagination__text { font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--text-body); }
 
 /* ==========================================================================
-   DS · Menú ⋮ (panel del Select) · ButtonSelect
+   DS · Menú ⋮ (panel del Select)
    ========================================================================== */
 .plz .menu-wrap { position: relative; display: inline-flex; }
 .plz .ds-menu {
@@ -558,17 +560,15 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
   background: var(--surface-card); border-radius: var(--r-md); box-shadow: var(--shadow-dropdown);
   display: flex; flex-direction: column; text-align: left;
 }
-.plz .ds-menu--left { right: auto; left: 0; }
 .plz .ds-menu [role="menuitem"] {
   display: flex; align-items: center; gap: var(--sp-8); min-height: 40px; padding: var(--sp-8) var(--sp-16);
   font-size: 14px; line-height: 16.8px; color: var(--text-body); text-align: left; white-space: nowrap;
 }
 .plz .ds-menu [role="menuitem"] svg { width: 20px; height: 20px; color: var(--button-primary); }
-/* menú ⋮ de el equipo (RowMenuPanel / RowMenuOption): 192 de ancho mínimo, opciones de 40 e íconos del color del texto.
-   "Agregar condición" (.ds-menu--left) no cambia. */
-.plz .ds-menu:not(.ds-menu--left) { min-width: 192px; border: 0; }
-.plz .ds-menu:not(.ds-menu--left) [role="menuitem"] { box-sizing: border-box; height: 40px; min-height: 0; }
-.plz .ds-menu:not(.ds-menu--left) [role="menuitem"] svg { color: currentColor; }
+/* menú ⋮ de el equipo (RowMenuPanel / RowMenuOption): 192 de ancho mínimo, opciones de 40 e íconos del color del texto */
+.plz .ds-menu { min-width: 192px; border: 0; }
+.plz .ds-menu [role="menuitem"] { box-sizing: border-box; height: 40px; min-height: 0; }
+.plz .ds-menu [role="menuitem"] svg { color: currentColor; }
 .plz .ds-menu [role="menuitem"]:hover, .plz .ds-menu [role="menuitem"]:focus-visible { background: var(--purple50); outline: 0; }
 .plz .ds-menu [role="menuitem"][aria-disabled="true"] { color: var(--text-placeholder); cursor: not-allowed; background: none; }
 .plz .ds-menu [role="menuitem"][aria-disabled="true"] svg { color: var(--text-placeholder); }
@@ -598,8 +598,10 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 .plz .tip-list { display: flex; flex-direction: column; gap: var(--sp-8); }
 .plz .tip-item { display: flex; flex-direction: column; gap: 2px; }
 .plz .tip-item__name { font-weight: 700; }
-.plz .info-trigger { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--text-placeholder); }
-.plz .info-trigger svg { width: 16px; height: 16px; }
+/* ayuda de los radios de tasa (HelpIcon 20 dentro de un Tooltip) */
+.plz .help-trigger { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--text-body); cursor: help; }
+.plz .help-trigger svg { width: 20px; height: 20px; }
+.plz .help-trigger:focus-visible { outline: 2px solid var(--button-primary); outline-offset: 2px; }
 
 /* ==========================================================================
    DS · Alert · Toast
@@ -640,8 +642,9 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 .plz .ds-toast--success { background: var(--success-surface); } .plz .ds-toast--success > svg { color: var(--success-icon); } .plz .ds-toast--success .ds-toast__title { color: var(--success-title); } .plz .ds-toast--success .ds-toast__timer { background: var(--success-icon); }
 .plz .ds-toast--error { background: var(--error-surface); }   .plz .ds-toast--error > svg { color: var(--error-icon); }     .plz .ds-toast--error .ds-toast__title { color: var(--error-title); }     .plz .ds-toast--error .ds-toast__timer { background: var(--error-icon); }
 
+
 /* ==========================================================================
-   DS · Modal (centrado y lateral)
+   DS · Modal (default 606 y large 800; el lateral ya no se usa)
    ========================================================================== */
 .plz .ds-overlay {
   position: fixed; inset: 0; z-index: 1400; padding: var(--sp-24); /* tapa también el header y el menú lateral */
@@ -650,71 +653,129 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 /* con un modal abierto, las pestañas de flujos y comentarios (../demo.js, ../comentarios.js) quedan por encima, como en la V1 */
 :where(body:has(.plz .ds-overlay)) .demo-rail { z-index: 1401; }
 :where(body:has(.plz .ds-overlay)) .demo-menu { z-index: 1402; }
-.plz .ds-overlay--side { padding: 0; justify-content: flex-end; align-items: stretch; background: rgba(0,0,0,.25); }
 .plz .ds-modal {
-  width: 100%; max-width: 606px; max-height: calc(100vh - 48px);
+  width: 100%; max-width: 606px; max-height: calc(100vh - 48px); box-sizing: border-box;
   display: flex; flex-direction: column; gap: var(--sp-24); padding: var(--sp-24);
   background: var(--surface-card); border-radius: var(--r-lg); box-shadow: 0 10px 60px rgba(0,0,0,.25);
   border: 0; animation: none; overflow: visible; /* ../ds/components.css le pone borde, animación de entrada y overflow */
 }
-.plz .ds-modal--side { max-width: 400px; max-height: none; height: 100vh; border-radius: var(--r-md) 0 0 var(--r-md); }
+.plz .ds-modal--large { max-width: 800px; } /* MODAL_MAX_WIDTH.large: árbol ampliado y tabla de amortización */
 .plz .ds-modal__head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-16); }
 .plz .ds-modal__title { font-size: 24px; line-height: 1.2; font-weight: 600; color: var(--text-body); }
 .plz .ds-modal__x { width: 40px; height: 40px; padding: var(--sp-8); border-radius: 50%; color: var(--text-captions); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .plz .ds-modal__x:hover { background: var(--neutral100); color: var(--text-body); }
 .plz .ds-modal__x svg { width: 24px; height: 24px; }
-.plz .ds-modal--side .ds-modal__x { color: var(--text-body); }
 .plz .ds-modal__body { overflow-y: auto; overflow-x: hidden; padding: 4px; margin: -4px; font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--text-title); display: flex; flex-direction: column; gap: var(--sp-16); }
-.plz .ds-modal--side .ds-modal__body { flex: 1; }
 .plz .modal-copy { display: flex; flex-direction: column; gap: var(--sp-8); }
 .plz .ds-modal__foot { display: flex; justify-content: center; gap: var(--sp-16); }
-.plz .ds-modal--side .ds-modal__foot > .ds-btn { flex: 1; }
+.plz .ds-modal__foot--end { justify-content: flex-end; } /* ModalActions del modal de interés */
 
 /* ==========================================================================
-   DS · AnchorMenu · FixedActionFooter
+   DS · DobleInput (select a la izquierda + input a la derecha, 40 de alto)
    ========================================================================== */
-/* AnchorMenu: control de navegación; el borde, el radio 100 y la sombra son los del DS de QA (verificado 2026-10-09) */
-.plz .ds-anchor {
-  display: inline-flex; align-items: center; gap: 0; max-width: 100%; overflow-x: auto; height: 45px; padding: 0 var(--sp-4);
-  background: var(--surface-card); border: 1px solid var(--border-default); border-radius: var(--r-pill); box-shadow: 0 2px 7px rgba(0,0,0,.1);
-  scrollbar-width: none;
+.plz .ds-doble { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
+.plz .ds-doble__row { display: flex; align-items: flex-end; }
+.plz .ds-doble__side { display: flex; flex-direction: column; gap: var(--sp-4); align-items: stretch; flex: 1; min-width: 0; }
+.plz .ds-doble__label { padding: 2px var(--sp-8); font-size: 14px; line-height: 1.2; font-weight: 500; letter-spacing: .3px; color: var(--text-title); }
+.plz .ds-doble__box {
+  display: flex; align-items: center; width: 100%; height: 40px; box-sizing: border-box; overflow: hidden;
+  border: 1px solid var(--border-default); background: var(--surface-card); transition: border-color .15s;
 }
-.plz .ds-anchor::-webkit-scrollbar { display: none; }
-.plz .ds-anchor a {
-  flex-shrink: 0; padding: 14px var(--sp-16); border-radius: var(--r-pill); line-height: 1;
-  font-size: 16px; color: var(--text-body); text-decoration: none; white-space: nowrap; transition: background-color .15s, color .15s;
+.plz .ds-doble__box--left { border-right: 0; border-radius: var(--r-pill) 0 0 var(--r-pill); }
+.plz .ds-doble__box--right { border-left: 0; border-radius: 0 var(--r-pill) var(--r-pill) 0; }
+.plz .ds-doble__divider { position: relative; z-index: 1; width: 1px; height: 40px; flex-shrink: 0; align-self: flex-end; background: var(--border-default); transition: background-color .15s; }
+/* activo: cualquiera de las dos mitades con foco o la lista abierta */
+.plz .ds-doble__row:focus-within .ds-doble__box, .plz .ds-doble__row:has([aria-expanded="true"]) .ds-doble__box { border-color: var(--border-active); }
+.plz .ds-doble__row:focus-within .ds-doble__divider, .plz .ds-doble__row:has([aria-expanded="true"]) .ds-doble__divider { background: var(--border-active); }
+.plz .ds-doble[data-error="true"] .ds-doble__box { border-color: var(--error-icon); }
+.plz .ds-doble[data-error="true"] .ds-doble__divider { background: var(--error-icon); }
+.plz .ds-doble__trigger {
+  display: flex; align-items: center; gap: 6px; width: 100%; height: 100%; padding: 0 var(--sp-12);
+  font-size: 16px; letter-spacing: .3px; color: var(--text-body); white-space: nowrap;
 }
-.plz .ds-anchor a:hover { background: var(--purple50); color: var(--button-link); }
-.plz .ds-anchor a[aria-current="true"] { padding: var(--sp-8) var(--sp-16); line-height: 19.2px; background: var(--purple50); color: var(--button-link); font-weight: 600; }
+.plz .ds-doble__trigger:focus-visible { outline: 0; } /* el foco se ve en el borde del campo */
+.plz .ds-doble__value { flex: 1; min-width: 0; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.plz .ds-doble__chev { width: 16px; height: 16px; transition: transform .15s; }
+.plz .ds-doble__trigger[aria-expanded="true"] .ds-doble__chev { transform: rotate(180deg); }
+.plz .ds-doble__input {
+  flex: 1; min-width: 0; height: 100%; padding: 0 var(--sp-12); border: 0; outline: 0; background: transparent;
+  font-size: 16px; letter-spacing: .3px; color: var(--text-body);
+}
+.plz .ds-doble__input::placeholder { color: var(--text-placeholder); }
+.plz .ds-doble__help { display: flex; align-items: center; gap: var(--sp-4); padding: 0 var(--sp-8); font-size: 12px; color: var(--error-icon); }
+.plz .ds-doble__help:empty { display: none; }
+.plz .ds-doble__help svg { width: 16px; height: 16px; }
+/* lista del DobleInput: 4 px debajo, radio 16, opciones de padding 8 y la elegida en #E5E5FF */
+.plz .ds-listbox--doble { padding: 0; border-radius: var(--r-md); box-shadow: 0 11px 26.6px rgba(0,0,0,.06); }
+.plz .ds-listbox--doble [role="option"] { min-height: 0; padding: var(--sp-8); font-size: 16px; line-height: 1.2; color: var(--text-body); }
 
-.plz .ds-footer {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; /* bajo el header (30) y el menú lateral (35) */
-  background: var(--purple10); backdrop-filter: blur(4px); box-shadow: var(--shadow-popup);
+/* ==========================================================================
+   DS · ButtonSelect (menú de "Agregar condición")
+   ========================================================================== */
+.plz [data-add-cond] svg { transition: transform .2s ease; }
+.plz [data-add-cond][aria-expanded="true"] svg { transform: rotate(180deg); }
+.plz .ds-btnselect-menu {
+  position: fixed; z-index: 1410; box-sizing: border-box; min-width: 160px; margin: 0; padding: var(--sp-8) 0; overflow-y: auto;
+  background: var(--surface-card); border-radius: var(--r-sm); box-shadow: 0 4px 16px rgba(0,0,0,.12); outline: none;
 }
-/* con el menú lateral fijo abierto, la barra empieza en su borde */
-@media (min-width: 901px) { .pos-menu-fijo:not(.is-menu-cerrado) .plz .ds-footer { left: var(--plz-menu); } }
-.plz .ds-footer__inner {
-  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--sp-16);
-  box-sizing: border-box; max-width: 1440px; min-height: 68px; margin: 0 auto; padding: var(--sp-16) var(--sp-64);
+.plz .ds-btnselect-menu [role="menuitem"] {
+  display: flex; align-items: center; min-height: 36px; padding: var(--sp-8) var(--sp-16); box-sizing: border-box;
+  font-size: 16px; line-height: 19.2px; color: var(--text-body); white-space: nowrap; cursor: pointer; outline: 0;
 }
-.plz .ds-footer__lead { grid-column: 2; font-size: 16px; line-height: 19.2px; letter-spacing: .3px; color: var(--text-body); text-align: center; }
-.plz .ds-footer__lead strong { font-weight: 600; }
-.plz .ds-footer__actions { grid-column: 3; justify-self: end; display: flex; gap: var(--sp-12); }
+.plz .ds-btnselect-menu [role="menuitem"]:hover, .plz .ds-btnselect-menu [role="menuitem"]:focus-visible, .plz .ds-btnselect-menu [role="menuitem"]:focus { background: var(--purple50); }
 
+/* ==========================================================================
+   DS · AutoMultiSelect (chips en una fila, filtro y lista con casillas)
+   ========================================================================== */
+.plz .ds-ams { position: relative; display: flex; flex-direction: column; gap: var(--sp-4); width: 100%; min-width: 0; }
+.plz .ds-ams__labelrow { display: flex; align-items: center; gap: var(--sp-4); padding: 0 var(--sp-8); }
+.plz .ds-ams__labelrow .ds-field__label { padding: 0; letter-spacing: .3px; }
+.plz .ds-ams__labelrow .ds-field__optional { font-size: 14px; }
+.plz .ds-ams__field {
+  display: flex; align-items: center; gap: var(--sp-8); height: 40px; padding: var(--sp-4) var(--sp-12); box-sizing: border-box; overflow: hidden;
+  border: 1px solid var(--border-default); border-radius: 20px; background: var(--surface-card); cursor: text; transition: border-color .2s ease-in-out;
+}
+.plz .ds-ams__field:hover { border-color: var(--border-hover); }
+.plz .ds-ams__field.is-open, .plz .ds-ams__field.is-open:hover { border-color: var(--border-active); }
+.plz .ds-ams__chips { position: relative; display: flex; flex: 1; flex-wrap: nowrap; align-items: center; gap: var(--sp-4); min-width: 0; overflow: hidden; }
+.plz .ds-ams__chip {
+  display: flex; align-items: center; flex-shrink: 0; box-sizing: border-box; max-width: 200px; padding: var(--sp-4) var(--sp-12);
+  border-radius: var(--r-pill); background: var(--border-default); font-size: 14px; line-height: 1.2; color: var(--text-body);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.plz .ds-ams__input { flex: 1; min-width: 24px; padding: 0; border: 0; outline: 0; background: transparent; font-size: 16px; letter-spacing: .3px; color: var(--text-body); }
+.plz .ds-ams__input::placeholder { color: var(--text-placeholder); }
+.plz .ds-ams__chev { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex-shrink: 0; color: var(--text-captions); transition: transform .2s ease; pointer-events: none; }
+.plz .ds-ams__chev svg { width: 24px; height: 24px; }
+.plz .ds-ams__field.is-open .ds-ams__chev { transform: rotate(180deg); }
+.plz .ds-ams-list {
+  position: fixed; z-index: 1410; max-height: 240px; margin: 0; padding: 0; overflow-y: auto;
+  background: var(--surface-card); border-radius: var(--r-md); box-shadow: 0 11px 26.6px rgba(0,0,0,.06);
+}
+.plz .ds-ams-opt { display: flex; align-items: center; gap: var(--sp-8); padding: var(--sp-8); cursor: pointer; transition: background .15s ease; }
+.plz .ds-ams-opt:hover, .plz .ds-ams-opt.is-active { background: var(--purple50); }
+.plz .ds-ams-opt__box {
+  display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; flex-shrink: 0; box-sizing: border-box;
+  border: 1px solid var(--text-placeholder); border-radius: var(--r-xs); background: var(--surface-card); color: var(--button-link);
+}
+.plz .ds-ams-opt[aria-selected="true"] .ds-ams-opt__box { background: var(--purple100); border-color: var(--purple200); }
+.plz .ds-ams-opt__box svg { width: 16px; height: 16px; }
+.plz .ds-ams-opt__text { display: flex; flex: 1; flex-direction: column; gap: 2px; min-width: 0; }
+.plz .ds-ams-opt__label { font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--text-body); white-space: nowrap; }
+.plz .ds-ams-opt__sub { font-size: 12px; line-height: 24px; color: var(--text-placeholder); white-space: nowrap; }
 
 /* ==========================================================================
    Layout de pantallas (composición; solo tokens del DS)
    ========================================================================== */
 /* sin max-width ni padding lateral propios: los da main.pos-main (1440 con 64 a los lados; 24 a 900 px o menos) */
 .plz .page { display: flex; flex-direction: column; padding-bottom: var(--sp-32); }
-.plz .page--form { padding-bottom: calc(68px + var(--sp-32)); }
 .plz .page > .ds-breadcrumb { margin-bottom: var(--sp-8); }
-.plz .title-row { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-16); flex-wrap: wrap; margin-bottom: var(--sp-16); }
-.plz .title-row__text { display: flex; flex-direction: column; gap: var(--sp-8); min-width: 0; }
-.plz .title-row__heading { display: flex; align-items: center; gap: var(--sp-12); flex-wrap: wrap; }
-.plz .title-row__actions { display: flex; align-items: center; gap: var(--sp-8); }
+.plz .title-row { min-height: 36px; display: flex; align-items: center; justify-content: space-between; gap: var(--sp-16); flex-wrap: wrap; margin-bottom: var(--sp-16); }
+.plz .title-row__heading { display: flex; align-items: center; gap: var(--sp-12); flex-wrap: wrap; min-width: 0; }
+.plz .title-row__actions { display: flex; align-items: center; gap: var(--sp-16); flex-wrap: wrap; }
 .plz .stack { display: flex; flex-direction: column; gap: var(--sp-16); }
 .plz .stack-24 { display: flex; flex-direction: column; gap: var(--sp-24); }
+.plz .stack-8 { display: flex; flex-direction: column; gap: var(--sp-8); }
 /* listado: 24 entre el encabezado, la card del listado y la de sugeridos (PageMain) */
 .plz .title-row--list { margin-bottom: var(--sp-16); }   /* 16 del título al contenido, como en Inventario; entre bloques sigue a 24, como en su código */
 
@@ -723,10 +784,7 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
   background: var(--surface-card); border-radius: var(--r-md); box-shadow: var(--shadow-card);
 }
 .plz .card--pad { padding: var(--sp-24); }
-.plz .card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--sp-16); flex-wrap: wrap; }
-.plz .card__titles { display: flex; flex-direction: column; gap: var(--sp-4); }
-.plz .section-sub { font-size: 16px; line-height: 19.2px; font-weight: 600; color: var(--text-title); letter-spacing: .3px; }
-.plz .divider { height: 1px; background: var(--border-default); border: 0; margin: 0; }
+.plz .divider { width: 100%; height: 1px; background: var(--border-default); border: 0; margin: 0; flex-shrink: 0; }
 
 /* Listado (ListCard): árbol y tabla en una sola card de al menos el 70 % del alto de la ventana.
    Sin overflow hidden, para no recortar la lista del chip de filtro; radio 16 y Card-shadow de .card. */
@@ -758,71 +816,109 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 .plz .sug-head { display: flex; flex-direction: column; gap: var(--sp-8); }
 /* notas de maqueta agrupadas: el grupo se va con ellas */
 body:not(.show-notes) .plz .design-notes { display: none; }
-.plz .state-error { padding: var(--sp-16); }
-.plz .empty {
-  display: flex; flex-direction: column; align-items: center; gap: var(--sp-16); text-align: center;
-  padding: var(--sp-48) var(--sp-24);
+
+/* Detalle (PreviewInstallmentDetail): DetailLayout 3fr/2fr, PairRow, cards con su h2 y un hr */
+.plz .detail-layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); align-items: start; gap: var(--sp-24); width: 100%; }
+.plz .detail-col { display: flex; flex-direction: column; gap: var(--sp-24); min-width: 0; }
+.plz .pair-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; gap: var(--sp-24); }
+.plz .dcard { display: flex; flex-direction: column; gap: var(--sp-16); padding: var(--sp-24); box-sizing: border-box; min-width: 0; }
+.plz .dcard__head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--sp-16); }
+.plz .loading-box { display: flex; flex-direction: column; align-items: center; gap: var(--sp-8); padding: var(--sp-24); }
+/* ViewField: caption + valor 16/19.2 en #1D1E20 */
+.plz .view-field { display: flex; flex-direction: column; gap: var(--sp-4); padding: 0 var(--sp-8); min-width: 0; overflow-wrap: anywhere; }
+.plz .view-field__value { font-size: 16px; line-height: 19.2px; font-weight: 400; letter-spacing: .3px; color: var(--text-title); }
+/* FieldsGrid: 3 columnas, 24 entre filas y 16 entre columnas */
+.plz .fields-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-24) var(--sp-16); }
+.plz .chip-row { display: flex; flex-wrap: wrap; gap: var(--sp-8); }
+.plz .seg-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-24); }
+.plz .seg-group { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-8); min-width: 0; }
+.plz .seg-heading { display: flex; align-items: center; gap: var(--sp-8); }
+.plz .seg-list { display: flex; flex-direction: column; gap: var(--sp-8); width: 100%; }
+.plz .seg-item { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+/* PreviewTruncatedName: una línea con elipsis; si se corta, el envoltorio toma foco y tooltip */
+.plz .trunc { min-width: 0; max-width: 100%; border-radius: var(--r-xs); }
+.plz .trunc:focus-visible { outline: 2px solid var(--border-active); outline-offset: 2px; }
+.plz .trunc__text { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 16px; line-height: 19.2px; letter-spacing: .3px; color: var(--text-title); }
+
+/* Formulario (PreviewInstallmentForm): FormPage 1fr/400 con gap 16; la simulación sticky arranca alineada
+   con "Detalles del plazo" porque el breadcrumb y el título quedan fuera del grid */
+.plz .form-aviso { margin-bottom: var(--sp-16); }
+.plz .form-page { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: var(--sp-16); align-items: start; }
+.plz .form-main { display: flex; flex-direction: column; gap: var(--sp-24); min-width: 0; }
+.plz .form-sim { position: sticky; top: calc(var(--pos-header-h, 60px) + var(--sp-24)); margin-top: 0; min-width: 0; }
+/* FormCard: gap 24, padding 24, sin borde */
+.plz .fcard { display: flex; flex-direction: column; gap: var(--sp-24); padding: var(--sp-24); box-sizing: border-box; min-width: 0; }
+.plz .fcard__head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-16); }
+.plz .fcard__heading { display: flex; flex-direction: column; gap: var(--sp-8); min-width: 0; }
+.plz .fblock { display: flex; flex-direction: column; gap: var(--sp-16); width: 100%; }
+.plz .fblock--tight { gap: var(--sp-8); }
+.plz .row3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: var(--sp-16); }
+.plz .row2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: var(--sp-16); }
+.plz .inline-row { display: flex; align-items: center; flex-wrap: wrap; gap: var(--sp-8); }
+.plz .narrow { width: 256px; max-width: 100%; }
+/* "Fin de vigencia" alineado con el input (24) y la X de 28 centrada con el input (28) */
+.plz .end-add { display: flex; align-items: flex-start; padding-top: 24px; }
+.plz .end-row { display: flex; align-items: flex-start; gap: var(--sp-4); min-width: 0; }
+.plz .end-row > :first-child { flex: 1; min-width: 0; }
+.plz .end-row__x { display: flex; padding-top: 28px; }
+/* DobleField: se sube 4 px para alinear su campo con los TextInput de la misma fila */
+.plz .doble-field { margin-top: -4px; min-width: 0; }
+.plz .switch-row { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-16); }
+.plz .switch-label { cursor: pointer; font-size: 16px; line-height: 19.2px; letter-spacing: .3px; color: var(--text-body); }
+.plz .age-row { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: start; gap: var(--sp-8); }
+.plz .age-row__sep { padding-top: var(--sp-8); }
+.plz .t-caption.field-alert { color: var(--error-title); } /* PreviewFieldError: caption en colors.errorTitle */
+.plz .ds-table--rangos td { padding-top: var(--sp-8); padding-bottom: var(--sp-8); }
+.plz .ds-table--rangos { min-width: 420px; }
+.plz .ds-table--amort { min-width: 640px; } /* AMORTIZATION_MIN_WIDTH: hace scroll dentro del modal */
+/* intereses: lista gris con ítems blancos de radio 16 y Card-shadow */
+.plz .interest-list { display: flex; flex-direction: column; gap: var(--sp-8); padding: var(--sp-16); border-radius: var(--r-sm); background: var(--neutral50); }
+.plz .interest-item { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-8); padding: var(--sp-16); border-radius: var(--r-md); background: var(--surface-card); box-shadow: var(--shadow-card); }
+.plz .interest-text { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
+.plz .interest-name { overflow-wrap: anywhere; }
+.plz .interest-ok, .plz .interest-no { display: inline-flex; }
+.plz .interest-ok svg, .plz .interest-no svg { width: 16px; height: 16px; }
+.plz .interest-ok { color: var(--success-icon); }
+.plz .interest-no { color: var(--text-captions); }
+.plz .actions-inline { display: flex; align-items: center; gap: var(--sp-4); flex-shrink: 0; }
+/* condición de refinanciamiento (ConditionItem / ConditionBody) */
+.plz .condition { display: flex; flex-direction: column; gap: var(--sp-8); padding: var(--sp-16); border-radius: var(--r-md); background: var(--surface-card); box-shadow: var(--shadow-card); }
+.plz .condition__head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-16); }
+.plz .condition__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: var(--sp-16); }
+.plz .condition__ctrl { min-width: 0; }
+/* ButtonsCard: al final de la columna principal, centrada */
+.plz .buttons-card { flex-direction: row; align-items: center; justify-content: center; gap: var(--sp-16); flex-wrap: wrap; }
+/* Simulación del plazo (SimulationTable real) */
+.plz .sim { display: flex; flex-direction: column; gap: var(--sp-16); padding: var(--sp-24); box-sizing: border-box; }
+.plz .sim__title { display: flex; flex-direction: column; gap: var(--sp-4); }
+.plz .minmax { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-12); padding: var(--sp-12) var(--sp-16); border-radius: var(--r-sm); background: var(--neutral50); }
+.plz .minmax__item { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
+.plz .minmax__value { font-size: 16px; line-height: 19.2px; font-weight: 600; letter-spacing: .3px; color: var(--text-title); overflow-wrap: anywhere; }
+.plz .sim__simulate { display: flex; flex-direction: column; gap: var(--sp-8); }
+.plz .rate-line { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-8); padding: 0 var(--sp-8); }
+.plz .sim__summary { display: flex; flex-direction: column; }
+.plz .sim__line { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-8); padding: var(--sp-12) var(--sp-8); border-bottom: 1px solid var(--border-default); }
+.plz .sim__line > span:last-child { font-size: 16px; line-height: 19.2px; letter-spacing: .3px; color: var(--text-title); text-align: right; }
+.plz .sim__total {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--sp-8); margin-top: var(--sp-8); padding: var(--sp-12) var(--sp-16);
+  border-radius: var(--r-sm); background: var(--purple50); font-size: 16px; line-height: 19.2px; font-weight: 600; letter-spacing: .3px; color: var(--text-title);
 }
-.plz .empty__msg { font-size: 14px; line-height: 20px; font-weight: 600; color: var(--text-captions); max-width: 420px; }
-.plz .empty__sub { font-size: 14px; line-height: 16.8px; color: var(--text-captions); max-width: 420px; }
-
-/* Detalle */
-.plz .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--sp-16) var(--sp-24); padding: var(--sp-24); }
-.plz .kv { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
-.plz .kv__k { font-size: 12px; line-height: 12px; font-weight: 700; color: var(--text-captions); }
-.plz .kv__v { font-size: 16px; line-height: 19.2px; letter-spacing: .3px; color: var(--text-body); }
-.plz .kv__v small { display: block; margin-top: var(--sp-4); font-size: 12px; line-height: 12px; letter-spacing: 0; color: var(--text-captions); }
-.plz .detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-16); }
-.plz .list-plain { display: flex; flex-direction: column; gap: var(--sp-12); }
-.plz .list-plain li { display: flex; justify-content: space-between; gap: var(--sp-16); font-size: 14px; line-height: 16.8px; }
-.plz .list-plain li span:first-child { color: var(--text-captions); }
-.plz .list-plain li span:last-child { color: var(--text-body); text-align: right; }
-
-/* Formulario */
-.plz .form-layout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: var(--sp-24); align-items: start; }
-.plz .form-anchor { position: sticky; top: var(--plz-top); z-index: 2; margin-bottom: var(--sp-16); }
-.plz .form-cards { display: flex; flex-direction: column; gap: var(--sp-24); }
-.plz .form-card { display: flex; flex-direction: column; gap: var(--sp-16); padding: var(--sp-24); }
-.plz .form-card > .card__titles { margin-bottom: var(--sp-8); }
-.plz .form-block { display: flex; flex-direction: column; gap: var(--sp-16); }
-.plz .form-block + .form-block { padding-top: var(--sp-16); border-top: 1px solid var(--border-default); }
-.plz .switch-row { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-16); flex-wrap: wrap; }
-.plz .ranges { display: flex; flex-direction: column; gap: var(--sp-8); }
-.plz .ranges .ds-table td { padding-top: var(--sp-8); padding-bottom: var(--sp-8); }
-.plz .ranges__from { font-size: 14px; color: var(--text-body); white-space: nowrap; }
-.plz .item-list { display: flex; flex-direction: column; gap: var(--sp-8); }
-.plz .item {
-  display: flex; align-items: center; gap: var(--sp-16); padding: var(--sp-12) var(--sp-16);
-  border-radius: var(--r-md); background: var(--surface-card); box-shadow: var(--shadow-card);
-}
-.plz .item__body { flex: 1; display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
-.plz .item__title { display: flex; align-items: center; gap: var(--sp-8); flex-wrap: wrap; font-size: 16px; line-height: 19.2px; font-weight: 600; color: var(--text-title); letter-spacing: .3px; }
-.plz .item__sub { font-size: 14px; line-height: 16.8px; color: var(--text-captions); }
-.plz .item__actions { display: flex; gap: var(--sp-4); }
-.plz .condition { display: flex; flex-direction: column; gap: var(--sp-12); padding: var(--sp-16); border-radius: var(--r-md); background: var(--surface-card); box-shadow: var(--shadow-card); }
-.plz .condition__head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-8); }
-
-.plz .sim { position: sticky; top: calc(var(--plz-top) + 61px); display: flex; flex-direction: column; gap: var(--sp-16); padding: var(--sp-24); }
-.plz .sim__result { display: flex; flex-direction: column; gap: var(--sp-12); padding: var(--sp-16); background: var(--purple50); border-radius: var(--r-sm); }
-.plz .sim__total { display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-8); padding-top: var(--sp-12); border-top: 1px solid var(--purple100); }
-.plz .sim__total span:first-child { font-size: 16px; font-weight: 600; color: var(--text-title); letter-spacing: .3px; }
-.plz .sim__total span:last-child { font-size: 20px; line-height: 24px; font-weight: 600; color: var(--text-title); }
-.plz .sim .list-plain li span:first-child { color: var(--text-body); }
 
 /* ==========================================================================
    Herramientas de la maqueta (no son producto)
    Panel de estados y notas de diseño. Se quitan al pasar a React.
    ========================================================================== */
-.plz .demo-toggle {
-  position: fixed; left: 16px; bottom: 16px; z-index: 21;
-}
-@media (min-width: 901px) { .pos-menu-fijo:not(.is-menu-cerrado) .plz .demo-toggle { left: calc(var(--plz-menu) + 16px); } }
-body.has-footer .plz .demo-toggle { bottom: 84px; }
+/* el botón flotante pasó a la pestaña "Estados de la maqueta" del riel (../demo.js); el contenedor ya no se posiciona */
+.plz .demo-toggle { position: static; }
 .plz .demo-panel {
   position: absolute; left: 0; bottom: calc(100% + 8px); width: 300px; padding: var(--sp-16);
   display: flex; flex-direction: column; gap: var(--sp-12);
   background: var(--surface-card); border-radius: var(--r-md); box-shadow: var(--shadow-dropdown);
 }
+/* dentro del riel (demo.js le pone .demo-proto): flota bajo el header, no sobre el botón */
+.plz .demo-panel.demo-proto { left: 26px; bottom: auto; display: flex; }
+@media (max-width: 720px) { .plz .demo-panel.demo-proto { left: 20px; } }
+.plz .demo-panel.demo-proto[hidden] { display: none !important; }
 .plz .demo-panel .ds-select { height: 32px; padding: var(--sp-4) 32px var(--sp-4) var(--sp-12); font-size: 14px; letter-spacing: 0; }
 .plz .demo-panel .ds-field__label { padding: 0; }
 .plz .demo-panel__title { font-size: 14px; font-weight: 700; color: var(--text-title); }
@@ -834,29 +930,26 @@ body.has-footer .plz .demo-toggle { bottom: 84px; }
 .plz .design-note::before { content: "Nota de maqueta"; flex-shrink: 0; font-weight: 700; }
 body:not(.show-notes) .plz .design-note { display: none; }
 
-/* Cortes de su maqueta (725 y 992 de la ventana) llevados al área útil del prototipo:
+/* Cortes de la vista previa (por ventana, con padding 24) llevados al área útil del prototipo:
    con el menú lateral fijo (más de 900 px) el área útil es la ventana − 244 − 128 de padding;
    a 900 px o menos el menú es cajón y el área útil es la ventana − 48.
-   - Formulario + Simulación lado a lado desde ~880 px útiles  → ventana ≥ 1252.
-   - Detalle en dos columnas desde ~760 px útiles               → ventana ≥ 1132.
-   - Árbol arriba de la tabla con menos de ~725 px útiles       → ventana ≤ 724, o 901–1096 con el menú fijo.
-   - El árbol abierto ya no se pliega solo: con la tabla de 880 px mínimos, por debajo de ~1604 px de ventana
-     (menú fijo incluido) la tabla hace scroll horizontal dentro de la card. */
-@media (max-width: 1251px) {
-  .plz .form-layout { grid-template-columns: minmax(0, 1fr); }
-  .plz .sim { position: static; }
+   - PairRow y FormPage en 1 columna con ≤1052 útiles                  → ventana ≤ 1424.
+   - DetailLayout en 1 columna y FieldsGrid en 2 con ≤852 útiles      → ventana ≤ 1224.
+   - Row2, Row3 y ConditionBody en 1 columna con ≤652 útiles          → ventana ≤ 700, o 901–1024 con el menú fijo.
+   - FieldsGrid y SegmentColumns en 1 columna con ≤512 útiles         → ventana ≤ 560.
+   - Árbol arriba de la tabla con menos de ~725 px útiles             → ventana ≤ 724, o 901–1096 con el menú fijo.
+   Con el menú fijo: a 1440 (1068 útiles) el detalle va en 2 columnas con PairRow en 2 y el formulario en 2 (principal de 652);
+   a 1280 (908) el detalle sigue en 2 con PairRow en 1 y el formulario en 1. Las tablas hacen scroll dentro de su card o modal. */
+@media (max-width: 1424px) {
+  .plz .pair-row { grid-template-columns: minmax(0, 1fr); }
+  .plz .form-page { grid-template-columns: minmax(0, 1fr); }
+  .plz .form-sim { position: static; margin-top: 0; }
 }
-@media (max-width: 1131px) {
-  .plz .detail-grid { grid-template-columns: minmax(0, 1fr); }
-}
-/* barra fija del formulario: lo que mide la barra (ventana, o ventana − 244 con el menú fijo) */
-@media (max-width: 1144px) {
-  .plz .ds-footer__inner { grid-template-columns: minmax(0, 1fr) auto; }
-  .plz .ds-footer__lead { grid-column: 1; text-align: left; font-size: 14px; }
-  .plz .ds-footer__actions { grid-column: 2; }
+@media (max-width: 1224px) {
+  .plz .detail-layout { grid-template-columns: minmax(0, 1fr); }
+  .plz .fields-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 900px) {
-  .plz .ds-footer__inner { padding-left: var(--sp-24); padding-right: var(--sp-24); }
   /* con el padding de 24 px la lista del chip de filtro abre hacia la izquierda para no salirse de la ventana */
   .plz .ds-filter-chip__list { left: auto; right: 0; }
 }
@@ -868,15 +961,9 @@ body:not(.show-notes) .plz .design-note { display: none; }
   .plz .is-collapsed .tree-panel { padding: var(--sp-8) var(--sp-16); }
   .plz .tree-panel__rail { writing-mode: horizontal-tb; transform: none; justify-content: flex-start; }
 }
-@media (max-width: 724px) {
-  .plz .page--form { padding-bottom: calc(120px + var(--sp-32)); }
-  .plz .field-row, .plz .field-row--3 { grid-template-columns: minmax(0, 1fr); }
-  .plz .form-card { padding: var(--sp-16); }
-  .plz .ds-footer__inner { grid-template-columns: minmax(0, 1fr); padding: var(--sp-12) var(--sp-24); gap: var(--sp-8); }
-  .plz .ds-footer__lead { grid-column: 1; text-align: center; }
-  .plz .ds-footer__actions { grid-column: 1; justify-self: stretch; }
-  .plz .ds-footer__actions .ds-btn { flex: 1; }
-  body.has-footer .plz .demo-toggle { bottom: 136px; }
-  .plz .ds-modal--side { max-width: 100%; border-radius: 0; }
-  .plz .summary { padding: var(--sp-16); }
+@media (max-width: 700px), (min-width: 901px) and (max-width: 1024px) {
+  .plz .row2, .plz .row3, .plz .condition__body { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  .plz .fields-grid, .plz .seg-columns { grid-template-columns: minmax(0, 1fr); }
 }

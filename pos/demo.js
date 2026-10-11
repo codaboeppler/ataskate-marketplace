@@ -153,7 +153,7 @@
     };
     tab2.addEventListener('click', () => (proto.hidden ? abrirP() : cerrarP(true)));
     tab.addEventListener('click', () => cerrarP());
-    document.addEventListener('click', (e) => { if (!proto.hidden && !tab2.contains(e.target) && !proto.contains(e.target)) cerrarP(); });
+    document.addEventListener('click', (e) => { if (!proto.hidden && !tab2.contains(e.target) && !proto.contains(e.target) && !e.target.closest('[role="listbox"], [role="option"]')) cerrarP(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !proto.hidden) cerrarP(true); });
   }
 
