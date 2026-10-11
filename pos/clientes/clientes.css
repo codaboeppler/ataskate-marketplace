@@ -95,7 +95,7 @@
 .cli-title{margin:0;font-size:28px;line-height:34px;font-weight:500;color:#2a2c2f}
 .cli-sub{margin-top:4px;font-size:16px;line-height:19.2px;letter-spacing:.3px;color:var(--cap)}
 .cli-head .acts{display:flex;gap:16px;align-items:center}
-.ctable{background:#fff;border:0;border-radius:16px;box-shadow:var(--shadow-card);padding:8px 24px 24px;display:flex;flex-direction:column;gap:16px}
+.ctable{background:#fff;border:0;border-radius:16px;box-shadow:var(--shadow-card);padding:24px;display:flex;flex-direction:column;gap:16px}
 /* Tabs (DataTable organismo completo) */
 .utabs{display:flex;border-bottom:1px solid var(--border)}
 .utabs button{display:flex;align-items:center;gap:8px;height:40px;padding:8px 16px;border-bottom:1px solid var(--border);margin-bottom:-1px;font-size:16px;letter-spacing:.3px;color:var(--body);white-space:nowrap;transition:color .15s,border-color .15s}
@@ -392,7 +392,7 @@
   .cp-kpis{padding-left:0}
 }
 @media (max-width: 600px){
-  .ctable{padding:8px 16px 16px}
+  .ctable{padding:16px}
   .cp-card{padding:16px}
   .cp-top{flex-wrap:wrap}
   .cp-av{width:48px;height:48px;font-size:16px}
