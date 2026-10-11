@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Ataskate POS — Cliente nuevo</title>
-<meta name="description" content="Ataskate POS (Operativo): alta de cliente nuevo con búsqueda previa, secciones tipo Cotizador, documentos, cámara y huellas. Prototipo de Product Design." />
+<meta name="description" content="Ataskate POS (Operativo): alta de cliente nuevo con identificación inicial opcional, detección de cliente existente, secciones tipo Cotizador, documentos, cámara y huellas. Prototipo de Product Design." />
 <meta name="robots" content="noindex" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="../ds/base.css" />
 <link rel="stylesheet" href="../ds/components.css" />
 <link rel="stylesheet" href="../pos.css?v=ux65" />
-<link rel="stylesheet" href="cliente-nuevo.css?v=1" />
+<link rel="stylesheet" href="cliente-nuevo.css?v=3" />
 </head>
 <!-- Operativo: el menú lateral es cajón (se abre con la hamburguesa), igual que en ../inventario/ -->
 <body class="pos cn-page" data-plataforma-fija="op">
@@ -117,8 +117,26 @@
   <symbol id="flag-mx" viewBox="0 0 24 24"><rect width="8" height="24" fill="#006847"/><rect x="8" width="8" height="24" fill="#fff"/><rect x="16" width="8" height="24" fill="#CE1126"/><circle cx="12" cy="12" r="2.2" fill="#8C6239"/></symbol>
 </svg>
 
-<!-- Cliente nuevo (propuesta v3 de Product Design · rama del equipo, commit 8f7723ad6) -->
+<!-- Cliente nuevo (propuesta v3 de Product Design · rama del equipo, commits 8f7723ad6 y 597ab9214) -->
 <div class="pos-cuerpo">
+  <!-- controles del prototipo de Product Design (no son parte del producto). Ya no van en una barra arriba del contenido:
+       ../demo.js los pone en la pestaña "Prototipo" del riel izquierdo (panel blanco en columna). -->
+  <div class="proto" data-proto-panel="Prototipo" aria-label="Controles del prototipo" hidden>
+    <b class="proto-t">Controles del prototipo</b>
+    <span class="proto-cap">Identificación y cliente existente</span>
+    <button type="button" id="demoIdm">Abrir modal de identificación</button>
+    <button type="button" id="demoMk">Simular cliente de Marketplace</button>
+    <button type="button" id="demoRed">Simular cliente de Red ataskate</button>
+    <span class="sep" aria-hidden="true"></span>
+    <span class="proto-cap">Captura y guardado</span>
+    <button type="button" id="demoFill">Llenar con datos de ejemplo</button>
+    <label><input type="checkbox" id="demoFail"> Simular error al guardar</label>
+    <label><input type="checkbox" id="demoDup"> Simular cliente ya registrado</label>
+    <label><input type="checkbox" id="demoReader"> Simular lector desconectado</label>
+    <span class="sep" aria-hidden="true"></span>
+    <p class="proto-note">La lectura de la identificación es simulada con datos de ejemplo: Ataskate aún no tiene un servicio para leer identificaciones. La carga del archivo (o la foto con la cámara) sí es real.</p>
+  </div>
+
   <main class="pos-main cn-main" id="cnMain">
   <nav aria-label="Breadcrumb" class="ds-breadcrumb">
     <ol class="pos-crumbs">
@@ -129,21 +147,14 @@
   </nav>
   <div class="headrow">
     <h1 class="cn-title">Cliente nuevo</h1>
-    <div class="proto" role="group" aria-label="Controles del prototipo">
-      <span>Prototipo:</span>
-      <button type="button" id="demoLookup">Buscar cliente existente</button>
-      <button type="button" id="demoFill">Llenar con datos de ejemplo</button>
-      <label><input type="checkbox" id="demoFail"> Simular error al guardar</label>
-      <label><input type="checkbox" id="demoDup"> Simular cliente ya registrado</label>
-      <label><input type="checkbox" id="demoReader"> Simular lector desconectado</label>
-    </div>
   </div>
 
   <div class="layout qcard">
     <!-- Columna de secciones (patrón Cotizador de empeño: Listado + contenido en una sola card) -->
     <aside class="qside" aria-label="Secciones del cliente">
       <div class="qside-h"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 12q-1.65 0-2.825-1.175T8 8t1.175-2.825T12 4t2.825 1.175T16 8t-1.175 2.825T12 12Zm-8 8v-2.8q0-.85.438-1.563T5.6 14.55q1.55-.775 3.15-1.163T12 13t3.25.388t3.15 1.162q.725.375 1.163 1.088T20 17.2V20Zm2-2h12v-.8q0-.275-.137-.5t-.363-.35q-1.35-.675-2.725-1.012T12 15t-2.775.338T6.5 16.35q-.225.125-.363.35T6 17.2Zm6-8q.825 0 1.413-.587T14 8t-.587-1.412T12 6t-1.412.588T10 8t.588 1.413T12 10Zm0-2Zm0 10Z" fill="currentColor"/></svg><span>Secciones del cliente</span></div>
-      <!-- Card única del cliente (patrón card de contrato del Cotizador) + DS CircularProgressIndicator -->
+      <!-- Card única del cliente (patrón card de contrato del Cotizador) + DS CircularProgressIndicator · .qstick = contenedor sticky (597ab9214) -->
+      <div class="qstick">
       <div class="qcli">
         <div class="qcli-h">
           <button type="button" class="qcli-tg" id="qToggle" aria-expanded="false" aria-controls="sSecs" aria-label="Mostrar secciones"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 10L12 15L17 10" stroke="#5A5AFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -159,8 +170,11 @@
         <li><a href="#s-bio" data-cpi="bio"><span class="dot" data-n="6">6</span><span class="qt">Biometría</span><span class="tag gray" data-sumtag="bio">Pendiente</span></a></li>
       </ul>
       </div>
+      </div>
     </aside>
     <form class="formcol qmain" id="form" novalidate autocomplete="off">
+      <!-- DS Alert info: cliente ya registrado en Marketplace / Red ataskate (se llena mientras se captura) -->
+      <div id="dupNote" class="dup-note" aria-live="polite" hidden></div>
       <div id="formAlert" hidden></div>
       <fieldset id="fs" class="formcol">
 
@@ -341,7 +355,7 @@
 <div id="modalRoot"></div>
 <div id="toastRoot"></div>
 
-<script src="cliente-nuevo.js?v=1"></script>
+<script src="cliente-nuevo.js?v=3"></script>
 <script src="../navbar.js?v=3"></script>
 <script src="../menu-op.js?v=11"></script>
 <script src="../demo.js?v=11"></script>

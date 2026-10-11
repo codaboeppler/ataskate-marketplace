@@ -1,11 +1,12 @@
-/* Ataskate POS (Operativo) · Cliente nuevo — propuesta v3 de Product Design (rama del equipo del repo del equipo, commit 8f7723ad6).
-   Búsqueda previa (Marketplace / Red ataskate / nuevo), layout tipo Cotizador de empeño, cámara para foto e INE/comprobantes,
+/* Ataskate POS (Operativo) · Cliente nuevo — propuesta v3 de Product Design (rama del equipo del repo del equipo,
+   commit 8f7723ad6, actualizado con 597ab9214). Modal inicial opcional con identificación (lectura simulada), detección de cliente
+   existente (Marketplace / Red ataskate) mientras se captura, layout tipo Cotizador de empeño, cámara para foto e identificación/comprobantes,
    visor de documentos, registro de huellas y FixedActionFooter. Su JS va completo; el header y el menú son los compartidos del POS. */
 (() => {
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const S = { address: null, files: {}, photo: null, co: [], prints: { izq: new Set(), der: new Set() }, hand: null, finger: null, touched: new Set(), dirty: false, saving: false };
+const S = { address: null, files: {}, photo: null, co: [], prints: { izq: new Set(), der: new Set() }, hand: null, finger: null, touched: new Set(), dirty: false, saving: false, autoFocus: null };
 const FINGERS = ['Pulgar', 'Índice', 'Medio', 'Anular', 'Meñique'];
 const HN = { izq: 'izquierdo', der: 'derecho' };
 
@@ -38,13 +39,16 @@ const reqs = () => $$('[data-req]');
 $$('#fs input, #fs select').forEach(el => {
   el.addEventListener('input', () => {
     S.dirty = true;
+    if (S.autoFocus === el.id) S.autoFocus = null;
     if (el.type === 'date') el.classList.toggle('empty', !el.value);
     if (el.dataset.count === undefined) { const n = $(`[data-count="${el.id}"]`); if (n) n.textContent = `${el.value.length} de ${el.id === 'curp' ? 18 : 13} caracteres`; }
     if (el.dataset.req !== undefined && S.touched.has(el.id)) paint(el);
     update();
   });
   el.addEventListener('change', () => { if (el.type === 'date') el.classList.toggle('empty', !el.value); if (el.dataset.req !== undefined) { S.touched.add(el.id); paint(el); } update(); });
-  el.addEventListener('blur', e => { if (e.relatedTarget && e.relatedTarget.classList.contains('cal-btn')) return; if (el.dataset.req !== undefined && (val(el) || el.tagName === 'INPUT')) { S.touched.add(el.id); paint(el); update(); } });
+  /* el foco automático (al cerrar el modal inicial) no cuenta como "tocado": si el usuario sale de Nombre sin escribir no se pinta
+     "Campo obligatorio"; si no, el renglón de error empuja el layout ~20 px entre mousedown y mouseup y el primer clic se pierde */
+  el.addEventListener('blur', e => { if (S.autoFocus === el.id) { S.autoFocus = null; if (!val(el)) return; } if (e.relatedTarget && e.relatedTarget.classList.contains('cal-btn')) return; if (el.dataset.req !== undefined && (val(el) || el.tagName === 'INPUT')) { S.touched.add(el.id); paint(el); update(); } });
 });
 $('#idVig').addEventListener('change', e => {
   const dv = parseDMY(e.target.value); const past = dv && dv < new Date();
@@ -333,7 +337,7 @@ const CAM_DOCS = {
   ingFile: { title: 'Comprobante de ingresos', hint: 'Coloca el comprobante completo dentro del marco, con el nombre y el monto legibles.', w: 1000, h: 1294, guide: 'page', name: 'comprobante-ingresos' },
 };
 const camStop = () => { if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; } };
-const camClose = () => { camStop(); camShot = null; const rf = camCfg && camCfg.retFocus; $('#modalRoot').innerHTML = ''; rf && $(rf) && $(rf).focus(); };
+const camClose = () => { camStop(); camShot = null; const rf = camCfg && camCfg.retFocus; $('#modalRoot').innerHTML = ''; if (camCfg && camCfg.onClose) return camCfg.onClose(); rf && $(rf) && $(rf).focus(); };
 const camView = (inner, cls) => `<div class="cam-view ${cls || ''} g-${camCfg.guide}" style="aspect-ratio:${camCfg.w} / ${camCfg.h}">${inner}</div>`;
 function camModal(view, hint, foot) {
   modal(`<div class="mh"><h3>${camCfg.title}</h3><button type="button" class="mx" id="camX" aria-label="Cerrar"><svg width="24" height="24"><use href="#i-close"/></svg></button></div>${view}${hint ? `<p class="cam-hint">${hint}</p>` : ''}<div class="mf">${foot}</div>`, 'cam' + (camCfg.h > camCfg.w ? ' cam-tall' : ''));
@@ -621,7 +625,7 @@ const LK_DB = [
     data: { name: 'Valeria', lastName: 'Ortiz', secondLastName: 'Campos', email: 'valeria.ortiz@ejemplo.com', phone: '5587654321', nat: 'Mexicana' },
     addr: { nombre: 'Casa', calle: 'Av. Insurgentes Sur', ext: '1602', int: '', col: 'Crédito Constructor', mun: 'Benito Juárez', edo: 'Ciudad de México', cp: '03940' },
     note: 'Del Marketplace solo vienen sus datos de contacto y su dirección de envío. Completa los datos personales, la identificación y las huellas.' },
-  { src: 'red', srcLabel: 'Otra casa de empeño', origin: 'Registrado en Monte Cristo · Red ataskate', email: 'raul.campos@ejemplo.com', phone: '8112345678', idType: 'INE', idNum: '4567891234567', curp: 'CAMR880921HNLMDL09',
+  { src: 'red', srcLabel: 'Red ataskate', origin: 'Registrado en Monte Cristo · Red ataskate', email: 'raul.campos@ejemplo.com', phone: '8112345678', idType: 'INE', idNum: '4567891234567', curp: 'CAMR880921HNLMDL09',
     data: { name: 'Raúl', lastName: 'Campos', secondLastName: 'Medina', email: 'raul.campos@ejemplo.com', phone: '8112345678', civil: 'Casado(a)', gender: 'Masculino', nat: 'Mexicana', dob: '21/09/1988', curp: 'CAMR880921HNLMDL09', rfc: 'CAMR880921K21', activity: 'Comercio', idType: 'INE', idNum: '4567891234567' },
     addr: { nombre: 'Casa', calle: 'Calle Morelos', ext: '845', int: '', col: 'Centro', mun: 'Monterrey', edo: 'Nuevo León', cp: '64000' },
     note: 'Viene de otra casa de empeño de la Red ataskate con sus datos personales, dirección e identificación. Revisa que estén actualizados y registra sus huellas.' },
@@ -727,16 +731,131 @@ function lkApply(c) {
   S.lkKeys = Object.keys(v);
   let a = $('#srcAlert'); if (!a) { a = document.createElement('div'); a.id = 'srcAlert'; $('#form').prepend(a); }
   const src = c ? `<span class="src ${c.src}">${c.srcLabel}</span>` : '<span class="src new">Sin registro</span>';
-  a.innerHTML = `<div class="alert ${cls}" role="status"><div class="main"><span class="ico">${c ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M11 17h2v-6h-2Zm1-8q.425 0 .713-.288Q13 8.425 13 8t-.287-.713Q12.425 7 12 7t-.712.287Q11 7.575 11 8t.288.712Q11.575 9 12 9Zm0 13q-2.075 0-3.9-.788q-1.825-.787-3.175-2.137q-1.35-1.35-2.137-3.175Q2 14.075 2 12t.788-3.9q.787-1.825 2.137-3.175q1.35-1.35 3.175-2.138Q9.925 2 12 2t3.9.787q1.825.788 3.175 2.138q1.35 1.35 2.137 3.175Q22 9.925 22 12t-.788 3.9q-.787 1.825-2.137 3.175q-1.35 1.35-3.175 2.137Q14.075 22 12 22Z" fill="currentColor"/></svg>' : '<svg width="24" height="24"><use href="#i-pos"/></svg>'}</span><div class="txt"><p class="ttl">${esc(title)} ${src}</p><p class="msg">${esc(msg)}</p></div></div><button type="button" class="act" id="srcAgain">Buscar otro cliente</button></div>`;
-  $('#srcAgain').onclick = () => lkForm();
+  a.innerHTML = `<div class="alert ${cls}" role="status"><div class="main"><span class="ico">${c ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M11 17h2v-6h-2Zm1-8q.425 0 .713-.288Q13 8.425 13 8t-.287-.713Q12.425 7 12 7t-.712.287Q11 7.575 11 8t.288.712Q11.575 9 12 9Zm0 13q-2.075 0-3.9-.788q-1.825-.787-3.175-2.137q-1.35-1.35-2.137-3.175Q2 14.075 2 12t.788-3.9q.787-1.825 2.137-3.175q1.35-1.35 3.175-2.138Q9.925 2 12 2t3.9.787q1.825.788 3.175 2.138q1.35 1.35 2.137 3.175Q22 9.925 22 12t-.788 3.9q-.787 1.825-2.137 3.175q-1.35 1.35-3.175 2.137Q14.075 22 12 22Z" fill="currentColor"/></svg>' : '<svg width="24" height="24"><use href="#i-pos"/></svg>'}</span><div class="txt"><p class="ttl">${esc(title)} ${src}</p><p class="msg">${esc(msg)}</p></div></div></div>`;
   update(); window.scrollTo({ top: 0, behavior: 'smooth' });
   toast(c ? 'Datos cargados' : 'Cliente nuevo', c ? `${v.name} ${v.lastName} · ${c.srcLabel}` : 'Captura sus datos para registrarlo.');
 }
 
 
 
-$('#demoLookup').onclick = () => lkForm();
-lkForm();
+/* ---------- Detección de cliente existente mientras se captura (sin modal previo) ---------- */
+function dupFind() {
+  const e = val($('#email')).toLowerCase(), p = digits(val($('#phone'))), n = val($('#idNum')).toUpperCase(), cu = val($('#curp')).toUpperCase();
+  for (const c of LK_DB) {
+    const m = [];
+    if (e && c.email === e) m.push('correo electrónico');
+    if (p.length === 10 && c.phone === p) m.push('teléfono');
+    if (n && c.idNum === n) m.push(`número de ${($('#idType').value || 'identificación').replace('Cédula profesional', 'cédula')}`);
+    if (cu && c.curp && c.curp === cu) m.push('CURP');
+    if (m.length) return { c, m };
+  }
+  return null;
+}
+/* Modal (DS Modal) con la vista previa de los datos que se van a precargar */
+const DUP_LBL = [['name', 'Nombre'], ['lastName', 'Apellido paterno'], ['secondLastName', 'Apellido materno'], ['email', 'Correo electrónico'], ['phone', 'Teléfono'], ['civil', 'Estado civil'], ['gender', 'Género'], ['nat', 'Nacionalidad'], ['dob', 'Fecha de nacimiento'], ['curp', 'CURP'], ['rfc', 'R.F.C'], ['activity', 'Actividad económica'], ['idType', 'Tipo de identificación'], ['idNum', 'Número de documento']];
+function dupPreview(c, where) {
+  const d = c.data, rows = DUP_LBL.filter(([k]) => d[k]).map(([k, l]) => `<div class="dp-r"><dt>${l}</dt><dd>${esc(k === 'phone' ? lkPhone(d[k]) : d[k])}</dd></div>`).join('');
+  const a = c.addr; const addr = a ? `${a.calle} ${a.ext}${a.int ? ' Int. ' + a.int : ''}, ${a.col}, ${a.mun}, ${a.edo}, C.P. ${a.cp}` : '';
+  modal(`<div class="mh"><h3>Datos del cliente</h3><button type="button" class="mx" aria-label="Cerrar" data-close><svg width="24" height="24"><use href="#i-close"/></svg></button></div>
+    <div class="mb"><p class="dp-sub">Estos datos están registrados en <b>${where}</b> y se cargarán en el formulario.</p>
+      <dl class="dp">${rows}${addr ? `<div class="dp-r wide"><dt>Dirección</dt><dd>${esc(addr)}</dd></div>` : ''}</dl></div>
+    <div class="mf"><button type="button" class="btn ter sm" data-close>Cancelar</button><button type="button" class="btn pri sm" id="dpLoad">Cargar datos</button></div>`, 'dp-modal');
+  $('#dpLoad').onclick = () => { $('#modalRoot').innerHTML = ''; S.dupLoaded = c.email; $('#dupNote').hidden = true; lkApply(c); };
+}
+function dupCheck() {
+  const box = $('#dupNote'); if (!box) return;
+  const r = dupFind();
+  if (!r || S.dupLoaded === r.c.email || S.dupClosed === r.c.email) { box.hidden = true; box.innerHTML = ''; box.dataset.k = ''; return; }
+  const where = r.c.src === 'mk' ? 'Marketplace' : 'Red ataskate';
+  const list = r.m.length > 1 ? r.m.slice(0, -1).join(', ') + ' y ' + r.m[r.m.length - 1] : r.m[0];
+  /* Corrección al portarlo: si ya se ve el mismo aviso no se vuelve a pintar. El "change" que sale al dejar el campo lo re-pintaba
+     entre el mousedown y el click, y el primer clic en "Ver datos" o en la X se perdía (pasa igual en su archivo). */
+  const key = r.c.email + '|' + list;
+  if (!box.hidden && box.dataset.k === key) return;
+  box.dataset.k = key;
+  box.hidden = false;
+  box.innerHTML = `<div class="ds-alert info" role="status"><div class="ds-alert-ic-c"><span class="ds-alert-ic"><svg width="24" height="24" viewBox="144 156 24 24" fill="none" aria-hidden="true"><path d="M154.774 172.838H156.774V166.838H154.774V172.838ZM155.774 164.838C156.058 164.838 156.295 164.742 156.487 164.55C156.679 164.359 156.774 164.121 156.774 163.838C156.774 163.555 156.679 163.317 156.487 163.125C156.295 162.934 156.058 162.838 155.774 162.838C155.491 162.838 155.254 162.934 155.062 163.125C154.87 163.317 154.774 163.555 154.774 163.838C154.774 164.121 154.87 164.359 155.062 164.55C155.254 164.742 155.491 164.838 155.774 164.838ZM155.774 177.838C154.391 177.838 153.091 177.575 151.874 177.05C150.658 176.525 149.599 175.813 148.699 174.913C147.799 174.013 147.087 172.955 146.562 171.738C146.037 170.521 145.774 169.221 145.774 167.838C145.774 166.455 146.037 165.155 146.562 163.938C147.087 162.721 147.799 161.663 148.699 160.763C149.599 159.863 150.658 159.15 151.874 158.625C153.091 158.1 154.391 157.838 155.774 157.838C157.158 157.838 158.458 158.1 159.674 158.625C160.891 159.15 161.949 159.863 162.849 160.763C163.749 161.663 164.462 162.721 164.987 163.938C165.512 165.155 165.774 166.455 165.774 167.838C165.774 169.221 165.512 170.521 164.987 171.738C164.462 172.955 163.749 174.013 162.849 174.913C161.949 175.813 160.891 176.525 159.674 177.05C158.458 177.575 157.158 177.838 155.774 177.838Z" fill="currentColor"/></svg></span><div class="ds-alert-c"><p class="ds-alert-t">Este cliente ya se encuentra registrado en ${where}</p><p class="ds-alert-x">Coincide su ${list}. ¿Deseas cargar los datos del cliente?</p></div></div><div class="ds-alert-a"><button type="button" class="ds-btn-ter" id="dupLoad">Ver datos</button></div><button type="button" class="ds-alert-close" id="dupX" aria-label="Cerrar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="currentColor"/></svg></button></div>`;
+  $('#dupLoad').onclick = () => dupPreview(r.c, where);
+  $('#dupX').onclick = () => { S.dupClosed = r.c.email; box.hidden = true; };
+}
+['email', 'phone', 'idNum', 'curp', 'idType'].forEach(id => { const el = $('#' + id); if (el) { el.addEventListener('input', dupCheck); el.addEventListener('change', dupCheck); } });
+/* Simulaciones del prototipo: se escribe un dato que coincide, como lo haría el valuador */
+const simType = (id, v) => { const el = $('#' + id); el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); };
+$('#demoMk').onclick = () => { S.dupClosed = S.dupLoaded = null; simType('email', 'valeria.ortiz@ejemplo.com'); $('#email').scrollIntoView({ block: 'center', behavior: 'smooth' }); };
+$('#demoRed').onclick = () => { S.dupClosed = S.dupLoaded = null; const acc = $('#idType').closest('[data-acc]'); if (acc && !acc.classList.contains('open')) acc.querySelector(':scope > button').click(); simType('idType', 'INE'); simType('idNum', '4567891234567'); $('#idNum').scrollIntoView({ block: 'center', behavior: 'smooth' }); };
+
+/* ---------- Modal inicial opcional: registrar con identificación ----------
+   La carga (archivo o cámara) es real y pasa a la sección Identificación.
+   La lectura de datos es SIMULADA: Ataskate aún no tiene servicio de OCR/KYC (solo Client/AddIdentificationDocument).
+   El aviso "lectura simulada" de su prototipo (.im-proto, recuadro punteado dentro del modal) va en el panel de la pestaña "Prototipo". */
+S.idm = { type: 'INE', front: null, back: null };
+/* En el modal inicial solo se pide el frente; el reverso se sigue pidiendo en la sección Identificación del formulario */
+const IDM_SIDES = { INE: ['front'], Pasaporte: ['front'], 'Cédula profesional': ['front'] };
+const IDM_DEMO = { name: 'Lucía', lastName: 'Herrera', secondLastName: 'Ramos', gender: 'Femenino', nat: 'Mexicana', dob: '14/03/1992', curp: 'HERL920314MDFRML08' };
+const IDM_NUM = { INE: '1029384756123', Pasaporte: 'G12345678', 'Cédula profesional': '12345678' };
+function idmZone(side) {
+  const f = S.idm[side], ttl = side === 'front' ? 'Frente de la identificación' : 'Reverso de la identificación';
+  const help = side === 'front' ? 'Donde aparecen la fotografía y los datos personales del cliente.' : 'Donde aparecen el código QR y otros datos de identificación.';
+  const body = f
+    ? `<div class="im-file">${/^image\//.test(f.type) ? `<img src="${f.url}" alt="">` : '<span class="im-pdf">PDF</span>'}<div class="im-tx"><b>${esc(f.name)}</b><span>Listo</span></div><button type="button" class="ds-btn-ter" data-imrm="${side}">Cambiar</button></div>`
+    : dzEmpty('im-' + side, 'Arrastra el archivo aquí', true, false, { key: 'im-' + side, title: ttl });
+  return `<div class="fld im-z"><span class="lbl" style="padding-left:0;font-weight:700">${ttl}</span><p class="dz-help">${help}</p><div data-imz="${side}">${body}</div></div>`;
+}
+function idmOpen() {
+  const t = S.idm.type, sides = IDM_SIDES[t], ready = sides.every(x => S.idm[x]);
+  modal(`<div class="mh"><h3>Agiliza el registro con una identificación</h3><button type="button" class="mx" id="imX" aria-label="Cerrar"><svg width="24" height="24"><use href="#i-close"/></svg></button></div>
+    <div class="mb im-b"><p class="im-sub">Pide al cliente su INE, pasaporte o cédula profesional para llenar sus datos más rápido. También puedes continuar sin identificación.</p>
+      <div class="fld im-type"><label class="lbl" for="imType">Tipo de identificación</label><select class="in" id="imType">${Object.keys(IDM_SIDES).map(x => `<option ${x === t ? 'selected' : ''}>${x}</option>`).join('')}</select></div>
+      <div class="im-pair ${sides.length === 1 ? 'one' : ''}">${sides.map(idmZone).join('')}</div></div>
+    <div class="mf"><button type="button" class="btn ter sm" id="imSkip">Continuar sin identificación</button><button type="button" class="btn pri sm" id="imUse" ${ready ? '' : 'disabled'}>Usar identificación</button></div>`, 'im-modal');
+  const sel = $('#imType'); enhanceSel(sel);
+  sel.addEventListener('change', () => { S.idm.type = sel.value; if (!IDM_SIDES[sel.value].includes('back')) S.idm.back = null; idmOpen(); });
+  sides.forEach(side => {
+    const host = $(`[data-imz="${side}"]`), inp = host.querySelector('input[type=file]');
+    if (inp) {
+      wireDrop(host.querySelector('.dz'), inp);
+      inp.addEventListener('change', () => { const file = inp.files[0]; if (file) idmSet(side, file); });
+      host.querySelector('[data-cam]').onclick = e => { e.preventDefault(); e.stopPropagation(); camOpen({ ...CAM_DOCS[side === 'front' ? 'idFront' : 'idBack'], fileInput: '#im-' + side, retFocus: null, onClose: idmOpen, onUse: f => idmSet(side, f) }); };
+    }
+    const rm = host.querySelector('[data-imrm]'); if (rm) rm.onclick = () => { S.idm[side] = null; idmOpen(); };
+  });
+  $('#imX').onclick = $('#imSkip').onclick = idmClose;
+  $('#modalRoot .scrim').addEventListener('keydown', e => { if (e.key === 'Escape') idmClose(); });
+  $('#imUse').onclick = idmUse;
+}
+function idmSet(side, file) { S.idm[side] = { name: file.name, url: URL.createObjectURL(file), type: file.type, size: file.size }; idmOpen(); }
+function idmClose() { $('#modalRoot').innerHTML = ''; const n = $('#name'); if (n) { S.autoFocus = 'name'; n.focus(); } }
+function idmUse() {
+  const b = $('#imUse'); b.disabled = true; b.innerHTML = '<span class="spin sm"></span>Leyendo identificación…'; $('#imSkip').disabled = true;
+  setTimeout(() => {
+    $('#modalRoot').innerHTML = '';
+    const t = S.idm.type;
+    /* archivos reales → sección Identificación */
+    const acc = $('#idType').closest('[data-acc]'); if (acc && !acc.classList.contains('open')) acc.querySelector(':scope > button').click();
+    lkSet('idType', t);
+    if (S.idm.front) { S.files.idFront = { ...S.idm.front }; renderFile('idFront'); }
+    if (S.idm.back) { S.files.idBack = { ...S.idm.back }; renderFile('idBack'); }
+    /* lectura simulada → campos existentes */
+    const v = { ...IDM_DEMO, idNum: IDM_NUM[t] };
+    Object.entries(v).forEach(([k, x]) => lkSet(k, x));
+    accTags(); update();
+    let a = $('#idAlert'); if (!a) { a = document.createElement('div'); a.id = 'idAlert'; a.className = 'id-alert'; $('#form').prepend(a); }
+    a.innerHTML = `<div class="ds-alert info" role="status"><div class="ds-alert-ic-c"><span class="ds-alert-ic"><svg width="24" height="24" viewBox="144 156 24 24" fill="none" aria-hidden="true"><path d="M154.774 172.838H156.774V166.838H154.774V172.838ZM155.774 164.838C156.058 164.838 156.295 164.742 156.487 164.55C156.679 164.359 156.774 164.121 156.774 163.838C156.774 163.555 156.679 163.317 156.487 163.125C156.295 162.934 156.058 162.838 155.774 162.838C155.491 162.838 155.254 162.934 155.062 163.125C154.87 163.317 154.774 163.555 154.774 163.838C154.774 164.121 154.87 164.359 155.062 164.55C155.254 164.742 155.491 164.838 155.774 164.838ZM155.774 177.838C154.391 177.838 153.091 177.575 151.874 177.05C150.658 176.525 149.599 175.813 148.699 174.913C147.799 174.013 147.087 172.955 146.562 171.738C146.037 170.521 145.774 169.221 145.774 167.838C145.774 166.455 146.037 165.155 146.562 163.938C147.087 162.721 147.799 161.663 148.699 160.763C149.599 159.863 150.658 159.15 151.874 158.625C153.091 158.1 154.391 157.838 155.774 157.838C157.158 157.838 158.458 158.1 159.674 158.625C160.891 159.15 161.949 159.863 162.849 160.763C163.749 161.663 164.462 162.721 164.987 163.938C165.512 165.155 165.774 166.455 165.774 167.838C165.774 169.221 165.512 170.521 164.987 171.738C164.462 172.955 163.749 174.013 162.849 174.913C161.949 175.813 160.891 176.525 159.674 177.05C158.458 177.575 157.158 177.838 155.774 177.838Z" fill="currentColor"/></svg></span><div class="ds-alert-c"><p class="ds-alert-t">Revisa los datos tomados de la identificación</p><p class="ds-alert-x">Llenamos nombre, apellidos, género, nacionalidad, fecha de nacimiento, CURP y número de ${t === 'INE' ? 'INE' : t === 'Pasaporte' ? 'pasaporte' : 'cédula'}. Corrige lo que no coincida y completa el resto.</p></div></div><button type="button" class="ds-alert-close" id="idAlertX" aria-label="Cerrar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="currentColor"/></svg></button></div>`;
+    $('#idAlertX').onclick = () => a.remove();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    toast('Identificación cargada', `${t} · revisa los datos precargados`);
+  }, 1200);
+}
+$('#demoIdm').onclick = () => { S.idm = { type: 'INE', front: null, back: null }; idmOpen(); };
+
+/* Controles del prototipo (pestaña "Prototipo" del riel, ../demo.js): las acciones cierran el panel para que se vea su efecto
+   (sin mover el foco, para no sacarlo del modal que abren); las casillas lo dejan abierto */
+$$('[data-proto-panel] button').forEach(b => b.addEventListener('click', () => {
+  const pn = b.closest('[data-proto-panel]'), tb = $('#demoProtoTab');
+  if (pn && !pn.hidden) { pn.hidden = true; if (tb) tb.setAttribute('aria-expanded', 'false'); }
+}));
+
+idmOpen();
 
 update();
 })();

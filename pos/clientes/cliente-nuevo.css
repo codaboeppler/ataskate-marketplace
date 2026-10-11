@@ -1,4 +1,5 @@
-/* Ataskate POS (Operativo) · Cliente nuevo — estilos de la propuesta v3 de Product Design (rama del equipo, commit 8f7723ad6).
+/* Ataskate POS (Operativo) · Cliente nuevo — estilos de la propuesta v3 de Product Design (rama del equipo, commit 8f7723ad6,
+   actualizado con 597ab9214: identificación inicial y cliente existente).
    Se quitaron su header, su barra de ventanas, su breadcrumb y el padding lateral de la página: el header, el menú lateral,
    el breadcrumb del DS y el ancho de pantalla (main.pos-main: 1440 con 64 a los lados, 24 a 900 px o menos) vienen de ../pos.css.
    Tarjetas y contenedores sin borde: solo Card-shadow (var(--pos-shadow-card)) y radio 16; los controles conservan su borde. */
@@ -26,17 +27,25 @@ p{margin:0}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 
-/* ===== Página: breadcrumb del DS, título y controles del prototipo (como ../inventario/) ===== */
+/* ===== Página: breadcrumb del DS y título (como ../inventario/) ===== */
 /* abajo deja libres la barra fija de acciones (68) y las pestañas de sesión (40) */
 .pos-main.cn-main{padding-bottom:140px}
 .pos-main .ds-breadcrumb + .headrow{margin-top:8px}
 .cn-title{margin:0;font-size:28px;line-height:34px;font-weight:500;color:#2a2c2f}
 
-/* Prototipo (no es parte de la UI): sin recuadro punteado, en el lila de la pestaña de flujos (../demo.js) */
-.proto{margin-left:auto;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;font-size:12px;color:var(--t-cap);border:0;border-radius:8px;padding:6px 12px;background:var(--p50)}
-.proto button{background:none;border:0;color:var(--primary);font-weight:700;font-size:12px;padding:2px 0}
-.proto label{display:inline-flex;gap:4px;align-items:center}
 .headrow{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:flex-end}
+
+/* Controles del prototipo (no son parte de la UI): ya no van en una barra arriba del contenido. Viven en el panel blanco
+   de la pestaña "Prototipo" del riel izquierdo (../demo.js: [data-proto-panel] → .demo-proto, fijo, z 45), en columna, con controles del DS */
+.proto{display:flex;flex-direction:column;align-items:stretch;gap:12px;color:var(--t-body);font-size:14px;line-height:19.6px}
+.proto-t{font-size:14px;line-height:19.6px;font-weight:600;color:var(--t-cap)}
+.proto-cap{margin-bottom:-4px;font-size:12px;line-height:16px;color:var(--t-cap)}
+.proto .sep{height:1px;background:#E8E9EA;flex:none}
+.proto button{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 16px;border:1px solid var(--primary);border-radius:100px;background:var(--white);color:var(--primary);font-size:14px;line-height:20px;font-weight:700;text-align:center;transition:background .15s}
+.proto button:hover{background:var(--p50)}
+.proto label{display:flex;align-items:center;gap:8px;min-height:24px;cursor:pointer;color:var(--t-body)}
+.proto input[type=checkbox]{width:18px;height:18px;margin:0;flex:none;accent-color:var(--primary);cursor:pointer}
+.proto-note{font-size:12px;line-height:16px;color:var(--t-cap)}
 
 .dot{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:100px;background:#D4D6D8;color:#54575C;font-size:14px;font-weight:600;flex:none;transition:background .25s}
 .is-active .dot,.dot.is-active{background:var(--navy);color:#FAFAFA}
@@ -527,7 +536,8 @@ a.btn,a.mx{text-decoration:none}
 .qcli .qlist a{border:0;border-radius:8px;padding:10px 8px}
 .qcli .qlist a:hover{background:#F0F0FF}
 .qcli .qlist a.is-active{background:#F0F0FF}
-.qside .qcli{position:sticky;top:calc(var(--pos-header-h, 56px) + 16px)}
+/* 597ab9214: lo sticky pasa de .qcli a su contenedor .qstick (en su prototipo top 16; aquí, bajo el header compartido) */
+.qside .qstick{position:sticky;top:calc(var(--pos-header-h, 56px) + 16px)}
 
 /* Card del cliente plegable (chevron del contrato del Cotizador: IconButton small 28px, ChevronDown 20 #5A5AFF) */
 .qcli-tg{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;margin-left:-6px;padding:0;border:0;border-radius:100px;background:#fff;cursor:pointer;flex:none;transition:background .15s}
@@ -561,6 +571,60 @@ a.btn,a.mx{text-decoration:none}
 .pair{align-items:stretch}
 .pair > .fld:has(.dz-help) .dz-help{flex:1}
 
+/* ===== 597ab9214 · Identificación inicial y cliente existente ===== */
+/* DS Alert (src/design-system/Alert) · variant="info" · filled="color" · fullWidth — sin estilos propios.
+   Sticky bajo el header compartido (en su prototipo top 16); z 6 queda debajo del header (30), de la barra fija (26) y de los modales (70) */
+.dup-note{margin:24px 24px 0;position:sticky;top:calc(var(--pos-header-h, 56px) + 16px);z-index:6}
+.dup-note[hidden]{display:none}
+.ds-alert{position:relative;z-index:6;display:flex;align-items:center;gap:16px;padding:16px;border-radius:8px;background:#EBF9FF;border:1px solid transparent;font-family:'Nunito',sans-serif;width:100%;max-width:100%;min-height:56px;box-sizing:border-box;overflow:hidden}
+.ds-alert-ic-c{display:flex;align-items:flex-start;gap:8px;flex:1;min-width:0}
+.ds-alert-ic{flex-shrink:0;color:#008FCC;width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+.ds-alert-c{display:flex;flex-direction:column;gap:8px;flex:1;min-width:0}
+.ds-alert-t{font-size:16px;font-weight:700;line-height:1.5;letter-spacing:.3px;color:#004461;margin:0}
+.ds-alert-x{font-size:16px;font-weight:400;line-height:1.2;letter-spacing:.3px;color:#2A2C2F;margin:0}
+.ds-alert-a{flex-shrink:0}
+.ds-btn-ter{display:inline-flex;align-items:center;justify-content:center;height:36px;padding:8px 16px;border:1px solid transparent;border-radius:100px;background:transparent;color:#5A5AFF;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;line-height:20px;cursor:pointer;white-space:nowrap;transition:background .2s ease-in-out}
+.ds-btn-ter:hover{background:#F0F0FF}
+.ds-alert-close{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:none;background:#FFFFFF99;cursor:pointer;padding:8px;color:#5A5AFF;border-radius:50%;outline:none;transition:background .15s ease-in-out}
+.ds-alert-close:hover{background:#FFFFFFE6}
+.ds-alert-close:focus-visible,.ds-btn-ter:focus-visible{outline:2px solid #5A5AFF;outline-offset:1px}
+
+/* Vista previa de datos del cliente existente (dentro del DS Modal) */
+/* mismo tope que .modal.lk e .im-modal: a 375 la vista previa mide ~1090 px y sin scroll quedaban fuera el título y "Cargar datos" */
+.modal.dp-modal{width:640px;max-height:calc(100vh - 48px);overflow-y:auto}
+.dp-sub{margin:0 0 16px;font-size:16px;line-height:19.2px;letter-spacing:.3px;color:#2A2C2F}
+.dp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 24px;margin:0}
+.dp-r{display:flex;flex-direction:column;gap:4px;min-width:0}
+.dp-r.wide{grid-column:1/-1}
+.dp dt{font-size:14px;line-height:16.8px;font-weight:400;color:#54575C}
+.dp dd{margin:0;font-size:16px;line-height:19.2px;font-weight:600;color:#2A2C2F;overflow-wrap:anywhere}
+@media (max-width:560px){.dp{grid-template-columns:minmax(0,1fr)}}
+
+/* Modal inicial de identificación (DS Modal + Select + Dropzone + Alert) */
+.modal.im-modal{width:760px;max-height:calc(100vh - 48px);overflow-y:auto}
+.im-b{display:flex;flex-direction:column;gap:16px}
+.im-sub{margin:0;font-size:16px;line-height:19.2px;letter-spacing:.3px;color:#2A2C2F}
+.im-type{max-width:320px}
+.im-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
+.im-pair.one{grid-template-columns:minmax(0,1fr)}
+.im-z .dz-help{flex:1}
+/* archivo cargado = contenedor: sin borde, solo Card-shadow y radio 16 (en su prototipo: borde 1px #D4D6D8) */
+.im-file{display:flex;align-items:center;gap:12px;min-height:116px;padding:16px;border:0;border-radius:16px;background:#fff;box-shadow:var(--card-shadow);box-sizing:border-box}
+.im-file img{width:84px;height:54px;object-fit:cover;border-radius:8px;flex:none;background:#F4F5F5}
+.im-pdf{display:grid;place-items:center;width:54px;height:54px;border-radius:8px;background:#FFEBEB;color:#A82424;font-size:12px;font-weight:700;flex:none}
+.im-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.im-tx b{font-size:14px;font-weight:600;color:#2A2C2F;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.im-tx span{font-size:12px;line-height:12px;color:#309C60}
+/* .im-proto (nota punteada "lectura simulada") no se trae: ese aviso va en el panel de la pestaña "Prototipo" (.proto-note) */
+.btn .spin.sm{width:16px;height:16px;border-width:2px;margin-right:8px}
+.qmain > .id-alert{margin:24px 24px 0}
+/* el aviso de origen (#srcAlert, ahora sale al "Cargar datos") lleva el mismo margen que sus Alerts nuevos; en su archivo queda pegado al borde de la card */
+.qmain > #srcAlert{margin:24px 24px 0}
+@media (max-width:640px){.im-pair{grid-template-columns:minmax(0,1fr)}}
+/* DS Button primary disabled */
+.btn.pri:disabled{background:#D4D6D8;border-color:#D4D6D8;color:#FFFFFF;cursor:not-allowed}
+.btn.pri:disabled .spin{border-top-color:#FFFFFF}
+
 /* ===== Pestañas de sesión al pie: las mismas de ../inventario/ y de la lista de Clientes ===== */
 .cli-sessions{position:fixed;z-index:25;left:0;right:0;bottom:0;display:flex;align-items:flex-end;gap:1px;height:40px;background:#f4f5f5}
 .cli-sessions__tab{display:inline-flex;align-items:center;gap:8px;height:40px;padding:8px 24px;box-sizing:border-box;background:#fff;border-top:2px solid #5a5aff;font:500 16px/24px var(--font-family-sans);color:#5a5aff;white-space:nowrap}
@@ -574,6 +638,17 @@ a.btn,a.mx{text-decoration:none}
   /* Alert del DS: la acción baja a su propio renglón para que el texto no quede en una columna angosta */
   .alert{flex-wrap:wrap;gap:8px 16px}
   .alert .main{flex:1 1 100%}
+  /* DS Alert de 597ab9214 (su prototipo era fijo de 1280): el texto usa todo el ancho (la X sale del renglón y queda en la
+     esquina superior derecha; solo el título le deja espacio) y "Ver datos" baja a su renglón */
+  .ds-alert{flex-wrap:wrap;align-items:flex-start;gap:8px 16px}
+  .ds-alert-ic-c{flex:1 1 100%}
+  .ds-alert-close{position:absolute;top:10px;right:10px}
+  .ds-alert:has(> .ds-alert-close) .ds-alert-t{padding-right:32px}
+  .ds-alert-a{order:3;flex-basis:100%;padding-left:16px}
+  /* el Alert de cliente existente deja de ser sticky: a 375 mide ~200 px y tapaba casi la mitad del área útil entre el header
+     y la barra fija de acciones; los Alerts arriba del formulario usan 16 de margen en vez de 24 para ganar ancho de texto */
+  .dup-note{position:static}
+  .qmain > .dup-note, .qmain > .id-alert, .qmain > #srcAlert{margin:16px 16px 0}
   .qmain .actions-card.fafooter{grid-template-columns:minmax(0,1fr) auto;height:auto;padding:12px 24px}
   .fafooter .fa-lead{grid-column:1;justify-self:start;font-size:14px;line-height:16.8px}
   .fafooter .fa-acts{grid-column:2}
