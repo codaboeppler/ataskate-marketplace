@@ -1,5 +1,5 @@
 /* Ataskate POS (Operativo) · Cliente nuevo — estilos de la propuesta v3 de Product Design (rama del equipo, commit 8f7723ad6,
-   actualizado con 597ab9214: identificación inicial y cliente existente).
+   actualizado con 597ab9214: cliente existente; e014b0c0a quitó el modal inicial de identificación).
    Se quitaron su header, su barra de ventanas, su breadcrumb y el padding lateral de la página: el header, el menú lateral,
    el breadcrumb del DS y el ancho de pantalla (main.pos-main: 1440 con 64 a los lados, 24 a 900 px o menos) vienen de ../pos.css.
    Tarjetas y contenedores sin borde: solo Card-shadow (var(--pos-shadow-card)) y radio 16; los controles conservan su borde. */
@@ -45,7 +45,6 @@ p{margin:0}
 .proto button:hover{background:var(--p50)}
 .proto label{display:flex;align-items:center;gap:8px;min-height:24px;cursor:pointer;color:var(--t-body)}
 .proto input[type=checkbox]{width:18px;height:18px;margin:0;flex:none;accent-color:var(--primary);cursor:pointer}
-.proto-note{font-size:12px;line-height:16px;color:var(--t-cap)}
 
 .dot{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:100px;background:#D4D6D8;color:#54575C;font-size:14px;font-weight:600;flex:none;transition:background .25s}
 .is-active .dot,.dot.is-active{background:var(--navy);color:#FAFAFA}
@@ -571,7 +570,7 @@ a.btn,a.mx{text-decoration:none}
 .pair{align-items:stretch}
 .pair > .fld:has(.dz-help) .dz-help{flex:1}
 
-/* ===== 597ab9214 · Identificación inicial y cliente existente ===== */
+/* ===== 597ab9214 · Cliente existente ===== */
 /* DS Alert (src/design-system/Alert) · variant="info" · filled="color" · fullWidth — sin estilos propios.
    Sticky bajo el header compartido (en su prototipo top 16); z 6 queda debajo del header (30), de la barra fija (26) y de los modales (70) */
 .dup-note{margin:24px 24px 0;position:sticky;top:calc(var(--pos-header-h, 56px) + 16px);z-index:6}
@@ -590,7 +589,7 @@ a.btn,a.mx{text-decoration:none}
 .ds-alert-close:focus-visible,.ds-btn-ter:focus-visible{outline:2px solid #5A5AFF;outline-offset:1px}
 
 /* Vista previa de datos del cliente existente (dentro del DS Modal) */
-/* mismo tope que .modal.lk e .im-modal: a 375 la vista previa mide ~1090 px y sin scroll quedaban fuera el título y "Cargar datos" */
+/* mismo tope que .modal.lk: a 375 la vista previa mide ~1090 px y sin scroll quedaban fuera el título y "Cargar datos" */
 .modal.dp-modal{width:640px;max-height:calc(100vh - 48px);overflow-y:auto}
 .dp-sub{margin:0 0 16px;font-size:16px;line-height:19.2px;letter-spacing:.3px;color:#2A2C2F}
 .dp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 24px;margin:0}
@@ -600,27 +599,8 @@ a.btn,a.mx{text-decoration:none}
 .dp dd{margin:0;font-size:16px;line-height:19.2px;font-weight:600;color:#2A2C2F;overflow-wrap:anywhere}
 @media (max-width:560px){.dp{grid-template-columns:minmax(0,1fr)}}
 
-/* Modal inicial de identificación (DS Modal + Select + Dropzone + Alert) */
-.modal.im-modal{width:760px;max-height:calc(100vh - 48px);overflow-y:auto}
-.im-b{display:flex;flex-direction:column;gap:16px}
-.im-sub{margin:0;font-size:16px;line-height:19.2px;letter-spacing:.3px;color:#2A2C2F}
-.im-type{max-width:320px}
-.im-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
-.im-pair.one{grid-template-columns:minmax(0,1fr)}
-.im-z .dz-help{flex:1}
-/* archivo cargado = contenedor: sin borde, solo Card-shadow y radio 16 (en su prototipo: borde 1px #D4D6D8) */
-.im-file{display:flex;align-items:center;gap:12px;min-height:116px;padding:16px;border:0;border-radius:16px;background:#fff;box-shadow:var(--card-shadow);box-sizing:border-box}
-.im-file img{width:84px;height:54px;object-fit:cover;border-radius:8px;flex:none;background:#F4F5F5}
-.im-pdf{display:grid;place-items:center;width:54px;height:54px;border-radius:8px;background:#FFEBEB;color:#A82424;font-size:12px;font-weight:700;flex:none}
-.im-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
-.im-tx b{font-size:14px;font-weight:600;color:#2A2C2F;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.im-tx span{font-size:12px;line-height:12px;color:#309C60}
-/* .im-proto (nota punteada "lectura simulada") no se trae: ese aviso va en el panel de la pestaña "Prototipo" (.proto-note) */
-.btn .spin.sm{width:16px;height:16px;border-width:2px;margin-right:8px}
-.qmain > .id-alert{margin:24px 24px 0}
 /* el aviso de origen (#srcAlert, ahora sale al "Cargar datos") lleva el mismo margen que sus Alerts nuevos; en su archivo queda pegado al borde de la card */
 .qmain > #srcAlert{margin:24px 24px 0}
-@media (max-width:640px){.im-pair{grid-template-columns:minmax(0,1fr)}}
 /* DS Button primary disabled */
 .btn.pri:disabled{background:#D4D6D8;border-color:#D4D6D8;color:#FFFFFF;cursor:not-allowed}
 .btn.pri:disabled .spin{border-top-color:#FFFFFF}
@@ -648,7 +628,7 @@ a.btn,a.mx{text-decoration:none}
   /* el Alert de cliente existente deja de ser sticky: a 375 mide ~200 px y tapaba casi la mitad del área útil entre el header
      y la barra fija de acciones; los Alerts arriba del formulario usan 16 de margen en vez de 24 para ganar ancho de texto */
   .dup-note{position:static}
-  .qmain > .dup-note, .qmain > .id-alert, .qmain > #srcAlert{margin:16px 16px 0}
+  .qmain > .dup-note, .qmain > #srcAlert{margin:16px 16px 0}
   .qmain .actions-card.fafooter{grid-template-columns:minmax(0,1fr) auto;height:auto;padding:12px 24px}
   .fafooter .fa-lead{grid-column:1;justify-self:start;font-size:14px;line-height:16.8px}
   .fafooter .fa-acts{grid-column:2}

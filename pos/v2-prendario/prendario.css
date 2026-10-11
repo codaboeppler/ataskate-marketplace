@@ -50,54 +50,6 @@
   .pr .pos-info > .ds-tabs .ds-tabs__tab { font-size: var(--font-size-xs); }
 }
 
-/* ---------------- Prendas en el contrato: DataTable del DS ----------------
-   Encabezado 14/600 #1D1E20, celdas 14/400 #2A2C2F, padding 12/8 (16 en los extremos), líneas #D4D6D8, la última sin línea.
-   Celda de artículo: 4 de padding vertical (fila de 51), miniatura 42 con radio 4 a 8 del texto, nombre 14 y detalle 12 separados 4. La fila de la prenda que se está viendo va seleccionada (#F0F0FF). */
-.pr-prendas__wrap {
-  position: relative;
-  border-radius: var(--radius-md); box-shadow: var(--pos-shadow-card); overflow-x: auto;
-  background: var(--surface-foreground); scrollbar-width: thin;
-}
-.pr-prendas__wrap:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
-.pr-prendas .ds-table { min-width: 760px; }
-@media (max-width: 840px) {
-  /* en tablet vertical cabe sin scroll: la ubicación baja a dos renglones */
-  .pr-prendas .ds-table { min-width: 660px; }
-  .pr-prendas .ds-table td:nth-child(5) { white-space: normal; }
-}
-.pr-prendas .ds-table thead, .pr-prendas .ds-table tbody tr, .pr-prendas .ds-table tbody tr:nth-child(even) { background: transparent; }
-.pr-prendas .ds-table tbody tr:hover { background: transparent; }
-.pr-prendas .ds-table th {
-  padding: 12px 8px; font-size: 14px; font-weight: var(--font-weight-semibold); line-height: normal; white-space: nowrap;
-  color: var(--pos-text-title); border-bottom: 1px solid var(--pos-table-line); vertical-align: middle;
-}
-.pr-prendas .ds-table td {
-  padding: 12px 8px; font-size: 14px; font-weight: var(--font-weight-regular); line-height: normal; white-space: nowrap;
-  color: var(--ats-neutral-700); border-bottom: 1px solid var(--pos-table-line); vertical-align: middle;
-}
-.pr-prendas .ds-table th:first-child, .pr-prendas .ds-table td:first-child { padding-left: 16px; }
-.pr-prendas .ds-table th:last-child, .pr-prendas .ds-table td:last-child { padding-right: 16px; }
-.pr-prendas .ds-table tbody tr:not(.pr-prendas__total) td:first-child { padding-top: 4px; padding-bottom: 4px; }
-.pr-prendas .ds-table tbody tr:last-child td { border-bottom: 0; }
-.pr-prendas .ds-table tbody tr[aria-current='true'], .pr-prendas .ds-table tbody tr[aria-current='true']:hover { background: var(--ats-primary-50); }
-.pr-prendas .ds-table tr.pr-prendas__total td { font-weight: var(--font-weight-bold); color: var(--pos-text-title); }
-.pr-prendas__fin { text-align: right; }
-.pr-art { display: flex; align-items: center; gap: var(--spacing-2); }
-.pr-art__img {
-  position: relative; flex: none; width: 42px; height: 42px; border-radius: var(--radius-xs); overflow: hidden;
-  background: var(--pos-surface-media);
-}
-.pr-art__img img { width: 100%; height: 100%; object-fit: cover; }
-/* la foto recortada (PNG sin fondo) se muestra entera y centrada, como en la miniatura de la galería */
-.pr-art__img img.pr-art__cut { position: absolute; inset: 0; margin: auto; width: 26px; height: 32px; }
-.pr-art__txt { min-width: 0; display: flex; flex-direction: column; gap: var(--spacing-1); white-space: normal; }
-.pr-art__txt b { font-size: 14px; line-height: 1.2; font-weight: var(--font-weight-regular); color: var(--pos-text-title); }
-.pr-art__txt span { font-size: 12px; line-height: 1; color: var(--ats-neutral-700); }
-/* "Ver detalle" = botón Tertiary Medium; dentro de la fila no agrega alto */
-.pos .ds-btn.pr-ver { margin: -8px 0; text-decoration: none; }
-/* texto solo para lectores de pantalla (encabezado de la columna de acciones) */
-.pr-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-
 /* ---------------- Accesibilidad ---------------- */
 /* el header es fijo: al tabular hacia arriba el foco no debe quedar tapado detrás de él */
 html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 16px); }
@@ -112,22 +64,3 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 16px); }
 .pr-cliente { color: var(--ats-primary-300); font-weight: var(--font-weight-semibold); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; border-radius: 2px; }
 .pr-cliente:hover { color: var(--ats-primary-400); }
 .pr-cliente:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
-
-/* titular del contrato, debajo de las prendas: tarjeta blanca con avatar de iniciales, correo y teléfono */
-.pr-titular { margin-top: var(--spacing-4); display: flex; align-items: center; gap: var(--spacing-5); flex-wrap: wrap; padding: var(--spacing-4) var(--spacing-5); border-radius: var(--radius-md); background: #fff; box-shadow: var(--pos-shadow-card); }
-.pr-titular__who { display: flex; align-items: center; gap: var(--spacing-3); min-width: 240px; }
-.pr-titular__av { flex: none; width: 48px; height: 48px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--ats-primary-100); color: var(--ats-primary-400); font-size: 18px; font-weight: var(--font-weight-semibold); }
-.pr-titular__who div { display: flex; flex-direction: column; gap: 2px; }
-.pr-titular__k { font-size: 12px; line-height: 1; color: var(--ats-neutral-600); }
-.pr-titular__who b { font-size: 18px; line-height: 1.3; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
-.pr-titular__meta { font-size: 14px; color: var(--ats-neutral-600); }
-.pr-titular__datos { display: flex; gap: var(--spacing-5); flex-wrap: wrap; margin: 0; padding: 0; list-style: none; flex: 1; }
-.pr-titular__datos li { display: flex; align-items: center; gap: var(--spacing-2); min-width: 0; }
-.pr-titular__ic { flex: none; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--ats-primary-50); color: var(--ats-primary-300); }
-.pr-titular__ic svg { width: 20px; height: 20px; }
-.pr-titular__datos small { display: block; font-size: 12px; line-height: 1.2; color: var(--ats-neutral-600); }
-.pr-titular__datos a { font-size: 16px; color: var(--ats-neutral-700); text-decoration: none; }
-.pr-titular__datos a:hover { color: var(--ats-primary-300); text-decoration: underline; text-underline-offset: 3px; }
-.pr-titular__datos em { font-style: normal; font-size: 16px; color: var(--ats-neutral-400); }
-.pr-titular__btn { margin-left: auto; }
-@media (max-width: 760px) { .pr-titular { flex-direction: column; align-items: flex-start; } .pr-titular__btn { margin-left: 0; } }

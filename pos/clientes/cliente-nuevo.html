@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Ataskate POS — Cliente nuevo</title>
-<meta name="description" content="Ataskate POS (Operativo): alta de cliente nuevo con identificación inicial opcional, detección de cliente existente, secciones tipo Cotizador, documentos, cámara y huellas. Prototipo de Product Design." />
+<meta name="description" content="Ataskate POS (Operativo): alta de cliente nuevo con detección de cliente existente, secciones tipo Cotizador, documentos, cámara y huellas. Prototipo de Product Design." />
 <meta name="robots" content="noindex" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="../ds/base.css" />
 <link rel="stylesheet" href="../ds/components.css" />
 <link rel="stylesheet" href="../pos.css?v=ux65" />
-<link rel="stylesheet" href="cliente-nuevo.css?v=3" />
+<link rel="stylesheet" href="cliente-nuevo.css?v=4" />
 </head>
 <!-- Operativo: el menú lateral es cajón (se abre con la hamburguesa), igual que en ../inventario/ -->
 <body class="pos cn-page" data-plataforma-fija="op">
@@ -117,14 +117,13 @@
   <symbol id="flag-mx" viewBox="0 0 24 24"><rect width="8" height="24" fill="#006847"/><rect x="8" width="8" height="24" fill="#fff"/><rect x="16" width="8" height="24" fill="#CE1126"/><circle cx="12" cy="12" r="2.2" fill="#8C6239"/></symbol>
 </svg>
 
-<!-- Cliente nuevo (propuesta v3 de Product Design · rama del equipo, commits 8f7723ad6 y 597ab9214) -->
+<!-- Cliente nuevo (propuesta v3 de Product Design · rama del equipo, commits 8f7723ad6, 597ab9214 y e014b0c0a) -->
 <div class="pos-cuerpo">
   <!-- controles del prototipo de Product Design (no son parte del producto). Ya no van en una barra arriba del contenido:
        ../demo.js los pone en la pestaña "Prototipo" del riel izquierdo (panel blanco en columna). -->
   <div class="proto" data-proto-panel="Prototipo" aria-label="Controles del prototipo" hidden>
     <b class="proto-t">Controles del prototipo</b>
-    <span class="proto-cap">Identificación y cliente existente</span>
-    <button type="button" id="demoIdm">Abrir modal de identificación</button>
+    <span class="proto-cap">Cliente existente</span>
     <button type="button" id="demoMk">Simular cliente de Marketplace</button>
     <button type="button" id="demoRed">Simular cliente de Red ataskate</button>
     <span class="sep" aria-hidden="true"></span>
@@ -133,8 +132,6 @@
     <label><input type="checkbox" id="demoFail"> Simular error al guardar</label>
     <label><input type="checkbox" id="demoDup"> Simular cliente ya registrado</label>
     <label><input type="checkbox" id="demoReader"> Simular lector desconectado</label>
-    <span class="sep" aria-hidden="true"></span>
-    <p class="proto-note">La lectura de la identificación es simulada con datos de ejemplo: Ataskate aún no tiene un servicio para leer identificaciones. La carga del archivo (o la foto con la cámara) sí es real.</p>
   </div>
 
   <main class="pos-main cn-main" id="cnMain">
@@ -355,7 +352,7 @@
 <div id="modalRoot"></div>
 <div id="toastRoot"></div>
 
-<script src="cliente-nuevo.js?v=3"></script>
+<script src="cliente-nuevo.js?v=4"></script>
 <script src="../navbar.js?v=3"></script>
 <script src="../menu-op.js?v=11"></script>
 <script src="../demo.js?v=12"></script>
