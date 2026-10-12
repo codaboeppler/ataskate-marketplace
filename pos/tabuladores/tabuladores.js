@@ -2,7 +2,9 @@
    (rama del equipo del repo del equipo, src/components/MetalTabulator/TabulatorDetails/NewTabulatorDetails/**).
    En la app los datos vienen de Redux (GetTabulatorDetailsReducer.details, interfaz ITabulatorDetails). Aquí van datos de ejemplo
    con esa misma forma; los campos que la API todavía no manda (creado, última modificación, estado "En uso" y zona de la sucursal)
-   usan sus DEV_MOCK_DETAILS, como en su ambiente de desarrollo. */
+   usan sus DEV_MOCK_DETAILS, como en su ambiente de desarrollo.
+   La lista (index.html) abre detalle.html?id=N: sin id es "Oro zona centro" (el ejemplo de abajo); con otro id el detalle se arma con
+   los datos de ese tabulador en datos.js. */
 (() => {
   'use strict';
 
@@ -53,14 +55,16 @@
   const round = (v) => Math.round(v * 100) / 100;
   const BASE_PRICE_GRAM = 2182.66;   /* 24K por gramo (MXN); × 28.3495 ≈ su BASE_PRICE de 61,877.35 por onza */
   const KARATS = [['8K', 33.3], ['10K', 41.7], ['12K', 50], ['14K', 58.5], ['18K', 75], ['21K', 87.5], ['22K', 91.6], ['24K', 99.9]];
-  const goldTabulator = KARATS.map(([name, pct], i) => {
-    const base = round(BASE_PRICE_GRAM * (pct / 100));
+  /* names: purezas que trae el tabulador (todas si no se indica) */
+  const buildGoldTabulator = (basePrice, names) => KARATS.filter(([name]) => !names || names.includes(name)).map(([name, pct], i) => {
+    const base = round(basePrice * (pct / 100));
     return {
       detailTabId: 300 + i, quilatesId: i + 1, quilatesName: name, porcentValue: pct, baseAmount: base,
       exellentAmount: round(base * PERCENTAGES.excellent), wellAmount: round(base * PERCENTAGES.good),
       averageAmount: round(base * PERCENTAGES.regular), badAmont: round(base * PERCENTAGES.bad),
     };
   });
+  const goldTabulator = buildGoldTabulator(BASE_PRICE_GRAM);
   const details = {
     tabId: 12,
     tabName: 'Oro zona centro',
@@ -91,6 +95,35 @@
     tabConservationStatus: { excellent: 91, good: 80, regular: 75, bad: 60 },
     /* createdDate, createdBy, updatedDate, updatedBy e inUse todavía no vienen de la API: se usan los DEV_MOCK_DETAILS */
   };
+
+  /* ======================= Tabulador elegido en la lista (?id=) ======================= */
+  /* Con el id de otro tabulador de datos.js se cambia lo que es suyo (nombre, folio, unidad, precio base, purezas, reglas y
+     sucursales con su zona); quién lo creó o modificó sigue saliendo de DEV_MOCK_DETAILS, como en su código. */
+  const D = window.TB_DATOS;
+  const idPedido = new URLSearchParams(location.search).get('id');
+  const elegido = D && idPedido ? D.tabulador(idPedido) : null;
+  if (elegido && elegido.tabulatorId !== details.tabId) {
+    details.tabId = elegido.tabulatorId;
+    details.tabName = elegido.nameTabulator;
+    details.tabIdentifier = elegido.identifier;
+    details.tabUnitMeasure = elegido.unitOfMeasure;
+    details.goldValue = { ...details.goldValue, basePrice: elegido.basePrice };
+    details.goldTabulator = buildGoldTabulator(elegido.basePrice, elegido.quilates);
+    details.priceAdjustmentAutomation = details.priceAdjustmentAutomation.slice(0, elegido.reglas);
+    details.generalInformation = elegido.sucursales.map(([id, reemplazada]) => {
+      const zona = D.padre(id);
+      return { branchTabId: 1000 + id, branchId: id, branchName: D.nodo(id).name, branchTabStatus: !reemplazada, branchZone: zona ? zona.name : undefined };
+    });
+    details.createdDate = elegido.creado;
+    details.updatedDate = elegido.modificado;
+    /* "En uso" si aplica en alguna sucursal; los archivados ya no aplican en ninguna ("Sin asignar") */
+    details.inUse = details.generalInformation.some((b) => b.branchTabStatus);
+  }
+  /* si se archivó o desarchivó en la lista (o aquí antes), se respeta */
+  if (D) {
+    details.statusTabId = D.estatus(details.tabId);
+    details.statusTabName = details.statusTabId === TABS_IDS.ARCHIVED ? 'Archivado' : 'Activo';
+  }
 
   /* ======================= utils ======================= */
   const numberToCurrency = (n) => new Intl.NumberFormat('ES-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 2 }).format(n);
@@ -259,11 +292,11 @@
     setTimeout(() => {
       details.statusTabId = isArchived() ? TABS_IDS.ACTIVE : TABS_IDS.ARCHIVED;
       details.statusTabName = isArchived() ? 'Archivado' : 'Activo';
+      if (D) D.guardarEstatus(details.tabId, details.statusTabId);
       updateStatusLoading = false; renderHeader(); closeModal();
     }, 600 + Math.round(Math.random() * 300));
   };
   $('tbArchivar').addEventListener('click', openArchiveModal);
-  document.querySelector('[data-noop]').addEventListener('click', (e) => e.preventDefault());
 
   /* ======================= Tooltip (DS) ======================= */
   const tip = document.createElement('div');

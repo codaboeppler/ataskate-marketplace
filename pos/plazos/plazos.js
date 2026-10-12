@@ -333,9 +333,18 @@ const SWITCH_KNOB = '<span class="ds-switch__knob"><svg class="on" viewBox="0 0 
 /* ==========================================================================
    Piezas del DS como funciones (HTML)
    ========================================================================== */
+/* "Configuración de sistema" no tiene pantalla en el prototipo: lleva al Inicio del Administrativo (../home-admin/),
+   lo más cercano a la configuración del sistema. Antes apuntaba a #/plazos (en el listado no hacía nada y en el
+   detalle y el formulario repetía "Plazos"). [Por confirmar con el equipo: M-13] */
+const CRUMB_CONFIG = { label: 'Configuración de sistema', href: '../home-admin/' };
 const ui = {
-  btn: (label, { variant = 'primary', iconLeft, iconRight, attrs = '', full, type = 'button' } = {}) =>
-    `<button type="${type}" class="ds-btn ds-btn--${variant}${iconLeft ? ' ds-btn--icon-left' : ''}${iconRight ? ' ds-btn--icon-right' : ''}${full ? ' ds-btn--full' : ''}" ${attrs}>${iconLeft ? icon(iconLeft) : ''}<span>${label}</span>${iconRight ? icon(iconRight) : ''}</button>`,
+  /* Button del DS. El ícono a la derecha va en su caja de 20 × 20 (.button-icon de Button.tsx) */
+  btn: (label, { variant = 'primary', iconLeft, iconRight, iconRightCls = '', attrs = '', full, type = 'button' } = {}) =>
+    `<button type="${type}" class="ds-btn ds-btn--${variant}${iconLeft ? ' ds-btn--icon-left' : ''}${iconRight ? ' ds-btn--icon-right' : ''}${full ? ' ds-btn--full' : ''}" ${attrs}>${iconLeft ? icon(iconLeft) : ''}<span>${label}</span>${iconRight ? `<span class="ds-btn__icon">${icon(iconRight, iconRightCls)}</span>` : ''}</button>`,
+  /* ButtonSelect del DS: no es un botón nuevo, es el Button (variante y tamaño propios) con ChevronDownIcon
+     de 20 a la derecha dentro de un contenedor inline-flex; el menú lo abre montarButtonSelect() */
+  btnSelect: (label, { variant = 'secondary', attrs = '' } = {}) =>
+    `<div class="ds-btnselect">${ui.btn(label, { variant, iconRight: 'ChevronDown', iconRightCls: 'ds-btnselect__chev', attrs: `aria-haspopup="menu" aria-expanded="false" ${attrs}` })}</div>`,
   iconBtn: (name, label, attrs = '', size = '') =>
     `<button type="button" class="ds-icon-btn${size ? ' ds-icon-btn--' + size : ''}" aria-label="${esc(label)}" ${attrs}>${icon(name)}</button>`,
   /* Breadcrumb del DS con el marcado de los demás módulos (estilos en ../pos.css); siempre empieza en Home,
@@ -531,22 +540,22 @@ document.addEventListener('keydown', e => {
 
 /* ==========================================================================
    Listas flotantes (capa 1410 en #plz-capas, position fixed): SelectionInput, la lista del DobleInput,
-   el menú del ButtonSelect y la del AutoMultiSelect. Una abierta a la vez; con scroll se reubican.
+   el menú del ButtonSelect y la del AutoMultiSelect. Una abierta a la vez; con scroll se reubican y con resize
+   se cierran (menos el menú del ButtonSelect, que se reubica).
    ========================================================================== */
-let popup = null; /* { anchor, list, focusTarget, reposition, onClose } */
+let popup = null; /* { anchor, list, focusTarget, reposition, seReubica, onClose } */
 function closePopup(devolverFoco) {
   if (!popup) return;
   const p = popup; popup = null;
   p.list.remove(); p.onClose?.();
   if (devolverFoco) p.focusTarget.focus();
 }
-function abrirLista({ anchor, items, selected, role = 'listbox', cls, width = false, minWidth, labelledby, onPick }) {
+function abrirLista({ anchor, items, selected, cls, width = false, minWidth, labelledby, onPick }) {
   closePopup(false); closeMenus();
-  const esMenu = role === 'menu';
   const list = document.createElement('ul');
-  list.className = cls; list.setAttribute('role', role); list.tabIndex = -1;
+  list.className = cls; list.setAttribute('role', 'listbox'); list.tabIndex = -1;
   if (labelledby) list.setAttribute('aria-labelledby', labelledby);
-  list.innerHTML = items.map((o, i) => `<li role="${esMenu ? 'menuitem' : 'option'}" tabindex="-1" data-i="${i}"${esMenu ? '' : ` aria-selected="${o.v === selected}"`}>${esc(o.label)}</li>`).join('');
+  list.innerHTML = items.map((o, i) => `<li role="option" tabindex="-1" data-i="${i}" aria-selected="${o.v === selected}">${esc(o.label)}</li>`).join('');
   document.getElementById('plz-capas').appendChild(list);
   const colocar = () => {
     const r = anchor.getBoundingClientRect();
@@ -572,7 +581,76 @@ function abrirLista({ anchor, items, selected, role = 'listbox', cls, width = fa
 }
 document.addEventListener('mousedown', e => { if (popup && !popup.list.contains(e.target) && !popup.anchor.contains(e.target)) closePopup(false); });
 window.addEventListener('scroll', e => { if (popup && !popup.list.contains(e.target)) popup.reposition?.(); }, true);
-window.addEventListener('resize', () => closePopup(false));
+/* con resize las listas se cierran; el menú del ButtonSelect se reubica, como useAnchorRect */
+window.addEventListener('resize', () => { if (popup?.seReubica) popup.reposition(); else closePopup(false); });
+
+/* ButtonSelect (DS): menú anclado al Button (ButtonSelectMenu + useButtonSelect + anchoredPanelStyles).
+   - Clic en el botón abre o cierra sin mover el foco; abierto, el botón lleva aria-controls y queda presionado.
+   - ↓/↑ abren si hace falta y recorren las opciones habilitadas en círculo (desde cerrado, ↓ va a la primera y ↑ a la última).
+   - Pasar el mouse por una opción también la enfoca. Enter o clic eligen; Esc cierra y regresa el foco al botón; Tab y clic fuera cierran.
+   - El menú mide lo que el botón (mín. 160), va 4 px abajo, o arriba si abajo quedan menos de 200 px y arriba hay más,
+     con alto máximo del espacio que queda (mín. 160). Con scroll o resize se reubica. */
+let btnSelectSeq = 0;
+function montarButtonSelect(trigger, { opciones, onSelect }) {
+  const label = trigger.textContent.trim();
+  const abierto = () => popup && popup.anchor === trigger;
+  const abrir = () => {
+    closePopup(false); closeMenus();
+    const items = opciones();
+    const menu = document.createElement('div');
+    menu.className = 'ds-btnselect-menu'; menu.id = `btnselect-${++btnSelectSeq}`;
+    menu.setAttribute('role', 'menu'); menu.setAttribute('aria-label', label);
+    menu.innerHTML = items.map((o, i) => `<button type="button" role="menuitem" tabindex="-1" data-i="${i}"${o.disabled ? ' aria-disabled="true"' : ''}>${esc(o.label)}</button>`).join('');
+    document.getElementById('plz-capas').appendChild(menu);
+    const colocar = () => {
+      const r = trigger.getBoundingClientRect(), alto = window.innerHeight;
+      const abajo = alto - r.bottom, haciaArriba = abajo < 200 && r.top > abajo;
+      menu.style.left = r.left + 'px'; menu.style.minWidth = r.width + 'px';   /* al menos el ancho del botón; crece si una opción no cabe ("Número de refrendos") */
+      menu.style.top = haciaArriba ? 'auto' : (r.bottom + 4) + 'px';
+      menu.style.bottom = haciaArriba ? (alto - r.top + 4) + 'px' : 'auto';
+      menu.style.maxHeight = Math.max(160, (haciaArriba ? r.top : abajo) - 8 - 4) + 'px';
+    };
+    colocar();
+    trigger.setAttribute('aria-expanded', 'true'); trigger.setAttribute('aria-controls', menu.id);
+    popup = { anchor: trigger, list: menu, focusTarget: trigger, reposition: colocar, seReubica: true,
+      onClose: () => { trigger.setAttribute('aria-expanded', 'false'); trigger.removeAttribute('aria-controls'); } };
+    const elegir = b => {
+      const o = items[+b.dataset.i];
+      if (!o || o.disabled) return;
+      closePopup(false); onSelect(o.v);
+      if (trigger.isConnected) trigger.focus();
+    };
+    menu.addEventListener('click', e => { const b = e.target.closest('[role="menuitem"]'); if (b) elegir(b); });
+    menu.addEventListener('mouseover', e => {
+      const b = e.target.closest('[role="menuitem"]');
+      if (b && b !== document.activeElement && b.getAttribute('aria-disabled') !== 'true') b.focus();
+    });
+    menu.addEventListener('keydown', teclas);
+  };
+  /* foco a la siguiente opción habilitada (nextEnabledIndex de useButtonSelect) */
+  const mover = paso => {
+    const lis = [...popup.list.querySelectorAll('[role="menuitem"]')];
+    const actual = lis.indexOf(document.activeElement);
+    const desde = actual === -1 && paso === -1 ? 0 : actual;
+    for (let k = 1; k <= lis.length; k++) {
+      const b = lis[(desde + paso * k + lis.length * k) % lis.length];
+      if (b.getAttribute('aria-disabled') !== 'true') { b.focus(); return; }
+    }
+  };
+  function teclas(e) {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!abierto()) abrir();
+      mover(e.key === 'ArrowDown' ? 1 : -1);
+      return;
+    }
+    if (!abierto()) return;
+    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closePopup(true); }
+    if (e.key === 'Tab') closePopup(false);
+  }
+  trigger.addEventListener('click', () => { if (abierto()) closePopup(false); else abrir(); });
+  trigger.addEventListener('keydown', teclas);
+}
 
 /* SelectionInput (DS): botón + listbox. El <select> oculto guarda el valor y emite "change". */
 const SELECT_CHEVRON = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="#71767D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -901,7 +979,7 @@ const filtroOpt = () => { const c = filtroCat(); return (c && c.opciones.find(o 
 
 function renderList(main) {
   main.innerHTML = `<div class="page">
-    ${ui.breadcrumb([{ label: 'Configuración de sistema', href: '#/plazos' }, { label: 'Plazos' }])}
+    ${ui.breadcrumb([CRUMB_CONFIG, { label: 'Plazos' }])}
     <div class="title-row title-row--list">
       <h1 class="t-titulo-pagina">Plazos</h1>
       <div class="title-row__actions">${ui.btn('Crear plazo', { iconLeft: 'Add', attrs: 'data-go="#/plazos/nuevo"' })}</div>
@@ -1380,7 +1458,7 @@ function renderDetail(main, id) {
   function pintarEncabezado() {
     const p = actual(), titulo = p ? p.name : 'Cargando plazo';
     page.querySelector('.ds-breadcrumb').outerHTML = ui.breadcrumb([
-      { label: 'Configuración de sistema', href: '#/plazos' }, { label: 'Plazos', href: '#/plazos', attrs: 'data-volver' }, { label: titulo },
+      CRUMB_CONFIG, { label: 'Plazos', href: '#/plazos', attrs: 'data-volver' }, { label: titulo },
     ]);
     const acciones = p && !st.loading
       ? `<div class="title-row__actions">${ui.btn('Editar plazo', { variant: 'secondary', iconLeft: 'Edit', attrs: 'data-action="editar"' })}${ui.menu('m-detail', `Más acciones de ${p.name}`, accionesDetalle(p))}</div>` : '';
@@ -1592,7 +1670,7 @@ function renderForm(main, { id, sugerencia }) {
   const sug = sugerencia ? (store.sugerencias.find(s => s.suggestedTermId === sugerencia) || db.sugerencias.find(s => s.suggestedTermId === sugerencia) || null) : null;
   const title = isEdit ? 'Editar plazo' : 'Nuevo plazo';
   main.innerHTML = `<div class="page">
-    ${ui.breadcrumb([{ label: 'Configuración de sistema', href: '#/plazos' }, { label: 'Plazo', href: '#/plazos' }, { label: title }])}
+    ${ui.breadcrumb([CRUMB_CONFIG, { label: 'Plazos', href: '#/plazos' }, { label: title }])}
     <div class="title-row"><h1 class="t-titulo-pagina">${title}</h1></div>
     <div id="form-root"></div></div>`;
   const root = main.querySelector('#form-root');
@@ -1987,10 +2065,21 @@ function buildForm(main, root, f, { isEdit, original, sug, title }) {
       `<label class="sr-only" for="plazo-refinanciamiento-switch">Activar refinanciamiento automático</label>${ui.switch({ id: 'plazo-refinanciamiento-switch', checked: f.refinancingEnabled, attrs: 'data-switch="refinancingEnabled"' })}`)
       + (f.refinancingEnabled ? `<hr class="divider"><div class="fblock">
           ${condiciones.map(condHTML).join('')}
-          ${disponibles.length ? `<div>${ui.btn('Agregar condición', { variant: 'secondary', iconRight: 'ChevronDown', attrs: 'aria-haspopup="menu" aria-expanded="false" data-add-cond' })}</div>` : ''}
+          ${disponibles.length ? `<div>${ui.btnSelect('Agregar condición', { variant: 'secondary', attrs: 'data-add-cond' })}</div>` : ''}
           ${ui.note('Opciones de “Estado de contrato” y “Canal de venta” de ejemplo: en producto llegan del servicio.')}
         </div>` : '');
     if (!f.refinancingEnabled) return;
+    /* "Agregar condición" (ButtonSelect): al elegir, la condición se agrega y el foco vuelve al botón (select → focusTrigger);
+       si ya no quedan opciones el botón desaparece y el foco va al control de la condición nueva */
+    const addc = sec.refinanciamiento.querySelector('[data-add-cond]');
+    if (addc) montarButtonSelect(addc, {
+      opciones: () => REFINANCING_CONDITIONS.filter(o => !f.refinancingConditions.some(c => c.type === o.v)),
+      onSelect: type => {
+        const c = { id: createId('condicion'), type, values: [], comparator: DEFAULT_COMPARATOR[type] ?? '', count: '', amount: null };
+        f.refinancingConditions.push(c); drawRefi(); cambio('refinancingConditions');
+        (sec.refinanciamiento.querySelector('[data-add-cond]') || sec.refinanciamiento.querySelector(`[data-cond="${c.id}"] .condition__ctrl input, [data-cond="${c.id}"] .condition__ctrl button`))?.focus();
+      },
+    });
     /* ninguna condición se valida (RefinancingConditionCard) */
     condiciones.forEach(c => {
       const caja = sec.refinanciamiento.querySelector(`[data-cond="${c.id}"]`), meta = condicionMeta(c.type);
@@ -2090,20 +2179,6 @@ function buildForm(main, root, f, { isEdit, original, sug, title }) {
       const i = +dr.dataset.delRango;
       guardarRangos(f.ranges.filter((_, j) => j !== i)); drawRangos(); cambio('ranges');
       (q(`[data-del-rango="${i - 1}"]`) || q('[data-rango="0"][data-rk="to"]'))?.focus();
-      return;
-    }
-    const addc = t.closest('[data-add-cond]');
-    if (addc) {
-      if (popup && popup.anchor === addc) { closePopup(true); return; }
-      const disponibles = REFINANCING_CONDITIONS.filter(o => !f.refinancingConditions.some(c => c.type === o.v));
-      abrirLista({
-        anchor: addc, role: 'menu', cls: 'ds-btnselect-menu', items: disponibles, minWidth: 160,
-        onPick: type => {
-          const c = { id: createId('condicion'), type, values: [], comparator: DEFAULT_COMPARATOR[type] ?? '', count: '', amount: null };
-          f.refinancingConditions.push(c); drawRefi(); cambio('refinancingConditions');
-          sec.refinanciamiento.querySelector(`[data-cond="${c.id}"] .condition__ctrl input, [data-cond="${c.id}"] .condition__ctrl button`)?.focus();
-        },
-      });
       return;
     }
     const dc = t.closest('[data-del-cond]');

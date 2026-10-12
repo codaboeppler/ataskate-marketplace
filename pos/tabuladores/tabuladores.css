@@ -1,19 +1,15 @@
 /* ============================================================
-   Detalles de tabulador (HU-CP-377-F) — reconstrucción estática del código de Product Design
-   Rama rama del equipo del repo del equipo: src/components/MetalTabulator/TabulatorDetails/NewTabulatorDetails/**.
-   Los valores salen de newTabulatorDetails.styles.ts / .constants.ts (DETAILS_LAYOUT) y de los componentes del DS
-   en src/design-system/ (Button, Chip, Table, TabsButton, Tooltip, Modal; tokens, Colors, Typography):
+   Tabuladores — reconstrucción estática (el repo del equipo):
+   - Lista (index.html, HU-CP-375-F; igual en develop y rama del equipo):
+     src/components/MetalTabulator/NewMetalTabulatorHome/** (al final de este archivo)
+   - Detalles de tabulador (detalle.html, HU-CP-377-F, código de Product Design en rama del equipo):
+     src/components/MetalTabulator/TabulatorDetails/NewTabulatorDetails/**
+   Los valores salen de sus .styles.ts / .constants.ts (DETAILS_LAYOUT) y de los componentes del DS
+   en src/design-system/ (Button, Chip, Table, TabsButton, Tooltip, Modal, Tree, SearchFieldV2; tokens, Colors, Typography):
    - .cd-*  = componentes del DS tal como están en su código
    - .tb-*  = acomodo de la pantalla
    El ancho de página y el padding lateral los pone .pos-main de ../pos.css (regla de Daniel: 1440 con 64 a los lados, 24 a ≤900).
    ============================================================ */
-
-/* Arreglo local de un detalle compartido de ../pos.css: a 900 px o menos el menú es cajón, pero la regla del Administrativo
-   (:root[data-plataforma='admin'] … .pos-cuerpo { padding-left: 244px }) le gana al reset del @media y el contenido quedaba
-   recorrido 244 px. Mismo selector, dentro del @media, para que gane aquí. Ver README. */
-@media (max-width: 900px) {
-  :root[data-plataforma='admin'] .pos-menu-fijo:not(.is-menu-cerrado) .pos-cuerpo { padding-left: 0; }
-}
 
 /* ---------------- Página (pageStyles / headerRowStyles / pageTitleStyles) ---------------- */
 /* Corrección: en el código el contenedor lleva overflow-x: hidden (escondía lo que se salía en vez de evitarlo); aquí no hace falta */
@@ -26,6 +22,9 @@
 @media (max-width: 900px) {
   .tb-head { flex-direction: column; align-items: flex-start; }
   .tb-grid { grid-template-columns: minmax(0, 1fr); }
+  /* en la lista título y botón "Tabulador" caben en un renglón de 36 hasta 375; a 320 el botón baja sin partir la palabra */
+  .tb-head--lista { flex-direction: row; flex-wrap: wrap; align-items: center; }
+  .tb-head--lista .tb-title { overflow-wrap: normal; }
 }
 
 /* ---------------- Card (cardStyles / cardHeaderStyles) ----------------
@@ -193,3 +192,196 @@
 .cd-tip__arrow { position: absolute; width: 16px; height: 8px; transform: translateX(-50%); display: block; }
 .cd-tip__arrow--top { top: 100%; }
 .cd-tip__arrow--bottom { bottom: 100%; transform: translateX(-50%) rotate(180deg); }
+
+/* ============================================================
+   LISTA DE TABULADORES (NewMetalTabulatorHome, HU-CP-375-F)
+   TabulatorPanelLayout: panel de ubicaciones (TabulatorLocationPanel) + tabla (TabulatorTablePanel), 697 de alto.
+   En su código el contenedor es blanco sin radio ni sombra; aquí es tarjeta: sin borde, Card-shadow y radio 16 (regla de Product Design en COMPONENTS.md).
+   ============================================================ */
+.tb-panel {
+  display: flex; flex-direction: row; align-items: stretch; height: 697px; min-width: 0; box-sizing: border-box;
+  border-radius: 16px; background: #fff; box-shadow: var(--pos-shadow-card, 0 2px 10px 0 rgba(0, 0, 0, .06));
+}
+
+/* ---------------- TabulatorLocationPanel: 303 de ancho, padding 12, separación 10, borde derecho #E8E9EA ---------------- */
+.tb-loc {
+  display: flex; flex-direction: column; align-items: stretch; gap: 10px; flex: 0 0 303px; width: 303px; min-height: 0; box-sizing: border-box;
+  padding: 12px; border-right: 1px solid #e8e9ea; border-radius: 16px 0 0 16px; background: #fff;
+}
+/* "Cerrar panel": SkipPreviousIcon 20 + texto 14/700 #5A5AFF, padding 8 16 8 8, separación 4 (en su código es un div con onClick) */
+.tb-loc__close {
+  display: flex; align-items: center; gap: 4px; width: 100%; padding: 8px 16px 8px 8px; box-sizing: border-box; flex-shrink: 0;
+  border: 0; border-radius: 8px; background: none; color: #5a5aff; cursor: pointer;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; line-height: normal; text-align: left;
+}
+.tb-loc__close:focus-visible, .tb-loc__open:focus-visible { outline: 2px solid #5a5aff; outline-offset: -2px; }
+/* buscador + árbol: padding 0 16 16, separación 10; el árbol hace scroll dentro del panel si no cabe */
+.tb-loc__body { display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 0; padding: 0 16px 16px; }
+.tb-loc__tree { flex: 1; min-height: 0; overflow-y: auto; }
+/* CollapsedSide (BranchLocations): franja de 56 con "Abrir panel" girado; toda la franja abre el panel */
+.tb-loc.is-collapsed { flex-basis: 56px; width: 56px; padding: 0; }
+.tb-loc__open {
+  display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 0; border: 0;
+  border-radius: 16px 0 0 16px; background: #fff; cursor: pointer;
+}
+.tb-loc__open-in {
+  display: inline-flex; align-items: center; gap: 8px; transform: rotate(-90deg); white-space: nowrap;
+  color: #5a5aff; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700;
+}
+.tb-loc__open-in .cd-ico { transform: rotate(270deg); }   /* el ícono va girado 270 dentro del texto girado: apunta hacia la tabla */
+
+/* ---------------- Tree (DS): tree.styles.ts ---------------- */
+.cd-tree { display: flex; flex-direction: column; gap: 2px; width: 100%; margin: 0; padding: 0; list-style: none; }
+.cd-tree__item {
+  display: flex; align-items: center; gap: 8px; width: 100%; box-sizing: border-box; padding: 8px; border-radius: 12px;
+  background: #fff; cursor: pointer; transition: background .15s ease;
+}
+.cd-tree__item:hover { background: #fafafa; }
+.cd-tree__item[aria-selected='true'], .cd-tree__item[aria-selected='true']:hover { background: #f0f0ff; }
+/* Corrección: su TreeItem no recibe foco (sin teclado); aquí el árbol se recorre con flechas y el nodo enfocado lleva anillo */
+.cd-tree__item:focus-visible { outline: 2px solid #5a5aff; outline-offset: -2px; }
+.cd-tree__chev {
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 28px; height: 28px; padding: 4px; box-sizing: border-box;
+  border: 0; border-radius: 100px; background: #fff; color: #0d166b; cursor: pointer; transition: transform .2s ease;
+}
+.cd-tree__chev:hover { background: #f4f5f5; }
+.cd-tree__chev[aria-expanded='true'] { transform: rotate(180deg); }
+.cd-tree__spacer { display: block; width: 28px; flex-shrink: 0; }
+.cd-tree__text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.cd-tree__label { font-size: 16px; font-weight: 400; line-height: 1.2; letter-spacing: .3px; color: #1d1e20; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cd-tree__sub { font-size: 12px; font-weight: 400; line-height: 12px; color: #a1a5aa; white-space: nowrap; }
+
+/* ---------------- SearchFieldV2 (DS, variant default) con autocompletado ---------------- */
+.cd-search { position: relative; width: 100%; flex-shrink: 0; }
+.cd-search__control {
+  display: grid; grid-template-columns: minmax(0, 1fr) 24px; align-items: center; gap: 8px; width: 100%; height: 40px; padding: 0 16px; box-sizing: border-box;
+  border: 1px solid transparent; border-radius: 100px; background: #fbfbfe;
+}
+.cd-search__control:hover { background: #fff; border-color: #5a5aff; }
+.cd-search__control:focus-within { background: #fff; border-color: #0d166b; }
+.cd-search__input {
+  width: 100%; min-width: 0; padding: 0; border: 0; outline: 0; background: transparent; overflow: hidden; text-overflow: ellipsis;
+  font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 400; line-height: 1.2; letter-spacing: .3px; color: #2a2c2f;
+}
+.cd-search__input::placeholder { color: #a1a5aa; }
+.cd-search__btn { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; border: 0; background: transparent; color: #5a5aff; cursor: pointer; }
+.cd-search__btn:focus-visible { border-radius: 50%; outline: 2px solid #5a5aff; outline-offset: 2px; }
+.cd-search__list {
+  position: absolute; top: 44px; left: 0; z-index: 3; display: flex; flex-direction: column; width: 100%; max-height: 280px; overflow-y: auto;
+  padding: 8px 0; box-sizing: border-box; border: 1px solid #e8e9ea; border-radius: 8px; background: #fff; box-shadow: 0 4px 16px rgba(0, 0, 0, .12);
+}
+.cd-search__list[hidden] { display: none; }
+.cd-search__opt {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; padding: 8px 16px; box-sizing: border-box;
+  border: 0; background: transparent; color: #1d1e20; text-align: left; cursor: pointer; font-family: 'Nunito', sans-serif;
+}
+.cd-search__opt:hover, .cd-search__opt[data-active='true'] { background: #fafaff; }
+.cd-search__opt-label { font-size: 16px; font-weight: 400; line-height: 1.2; letter-spacing: .3px; overflow-wrap: anywhere; }
+.cd-search__opt-label strong { font-weight: 600; }
+.cd-search__opt-desc { font-size: 12px; font-weight: 400; line-height: 12px; color: #54575c; overflow-wrap: anywhere; }
+.cd-search__feedback { display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: flex-start; gap: 12px; padding: 8px 16px; }
+.cd-search__feedback > svg { color: #cc9200; }
+.cd-search__feedback > span { display: flex; flex-direction: column; gap: 8px; }
+.cd-search__feedback strong { font-size: 16px; font-weight: 600; line-height: 1.2; color: #614500; }
+.cd-search__feedback span span { font-size: 16px; font-weight: 400; line-height: 1.2; color: #2a2c2f; }
+.cd-search__loading { display: flex; flex-direction: column; gap: 8px; padding: 8px 16px; }
+.cd-search__loading span {
+  height: 16px; border-radius: 4px; background: linear-gradient(90deg, #e8e9ea 25%, #f4f5f5 50%, #e8e9ea 75%); background-size: 200% 100%;
+  animation: tb-sk 1.5s ease-in-out infinite;
+}
+.cd-search__loading span:nth-of-type(2) { width: 82%; }
+.cd-search__loading span:nth-of-type(3) { width: 68%; }
+
+/* ---------------- TabulatorTablePanel ---------------- */
+.tb-tp { display: flex; flex-direction: column; gap: 16px; flex: 1; min-width: 0; min-height: 0; border-radius: 0 16px 16px 0; background: #fff; }
+.tb-tp__head {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-shrink: 0; height: 56px; padding: 8px 16px; box-sizing: border-box;
+  border-bottom: 1px solid #e8e9ea;
+}
+.tb-tp__title { margin: 0; font-size: 14px; font-weight: 700; line-height: normal; color: #1d1e20; }
+.tb-tp__body { display: flex; flex-direction: column; flex: 1; min-height: 0; width: 100%; overflow-y: auto; }
+/* Table del DS con borderVariant "default": líneas de fila #FBFBFE y del encabezado #D4D6D8 */
+.cd-tscroll--default { --table-row-border: #fbfbfe; --table-header-border: #d4d6d8; }
+.cd-th--160 { min-width: 160px; box-sizing: border-box; }
+.cd-th--40 { min-width: 40px; width: 40px; }
+/* TableCell type="text-description": padding 4 8, texto 14 y descripción 12 */
+.cd-td--desc { padding: 4px 8px; }
+.cd-td__main { margin: 0; font-size: 14px; font-weight: 400; line-height: 1.2; color: #2a2c2f; }
+.cd-td__sub { margin: 4px 0 0; font-size: 12px; font-weight: 400; line-height: 12px; color: #54575c; }
+/* TableCell type="icon-button": 40 de ancho, centrado */
+.cd-td--icon { width: 40px; padding: 12px 0; text-align: center; }
+/* TableRow con onClick (clickableRowStyles): hover surfacePage y anillo de foco */
+.cd-tr--click { cursor: pointer; }
+.cd-tr--click:hover { background: #fbfbfe; }
+.cd-tr--click:focus-visible { outline: 2px solid #5a5aff; outline-offset: -2px; }
+/* Ajuste del prototipo: con el panel abierto la tabla (4 × 160 + 40) no cabe entre 1097 y ~1350 px; hace scroll dentro de la tarjeta
+   y la columna del ⋮ se queda fija a la derecha, con la sombra de "hay más" en su borde izquierdo (como en ../plazos) */
+.tb-tp .cd-tframe::after { content: none; }
+.cd-table--tb th:last-child, .cd-table--tb td:last-child { position: sticky; right: 0; z-index: 1; background: #fff; }
+.cd-table--tb tr.cd-tr--click:hover td:last-child { background: #fbfbfe; }
+.cd-table--tb th:last-child::before, .cd-table--tb td:last-child::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 16px; pointer-events: none;
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, .06); clip-path: inset(0 100% 0 -24px); opacity: 0; transition: opacity .15s ease;
+}
+.tb-tp .cd-tframe.is-end .cd-table--tb th:last-child::before, .tb-tp .cd-tframe.is-end .cd-table--tb td:last-child::before { opacity: 1; }
+
+/* ⋮ de cada fila (TabulatorRowOptionsMenu: blueOptionsIcon 24). Corrección: en su código es una imagen con onClick; aquí es botón */
+.tb-opts {
+  display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; vertical-align: middle;
+  border: 0; border-radius: 50%; background: none; cursor: pointer;
+}
+.tb-opts:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
+/* menú del ⋮: 200 de ancho, borde #F3F3F3, radio 8, sombra 0 11 26.6. Va fijo sobre la página (no lo recorta el scroll de la tabla) */
+.tb-menu {
+  position: fixed; z-index: 40; display: flex; flex-direction: column; width: 200px; overflow: hidden; box-sizing: border-box;
+  border: 1px solid #f3f3f3; border-radius: 8px; background: #fff; box-shadow: 0 11px 26.6px 0 rgba(0, 0, 0, .06);
+}
+.tb-menu[hidden] { display: none; }
+.tb-menu__item {
+  width: 100%; padding: 8px; box-sizing: border-box; border: 0; border-radius: 0; background: transparent; text-align: left; cursor: pointer;
+  font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 400; line-height: 1.2; color: #2a2c2f;
+}
+.tb-menu__item:hover, .tb-menu__item:focus-visible { background: #f0f0ff; color: #5a5aff; outline: 0; }
+.tb-menu__item:disabled { cursor: default; opacity: .5; background: transparent; color: #2a2c2f; }
+
+/* TabulatorTableEmptyState: ilustración 50.832 × 125 y "No hay nada para mostrar" (textoRegular en #54575C), centrado en lo que queda */
+.tb-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; flex: 1; padding: 24px 16px; text-align: center; }
+.tb-empty img { display: block; width: 50.832px; height: 125px; }
+.tb-empty p { margin: 0; font-size: 16px; font-weight: 400; line-height: 1.2; letter-spacing: .3px; color: #54575c; }
+
+/* Button del DS con ícono a la izquierda: padding 8 izquierda, 16 derecha; ícono de 20 */
+.cd-btn--icon-left { padding-left: 8px; padding-right: 16px; }
+.cd-btn--icon-left .cd-ico { width: 20px; height: 20px; }
+
+/* texto solo para lectores de pantalla (encabezado de la columna del ⋮) */
+.tb-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+/* ---------------- Skeleton (General/Atoms/Skeleton) ---------------- */
+.tb-sk {
+  display: block; background: linear-gradient(45deg, #e8e9ea 25%, #f0f0f0 50%, #e8e9ea 75%); background-size: 200% 100%;
+  animation: tb-sk 1.5s ease-in-out infinite; opacity: .9;
+}
+@keyframes tb-sk { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .tb-sk, .cd-search__loading span { animation: none; } }
+.tb-sk-col { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 8px; }
+.tb-sk-row { display: flex; align-items: center; gap: 16px; width: 100%; padding: 12px 16px; box-sizing: border-box; border-bottom: 1px solid #e8e9ea; }
+.tb-sk-row > .tb-sk { flex: 1; height: 14px; border-radius: 4px; }
+
+/* Toast del DS en tono informativo (los de éxito y advertencia los trae ../pos.css) */
+.pos .ds-toast--info { background: #ebf9ff; }
+.pos .ds-toast--info .ds-toast__icon { color: #008fcc; }
+.pos .ds-toast--info .ds-toast__title { color: #004461; }
+.pos .ds-toast--info .ds-toast__timer { background-color: #008fcc; }
+
+/* Panel arriba de la tabla cuando no caben lado a lado (con 303 de panel la tabla se quedaría casi sin ancho):
+   ventana de 900 o menos, o de 901 a 1096 con el menú fijo del Administrativo (los mismos cortes que ../plazos) */
+@media (max-width: 900px), (min-width: 901px) and (max-width: 1096px) {
+  .tb-panel { flex-direction: column; height: auto; }
+  .tb-loc { flex: 0 0 auto; width: 100%; border-right: 0; border-bottom: 1px solid #e8e9ea; border-radius: 16px 16px 0 0; }
+  .tb-loc__tree { max-height: 320px; }
+  .tb-loc.is-collapsed { width: 100%; padding: 0; }
+  .tb-loc__open { justify-content: flex-start; padding: 8px 16px 8px 12px; border-radius: 16px 16px 0 0; }
+  .tb-loc__open-in { transform: none; }
+  .tb-loc__open-in .cd-ico { transform: rotate(180deg); }
+  .tb-tp { min-height: 420px; border-radius: 0 0 16px 16px; }
+}

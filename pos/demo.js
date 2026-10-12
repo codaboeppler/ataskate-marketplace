@@ -18,10 +18,12 @@
     ['Cliente nuevo', 'Operativo · alta de cliente', 'clientes/cliente-nuevo.html'],
     ['Configura tu empresa', 'Administrativo · datos de empresa', 'empresa/'],
     ['Plazos', 'Administrativo · plazos', 'plazos/'],
-    ['Tabuladores', 'Administrativo · detalle del tabulador de metales', 'tabuladores/'],
+    ['Tabuladores', 'Administrativo · tabuladores por ubicación', 'tabuladores/'],
+    ['Detalle de tabulador', 'Administrativo · tabulador de metales', 'tabuladores/detalle.html'],
     ['Generación de códigos', 'Administrativo · cola de atención e historial', 'codigos-acceso/'],
     ['Generación de códigos vacía', 'Administrativo · sin solicitudes', 'codigos-acceso/?escenario=vacio'],
     ['Generación de códigos cargando', 'Administrativo · carga lenta', 'codigos-acceso/?escenario=carga-lenta'],
+    ['Registro por invitación', 'Acceso · código de invitación y alta de cuenta', 'registro-invitacion/'],
   ];
   // la ruta sin index.html, más los parámetros que cambian de ficha (mora, tipo de inventario, inventario vacío)
   const limpiar = (u) => u.pathname.replace(/index\.html$/, '').replace(/\/?$/, '/')

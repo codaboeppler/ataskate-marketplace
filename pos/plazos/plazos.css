@@ -106,23 +106,25 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 /* ==========================================================================
    DS · Button / IconButton
    ========================================================================== */
+/* button.styles.ts: tamaño default 36 de alto con padding 8/16 y gap 8; con ícono, 8 del lado del ícono
+   y 16 del otro (iconPaddingStyles). El ícono va en su caja de 20 × 20 (.button-icon del DS) */
 .plz .ds-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: var(--sp-8);
-  height: 36px; padding: 7px var(--sp-16);
+  height: 36px; padding: var(--sp-8) var(--sp-16);
   border: 1px solid transparent; border-radius: var(--r-pill);
   font-size: 14px; line-height: 20px; font-weight: 700; white-space: nowrap;
   transition: background-color .2s ease-in-out, color .2s ease-in-out, border-color .2s ease-in-out;
 }
 .plz .ds-btn svg { width: 20px; height: 20px; }
-.plz .ds-btn--icon-left { padding-left: 7px; }
-.plz .ds-btn--icon-right { padding-right: 7px; }
-.plz .ds-btn--icon-right svg { width: 16px; height: 16px; margin: 0 2px; }
+.plz .ds-btn--icon-left { padding-left: var(--sp-8); }
+.plz .ds-btn--icon-right { padding-right: var(--sp-8); }
+.plz .ds-btn__icon { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; line-height: 0; }
 .plz .ds-btn--primary { background: var(--button-primary); color: var(--text-button); }
 .plz .ds-btn--primary:hover, .plz .ds-btn--primary:active { background: var(--button-link); }
 .plz .ds-btn--secondary { background: var(--surface-card); color: var(--button-primary); border-color: var(--button-primary); }
-.plz .ds-btn--secondary:hover { background: var(--purple50); }
+.plz .ds-btn--secondary:hover, .plz .ds-btn--secondary:active { background: var(--purple50); }
 .plz .ds-btn--tertiary { background: var(--surface-card); color: var(--button-primary); }
-.plz .ds-btn--tertiary:hover { background: var(--purple50); }
+.plz .ds-btn--tertiary:hover, .plz .ds-btn--tertiary:active { background: var(--purple50); }
 .plz .ds-btn--destructive { background: var(--button-destructive); color: var(--text-button); }
 .plz .ds-btn--destructive:hover { background: var(--error-title); }
 .plz .ds-btn[aria-busy="true"] { pointer-events: none; padding-left: var(--sp-16); }
@@ -710,19 +712,32 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 .plz .ds-listbox--doble [role="option"] { min-height: 0; padding: var(--sp-8); font-size: 16px; line-height: 1.2; color: var(--text-body); }
 
 /* ==========================================================================
-   DS · ButtonSelect (menú de "Agregar condición")
+   DS · ButtonSelect ("Agregar condición"): el Button del DS con ChevronDownIcon de 20 a la derecha
+   y un menú anclado (buttonSelect.styles.ts). No es un botón nuevo: toma la variante y el tamaño del Button.
    ========================================================================== */
-.plz [data-add-cond] svg { transition: transform .2s ease; }
-.plz [data-add-cond][aria-expanded="true"] svg { transform: rotate(180deg); }
+.plz .ds-btnselect { display: inline-flex; position: relative; }
+.plz .ds-btnselect__chev { transition: transform .2s ease; }
+/* abierto: el botón queda presionado (variantActiveStyles, mismo fondo que :hover) y el chevron gira 180° */
+.plz .ds-btnselect > .ds-btn[aria-expanded="true"] .ds-btnselect__chev { transform: rotate(180deg); }
+.plz .ds-btnselect > .ds-btn--primary[aria-expanded="true"] { background: var(--button-link); }
+.plz .ds-btnselect > .ds-btn--secondary[aria-expanded="true"],
+.plz .ds-btnselect > .ds-btn--tertiary[aria-expanded="true"] { background: var(--purple50); }
+/* menú: fijo, al menos del ancho del botón (mín. 160) y sin partir opciones en dos renglones, 4 px abajo o arriba si abajo quedan menos de 200 (anchoredPanelStyles);
+   capa 1410 en #plz-capas, como las demás listas */
 .plz .ds-btnselect-menu {
   position: fixed; z-index: 1410; box-sizing: border-box; min-width: 160px; margin: 0; padding: var(--sp-8) 0; overflow-y: auto;
-  background: var(--surface-card); border-radius: var(--r-sm); box-shadow: 0 4px 16px rgba(0,0,0,.12); outline: none;
+  background: var(--surface-card); border-radius: var(--r-sm); box-shadow: var(--shadow-dropdown); outline: none;
 }
 .plz .ds-btnselect-menu [role="menuitem"] {
-  display: flex; align-items: center; min-height: 36px; padding: var(--sp-8) var(--sp-16); box-sizing: border-box;
-  font-size: 16px; line-height: 19.2px; color: var(--text-body); white-space: nowrap; cursor: pointer; outline: 0;
+  display: flex; align-items: center; box-sizing: border-box; width: 100%; min-height: 36px; padding: var(--sp-8) var(--sp-16);
+  border: none; background: transparent; font-family: inherit; font-size: 16px; font-weight: 400; line-height: 19.2px;
+  color: var(--text-body); text-align: left; white-space: nowrap; cursor: pointer; outline: 0; transition: background .15s ease;
 }
-.plz .ds-btnselect-menu [role="menuitem"]:hover, .plz .ds-btnselect-menu [role="menuitem"]:focus-visible, .plz .ds-btnselect-menu [role="menuitem"]:focus { background: var(--purple50); }
+/* la opción enfocada (con flechas o con el mouse, que también la enfoca) va en primary50, como :hover; con teclado
+   además lleva el foco visible de 2 px (regla de producto), por dentro para que el scroll del menú no lo recorte */
+.plz .ds-btnselect-menu [role="menuitem"]:hover, .plz .ds-btnselect-menu [role="menuitem"]:focus { background: var(--purple50); }
+.plz .ds-btnselect-menu [role="menuitem"]:focus-visible { outline: 2px solid var(--button-primary); outline-offset: -2px; }
+.plz .ds-btnselect-menu [role="menuitem"][aria-disabled="true"] { color: var(--text-placeholder); cursor: not-allowed; background: transparent; }
 
 /* ==========================================================================
    DS · AutoMultiSelect (chips en una fila, filtro y lista con casillas)
