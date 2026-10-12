@@ -607,6 +607,9 @@ a.btn,a.mx{text-decoration:none}
 
 /* ===== Pestañas de sesión al pie: las mismas de ../inventario/ y de la lista de Clientes ===== */
 .cli-sessions{position:fixed;z-index:25;left:0;right:0;bottom:0;display:flex;align-items:flex-end;gap:1px;height:40px;background:#f4f5f5}
+/* En pantallas táctiles Safari pinta lo que queda bajo su barra flotante con el color de esta barra: con #f4f5f5 dejaba una franja gris
+   abajo de toda la pantalla. Ahí toma el fondo de la página con una línea arriba; en escritorio queda gris como en Figma. */
+@media (hover:none) and (pointer:coarse){.cli-sessions{background:#fbfbfe;box-shadow:0 -1px 0 #e5e6e8}}
 .cli-sessions__tab{display:inline-flex;align-items:center;gap:8px;height:40px;padding:8px 24px;box-sizing:border-box;background:#fff;border-top:2px solid #5a5aff;font:500 16px/24px var(--font-family-sans);color:#5a5aff;white-space:nowrap}
 .cli-sessions__help{display:inline-flex;cursor:help}
 .cli-sessions__add{display:inline-flex;align-items:center;justify-content:center;width:68px;height:36px;border:0;border-top:1px solid #d4d6d8;background:#fff;color:#54575c;cursor:pointer}
