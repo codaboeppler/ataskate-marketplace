@@ -1,0 +1,371 @@
+/* ============================================================
+   Configuración de contratos · pestaña "Diseño del contrato" (contrato-diseno.js)
+   Figma "Suscripción" J7QvWSiVMKOxDex4x3Wmbj, sección 4621:11178: Diseño de contrato 01–18, Vista previa01/02,
+   Cambios Guardados 427, tamaño de hoja 5001:12215. Medidas en figma-contrato/SPEC.md §3–§5.
+   - Todo vive bajo .ctd (la raíz de la pestaña y la capa .ctd-capas que se cuelga de <body>): nada sale de aquí.
+   - Valores del DS (src/design-system: Colors, Tabs, Switch, SelectionChip, Dropzone, Button) como variables propias.
+   - Tarjetas sin borde con Card-shadow y radio 16 (regla de Product Design); los controles conservan su borde.
+   - La hoja del contrato (427) se dibuja a la escala de Figma (557 de ancho, letras de 7 a 10 px) y el JS le pone
+     zoom para que se lea (hasta 1.4 en la hoja guardada y 1.5 en la Vista previa) o para que quepa a 375.
+   ============================================================ */
+.ctd {
+  color-scheme: light;
+  --ctd-p10:#FAFAFF; --ctd-p50:#F0F0FF; --ctd-p100:#E5E5FF; --ctd-p200:#ACACFF; --ctd-p300:#5A5AFF; --ctd-p400:#0D166B;
+  --ctd-n50:#FAFAFA; --ctd-n100:#F4F5F5; --ctd-n200:#E8E9EA; --ctd-n300:#D4D6D8; --ctd-n400:#A1A5AA; --ctd-n500:#71767D;
+  --ctd-n600:#54575C; --ctd-n700:#2A2C2F; --ctd-n800:#1D1E20;
+  --ctd-page:#FBFBFE; --ctd-err:#A82424; --ctd-err-oscuro:#501111;
+  --ctd-sombra:0 2px 10px 0 rgba(0,0,0,.06);          /* Card-shadow */
+  --ctd-sombra-menu:0 4px 16px rgba(0,0,0,.12);        /* shadows.dropdown */
+  --ctd-sombra-arrastre:0 3px 9.4px 0 rgba(0,0,0,.19); /* shadows.drag */
+  --ctd-font:var(--font-family-sans, 'Nunito', system-ui, sans-serif);
+  font-family:var(--ctd-font); color:var(--ctd-n700); font-size:16px; line-height:1.2; letter-spacing:.3px;
+}
+.ctd *, .ctd *::before, .ctd *::after { box-sizing:border-box; }
+.ctd button, .ctd input { font-family:inherit; }
+.ctd button { cursor:pointer; }
+.ctd p, .ctd h2, .ctd h3, .ctd ol, .ctd ul { margin:0; }
+.ctd svg { flex-shrink:0; }
+.ctd :focus-visible { outline:2px solid var(--ctd-p300); outline-offset:2px; }
+.ctd .ctd-sr { position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+.ctd .ctd-file { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
+@media (prefers-reduced-motion: reduce) { .ctd *, .ctd *::before, .ctd *::after { transition:none !important; animation:none !important; scroll-behavior:auto !important; } }
+
+/* ---------- Botones (DS Button: pill, Nunito Bold 14/20, 8 16) ---------- */
+.ctd .ctd-btn { position:relative; display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:36px; padding:8px 16px;
+  border-radius:100px; border:1px solid transparent; font-size:14px; line-height:20px; font-weight:700; letter-spacing:0; white-space:nowrap;
+  transition:background-color .15s ease-in-out, color .15s ease-in-out; text-decoration:none; }
+.ctd .ctd-btn--pri { background:var(--ctd-p300); color:#fff; }
+.ctd .ctd-btn--pri:hover { background:var(--ctd-p400); }
+.ctd .ctd-btn--ter { background:transparent; color:var(--ctd-p300); }
+.ctd .ctd-btn--ter:hover { background:var(--ctd-p50); }
+.ctd .ctd-btn--ter:disabled { color:var(--ctd-p200); background:transparent; cursor:not-allowed; }
+.ctd .ctd-btn--des { background:var(--ctd-err); color:#fff; }
+.ctd .ctd-btn--des:hover { background:var(--ctd-err-oscuro); }
+.ctd .ctd-btn--ic { padding-left:8px; }
+.ctd .ctd-btn.is-cargando { pointer-events:none; }
+.ctd .ctd-btn.is-cargando .ctd-btn__t { visibility:hidden; }
+.ctd .ctd-spin { position:absolute; left:50%; top:50%; width:20px; height:20px; margin:-10px 0 0 -10px; border-radius:50%;
+  border:2px solid rgba(255,255,255,.35); border-top-color:#fff; animation:ctd-giro .7s linear infinite; }
+@keyframes ctd-giro { to { transform:rotate(360deg); } }
+/* Icon Button del DS: redondo, ícono morado */
+.ctd .ctd-ib { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; padding:8px; border:0; border-radius:50%;
+  background:#fff; color:var(--ctd-p300); transition:background-color .15s ease-in-out; }
+.ctd .ctd-ib:hover, .ctd .ctd-ib[aria-pressed="true"] { background:var(--ctd-p50); }
+.ctd .ctd-ib--28 { width:28px; height:28px; padding:4px; }
+
+/* ---------- Editor: dos columnas (Figma 595 | 685 a 1280; aquí proporcional y con tope 547) ---------- */
+.ctd .ctd-cq { container:ctd / inline-size; }
+.ctd .ctd-ed { display:grid; grid-template-columns:clamp(320px, 46%, 547px) minmax(0, 1fr); gap:24px; align-items:start; }
+.ctd .ctd-col-conf { display:flex; flex-direction:column; min-width:0; }
+/* fija mientras el contrato se recorre, solo si la columna cabe en la ventana (lo decide el JS) */
+.ctd .ctd-col-conf.is-fija { position:sticky; top:calc(var(--pos-header-h, 56px) + 16px); }
+
+/* tarjeta "Categorías": padding 16, gap 24, radio 16, Card-shadow (sin el borde izquierdo de 0.5 de Figma) */
+.ctd .ctd-conf { container:ctdconf / inline-size; background:#fff; border-radius:16px; box-shadow:var(--ctd-sombra); padding:16px; display:flex; flex-direction:column; gap:24px; }
+.ctd .ctd-conf.is-estilos { min-height:556px; }
+/* lo que el JS lleva a la vista con scrollIntoView no queda debajo del header compartido */
+.ctd .ctd-conf, .ctd .ctd-b, .ctd .ctd-gcard { scroll-margin-top:calc(var(--pos-header-h, 56px) + 16px); scroll-margin-bottom:16px; }
+.ctd .ctd-panel { display:flex; flex-direction:column; gap:24px; min-width:0; }
+.ctd .ctd-pie { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:16px; padding:16px 0; }
+
+/* DS Tabs (subrayado): 40 de alto, 8 16, 16/1.2; activa SemiBold #5A5AFF con línea 1.2; contenedor con línea #D4D6D8 */
+.ctd .ctd-tabs { display:flex; align-items:flex-end; height:40px; border-bottom:1.2px solid var(--ctd-n300); }
+.ctd .ctd-tab { display:inline-flex; align-items:center; height:40px; padding:8px 16px; border:0; border-bottom:1.2px solid var(--ctd-n300); margin-bottom:-1.2px;
+  background:none; font-size:16px; line-height:1.2; font-weight:400; letter-spacing:.3px; color:var(--ctd-n700); white-space:nowrap;
+  transition:color .15s ease-in-out, border-color .15s ease-in-out; }
+.ctd .ctd-tab:hover { color:var(--ctd-p300); border-bottom-color:var(--ctd-p300); }
+.ctd .ctd-tab[aria-selected="true"] { font-weight:600; letter-spacing:normal; color:var(--ctd-p300); border-bottom-color:var(--ctd-p300); }
+
+/* ---------- Contenido (Diseño de contrato 01) ---------- */
+.ctd .ctd-cab { display:flex; flex-direction:column; gap:8px; }
+.ctd .ctd-cab__t { font-size:16px; line-height:1.2; font-weight:600; letter-spacing:normal; color:var(--ctd-n800); }
+.ctd .ctd-cab__d { font-size:14px; line-height:1.2; letter-spacing:normal; color:var(--ctd-n600); }
+.ctd .ctd-lista { list-style:none; padding:0; display:flex; flex-direction:column; gap:4px; }
+.ctd .ctd-fila { position:relative; display:flex; align-items:center; gap:16px; min-height:52px; padding:6px 16px; background:#fff; border-bottom:1px solid var(--ctd-n200); }
+.ctd .ctd-fila__n { flex:1; min-width:0; font-size:16px; line-height:1.2; color:var(--ctd-n700); cursor:pointer; }
+.ctd .ctd-fila.is-off .ctd-fila__n { cursor:default; }
+.ctd .ctd-asa { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; padding:4px; border:0; border-radius:50%;
+  background:transparent; color:var(--ctd-p300); cursor:grab; touch-action:none; -webkit-user-select:none; user-select:none; transition:background-color .15s; }
+.ctd .ctd-asa:hover { background:var(--ctd-p50); }
+.ctd .ctd-lista.is-ordenando .ctd-fila { transition:transform .15s ease-out; }
+.ctd .ctd-lista.is-ordenando .ctd-fila.is-arrastre { transition:none; z-index:2; border-radius:8px; border-bottom-color:transparent; box-shadow:var(--ctd-sombra-arrastre); }
+.ctd .ctd-lista.is-ordenando, .ctd .ctd-lista.is-ordenando * { cursor:grabbing; user-select:none; }
+
+/* DS Switch: 48×24; encendido pista #E5E5FF y pulgar #5A5AFF con palomita; apagado pista #FAFAFA y pulgar #54575C con tache */
+.ctd .ctd-sw { position:relative; display:inline-flex; flex-shrink:0; cursor:pointer; }
+.ctd .ctd-sw input { position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:pointer; z-index:1; }
+.ctd .ctd-sw__tr { position:relative; display:block; width:48px; height:24px; border-radius:100px; background:var(--ctd-n50);
+  box-shadow:inset 0 0 4px rgba(0,0,0,.1); transition:background .2s ease-in-out, box-shadow .15s; }
+.ctd .ctd-sw__kn { position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:var(--ctd-n600);
+  box-shadow:1px 1px 4px rgba(212,214,216,.88); display:flex; align-items:center; justify-content:center; transition:left .2s ease-in-out, background .15s ease-in-out; }
+.ctd .ctd-sw input:checked + .ctd-sw__tr { background:var(--ctd-p100); }
+.ctd .ctd-sw input:checked + .ctd-sw__tr .ctd-sw__kn { left:26px; background:var(--ctd-p300); box-shadow:1px 1px 4px rgba(172,172,255,.88); }
+.ctd .ctd-sw:hover .ctd-sw__tr { box-shadow:inset 0 0 4px rgba(0,0,0,.1), inset 0 1px 4px var(--ctd-n300); }
+.ctd .ctd-sw:hover .ctd-sw__kn { background:var(--ctd-n700); }
+.ctd .ctd-sw:hover input:checked + .ctd-sw__tr { box-shadow:inset 0 0 4px rgba(0,0,0,.1), inset 0 1px 4px rgba(90,90,255,.4); }
+.ctd .ctd-sw:hover input:checked + .ctd-sw__tr .ctd-sw__kn { background:var(--ctd-p400); }
+.ctd .ctd-sw input:focus-visible + .ctd-sw__tr { outline:2px solid var(--ctd-p300); outline-offset:2px; }
+
+/* ---------- Estilos (Diseño de contrato 02–18) ---------- */
+.ctd .ctd-grupo { display:flex; flex-direction:column; gap:8px; min-width:0; }
+.ctd .ctd-lbl { padding:0 8px; font-size:14px; line-height:1.2; font-weight:500; letter-spacing:.3px; color:var(--ctd-n800); }
+.ctd .ctd-vacio { font-size:14px; line-height:1.4; color:var(--ctd-n600); letter-spacing:normal; }
+/* qué sección se edita: Figma no lo rotula (lo dice el contorno del contrato); con las columnas apiladas sí se ve */
+.ctd .ctd-estilos-de { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+.ctd .ctd-estilos-de__l { color:var(--ctd-n600); font-weight:400; }
+
+/* muestras de color: círculos de 32 a 8; la elegida lleva anillo de 2 #5A5AFF por dentro; la blanca, borde #D4D6D8 */
+.ctd .ctd-sws { display:grid; grid-template-columns:repeat(12, minmax(0, 32px)); gap:8px; padding:0 8px; }
+.ctd .ctd-sw8 { width:100%; max-width:32px; aspect-ratio:1; padding:0; border:0; border-radius:50%; background:var(--c); transition:box-shadow .15s; }
+.ctd .ctd-sw8.is-blanco { box-shadow:inset 0 0 0 1px var(--ctd-n300); }
+.ctd .ctd-sw8:hover { box-shadow:inset 0 0 0 1px var(--ctd-p200); }
+.ctd .ctd-sw8[aria-checked="true"] { box-shadow:inset 0 0 0 2px var(--ctd-p300); }
+/* 12 × 32 + 11 × 8 + 16 = 488: si no caben en un renglón (1440 con el menú fijo deja 459), dos renglones de 6 en vez de
+   encogerlas; en una tarjeta angostísima, las que quepan */
+@container ctdconf (width < 488px) {
+  .ctd .ctd-sws { grid-template-columns:repeat(6, 32px); }
+}
+@container ctdconf (width < 248px) {
+  .ctd .ctd-sws { grid-template-columns:repeat(auto-fill, 32px); }
+}
+
+/* DS Text Area con negrita y cursiva */
+.ctd .ctd-texto { min-height:72px; padding:12px; border:1px solid var(--ctd-n300); border-radius:16px; background:#fff; font-size:16px; line-height:1.2;
+  letter-spacing:.3px; color:var(--ctd-n700); white-space:pre-wrap; overflow-wrap:anywhere; transition:border-color .2s ease-in-out; }
+.ctd .ctd-texto:hover { border-color:var(--ctd-p300); }
+.ctd .ctd-texto:focus { outline:none; border-color:var(--ctd-p400); }
+.ctd .ctd-texto b, .ctd .ctd-texto strong { font-weight:700; }
+.ctd .ctd-bi { display:flex; gap:8px; }
+
+/* DS Text input (Enlace de código QR de solo lectura e Identificador) */
+.ctd .ctd-inp { width:100%; height:40px; padding:8px 12px; border:1px solid var(--ctd-n300); border-radius:100px; background:#fff; font-size:16px; line-height:1.2;
+  letter-spacing:.3px; color:var(--ctd-n700); transition:border-color .2s ease-in-out; }
+.ctd .ctd-inp::placeholder { color:var(--ctd-n400); }
+.ctd .ctd-inp:hover { border-color:var(--ctd-p300); }
+.ctd .ctd-inp:focus { outline:none; border-color:var(--ctd-p400); }
+.ctd .ctd-inp[readonly] { background:var(--ctd-n50); color:var(--ctd-n400); }
+.ctd .ctd-inp[readonly]:hover { border-color:var(--ctd-n300); }
+.ctd .ctd-inp[readonly]:focus-visible { outline:2px solid var(--ctd-p300); outline-offset:2px; }
+
+/* DS Dropzone (Logo vacío) y logo cargado */
+.ctd .ctd-dz { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:6px; min-height:74px; padding:16px; border:1px dashed var(--ctd-p300);
+  border-radius:16px; background:var(--ctd-n50); cursor:pointer; transition:background-color .2s ease; }
+.ctd .ctd-dz:hover, .ctd .ctd-dz.is-drag { background:var(--ctd-p50); }
+.ctd .ctd-dz.is-err { border-color:var(--ctd-err); }
+.ctd .ctd-dz__up { display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:#fff; color:var(--ctd-p300); }
+.ctd .ctd-dz__t { font-size:16px; line-height:1.5; letter-spacing:.3px; color:var(--ctd-n700); }
+.ctd .ctd-dz__link { display:inline-flex; align-items:center; gap:4px; padding:8px 16px 8px 8px; border:0; border-radius:100px; background:transparent;
+  color:var(--ctd-p300); font-size:14px; line-height:20px; font-weight:700; letter-spacing:0; white-space:nowrap; }
+.ctd .ctd-dz__link:hover { background:#fff; }
+.ctd .ctd-err { display:flex; align-items:center; gap:4px; padding:2px 8px; font-size:14px; line-height:1.4; letter-spacing:normal; color:var(--ctd-err); }
+.ctd .ctd-logo-cab { display:flex; align-items:center; justify-content:space-between; gap:8px; padding-right:8px; }
+.ctd .ctd-logo-banda { display:flex; justify-content:center; align-items:center; min-height:72px; background:#F9FAFB; }
+.ctd .ctd-logo-banda img { display:block; width:72px; height:72px; object-fit:contain; border-radius:8px; }
+
+/* DS Choice chip (redes y Doble cara): 36 de alto, 8 12, radio 8; elegida #F0F0FF + borde #5A5AFF + SemiBold #0D166B + palomita */
+.ctd .ctd-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.ctd .ctd-chip { display:inline-flex; align-items:center; gap:8px; height:36px; padding:8px 12px; border:1px solid var(--ctd-n300); border-radius:8px;
+  background:#fff; font-size:14px; line-height:1.2; font-weight:400; letter-spacing:0; color:var(--ctd-n700); white-space:nowrap;
+  transition:border-color .15s ease-in-out, background .15s ease-in-out, color .15s ease-in-out; }
+.ctd .ctd-chip:hover { border-color:var(--ctd-p300); background:var(--ctd-p50); color:var(--ctd-p400); }
+.ctd .ctd-chip.is-on { border-color:var(--ctd-p300); background:var(--ctd-p50); color:var(--ctd-p400); font-weight:600; }
+.ctd .ctd-chip__red { color:#000; }
+.ctd .ctd-chip--40 { height:40px; padding:0 12px; }
+
+/* ---------- Contrato (columna derecha) ---------- */
+.ctd .ctd-prev { min-width:0; background:#fff; border-radius:16px; box-shadow:var(--ctd-sombra); padding:12px; display:flex; flex-direction:column; gap:12px; }
+/* barra de Formato: Formato + select + Doble cara · Vista previa */
+.ctd .ctd-fbar { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; padding:8px; border-bottom:1px solid #E7E7F3; }
+/* "Vista previa" se queda a la derecha aunque la barra se parta en dos renglones */
+.ctd .ctd-fbar > .ctd-btn--ter { margin-left:auto; }
+.ctd .ctd-fbar__izq { display:flex; flex-wrap:wrap; align-items:center; gap:8px; min-width:0; }
+.ctd .ctd-fbar__l { font-size:14px; line-height:1.2; font-weight:500; letter-spacing:.3px; color:#000; }
+/* DS Selection input (tamaño de hoja 5001:12215) */
+.ctd .ctd-sel { position:relative; }
+.ctd .ctd-sel__btn { display:flex; align-items:center; justify-content:space-between; gap:8px; min-width:222px; height:40px; padding:8px 12px; border:1px solid var(--ctd-n300);
+  border-radius:100px; background:#fff; font-size:16px; line-height:1.2; letter-spacing:.3px; color:var(--ctd-n700); white-space:nowrap; transition:border-color .2s ease-in-out; }
+.ctd .ctd-sel__btn:hover { border-color:var(--ctd-p300); }
+.ctd .ctd-sel__btn svg { color:var(--ctd-n700); transition:transform .2s ease-in-out; }
+.ctd .ctd-sel.is-abierto .ctd-sel__btn { border-color:var(--ctd-p400); }
+.ctd .ctd-sel.is-abierto .ctd-sel__btn svg { transform:rotate(180deg); }
+.ctd .ctd-sel__lista { position:absolute; z-index:20; top:calc(100% + 4px); left:0; min-width:100%; margin:0; padding:4px 0; list-style:none;
+  background:#fff; border-radius:8px; box-shadow:var(--ctd-sombra-menu); }
+.ctd .ctd-sel__lista li { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:36px; padding:0 12px; font-size:16px; line-height:1.2;
+  letter-spacing:.3px; color:var(--ctd-n700); white-space:nowrap; cursor:pointer; }
+.ctd .ctd-sel__lista li:hover, .ctd .ctd-sel__lista li:focus { background:var(--ctd-p50); outline:none; }
+.ctd .ctd-sel__lista li:focus-visible { box-shadow:inset 0 0 0 2px var(--ctd-p300); }
+
+/* bloques del contrato: blancos, Card-shadow, 12 de padding, radio 16 (8 en identidad, folio y redes), Nunito 14/1.2.
+   --b-bg = Color de fondo; --ac-* = Color de acento (encabezados y bordes de las tablas) */
+.ctd .ctd-bloques { display:flex; flex-direction:column; gap:12px; }
+.ctd .ctd-b { --ink:var(--b-ink, #2A2C2F); --title:var(--b-title, #1D1E20); --muted:var(--b-muted, #54575C);
+  --acb:var(--ac-bg, rgba(212,214,216,.4)); --acd:var(--ac-bd, #D4D6D8); --aci:var(--ac-ink, #2A2C2F);
+  position:relative; padding:12px; border-radius:16px; background:var(--b-bg, #fff); box-shadow:var(--ctd-sombra); cursor:pointer;
+  font-size:14px; line-height:1.2; letter-spacing:0; color:var(--title); transition:box-shadow .15s ease-in-out; }
+.ctd .ctd-b:hover { box-shadow:0 0 0 1px var(--ctd-p200), var(--ctd-sombra); }
+.ctd .ctd-b.is-sel { box-shadow:0 0 0 1px var(--ctd-p300), var(--ctd-sombra); }
+.ctd .ctd-b:has(.ctd-b__sel:focus-visible) { box-shadow:0 0 0 2px var(--ctd-p300), var(--ctd-sombra); }
+.ctd .ctd-b__sel { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+.ctd .ctd-b--identidad, .ctd .ctd-b--folio, .ctd .ctd-b--redes { border-radius:8px; }
+.ctd .ctd-b b { font-weight:700; }
+.ctd .ctd-b .ctd-ph { color:var(--muted); }
+.ctd .ctd-b .ctd-dato { color:inherit; }
+.ctd .ctd-b .ctd-lk { color:var(--b-lk, var(--ctd-p300)); }
+.ctd .ctd-b .ctd-muted, .ctd .ctd-b .ctd-muted .ctd-ph { color:var(--muted); }
+.ctd .ctd-vacio--prev { padding:24px 12px; text-align:center; }
+/* 1 · Identidad */
+.ctd .ctd-pi { display:flex; align-items:center; justify-content:center; gap:8px; min-width:0; }
+.ctd .ctd-pi__logo { width:38px; height:38px; flex-shrink:0; border-radius:8px; background:var(--ctd-n300); overflow:hidden; }
+.ctd .ctd-pi__logo img { display:block; width:100%; height:100%; object-fit:contain; }
+.ctd .ctd-pi__n { font-size:16px; font-weight:600; color:var(--ink); overflow-wrap:anywhere; }
+/* 2 · Folio y fecha */
+.ctd .ctd-pf { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px 24px; }
+/* 3, 5–8 · secciones de texto */
+.ctd .ctd-pt { display:flex; flex-direction:column; gap:12px; }
+.ctd .ctd-b--iva .ctd-pt { color:var(--ink); }
+.ctd .ctd-b--profeco .ctd-pt { color:var(--muted); }
+.ctd .ctd-b--dudas .ctd-pt { color:var(--ink); }
+.ctd .ctd-b--dudas .ctd-tt, .ctd .ctd-b--dudas .ctd-tt b { color:var(--title); font-weight:600; }
+.ctd .ctd-b--plazo .ctd-pt { color:var(--ink); }
+/* tablas: borde 0.7, encabezado con el acento (gris rgba(212,214,216,.4) por omisión), Bold 12 centrado.
+   Selectores con table.ctd-t: empresa.css trae reglas de tabla para todo .cte (min-width 640, nowrap, 14 px, alto 40). */
+.ctd .ctd-tw { overflow-x:auto; }
+.ctd table.ctd-t { width:100%; min-width:0; border-collapse:separate; border-spacing:0; border:.7px solid var(--acd); border-radius:12px; overflow:hidden; }
+.ctd table.ctd-t th, .ctd table.ctd-t td { font-size:12px; line-height:1.1; letter-spacing:0; white-space:normal; height:auto; border:0; border-left:.7px solid var(--acd); }
+.ctd table.ctd-t th { padding:4px 8px; height:46px; background:var(--acb); color:var(--aci); font-weight:400; text-align:center; vertical-align:middle; }
+.ctd table.ctd-t td { padding:4px 8px; color:var(--muted); text-align:left; vertical-align:top; border-top:.7px solid var(--acd); }
+.ctd table.ctd-t th:first-child, .ctd table.ctd-t td:first-child { border-left:0; padding-left:8px; }
+.ctd table.ctd-t th:last-child, .ctd table.ctd-t td:last-child { padding-right:8px; }
+.ctd table.ctd-t th b { font-weight:700; }
+.ctd table.ctd-t--fin { min-width:400px; }
+.ctd table.ctd-t--fin th.is-com, .ctd table.ctd-t--fin td.is-com { width:30%; }
+.ctd table.ctd-t--fin td.is-com { padding:0; }
+.ctd table.ctd-t--fin td.is-com ul { list-style:none; margin:0; padding:0; }
+.ctd table.ctd-t--fin td.is-com li { display:flex; flex-direction:column; gap:2px; padding:4px; border-bottom:.4px solid var(--acd); }
+.ctd table.ctd-t--fin td.is-com li:last-child { border-bottom:0; }
+.ctd table.ctd-t--fin .ctd-cl { font-size:10px; }
+.ctd table.ctd-t--fin .ctd-mini { font-size:9px; }
+.ctd table.ctd-t tr.ctd-t__pie td { padding:4px 16px; font-size:9px; line-height:1.5; color:var(--muted); }
+.ctd table.ctd-t tr.ctd-t__pie b { color:var(--title); }
+.ctd table.ctd-t--cols { border-radius:8px; }
+.ctd table.ctd-t--cols th { padding:8px 4px; height:46px; hyphens:auto; }
+.ctd table.ctd-t--cols th:first-child, .ctd table.ctd-t--cols th:last-child { padding-left:4px; padding-right:4px; }
+.ctd table.ctd-t--cols td { height:36px; }
+.ctd table.ctd-t--opciones { min-width:470px; }
+.ctd table.ctd-t--prenda { min-width:380px; }
+.ctd table.ctd-t--prenda th:first-child { width:26%; }
+.ctd table.ctd-t--des { border-radius:8px; table-layout:fixed; }
+.ctd table.ctd-t--des th { height:auto; padding:8px; font-weight:700; }
+.ctd table.ctd-t--des td { padding:8px; }
+.ctd table.ctd-t--des td > p + p { margin-top:10px; }
+.ctd .ctd-p12 { font-size:12px; line-height:1.2; color:var(--muted); }
+.ctd .ctd-fecha { font-size:14px; line-height:1.2; color:var(--title); }
+/* 12 · Firma */
+.ctd .ctd-pfir { display:grid; grid-template-columns:repeat(auto-fit, minmax(96px, 1fr)); gap:12px; }
+.ctd .ctd-pfir__c { display:flex; flex-direction:column; justify-content:flex-end; gap:4px; min-height:122px; padding:16px 8px; border-radius:16px; background:var(--ctd-page); }
+.ctd .ctd-pfir__l { display:block; border-top:.8px solid var(--ctd-n600); }
+.ctd .ctd-pfir__t { text-align:center; font-size:14px; color:var(--ink); overflow-wrap:anywhere; }
+/* 13 · Código QR */
+.ctd .ctd-b--qr { padding:16px; }
+.ctd .ctd-pq { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.ctd .ctd-pq p { font-size:16px; line-height:1.2; letter-spacing:.3px; color:var(--muted); }
+.ctd .ctd-pq__qr { display:inline-flex; flex-shrink:0; width:52px; height:52px; color:var(--ctd-p400); background:var(--ctd-page); }
+/* 14 · Redes */
+.ctd .ctd-pr { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; font-size:16px; letter-spacing:.3px; color:var(--muted); }
+.ctd .ctd-pr__ics { display:inline-flex; gap:8px; color:var(--ctd-n800); }
+.ctd .ctd-pr__ic { display:inline-flex; }
+.ctd .ctd-pr__id { color:var(--ink); }
+
+/* ---------- Hoja del contrato (427 y Vista previa): escala de Figma, el JS le pone zoom ---------- */
+.ctd .ctd-gcard { background:#fff; border-radius:16px; box-shadow:var(--ctd-sombra); padding:16px; display:flex; flex-direction:column; gap:16px; }
+.ctd .ctd-gcard:focus { outline:none; }
+.ctd .ctd-gcard:focus-visible { outline:2px solid var(--ctd-p300); outline-offset:2px; }
+.ctd .ctd-gcard__acc { display:flex; justify-content:flex-end; margin-bottom:-8px; }
+/* overflow-x recorta la sombra de la hoja: 12 de padding que se devuelven con margen negativo (el layout no cambia) */
+.ctd .ctd-harea { min-width:0; overflow-x:auto; overscroll-behavior-x:contain; padding:12px; margin:-12px; }
+.ctd .ctd-harea:focus { outline:none; }
+.ctd .ctd-harea:focus-visible { outline:2px solid var(--ctd-p300); outline-offset:-2px; border-radius:8px; }
+.ctd .ctd-hzoom { width:557px; margin:0 auto; }
+.ctd .ctd-hpie { text-align:center; font-size:12px; line-height:1; font-weight:700; letter-spacing:0; color:var(--ctd-n400); }
+.ctd .ctd-hoja { --h-ink:#1B1F3B; --h-muted:#6B7192; --h-ph:#A6ABC6; --h-bd:#D8DAE8; --h-th:#F5F5FA; --h-caja:#FAFAFC; --h-sep:#E7E7F3;
+  width:557px; padding:16px; border-radius:3px; background:#fff; box-shadow:var(--ctd-sombra); display:flex; flex-direction:column;
+  font-family:var(--ctd-font); color:var(--h-ink); letter-spacing:0; }
+.ctd .ctd-hoja.is-doble { box-shadow:var(--ctd-sombra), 4px 4px 0 -1px #fff, 4px 4px 0 0 var(--h-sep); }
+.ctd .ctd-hs { --acb:var(--ac-bg, var(--h-th)); --acd:var(--ac-bd, var(--h-bd)); --aci:var(--ac-ink, var(--h-ink));
+  padding:6px; margin:0 -6px; border-radius:3px; background:var(--b-bg, transparent); }
+.ctd .ctd-hs--identidad { padding-top:0; }
+.ctd .ctd-hs__t { margin:0 0 3px; font-size:8px; line-height:11.36px; font-weight:700; text-transform:uppercase; color:var(--h-ink); letter-spacing:0; }
+.ctd .ctd-hs p { font-size:9px; line-height:12.78px; }
+.ctd .ctd-hs b { font-weight:700; }
+.ctd .ctd-hoja .ctd-ph { color:var(--h-ph); }
+.ctd .ctd-hoja .ctd-lk { color:var(--h-lk, var(--ctd-p300)); }
+.ctd .ctd-hoja .ctd-dato { color:inherit; }
+.ctd .ctd-hid { display:flex; align-items:center; gap:8px; }
+.ctd .ctd-hid__logo { width:38px; height:38px; flex-shrink:0; border-radius:8px; background:var(--ctd-n300); overflow:hidden; }
+.ctd .ctd-hid__logo img { display:block; width:100%; height:100%; object-fit:contain; }
+.ctd .ctd-hs p.ctd-hid__n { font-size:10px; line-height:14.2px; font-weight:800; color:var(--ctd-p400); }
+.ctd .ctd-hs p.ctd-hid__s { font-size:7.5px; line-height:10.65px; color:var(--h-muted); }
+.ctd .ctd-hid__r { margin:9px 0 0; border:0; border-top:.5px solid var(--h-bd); }
+.ctd .ctd-hcaja { display:flex; flex-wrap:wrap; align-items:center; gap:2px 12px; min-height:20px; padding:3px 5px; border:.5px solid var(--h-sep); border-radius:3px;
+  background:var(--h-caja); font-size:9px; line-height:12.78px; color:var(--h-muted); }
+.ctd table.ctd-ht { width:100%; min-width:0; border-collapse:collapse; table-layout:fixed; }
+.ctd table.ctd-ht th, .ctd table.ctd-ht td { height:auto; padding:.75px 3.75px; border:.5px solid var(--acd); font-size:7.5px; line-height:10.65px; letter-spacing:0;
+  text-align:left; vertical-align:top; white-space:normal; overflow-wrap:anywhere; }
+.ctd table.ctd-ht th:first-child, .ctd table.ctd-ht td:first-child, .ctd table.ctd-ht th:last-child, .ctd table.ctd-ht td:last-child { padding-left:3.75px; padding-right:3.75px; }
+.ctd table.ctd-ht th { background:var(--acb); color:var(--aci); font-weight:700; }
+.ctd table.ctd-ht td { color:var(--h-ink); }
+.ctd table.ctd-ht tr:last-child td { border-bottom:.5px solid var(--acd); }
+.ctd .ctd-hs p.ctd-hnota { margin-top:3px; font-size:7.5px; line-height:10.65px; color:var(--h-muted); }
+.ctd .ctd-hfir { display:flex; gap:12px; margin-top:6px; }
+.ctd .ctd-hfir__c { flex:1; display:flex; flex-direction:column; gap:2px; min-width:0; }
+.ctd .ctd-hfir__l { display:block; height:18px; border-bottom:.5px solid var(--h-ink); }
+.ctd .ctd-hfir__t { font-size:7px; line-height:9.94px; color:var(--h-muted); }
+.ctd .ctd-hqr { display:flex; align-items:center; gap:8px; }
+.ctd .ctd-hqr__c { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; width:36px; height:36px; border:.5px solid var(--h-bd); border-radius:4px;
+  background:var(--h-caja); color:var(--h-ink); }
+.ctd .ctd-hs p.ctd-hqr__t { font-weight:700; }
+.ctd .ctd-hs p.ctd-hqr__s { color:var(--h-muted); }
+.ctd .ctd-hs--redes { margin-top:6px; }
+.ctd .ctd-hs p.ctd-hredes { display:flex; flex-wrap:wrap; justify-content:center; gap:2px 8px; padding-top:4px; border-top:.5px solid var(--h-sep);
+  font-size:7.5px; line-height:10.65px; font-weight:700; color:var(--h-lk, var(--ctd-p300)); }
+.ctd .ctd-hredes__l { color:var(--h-muted); text-transform:uppercase; }
+.ctd .ctd-hvacia { margin:auto; font-size:9px; color:var(--h-muted); }
+
+/* ---------- Capa en <body>: Vista previa (vista01) y modal ---------- */
+.ctd.ctd-capas { position:static; }
+/* bajo el header compartido (z 30) y el menú fijo (35); el JS la recorre al borde del menú */
+.ctd .ctd-vp { position:fixed; z-index:27; top:var(--pos-header-h, 56px); left:0; right:0; bottom:0; overflow-y:auto; overscroll-behavior:contain; background:var(--ctd-page); }
+.ctd .ctd-vp__in { display:flex; flex-direction:column; gap:12px; padding:16px 64px 48px; max-width:1440px; margin:0 auto; }
+.ctd .ctd-vp__top { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px 64px; }
+.ctd .ctd-vp__t { font-size:12px; line-height:1.2; letter-spacing:0; color:var(--ctd-n600); }
+.ctd .ctd-vp .ctd-fbar { padding:8px; }
+.ctd .ctd-vp .ctd-harea { margin-top:0; }   /* 12 más entre la barra de Formato y la hoja */
+.ctd .ctd-ov { position:fixed; inset:0; z-index:1400; display:flex; align-items:center; justify-content:center; padding:24px; background:rgba(0,0,0,.5); }
+.ctd .ctd-modal { width:100%; max-width:606px; max-height:calc(100vh - 48px); overflow:auto; display:flex; flex-direction:column; gap:24px; padding:24px;
+  border-radius:24px; background:#fff; box-shadow:0 10px 60px 0 rgba(0,0,0,.25); }
+.ctd .ctd-modal__h { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.ctd .ctd-modal__h h2 { font-size:24px; line-height:1.2; font-weight:600; letter-spacing:normal; color:var(--ctd-n700); }
+.ctd .ctd-modal__b { font-size:16px; color:var(--ctd-n800); }
+.ctd .ctd-modal__f { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; }
+.ctd .ctd-mx { display:flex; align-items:center; justify-content:center; width:40px; height:40px; flex-shrink:0; border:0; border-radius:50%; background:#fff; color:var(--ctd-n600); }
+.ctd .ctd-mx:hover { background:var(--ctd-n100); color:var(--ctd-n700); }
+
+/* ---------- Columnas apiladas (contenedor menor a 860: 1024 con el menú fijo, tablet y teléfono) ---------- */
+@container ctd (max-width: 859px) {
+  .ctd .ctd-ed { grid-template-columns:minmax(0, 1fr); }
+  .ctd .ctd-estilos-de { position:static; width:auto; height:auto; overflow:visible; clip:auto; white-space:normal; padding:0 8px; font-size:14px; line-height:1.2;
+    font-weight:600; letter-spacing:normal; color:var(--ctd-n800); }
+  .ctd .ctd-conf.is-estilos { min-height:0; }
+}
+@container ctd (max-width: 480px) {
+  .ctd .ctd-conf { padding:16px 12px; }
+  .ctd .ctd-fila { gap:12px; padding:6px 8px; }
+  .ctd .ctd-sel__btn { min-width:0; }
+  .ctd .ctd-fbar { padding:8px 0; }
+  .ctd .ctd-pq { flex-direction:column; align-items:flex-start; }
+  .ctd .ctd-gcard { padding:12px; }
+}
+@media (max-width: 900px) {
+  .ctd .ctd-vp__in { padding:16px 24px 40px; }
+  .ctd .ctd-vp__top { gap:8px 16px; }
+}

@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Ataskate POS — Configura tu empresa</title>
-<meta name="description" content="Ataskate POS (Administrativo): Configura tu empresa — guía de configuración inicial, datos de empresa, roles, usuarios y horarios. Prototipo de el equipo." />
+<meta name="description" content="Ataskate POS (Administrativo): Configura tu empresa — guía de configuración inicial, configuración de contratos (datos de la empresa y diseño del contrato), roles, usuarios y horarios. Prototipo de el equipo." />
 <meta name="robots" content="noindex" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,7 +15,10 @@
 <link rel="stylesheet" href="../ds/base.css" />
 <link rel="stylesheet" href="../ds/components.css" />
 <link rel="stylesheet" href="../pos.css?v=ux65" />
-<link rel="stylesheet" href="empresa.css?v=3" />
+<link rel="stylesheet" href="empresa.css?v=4" />
+<!-- Configuración de contratos (#datos): marco + "Datos de la empresa" (contrato.*) y "Diseño del contrato" (contrato-diseno.*) -->
+<link rel="stylesheet" href="contrato.css?v=2" />
+<link rel="stylesheet" href="contrato-diseno.css?v=2" />
 </head>
 <!-- data-plataforma-fija: "admin" para módulos del Administrativo, "op" para el Operativo -->
 <body class="pos pos-menu-fijo" data-plataforma-fija="admin">
@@ -92,6 +95,25 @@
       <b>Controles del prototipo</b>
       <label for="proto-screen">Pantalla</label>
       <select id="proto-screen" aria-label="Ir a pantalla"></select>
+      <!-- estados del Figma de Configuración de contratos (Suscripción › V1- Datos de mi empresa) -->
+      <label for="proto-ctr">Configuración de contratos</label>
+      <select id="proto-ctr">
+        <option value="">Elige un estado…</option>
+        <optgroup label="Datos de la empresa">
+          <option value="vacio">Vacío (420)</option>
+          <option value="lleno">Lleno, sin guardar (425)</option>
+          <option value="vacios">Error: campos vacíos</option>
+          <option value="formato">Error: formato</option>
+          <option value="carga">Cargando</option>
+          <option value="guardado">Guardado (426)</option>
+        </optgroup>
+        <optgroup label="Diseño del contrato">
+          <option value="diseno">Editor: Contenido (01)</option>
+          <option value="estilos">Editor: Estilos (08)</option>
+          <option value="diseno-guardado">Guardado (427)</option>
+          <option value="vista">Vista previa</option>
+        </optgroup>
+      </select>
       <span class="sep"></span>
       <label for="proto-notes"><input type="checkbox" id="proto-notes"><span class="mini-switch"></span>Notas de diseño</label>
       <span class="sep"></span>
@@ -106,10 +128,13 @@
   <div id="layer"></div>
 </div>
 
-<script src="empresa.js?v=2"></script>
+<!-- contrato-diseno.js (window.CtrDiseno) y contrato.js (window.CtrContrato) van antes de empresa.js, que los usa -->
+<script src="contrato-diseno.js?v=2"></script>
+<script src="contrato.js?v=3"></script>
+<script src="empresa.js?v=5"></script>
 <script src="../navbar.js?v=3"></script>
-<script src="../menu-op.js?v=11"></script>
-<script src="../demo.js?v=13"></script>
+<script src="../menu-op.js?v=13"></script>
+<script src="../demo.js?v=14"></script>
 <script src="../comentarios.js?v=5"></script>
 </body>
 </html>

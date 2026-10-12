@@ -5,6 +5,9 @@
    - Breadcrumb del DS (el de ../inventario/) en todas las pantallas: Home › Configura tu empresa › pantalla.
    - Las notas de diseño se encienden en .cte (el .pos-cuerpo), no en body.
    - En el menú lateral compartido, "Configura tu empresa" regresa a la guía y "Usuarios" abre la pantalla de usuarios.
+   - 2026-10-12: la hoja "Datos de empresa" (#datos) se reemplazó por "Configuración de contratos" (Figma "Suscripción",
+     sección 4621:11178). La pantalla vive en contrato.js (pestaña "Datos de la empresa" y el marco) y contrato-diseno.js
+     (pestaña "Diseño del contrato"); aquí quedan los controles compartidos, las rutas y los eventos.
    Lo demás (pantallas, estados, validaciones, modales, toasts, barra del prototipo) es el código de el equipo. */
 (function () {
   'use strict';
@@ -14,13 +17,13 @@
   const ic = (n, s, extra) => { const i = DSI[n]; return `<svg width="${s||20}" height="${s||20}" viewBox="${i[0]}" fill="none" aria-hidden="true" ${extra||''}>${i[1]}</svg>`; };
   /* Banderas: SVG de src/design-system/Flags/Flags.tsx */
   const FLAG_SVG = {"mexico": "<path d=\"M12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24Z\" fill=\"#F4F5F5\" /> <path d=\"M23.9999 11.9997C23.9999 7.24218 21.2312 3.13143 17.2173 1.19043V22.8089C21.2312 20.868 23.9999 16.7572 23.9999 11.9997Z\" fill=\"#A82424\" /> <path d=\"M0 11.9997C0 16.7572 2.76867 20.868 6.78262 22.809V1.19043C2.76867 3.13143 0 7.24218 0 11.9997Z\" fill=\"#309C60\" /> <path d=\"M8.86963 11.999C8.86963 13.7279 10.2712 15.1295 12.0001 15.1295C13.729 15.1295 15.1305 13.7279 15.1305 11.999V10.9556H8.86963V11.999Z\" fill=\"#309C60\" /> <path d=\"M16.1736 9.9136H13.0431C13.0431 9.33732 12.5759 8.87012 11.9996 8.87012C11.4233 8.87012 10.9561 9.33732 10.9561 9.9136H7.82568C7.82568 10.4899 8.32767 10.9571 8.9039 10.9571H8.86917C8.86917 11.5334 9.33633 12.0006 9.91265 12.0006C9.91265 12.5769 10.3798 13.044 10.9561 13.044H13.0431C13.6194 13.044 14.0866 12.5769 14.0866 12.0006C14.6629 12.0006 15.1301 11.5334 15.1301 10.9571H15.0953C15.6716 10.9571 16.1736 10.4899 16.1736 9.9136Z\" fill=\"#FFBD00\" />", "canada": "<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M0.000488281 12.0007C0.000488281 16.7582 2.76916 20.869 6.78311 22.81V1.19141C2.76916 3.13241 0.000488281 7.24316 0.000488281 12.0007ZM24.0009 12.0007C24.0009 7.24316 21.2322 3.13241 17.2182 1.19141V22.8099C21.2322 20.869 24.0009 16.7582 24.0009 12.0007ZM16.1745 12.5225L14.0876 13.566L14.6093 14.6095H12.5223V16.1747H11.4789V14.6095H9.39189L9.91361 13.566L7.82669 12.5225L8.87013 12.0008V10.9573L10.9571 12.0008L9.91361 9.91384H10.9571L12.0006 8.34863L13.0441 9.91384H14.0876L13.0441 12.0008L15.131 10.9573V12.0008L16.1745 12.5225Z\" fill=\"#A82424\" />", "usa": "<path d=\"M12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24Z\" fill=\"#F4F5F5\" /> <path d=\"M11.478 12.0001H23.9997C23.9997 10.917 23.8554 9.86774 23.5863 8.86963H11.478V12.0001Z\" fill=\"#A82424\" /> <path d=\"M11.478 5.73836H22.2385C21.5039 4.53968 20.5647 3.48016 19.4696 2.60791H11.478V5.73836Z\" fill=\"#A82424\" /> <path d=\"M11.9996 23.9998C14.8238 23.9998 17.4196 23.0237 19.4694 21.3911H4.52979C6.57963 23.0237 9.17543 23.9998 11.9996 23.9998Z\" fill=\"#A82424\" /> <path d=\"M1.76098 18.2598H22.2384C22.8281 17.2975 23.2855 16.2457 23.5863 15.1294H0.413086C0.713883 16.2457 1.17124 17.2975 1.76098 18.2598Z\" fill=\"#A82424\" /> <path d=\"M5.55863 1.87397H6.65217L5.63498 2.61295L6.02353 3.80869L5.00639 3.0697L3.98925 3.80869L4.32487 2.7757C3.42928 3.52172 2.64431 4.39575 1.99744 5.36963H2.34783L1.70034 5.84002C1.59947 6.0083 1.50272 6.17925 1.41 6.35273L1.71919 7.30434L1.14234 6.88523C0.998953 7.18903 0.867797 7.49967 0.749906 7.81678L1.09055 8.86528H2.34783L1.33064 9.60427L1.71919 10.8L0.702047 10.061L0.0927656 10.5037C0.0317812 10.9939 0 11.4932 0 12H12C12 5.37262 12 4.59131 12 0C9.62944 0 7.41961 0.687656 5.55863 1.87397ZM6.02353 10.8L5.00639 10.061L3.98925 10.8L4.3778 9.60427L3.36061 8.86528H4.61789L5.00639 7.66955L5.39489 8.86528H6.65217L5.63498 9.60427L6.02353 10.8ZM5.63498 6.10861L6.02353 7.30434L5.00639 6.56536L3.98925 7.30434L4.3778 6.10861L3.36061 5.36963H4.61789L5.00639 4.17389L5.39489 5.36963H6.65217L5.63498 6.10861ZM10.3279 10.8L9.31073 10.061L8.29359 10.8L8.68214 9.60427L7.66495 8.86528H8.92223L9.31073 7.66955L9.69923 8.86528H10.9565L9.93933 9.60427L10.3279 10.8ZM9.93933 6.10861L10.3279 7.30434L9.31073 6.56536L8.29359 7.30434L8.68214 6.10861L7.66495 5.36963H8.92223L9.31073 4.17389L9.69923 5.36963H10.9565L9.93933 6.10861ZM9.93933 2.61295L10.3279 3.80869L9.31073 3.0697L8.29359 3.80869L8.68214 2.61295L7.66495 1.87397H8.92223L9.31073 0.678234L9.69923 1.87397H10.9565L9.93933 2.61295Z\" fill=\"#008FCC\" />"};
-  const PAISES = [{v:'mexico', pre:'+52', n:'México'}, {v:'canada', pre:'+1', n:'Canadá'}, {v:'usa', pre:'+1', n:'Estados Unidos'}];
+  /* (PAISES y el selector de país del teléfono se quitaron: el teléfono de Configuración de contratos es solo México, +52) */
   const flag = (c, size) => `<span class="flag" style="width:${size}px;height:${size}px" aria-hidden="true"><svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none">${FLAG_SVG[c]}</svg></span>`;
   const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
   /* ---------- Datos ---------- */
   const TASKS = [
-    {id:'datos', destino:'Datos de empresa', grupo:'empresa', titulo:'Completa los datos de tu empresa', desc:'Contacto, dirección, datos fiscales y documentos.', min:'10 min', icon:'business'},
+    {id:'datos', destino:'Datos de contrato', grupo:'empresa', titulo:'Completa los datos de contrato', desc:'Datos legales, dirección fiscal, cierre y diseño del contrato.', min:'10 min', icon:'business'},
     {id:'roles', destino:'Roles y permisos', grupo:'empresa', titulo:'Revisa los roles de tu equipo', desc:'Ataskate trae roles sugeridos. Ajústalos o crea los tuyos.', min:'3 min', icon:'key'},
     {id:'usuarios', destino:'Usuarios', grupo:'empresa', titulo:'Invita a tu equipo', desc:'Crea los usuarios que administrarán y operarán tu empresa.', min:'5 min', icon:'people'},
     {id:'horario', destino:'Horarios', grupo:'empresa', titulo:'Define tus días y horarios hábiles', desc:'Revisa el horario sugerido o ajústalo a tu empresa.', min:'2 min', icon:'clock'},
@@ -48,7 +51,9 @@
   Object.assign(CP, {
     '06000': {estado:'Ciudad de México', municipio:'Cuauhtémoc', colonias:['Centro']},
     '06140': {estado:'Ciudad de México', municipio:'Cuauhtémoc', colonias:['Condesa']},
-    '06600': {estado:'Ciudad de México', municipio:'Cuauhtémoc', colonias:['Juárez']}
+    '06600': {estado:'Ciudad de México', municipio:'Cuauhtémoc', colonias:['Juárez']},
+    /* el del ejemplo del Figma de Configuración de contratos (Londres 247) */
+    '04100': {estado:'Ciudad de México', municipio:'Coyoacán', colonias:['Del Carmen']}
   });
   /* Servicio real (QA): CatColony/GetColonysByPostalCode. Si no responde (por ejemplo, dentro del artifact), se usa la simulación local. */
   const CP_API = 'https://qa-api.ataskate.com.mx/web/api/v1/CatColony/GetColonysByPostalCode?postalCode=';
@@ -84,21 +89,9 @@
     const municipio = row[2] === 'Ciudad de México' ? ALCALDIA_CDMX[pre] : '';
     return {estado:row[2], municipio, colonias:[], auto:!!municipio};
   }
-  const INDUSTRIAS = ['Préstamos personales', 'Casa de empeño', 'Venta de artículos', 'Servicios financieros'];
-  const REGIMENES = ['601 General de Ley Personas Morales', '603 Personas Morales con Fines no Lucrativos', '612 Personas Físicas con Actividades Empresariales', '626 Régimen Simplificado de Confianza'];
-  const CFDI = ['G01 Adquisición de mercancías', 'G03 Gastos en general', 'I04 Equipo de cómputo', 'S01 Sin efectos fiscales'];
-  const DOCS = [
-    {id:'constancia', titulo:'Constancia de situación fiscal', ayuda:'Emitida hace 3 meses o menos', file:'constancia_situacion_fiscal.pdf'},
-    {id:'banco', titulo:'Estado de cuenta bancario', ayuda:'De la persona física o moral a quien Ataskate factura', file:'estado_cuenta_sep_2026.pdf'},
-    {id:'ine', titulo:'Identificación oficial', ayuda:'Del representante legal: INE o pasaporte vigente', file:'ine_representante_legal.pdf'}
-  ];
-  const SECTIONS = [
-    {id:'contacto', titulo:'Datos generales', fields:['nombreFiscal','rfc','correo','telefono']},
-    {id:'contrato', titulo:'Contrato de adhesión', fields:['registro','fechaEmision']},
-    {id:'direccion', titulo:'Domicilio fiscal', fields:['cp','estado','municipio','colonia','calle','numExt']},
-    {id:'fiscal', titulo:'Actividad fiscal', fields:['industria','regimen','cfdi']},
-    {id:'documentos', titulo:'Documentos', fields:['doc_constancia','doc_banco','doc_ine']}
-  ];
+  /* (la hoja "Datos de empresa" de el equipo — industria, régimen, CFDI, documentos y sus secciones — se quitó con la pantalla:
+     ahora #datos es Configuración de contratos, contrato.js) */
+  const CTRM = window.CtrContrato;   /* contrato.js: campos y estado inicial de Configuración de contratos */
   const HOURS = ['7:00 a.m.','8:00 a.m.','9:00 a.m.','10:00 a.m.','11:00 a.m.','12:00 p.m.','1:00 p.m.','2:00 p.m.','3:00 p.m.','4:00 p.m.','5:00 p.m.','6:00 p.m.','7:00 p.m.','8:00 p.m.'];
   const DAYS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
   const PERMS = {
@@ -112,10 +105,9 @@
     return {
       route:'inicio', notes:false,
       done:{}, justDone:null,
-      f:{ nombreComercial:'PrestaYa', nombreFiscal:'PrestaYa Servicios Financieros', rfc:'PSF190312AB4', correo:'contacto@prestaya.mx', telefono:'55 1234 5678', web:'',
-          registro:'', fechaEmision:'', cp:'06700', estado:'Ciudad de México', municipio:'Cuauhtémoc', colonia:'Roma Norte', calle:'Av. Álvaro Obregón', numExt:'121', numInt:'',
-          industria:'Préstamos personales', regimen:'', cfdi:'', doc_constancia:'', doc_banco:'', doc_ine:'' },
-      uploading:{}, errors:{}, openSec:null, savedSec:{contacto:true, direccion:true}, snap:null, docOpen:null, docType:{}, docMenu:null, cc:'mexico', ccOpen:false, cal:null, triedSave:false, dirty:false, saving:false, openSel:null,
+      /* f = los campos de Configuración de contratos (claves en contrato.js); empieza vacío, como el Figma 420 */
+      f: CTRM.vacio(), ctr: CTRM.estadoInicial(), logoUrl:null,
+      errors:{}, cal:null, triedSave:false, dirty:false, saving:false, openSel:null,
       roles:[
         {id:'admin', nombre:'Administrador', para:'Dueños y directores', perms:12, fijo:true, on:true},
         {id:'gerente', nombre:'Gerente de sucursal', para:'Responsables de una sucursal', perms:9, on:true},
@@ -144,16 +136,7 @@
   const errLine = (msg) => msg ? `<div class="errmsg" role="alert">${ic('close', 16)}<span>${esc(msg)}</span></div>` : '';
   const note = (txt, q) => `<div class="note${q ? ' q' : ''}"><span class="nl">${q ? 'Pregunta de negocio' : 'Nota de diseño'}</span><span>${txt}</span></div>`;
 
-  function input(key, label, o) {
-    o = o || {};
-    const e = S.errors[key];
-    const field = `<input class="inp${e ? ' err' : ''}" id="in-${key}" data-f="${key}" value="${esc(S.f[key])}" placeholder="${esc(o.ph || '')}" ${o.ro ? 'readonly' : ''} ${o.mode ? `inputmode="${o.mode}"` : ''} ${o.max ? `maxlength="${o.max}"` : ''} autocomplete="off" aria-invalid="${!!e}">`;
-    return `<div class="field${o.span ? ' span2' : ''}" id="f-${key}">
-      <label for="in-${key}">${esc(label)}${o.optional ? ' <span class="opt">(opcional)</span>' : ''}</label>
-      ${o.suffix ? `<div class="inp-wrap">${field}<span class="suffix">${ic(o.suffix, 20)}</span></div>` : field}
-      ${e ? errLine(e) : (o.help ? `<div class="help" id="h-${key}">${o.help}</div>` : '')}
-    </div>`;
-  }
+  /* (input() y dateField() de la hoja de el equipo se quitaron: los campos de Configuración de contratos los arma contrato.js) */
   /* Calendario: Figma del DS, "Calendar modal" (5931:21122) */
   const MESES_LARGOS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   const MESES_CORTOS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -170,7 +153,7 @@
       const tod = d.toDateString() === today.toDateString();
       cells += `<button type="button" class="cal-d${out ? ' out' : ''}${sel ? ' sel' : ''}${tod && !sel ? ' today' : ''}" data-action="cal-day" data-t="${d.getTime()}" aria-label="${d.getDate()} ${MESES_LARGOS[d.getMonth()]} ${d.getFullYear()}">${d.getDate()}</button>`;
     }
-    const years = []; for (let y = today.getFullYear() + 2; y >= 1990; y--) years.push(y);
+    const years = []; for (let y = today.getFullYear() + 2; y >= 1950; y--) years.push(y);   /* 1950: escrituras y poderes pueden ser viejos (antes 1990) */
     const list = c.list === 'm' ? `<div class="cal-list" style="left:8px">${MESES_LARGOS.map((n, i) => `<button type="button" class="cal-li${i === c.m ? ' on' : ''}" data-action="cal-setm" data-v="${i}">${n}</button>`).join('')}</div>`
       : c.list === 'y' ? `<div class="cal-list" style="left:128px">${years.map(y => `<button type="button" class="cal-li${y === c.y ? ' on' : ''}" data-action="cal-sety" data-v="${y}">${y}</button>`).join('')}</div>` : '';
     return `<div class="cal" role="dialog" aria-label="Elegir fecha">
@@ -182,16 +165,6 @@
       <div class="cal-grid">${['L','M','M','J','V','S','D'].map(d => `<span class="cal-h">${d}</span>`).join('')}${cells}</div>
       <div class="cal-act"><button type="button" class="cal-b" data-action="cal-close">Cancelar</button><button type="button" class="cal-b pri" data-action="cal-apply">Aplicar</button></div>
     </div>`;
-  }
-  function dateField(key, label) {
-    const e = S.errors[key];
-    return `<div class="field" id="f-${key}"><label for="in-${key}">${esc(label)}</label>
-      <div class="inp-wrap" style="position:relative">
-        <input class="inp${e ? ' err' : ''}" id="in-${key}" data-f="${key}" value="${esc(S.f[key])}" placeholder="DD/MM/AAAA" inputmode="numeric" maxlength="10" autocomplete="off" aria-invalid="${!!e}">
-        <button type="button" class="cal-btn" data-action="cal-toggle" data-key="${key}" aria-label="Abrir calendario" aria-expanded="${!!(S.cal && S.cal.key === key)}">${ic('calendar', 20)}</button>
-        ${S.cal && S.cal.key === key ? calendarHTML() : ''}
-      </div>
-      ${e ? errLine(e) : ''}</div>`;
   }
   function select(key, label, options, o) {
     o = o || {};
@@ -209,10 +182,12 @@
       ${e ? errLine(e) : (o.help ? `<div class="help">${o.help}</div>` : '')}
     </div>`;
   }
+  /* nombre de la empresa en la guía: el nombre comercial ya guardado en Configuración de contratos o, antes, el de la cuenta */
+  const nombreEmpresa = () => (S.ctr.guardados && S.ctr.guardados.nombreComercial) || 'PrestaYa';
+  /* el logo es el del diseño del contrato guardado (contrato.js lo toma del aviso 'guardado' de contrato-diseno.js) */
   const avatarEmpresa = () => S.logoUrl
-    ? `<span class="avatar img"><img src="${S.logoUrl}" alt="Logo de ${esc(S.f.nombreComercial)}"></span>`
-    : `<span class="avatar" aria-hidden="true">${esc(S.f.nombreComercial.slice(0, 1))}</span>`;
-  const LOGO_TYPES = {'image/png':'PNG', 'image/jpeg':'JPG', 'image/svg+xml':'SVG'};
+    ? `<span class="avatar img"><img src="${S.logoUrl}" alt="Logo de ${esc(nombreEmpresa())}"></span>`
+    : `<span class="avatar" aria-hidden="true">${esc(nombreEmpresa().slice(0, 1))}</span>`;
   /* Breadcrumb del DS, el mismo marcado de ../inventario/ (estilos en ../pos.css). Los enlaces siguen navegando dentro
      de la app con data-go. Home = Panel del Administrativo; "Configura tu empresa" = la guía. */
   const SEP = '<span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt="" /></span>';
@@ -226,6 +201,14 @@
   /* Home siempre lleva al Home con widgets (../home/), igual en todos los flujos del prototipo */
   const HOME = {l:'Home', href:'../home/'}, GUIA = {l:'Configura tu empresa', r:'inicio'};
   const ruta = (actual) => crumbs([HOME, GUIA, {l:actual}]);
+  /* Configuración de contratos (contrato.js): recibe los helpers del módulo; S va por getter porque "Reiniciar" lo cambia */
+  const CTR = CTRM.crear({
+    get S() { return S; },
+    ic, esc, flag, btn, note, crumbs, HOME, GUIA, parseFecha, lookupCP, fetchCP, scrollToEl, toast,
+    calendario: () => calendarHTML(),
+    render: () => render(), renderLayer: () => renderLayer(), go: (r, o) => go(r, o), navegar: (r) => navegar(r), syncProto: () => syncProto(),
+    siguiente: () => TASKS.find(t => !S.done[t.id] && t.id !== 'datos')
+  });
   function stepCircle(t, i, sm) {
     const st = S.done[t.id] ? 'done' : (t.id === nextTask()?.id ? 'active' : 'pending');
     return `<span class="step ${st}${sm ? ' sm' : ''}" aria-hidden="true">${st === 'done' ? ic('check', 16) : i + 1}</span>`;
@@ -295,7 +278,7 @@
           <section class="card" aria-labelledby="h-emp">
             <div class="identity" style="gap:16px">
               ${avatarEmpresa()}
-              <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><h2 class="t-sub" id="h-emp">${esc(S.f.nombreComercial)}</h2><span class="t-cap">${S.done.datos ? esc(S.f.nombreFiscal) : 'Datos de empresa incompletos'}</span></div>
+              <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><h2 class="t-sub" id="h-emp">${esc(nombreEmpresa())}</h2><span class="t-cap">${S.done.datos && S.ctr.guardados ? `RFC ${esc(S.ctr.guardados.rfc)}` : 'Datos de contrato incompletos'}</span></div>
             </div>
             <hr class="divider">
             <div class="kv"><span class="k">Accesos</span><div class="chips"><span class="chip tbl gray">Admin</span><span class="chip tbl gray">Operativo</span></div></div>
@@ -314,162 +297,9 @@
     </div>`;
   }
 
-  /* ---------- Pantalla: Datos de empresa ---------- */
-  function sectionStatus(sec) {
-    const filled = sec.fields.filter(k => String(S.f[k] || '').trim()).length;
-    const errs = sec.fields.filter(k => S.errors[k]).length;
-    return {filled, total:sec.fields.length, errs, done: filled === sec.fields.length && !errs};
-  }
-  const DOC_TYPES = {'application/pdf':'pdf', 'image/jpeg':'jpg', 'image/png':'png'};
-  const fmtIcon = (t) => `<span class="fmt-box"><img src="assets/formato-${t || 'pdf'}.svg" width="32" height="38" alt="${(t || 'pdf').toUpperCase()}"></span>`;
-  function docField(d, compact) {
-    const key = 'doc_' + d.id, e = S.errors[key];
-    let body;
-    if (S.uploading[key]) body = `<div class="dz-progress"><span style="font-size:14px;color:var(--color-neutral-500);letter-spacing:normal">Subiendo archivo...</span><div class="track"><div class="bar"></div></div></div>`;
-    else if (S.f[key]) body = `<div class="dz-file"><span class="fmt">${fmtIcon(S.docType[key])}</span>
-        <span class="name"><span>${esc(S.f[key])}</span></span>
-        <span class="acts" style="position:relative"><button type="button" class="act-more" data-action="doc-menu" data-key="${key}" aria-haspopup="menu" aria-expanded="${S.docMenu === key}" aria-label="Más opciones">${ic('more', 24)}</button>
-        ${S.docMenu === key ? `<ul class="menu-list act-menu" role="menu">
-          <li role="menuitem" tabindex="-1" data-action="doc-replace" data-key="${key}">${ic('replace', 20)}<span>Reemplazar archivo</span></li>
-          <li role="menuitem" tabindex="-1" data-action="doc-remove" data-key="${key}">${ic('trash', 20)}<span>Eliminar archivo</span></li></ul>` : ''}</span></div>`;
-    else body = `<button type="button" class="dz${e ? ' err' : ''}" data-action="doc-pick" data-key="${key}" data-drop="${key}" id="in-${key}">
-        <span class="up">${ic('upload', 24)}</span><span class="txt">Arrastra elementos aquí o</span><span class="link">${ic('search', 20)}Busca archivos</span></button>`;
-    return `<div class="doc-row" id="f-${key}">
-      <input type="file" id="file-${key}" data-doc-input="${key}" accept="application/pdf,image/jpeg,image/png" class="sr" tabindex="-1">
-      ${compact ? '' : `<div class="doc-head"><span>${d.titulo}</span></div>`}
-      ${body}
-      ${e ? errLine(e) : (compact ? '' : `<div class="help">${d.ayuda}</div>`)}
-    </div>`;
-  }
-  const SEC_META = {
-    contacto:{desc:'Nombre fiscal, RFC y contacto.'},
-    contrato:{desc:'Cópialos tal como aparecen en tu contrato.'},
-    direccion:{desc:'Empieza por el código postal.'},
-    fiscal:{desc:'Ataskate la usa para emitir tus facturas.'},
-    documentos:{desc:'Sube cada archivo en PDF, JPG o PNG.'}
-  };
-  const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  const fechaCorta = (v) => { const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(v || ''); return m ? `${+m[1]} ${MESES[+m[2] - 1] || ''} ${m[3]}` : v; };
-  const val = (v) => String(v || '').trim() ? `<span class="rv">${esc(v)}</span>` : '<span class="rv empty">Sin registrar</span>';
-  const pair = (l, v, raw, cls) => `<div class="rp${cls ? ' ' + cls : ''}"><span class="rl">${l}</span>${raw || val(v)}</div>`;
-  function readMode(id) {
-    const f = S.f;
-    if (id === 'contacto') return `<div class="rgrid">
-      ${pair('Nombre fiscal', f.nombreFiscal)}${pair('RFC', f.rfc)}${pair('Correo electrónico', f.correo)}
-      ${pair('Teléfono', '', f.telefono ? `<span class="rv" style="display:flex;align-items:center;gap:8px">${flag(S.cc, 20)}${PAISES.find(x => x.v === S.cc).pre} ${esc(f.telefono)}</span>` : '')}
-      ${pair('Página web', f.web)}</div>`;
-    if (id === 'contrato') return `<div class="rgrid">${pair('Número de registro', f.registro)}${pair('Fecha de emisión', fechaCorta(f.fechaEmision))}</div>`;
-    if (id === 'direccion') {
-      const full = f.calle && f.cp ? `${f.calle} ${f.numExt}${f.numInt ? ' int. ' + f.numInt : ''}, ${f.colonia}, ${f.municipio}, ${f.cp} ${f.estado}` : '';
-      return `<div class="lrow">${ic('pin', 20)}${val(full)}</div>`;
-    }
-    if (id === 'fiscal') return `<div class="rgrid">${pair('Tipo de industria', f.industria)}${pair('Régimen fiscal', f.regimen)}${pair('Uso de CFDI', f.cfdi)}</div>`;
-    return '';
-  }
-  function editMode(id) {
-    const cpInfo = lookupCP(S.f.cp);
-    if (id === 'contacto') return `<div class="grid3">
-      ${input('nombreFiscal', 'Nombre fiscal', {ph:'Ej. PrestaYa Servicios Financieros S.A. de C.V.', help:'Igual que en tu constancia fiscal.'})}
-      ${input('rfc', 'RFC', {ph:'Ej. PSF190312AB4', max:13, help:'Moral: 12 caracteres. Física: 13.'})}
-      ${input('correo', 'Correo electrónico', {ph:'Ej. contacto@tuempresa.mx', mode:'email'})}
-      <div class="field" id="f-telefono"><label for="in-telefono">Teléfono</label>
-        <div style="position:relative"><div class="phone${S.errors.telefono ? ' err' : ''}"><button type="button" class="pre" data-action="cc-toggle" aria-haspopup="listbox" aria-expanded="${!!S.ccOpen}" aria-label="País: ${PAISES.find(x => x.v === S.cc).n}">${flag(S.cc, 28)}<span>${PAISES.find(x => x.v === S.cc).pre}</span><span class="chev${S.ccOpen ? ' open' : ''}">${ic('down', 16)}</span></button>
-        <input id="in-telefono" data-f="telefono" value="${esc(S.f.telefono)}" placeholder="55 0000 0000" inputmode="numeric" maxlength="12" autocomplete="off"><span class="hlp" title="Teléfono de contacto de tu empresa, a 10 dígitos">${ic('help', 24)}</span></div>
-        ${S.ccOpen ? `<div class="cc-menu" role="listbox">${PAISES.map(c => `<div role="option" tabindex="-1" class="cc-opt${c.v === S.cc ? ' sel' : ''}" aria-selected="${c.v === S.cc}" data-action="cc-pick" data-c="${c.v}" title="${c.n}">${flag(c.v, 20)}<span>${c.pre}</span></div>`).join('')}</div>` : ''}</div>
-        ${errLine(S.errors.telefono)}</div>
-      ${input('web', 'Página web', {optional:true, ph:'www.empresa.com'})}
-    </div>`;
-    if (id === 'contrato') return `<div class="grid3">
-      ${input('registro', 'Número de registro', {ph:'Ej. 1234-439-012345/01-01234-0926'})}
-      ${dateField('fechaEmision', 'Fecha de emisión')}
-    </div>${note('¿El número de registro es el de CONDUSEF (RECA)? El Figma solo dice "No. Registro". Confirmar el nombre exacto y su formato para validarlo.', true)}`;
-    if (id === 'direccion') return `<div class="grid3">
-      ${input('cp', 'Código postal', {ph:'Ej. 06700', mode:'numeric', max:5, help: S.cpLoading ? 'Buscando el código postal…' : ''})}
-      ${input('estado', 'Estado', {ph:'Ej. Ciudad de México'})}
-      ${input('municipio', 'Alcaldía o municipio', {ph:'Ej. Cuauhtémoc'})}
-      ${cpInfo && !cpInfo.colonias.length ? input('colonia', 'Colonia', {ph:'Ej. Roma Norte'}) : select('colonia', 'Colonia', cpInfo ? cpInfo.colonias : [], {ph:'Ej. Roma Norte', disabled:!cpInfo})}
-      ${input('calle', 'Calle', {ph:'Ej. Av. Álvaro Obregón'})}
-      ${input('numExt', 'Núm. ext.', {ph:'123'})}
-      ${input('numInt', 'Núm. int.', {optional:true, ph:'4B'})}
-    </div>${note('Código postal primero: es la convención de los checkouts en México (Amazon, Mercado Libre). Llena estado y municipio, filtra colonias y evita errores de captura.')}`;
-    if (id === 'fiscal') return `<div class="grid3">
-      ${select('industria', 'Tipo de industria', INDUSTRIAS)}
-      ${select('regimen', 'Régimen fiscal', REGIMENES)}
-      ${select('cfdi', 'Uso de CFDI', CFDI)}
-    </div>`;
-    return '';
-  }
-  function fblock(id, titulo, desc, chip, action, body, editing, o) {
-    o = o || {};
-    const head = `<div class="dc-t"><h2 class="t-sub" id="h-${id}">${titulo}</h2>${chip || ''}</div><span class="t-cap">${desc}</span>`;
-    return `<section class="fblock${editing ? ' editing' : ''}${o.stack ? ' stack' : ''}" id="sec-${id}" aria-labelledby="h-${id}">
-      ${o.aside ? `<div class="fb-l has-aside"><div class="fb-lt">${head}</div>${o.aside}</div>` : `<div class="fb-l">${head}</div>`}
-      <div class="fb-r">${body}</div>
-      <div class="fb-a">${action || ''}</div>
-    </section>`;
-  }
-  const pendiente = '<span class="st-chip yellow">Pendiente</span>';
-  function docsBlock(sec) {
-    const list = `<div class="dlist">${DOCS.map(d => {
-        const k = 'doc_' + d.id, has = !!S.f[k], open = S.docOpen === d.id, e = S.errors[k];
-        return `<div class="ditem${open ? ' open' : ''}">
-          <button type="button" class="drow" data-action="doc-toggle" data-doc="${d.id}" aria-expanded="${open}">
-            ${ic('doc', 24)}
-            <span class="lt"><span class="t-body">${d.titulo}</span><span class="t-cap">${has ? esc(S.f[k]) : esc(d.ayuda)}</span></span>
-            <span class="st-chip ${has ? 'green' : 'yellow'}">${has ? 'Cargado' : 'Pendiente'}</span>
-            <span class="chev" style="color:var(--ds-primary)">${ic('down', 20)}</span>
-          </button>
-          ${open ? `<div class="dbody">${docField(d, true)}</div>` : ''}
-          ${!open && e ? `<div style="padding:0 0 12px 40px">${errLine(e)}</div>` : ''}
-        </div>`; }).join('')}</div>
-      ${note('¿Formatos y peso máximo de los archivos? ¿La antigüedad de la constancia (menos de 3 meses) la valida el sistema o solo se informa?', true)}`;
-    return fblock('documentos', sec.titulo, SEC_META.documentos.desc, '', '', list);
-  }
-  function secBlock(sec) {
-    if (sec.id === 'documentos') return docsBlock(sec);
-    const complete = sectionStatus(sec).filled === sec.fields.length && S.savedSec[sec.id];
-    const open = S.openSec === sec.id;
-    const body = open ? `${editMode(sec.id)}
-        <div class="sec-f">${btn('Cancelar', 'secondary', 'data-action="sec-cancel"')}${btn('Guardar', 'primary', `data-action="sec-save" data-sec="${sec.id}"`, {loading:S.saving})}</div>` : readMode(sec.id);
-    return fblock(sec.id, sec.titulo, SEC_META[sec.id].desc, !complete && !open ? pendiente : '',
-      open ? '' : btn('Editar', 'tertiary', `data-action="sec-open" data-sec="${sec.id}"`), body, open);
-  }
-  function companyHeader() {
-    const cambiar = S.logoUrl ? 'Cambiar logo' : 'Subir logo';
-    const av = S.logoUrl ? `<span class="avatar lg img"><img src="${S.logoUrl}" alt="Logo de ${esc(S.f.nombreComercial)}"></span>`
-      : `<span class="avatar lg" aria-hidden="true">${esc(S.f.nombreComercial.slice(0, 1))}</span>`;
-    return `<section class="fblock fb-id" id="sec-logo" aria-labelledby="h-emp">
-      <div class="lrow" style="align-items:center">
-        <button type="button" class="logo-btn" data-action="logo-pick" aria-label="${cambiar}">${av}<span class="logo-ov" aria-hidden="true">${ic('upload', 20)}</span></button>
-        <div class="lt"><h2 class="t-sub" id="h-emp">${esc(S.f.nombreComercial)}</h2><span class="t-cap">Nombre comercial · lo ven tus clientes</span>${S.logoErr ? errLine(S.logoErr) : ''}</div>
-      </div>
-      <input type="file" id="logo-file" accept="image/png,image/jpeg,image/svg+xml" class="sr" tabindex="-1">
-    </section>`;
-  }
-  function screenDatos() {
-    const n = SECTIONS.filter(s => S.savedSec[s.id]).length, all = n === SECTIONS.length;
-    const nx = TASKS.find(t => !S.done[t.id] && t.id !== 'datos');
-    return `<div class="page no-footer">
-      <div class="datos-col">
-        <div class="head">
-          ${ruta('Datos de empresa')}
-          <div class="head-row">
-            <h1 class="t-page">Datos de empresa</h1>
-            ${all && nx && !S.openSec && !S.logoEdit ? btn(`Continuar a ${nx.destino || nx.modulo}`, 'primary', `data-go="${nx.id}"`, {iconR:'right'}) : ''}
-          </div>
-        </div>
-        ${all ? `<div class="alert success" role="status">${ic('success', 24, 'class="ic"')}<div class="txt"><span class="at">Datos de empresa guardados</span><span class="ab">Puedes editarlos cuando quieras en Configuración general › Configura tu empresa.</span></div></div>` : ''}
-        <section class="card sheet" aria-label="Datos de empresa">
-          ${companyHeader()}
-          ${SECTIONS.map(secBlock).join('')}
-        </section>
-        ${note('Hoja tipo formulario de Google Workspace: un solo contenedor con sombra y bloques separados por líneas. A la izquierda, qué es la sección; a la derecha, sus datos (máximo 3 columnas por fila); "Editar" abre los campos en el mismo lugar. Lo vacío dice "Sin registrar".')}
-        ${note('Datos generales y Domicilio fiscal llegan llenos con lo que la empresa envió en la contratación y siguen siendo editables. El usuario solo captura el contrato de adhesión y la actividad fiscal.')}
-        ${note('Documentos en lista, con estado (Pendiente / Cargado) y el Dropzone solo al expandir la fila. Se guardan al subirse: no necesitan botón.')}
-        ${note('Un solo Primary visible a la vez: el "Guardar" del bloque en edición. Cuando todo está completo, el Primary pasa a "Continuar" con la siguiente tarea.')}
-      </div>
-    </div>`;
-  }
+  /* ---------- Pantalla: Configuración de contratos (#datos) ----------
+     Reemplazó a la hoja "Datos de empresa" de el equipo (Datos generales, Contrato de adhesión, Domicilio fiscal, Actividad fiscal,
+     Documentos, logo). La pinta contrato.js: CTR.pantalla(). */
   function footer(lead, acts) {
     return `<div class="ffoot" role="region" aria-label="Acciones"><div class="ffoot-in"><div class="lead">${lead}</div><div class="acts">${acts}</div></div></div>`;
   }
@@ -613,7 +443,7 @@
     if (m.type === 'cancel') {
       return `<div class="ov" data-action="close-ov"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mc-t">
         <div class="modal-h"><h2 id="mc-t">¿Salir sin guardar?</h2><button type="button" class="mx" data-action="close" aria-label="Cerrar">${ic('close', 24)}</button></div>
-        <div class="modal-b"><p style="margin:0">Los cambios que no guardaste en esta sección se van a perder. Las secciones que ya guardaste se conservan.</p></div>
+        <div class="modal-b"><p style="margin:0">Los cambios que no guardaste se van a perder.</p></div>
         <div class="modal-f">${btn('Cancelar', 'tertiary', 'data-action="close"')}${btn('Salir sin guardar', 'destructive', 'data-action="leave"')}</div>
       </div></div>`;
     }
@@ -658,7 +488,7 @@
     const t = TASKS.find(x => x.id === S.route);
     switch (S.route) {
       case 'inicio': return screenInicio();
-      case 'datos': return screenDatos();
+      case 'datos': return CTR.pantalla();
       case 'roles': return screenRoles();
       case 'usuarios': return screenUsuarios();
       case 'horario': return screenHorario();
@@ -671,20 +501,30 @@
     root.classList.toggle('notes-on', S.notes);
     const y = window.scrollY;
     app.innerHTML = screen();
+    CTR.despues();   /* cuelga el contenedor de "Diseño del contrato" (contrato-diseno.js) si esa pestaña está abierta */
     layer.innerHTML = layerHTML();
     syncProto();
     window.scrollTo(0, y);
   }
   function renderLayer() { layer.innerHTML = layerHTML(); }
-  /* ir a otra pantalla; si hay cambios sin guardar en Datos de empresa, primero "¿Salir sin guardar?" */
-  function navegar(to) {
-    if (S.route === 'datos' && S.dirty && to !== 'datos' && !S.saving) { S.modal = {type:'cancel', to}; renderLayer(); return; }
-    go(to);
+  /* ir a otra pantalla; si hay cambios sin guardar en Configuración de contratos (cualquiera de sus dos pestañas),
+     primero "¿Salir sin guardar?". Mientras "Guardar cambios" carga, la pestaña 1 ya no cuenta (contrato.js termina de
+     guardarla aunque se salga), el diseño sí */
+  function navegar(to, tab) {
+    if (S.route === 'datos' && ((S.dirty && !S.saving) || S.ctr.disenoDirty) && to !== 'datos') {
+      S.modal = {type:'cancel', to};
+      try { history.replaceState(null, '', '#' + hashActual()); } catch (e) { /* sin hash */ }
+      renderLayer(); return;
+    }
+    go(to, {tab});
   }
-  function go(route) {
-    S.route = route; S.modal = null; S.openSel = null; S.errors = {}; S.triedSave = false; S.saving = false;
+  const hashActual = () => S.route === 'datos' ? CTR.hash() : S.route;
+  function go(route, opt) {
+    if (S.route === 'datos' && route !== 'datos') CTR.descartar();   /* lo no guardado no se queda al volver */
+    S.route = route; S.modal = null; S.openSel = null; S.cal = null; S.errors = {}; S.triedSave = false; S.saving = false;
     if (route === 'inicio') S.seenListo = false;
-    try { history.replaceState(null, '', '#' + route); } catch (e) { /* sin hash */ }
+    if (route === 'datos') CTR.entrar(opt && opt.tab);
+    try { history.replaceState(null, '', '#' + hashActual()); } catch (e) { /* sin hash */ }
     render();
     window.scrollTo({top:0});
   }
@@ -703,30 +543,7 @@
     el.querySelector('.x').addEventListener('click', () => el.remove());
   }
 
-  /* ---------- Validación de Datos de empresa ---------- */
-  const REQ = 'Este campo es requerido para continuar';
-  const MSG = {nombreFiscal:'Escribe el nombre fiscal', rfc:'Escribe el RFC', correo:'Escribe el correo de tu empresa', telefono:'Escribe el teléfono a 10 dígitos', registro:'Escribe el número de registro', fechaEmision:'Escribe la fecha de emisión', cp:'Escribe el código postal', calle:'Escribe la calle', numExt:'Escribe el número exterior'};
-  function validateDatos() {
-    const f = S.f, e = {};
-    ['nombreFiscal', 'correo', 'registro', 'calle', 'numExt'].forEach(k => { if (!String(f[k]).trim()) e[k] = MSG[k]; });
-    if (!f.rfc.trim()) e.rfc = MSG.rfc; else if (!/^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/.test(f.rfc.trim().toUpperCase())) e.rfc = 'Revisa el RFC: lleva 12 caracteres (persona moral) o 13 (persona física)';
-    if (f.correo.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.correo.trim())) e.correo = 'Escribe el correo completo, por ejemplo contacto@tuempresa.mx';
-    if (!f.telefono.trim()) e.telefono = MSG.telefono; else if (f.telefono.replace(/\D/g, '').length !== 10) e.telefono = 'El teléfono lleva 10 dígitos, por ejemplo 55 1234 5678';
-    if (!f.fechaEmision.trim()) e.fechaEmision = MSG.fechaEmision; else if (!/^\d{2}\/\d{2}\/\d{4}$/.test(f.fechaEmision)) e.fechaEmision = 'Escribe la fecha como DD/MM/AAAA, por ejemplo 12/03/2024';
-    const cpi = lookupCP(f.cp);
-    if (!f.cp.trim()) e.cp = MSG.cp; else if (!cpi) e.cp = 'No se encontró este código postal. Revisa los 5 dígitos.';
-    if (!e.cp && !String(f.estado).trim()) e.estado = 'Escribe el estado';
-    if (!e.cp && !String(f.municipio).trim()) e.municipio = 'Escribe la alcaldía o el municipio';
-    if (!String(f.colonia).trim() && !e.cp) e.colonia = cpi && cpi.colonias.length ? 'Elige tu colonia' : 'Escribe la colonia';
-    Object.entries({industria:'Elige el tipo de industria', regimen:'Elige el régimen fiscal', cfdi:'Elige el uso de CFDI'}).forEach(([k, m]) => { if (!f[k]) e[k] = m; });
-    DOCS.forEach(d => { if (!f['doc_' + d.id]) e['doc_' + d.id] = `Sube tu ${d.titulo.toLowerCase()}`; });
-    return e;
-  }
-  function firstErrorEl() {
-    for (const s of SECTIONS) for (const k of s.fields) if (S.errors[k]) return document.getElementById('f-' + k);
-    const k = Object.keys(S.errors)[0];
-    return k ? document.getElementById('f-' + k) : null;
-  }
+  /* (la validación de la hoja de el equipo se quitó: la de Configuración de contratos está en contrato.js) */
   function scrollToEl(el) {
     if (!el) return;
     const headerH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--pos-header-h')) || 60;
@@ -734,17 +551,6 @@
     window.scrollTo({top:y, behavior:'smooth'});
     const focusable = el.querySelector('input,button');
     if (focusable) setTimeout(() => focusable.focus({preventScroll:true}), 350);
-  }
-
-  function afterSave(secId, title) {
-    S.savedSec[secId] = true; S.dirty = false; S.errors = {};
-    const nxt = SECTIONS.find(x => !S.savedSec[x.id]);
-    S.openSec = null;
-    S.snap = Object.assign({}, S.f);
-    if (!nxt) { S.done.datos = true; S.justDone = 'datos'; }
-    render();
-    if (!nxt) { { const nt = nextTask(); toast('success', 'Datos de empresa guardados', `Tarea 1 de ${REQUIRED.length} completada.${nt ? ' Sigue con: ' + (nt.destino || nt.modulo) + '.' : ''}`); } }
-    else { toast('success', title, `Sigue con: ${nxt.titulo}.`); }
   }
 
   function completeTask(id, title, text) {
@@ -759,7 +565,11 @@
   }
 
   /* ---------- Eventos ---------- */
+  /* lo que pasa dentro de la pestaña "Diseño del contrato" (y de su capa de vista previa y modal, .ctd-capas, que cuelga de
+     <body>) lo maneja contrato-diseno.js: aquí no se toca */
+  const enDiseno = (ev) => !!(ev.target && ev.target.closest && ev.target.closest('#ctrDiseno, .ctd-capas'));
   document.addEventListener('click', (ev) => {
+    if (enDiseno(ev)) return;
     const goEl = ev.target.closest('[data-go]');
     const a = ev.target.closest('[data-action]');
     if (goEl && (!a || goEl.contains(a) === false || a === goEl)) {
@@ -770,10 +580,7 @@
       S.openSel = null; if (S.modal) renderLayer(); else render();
       if (!a || a.dataset.action !== 'sel') return;
     }
-    if (S.ccOpen && !ev.target.closest('.cc-menu') && !(a && a.dataset.action === 'cc-toggle')) { S.ccOpen = false; render(); if (!a) return; }
     if (S.cal && !ev.target.closest('.cal') && !(a && a.dataset.action === 'cal-toggle')) { S.cal = null; render(); if (!a) return; }
-    if (S.logoMenu && !ev.target.closest('.act-menu') && !(a && a.dataset.action === 'logo-menu')) { S.logoMenu = false; render(); if (!a) return; }
-    if (S.docMenu && !ev.target.closest('.act-menu') && !(a && a.dataset.action === 'doc-menu')) { S.docMenu = null; render(); if (!a) return; }
     if (!a) return;
     const act = a.dataset.action;
     if (act === 'close-ov') { if (ev.target === a) { S.modal = null; renderLayer(); } return; }
@@ -792,8 +599,6 @@
         const b = document.querySelector(`[data-action="sel"][data-key="${k}"]`); if (b) b.focus();
         break;
       }
-      case 'jump': scrollToEl(document.getElementById('sec-' + a.dataset.sec)); break;
-      case 'first-error': scrollToEl(firstErrorEl()); break;
       case 'cal-toggle': {
         if (S.cal) { S.cal = null; render(); break; }
         const k = a.dataset.key, cur = parseFecha(S.f[k]) || null, base = cur || new Date();
@@ -805,61 +610,19 @@
       case 'cal-day': { const d = new Date(+a.dataset.t); S.cal.sel = d; S.cal.y = d.getFullYear(); S.cal.m = d.getMonth(); render(); break; }
       case 'cal-close': S.cal = null; render(); break;
       case 'cal-apply': {
-        const c = S.cal; if (c.sel) { S.f[c.key] = `${pad(c.sel.getDate())}/${pad(c.sel.getMonth() + 1)}/${c.sel.getFullYear()}`; delete S.errors[c.key]; S.dirty = true; }
-        S.cal = null; render(); break;
+        const c = S.cal; if (c.sel) { S.f[c.key] = `${pad(c.sel.getDate())}/${pad(c.sel.getMonth() + 1)}/${c.sel.getFullYear()}`; delete S.errors[c.key]; S.dirty = true; CTR.revisar(c.key); }
+        S.cal = null; render(); document.getElementById('in-' + c.key)?.focus(); break;
       }
-      case 'cc-toggle': S.ccOpen = !S.ccOpen; render(); if (S.ccOpen) document.querySelector('.cc-opt.sel')?.focus(); break;
-      case 'cc-pick': S.cc = a.dataset.c; S.ccOpen = false; S.dirty = true; render(); document.getElementById('in-telefono')?.focus(); break;
-      case 'logo-edit': if (S.openSec && S.snap) { SECTIONS.find(x => x.id === S.openSec).fields.concat(['web', 'numInt', 'estado', 'municipio']).forEach(k => { S.f[k] = S.snap[k]; }); } S.openSec = null; S.errors = {}; S.dirty = false; S.logoEdit = true; S.logoDraft = null; S.logoErr = null; S.logoMenu = false; render(); break;
-      case 'logo-cancel': S.logoEdit = false; S.logoDraft = null; S.logoErr = null; S.logoMenu = false; render(); break;
-      case 'logo-pick': document.getElementById('logo-file')?.click(); break;
-      case 'logo-menu': S.logoMenu = !S.logoMenu; render(); break;
-      case 'logo-clear': S.logoDraft = null; S.logoMenu = false; render(); break;
-      case 'logo-save': {
-        if (!S.logoDraft) { S.logoErr = 'Sube una imagen para guardar tu logo'; render(); break; }
-        const name = S.logoDraft.name;
-        S.logoUrl = S.logoDraft.url; S.logoEdit = false; S.logoDraft = null; S.logoErr = null; render();
-        toast('success', 'Logo guardado', name); break;
+      case 'leave': {
+        /* "Salir sin guardar": se pierde lo no guardado. En Configuración de contratos con datos ya guardados, Cancelar se
+           queda en la pantalla y regresa a la vista guardada (quedarse); si no, va a donde iba */
+        const m = S.modal || {}, to = m.to || 'inicio';
+        /* el Cancelar de la pestaña 1 que se queda solo descarta esa pestaña: el borrador del diseño sigue */
+        if (S.route === 'datos') CTR.descartar(m.quedarse ? {soloEmpresa:true} : undefined);
+        S.dirty = false;
+        if (m.quedarse) { S.modal = null; render(); break; }
+        go(to); break;
       }
-      case 'doc-pick': case 'doc-replace': { const k = a.dataset.key; S.docMenu = null; if (a.dataset.action === 'doc-replace') render(); document.getElementById('file-' + k)?.click(); break; }
-      case 'doc-menu': S.docMenu = S.docMenu === a.dataset.key ? null : a.dataset.key; render(); if (S.docMenu) document.querySelector('.act-menu li')?.focus(); break;
-      case 'doc-remove': {
-        const k = a.dataset.key, d = DOCS.find(x => 'doc_' + x.id === k);
-        S.f[k] = ''; delete S.docType[k]; S.docMenu = null; S.savedSec.documentos = false; render();
-        toast('info', 'Archivo eliminado', `Sube de nuevo tu ${d.titulo.toLowerCase()}.`); break;
-      }
-      case 'doc-toggle': S.docOpen = S.docOpen === a.dataset.doc ? null : a.dataset.doc; render(); break;
-      case 'sec-open': {
-        const id = a.dataset.sec;
-        if (S.openSec && S.openSec !== id && S.savedSec[S.openSec] && S.snap) {
-          SECTIONS.find(x => x.id === S.openSec).fields.concat(['web', 'numInt', 'estado', 'municipio']).forEach(k => { S.f[k] = S.snap[k]; });
-        }
-        S.logoEdit = false; S.logoDraft = null; S.logoErr = null; S.logoMenu = false;
-        S.openSec = id; S.snap = Object.assign({}, S.f); S.errors = {}; S.dirty = false; render();
-        break;
-      }
-      case 'sec-cancel': {
-        if (S.snap) Object.assign(S.f, S.snap);
-        S.logoDraft = null; S.logoErr = null;
-        S.openSec = null; S.errors = {}; S.dirty = false; render(); break;
-      }
-      case 'sec-save': {
-        const sec = SECTIONS.find(x => x.id === a.dataset.sec), all = validateDatos(), e = {};
-        sec.fields.forEach(k => { if (all[k]) e[k] = all[k]; });
-        S.errors = e;
-        if (Object.keys(e).length) { render(); scrollToEl(firstErrorEl()); break; }
-        S.saving = true; render();
-        setTimeout(() => { S.saving = false; if (sec.id === 'contacto' && S.logoDraft) { S.logoUrl = S.logoDraft.url; S.logoDraft = null; } afterSave(sec.id, `${sec.titulo} guardada`); }, 500);
-        break;
-      }
-      case 'save-datos': {
-        S.triedSave = true; S.errors = validateDatos();
-        if (Object.keys(S.errors).length) { render(); scrollToEl(document.getElementById('err-summary') || firstErrorEl()); break; }
-        completeTask('datos', 'Datos de empresa guardados', 'Tarea 1 completada.');
-        break;
-      }
-      case 'cancel': if (S.dirty) { S.modal = {type:'cancel', to:'inicio'}; renderLayer(); } else go('inicio'); break;
-      case 'leave': { const to = S.modal?.to || 'inicio'; S.dirty = false; go(to); break; }
       case 'role-toggle': break;
       case 'perms': S.modal = {type:'perms', i:+a.dataset.i}; renderLayer(); break;
       case 'new-role': S.modal = {type:'role'}; renderLayer(); setTimeout(() => document.getElementById('in-rolname')?.focus(), 30); break;
@@ -894,40 +657,20 @@
         S.horario.forEach((d, i) => { if (i > 0 && i < 5 && d.on) { d.abre = m.abre; d.cierra = m.cierra; } });
         render(); toast('info', 'Horario copiado', `De martes a viernes: ${m.abre} a ${m.cierra}.`); break;
       }
+      /* Configuración de contratos: pestañas, Editar, Cancelar y Guardar cambios (contrato.js) */
+      default: if (act.indexOf('ctr-') === 0) CTR.accion(act, a, ev);
     }
   });
-  function loadDoc(key, file) {
-    if (!file) return;
-    const d = DOCS.find(x => 'doc_' + x.id === key), t = DOC_TYPES[file.type];
-    if (!t) { S.errors[key] = 'Formato no permitido. Solo PDF, JPG o PNG'; render(); return; }
-    delete S.errors[key]; S.uploading[key] = true; render();
-    setTimeout(() => {
-      S.uploading[key] = false; S.f[key] = file.name; S.docType[key] = t;
-      if (!DOCS.find(x => !S.f['doc_' + x.id])) { afterSave('documentos', 'Documentos cargados'); return; }
-      render();
-      toast('success', 'Documento cargado', '');
-    }, 1200);
-  }
-  function loadLogo(file) {
-    if (!file) return;
-    if (!LOGO_TYPES[file.type]) { S.logoErr = 'Formato no permitido. Solo PNG, JPG o SVG.'; render(); return; }
-    const r = new FileReader();
-    r.onload = () => { S.logoUrl = r.result; S.logoErr = null; render(); toast('success', 'Logo actualizado', ''); };
-    r.readAsDataURL(file);
-  }
-  const dropZone = (ev) => ev.target.closest && ev.target.closest('#dz-logo, [data-drop]');
-  document.addEventListener('dragover', (ev) => { const z = dropZone(ev); if (z) { ev.preventDefault(); z.classList.add('drag'); } });
-  document.addEventListener('dragleave', (ev) => { const z = dropZone(ev); if (z) z.classList.remove('drag'); });
-  document.addEventListener('drop', (ev) => { const z = dropZone(ev); if (!z) return; ev.preventDefault(); const f = ev.dataTransfer.files[0]; if (z.id === 'dz-logo') loadLogo(f); else loadDoc(z.dataset.drop, f); });
+  /* (la carga de documentos y del logo de la hoja de el equipo se quitó con la pantalla; el logo ahora va en "Diseño del contrato") */
   document.addEventListener('change', (ev) => {
-    if (ev.target.id === 'logo-file') { loadLogo(ev.target.files[0]); ev.target.value = ''; return; }
-    if (ev.target.dataset && ev.target.dataset.docInput) { loadDoc(ev.target.dataset.docInput, ev.target.files[0]); ev.target.value = ''; return; }
+    if (enDiseno(ev)) return;
     const a = ev.target.closest('[data-action]');
     if (!a) return;
     if (a.dataset.action === 'role-toggle') { const r = S.roles[+a.dataset.i]; r.on = a.checked; render(); toast('info', r.on ? 'Rol activado' : 'Rol desactivado', `${r.nombre} ${r.on ? 'ya se puede asignar' : 'ya no se puede asignar'} a usuarios.`); }
     if (a.dataset.action === 'day-toggle') { S.horario[+a.dataset.i].on = a.checked; render(); }
   });
   document.addEventListener('input', (ev) => {
+    if (enDiseno(ev)) return;
     const el = ev.target;
     if (el.dataset.u) { S.uf[el.dataset.u] = el.value; return; }
     const k = el.dataset.f;
@@ -935,13 +678,17 @@
     let v = el.value;
     if (k === 'rfc') { v = v.toUpperCase(); el.value = v; }
     if (k === 'telefono') { const d = v.replace(/\D/g, '').slice(0, 10); v = [d.slice(0, 2), d.slice(2, 6), d.slice(6)].filter(Boolean).join(' '); el.value = v; }
-    if (k === 'fechaEmision') { const d = v.replace(/\D/g, '').slice(0, 8); v = [d.slice(0, 2), d.slice(2, 4), d.slice(4)].filter(Boolean).join('/'); el.value = v; }
+    if (el.dataset.mask === 'fecha') { const d = v.replace(/\D/g, '').slice(0, 8); v = [d.slice(0, 2), d.slice(2, 4), d.slice(4)].filter(Boolean).join('/'); el.value = v; }
     if (k === 'cp') { v = v.replace(/\D/g, '').slice(0, 5); el.value = v; }
     S.f[k] = v; S.dirty = true;
     if (S.errors[k]) {
       delete S.errors[k];
       el.classList.remove('err'); el.closest('.phone')?.classList.remove('err');
       el.closest('.field')?.querySelector('.errmsg')?.remove();
+      const desc = (el.getAttribute('aria-describedby') || '').split(' ').filter(x => x && x !== 'e-' + k).join(' ');
+      if (desc) el.setAttribute('aria-describedby', desc); else el.removeAttribute('aria-describedby');
+      el.setAttribute('aria-invalid', 'false');
+      if (S.route === 'datos') CTR.alEditar(k);   /* el aviso de la tarjeta se quita si ya no le quedan errores */
     }
     if (k === 'cp') {
       const applyCP = (info) => {
@@ -973,7 +720,9 @@
     }
   });
   document.addEventListener('keydown', (ev) => {
+    if (enDiseno(ev)) return;
     if (ev.key === 'Escape') {
+      if (S.cal) { const k = S.cal.key; S.cal = null; render(); document.getElementById('in-' + k)?.focus(); return; }
       if (S.openSel) { const k = S.openSel; S.openSel = null; if (S.modal) renderLayer(); else render(); document.querySelector(`[data-action="sel"][data-key="${k}"]`)?.focus(); return; }
       if (S.modal) { S.modal = null; renderLayer(); }
     }
@@ -989,32 +738,27 @@
   });
 
   /* ---------- Barra del prototipo ---------- */
-  const SCREENS = [['inicio', 'Configuración inicial (guía)'], ['datos', '1 · Datos de empresa'], ['roles', '2 · Roles y permisos'], ['usuarios', '3 · Usuarios'], ['horario', '4 · Días hábiles'],
+  const SCREENS = [['inicio', 'Configuración inicial (guía)'], ['datos', '1 · Configuración de contratos'], ['roles', '2 · Roles y permisos'], ['usuarios', '3 · Usuarios'], ['horario', '4 · Días hábiles'],
     ['ubicaciones', '5 · Ubicaciones (simulada)'], ['plazos', '6 · Plazos (simulada)'], ['catalogo-empenos', '7 · Catálogo de empeños (simulada)'], ['catalogo-venta', '8 · Catálogo de venta (simulada)'], ['tienda', '9 · Tienda (opcional, simulada)'], ['listo', 'Configuración completa'], ['panel', 'Panel']];
   const sel = document.getElementById('proto-screen');
   sel.innerHTML = SCREENS.map(([v, l]) => `<option value="${v}">${l}</option>`).join('');
   sel.addEventListener('change', () => {
     if (sel.value === 'listo') REQUIRED.forEach(t => { S.done[t.id] = true; });
-    S.dirty = false; go(sel.value);
+    go(sel.value); S.dirty = false;
   });
-  function syncProto() { sel.value = SCREENS.some(s => s[0] === S.route) ? S.route : 'inicio'; document.getElementById('proto-notes').checked = S.notes; }
+  function syncProto() { sel.value = SCREENS.some(s => s[0] === S.route) ? S.route : 'inicio'; document.getElementById('proto-notes').checked = S.notes; CTR.syncProto(); }
   document.getElementById('proto-notes').addEventListener('change', (e) => { S.notes = e.target.checked; try { localStorage.setItem('cte-notes', S.notes ? '1' : '0'); } catch (er) { /* sin storage */ } root.classList.toggle('notes-on', S.notes); });
-  document.getElementById('proto-fill').addEventListener('click', () => {
-    Object.assign(S.f, {rfc:'PSF190312AB4', registro:'1234-439-012345/01-01234-0926', fechaEmision:'12/03/2024', cp:'06700', estado:'Ciudad de México', municipio:'Cuauhtémoc', colonia:'Roma Norte', calle:'Av. Álvaro Obregón', numExt:'121', regimen:REGIMENES[0], cfdi:CFDI[1], doc_constancia:DOCS[0].file, doc_banco:DOCS[1].file, doc_ine:DOCS[2].file});
-    ['contacto', 'contrato', 'direccion', 'fiscal'].forEach(k => { S.savedSec[k] = true; });
-    S.f.doc_ine = ''; S.savedSec.documentos = false; S.openSec = null; S.docOpen = null; S.snap = Object.assign({}, S.f);
-    S.errors = {}; S.dirty = false;
-    if (S.route !== 'datos') go('datos'); else render();
-    toast('info', 'Datos de ejemplo', 'Guardamos casi todo. Sube la identificación oficial para terminar la tarea.');
-  });
-  document.getElementById('proto-reset').addEventListener('click', () => { const notes = S.notes; S = initialState(); S.notes = notes; go('inicio'); });
+  /* "Llenar con datos de ejemplo": los del Figma de Configuración de contratos (425), sin guardar */
+  document.getElementById('proto-fill').addEventListener('click', () => CTR.llenarEjemplo());
+  document.getElementById('proto-reset').addEventListener('click', () => { const notes = S.notes; CTR.reiniciar(); S = initialState(); S.notes = notes; go('inicio'); });
 
   /* ---------- Header y menú lateral compartidos (../menu-op.js, ../navbar.js) ---------- */
   /* "Configura tu empresa" (la opción activa) regresa a la guía y "Usuarios" abre la pantalla de usuarios de esta app.
      A 900 px o menos el menú es cajón: se cierra al elegir. */
   document.addEventListener('click', (ev) => {
     const it = ev.target.closest('.pos-side [data-id]');
-    const to = it && {empresa:'inicio', usuarios:'usuarios'}[it.dataset.id];
+    /* "contratos": "Config. contratos" de ../menu-op.js (Figma Home Admin) abre Configuración de contratos */
+    const to = it && {empresa:'inicio', usuarios:'usuarios', contratos:'datos'}[it.dataset.id];
     if (!to) return;
     ev.preventDefault();
     if (window.innerWidth <= 900) document.querySelector('.pos-header .pos-menu')?.click();
@@ -1026,7 +770,19 @@
     .observe(gear, {attributes:true, attributeFilter:['aria-expanded']});
 
   try { S.notes = localStorage.getItem('cte-notes') === '1'; } catch (e) { /* sin storage */ }
-  const h = (location.hash || '').slice(1);
-  if (SCREENS.some(s => s[0] === h)) { if (h === 'listo') REQUIRED.forEach(t => { S.done[t.id] = true; }); S.route = h; }
+  /* rutas: #datos (alias #contrato y #contratos) abre Configuración de contratos; #datos/diseno, su segunda pestaña */
+  const h = (location.hash || '').slice(1), hc = CTR.leerHash(h);
+  if (hc) { S.route = 'datos'; CTR.entrar(hc.tab); try { history.replaceState(null, '', '#' + CTR.hash()); } catch (e) { /* sin hash */ } }
+  else if (SCREENS.some(s => s[0] === h)) { if (h === 'listo') REQUIRED.forEach(t => { S.done[t.id] = true; }); S.route = h; }
+  /* si el hash cambia con la página abierta (enlace del riel de flujos, atrás/adelante, a mano) */
+  window.addEventListener('hashchange', () => {
+    const h2 = (location.hash || '').slice(1), r = CTR.leerHash(h2);
+    if (r) {
+      if (S.route === 'datos') CTR.cambiarTab(r.tab); else navegar('datos', r.tab);
+      if (!S.modal) try { history.replaceState(null, '', '#' + hashActual()); } catch (e) { /* sin hash */ }   /* #contratos → #datos */
+      return;
+    }
+    if (h2 !== S.route && SCREENS.some(s => s[0] === h2)) navegar(h2);
+  });
   render();
 })();

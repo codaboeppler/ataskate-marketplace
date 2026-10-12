@@ -16,7 +16,8 @@
     ['Marketplace', 'Ficha del cliente', 'v2-marketplace/'],
     ['Clientes', 'Operativo · listado y perfil', 'clientes/'],
     ['Cliente nuevo', 'Operativo · alta de cliente', 'clientes/cliente-nuevo.html'],
-    ['Configura tu empresa', 'Administrativo · datos de empresa', 'empresa/'],
+    ['Configura tu empresa', 'Administrativo · guía de configuración inicial', 'empresa/'],
+    ['Configuración de contratos', 'Administrativo · datos de la empresa y diseño del contrato', 'empresa/#datos'],
     ['Plazos', 'Administrativo · plazos', 'plazos/'],
     ['Tabuladores', 'Administrativo · tabuladores por ubicación', 'tabuladores/'],
     ['Detalle de tabulador', 'Administrativo · tabulador de metales', 'tabuladores/detalle.html'],
@@ -25,12 +26,13 @@
     ['Generación de códigos cargando', 'Administrativo · carga lenta', 'codigos-acceso/?escenario=carga-lenta'],
     ['Registro por invitación', 'Acceso · código de invitación y alta de cuenta', 'registro-invitacion/'],
   ];
-  // la ruta sin index.html, más los parámetros que cambian de ficha (mora, tipo de inventario, inventario vacío)
+  // la ruta sin index.html, más los parámetros que cambian de ficha (mora, tipo de inventario, inventario vacío) y el #datos de contratos
   const limpiar = (u) => u.pathname.replace(/index\.html$/, '').replace(/\/?$/, '/')
     + (u.searchParams.get('estado') === 'mora' ? '?estado=mora' : '')
     + (u.searchParams.get('tipo') === 'prendario' ? '?tipo=prendario' : '')
     + (u.searchParams.get('vacio') === '1' ? '?vacio=1' : '')
-    + (u.searchParams.get('escenario') ? '?escenario=' + u.searchParams.get('escenario') : '');
+    + (u.searchParams.get('escenario') ? '?escenario=' + u.searchParams.get('escenario') : '')
+    + (/^#(datos|contratos?)(\/|$)/.test(u.hash) ? '#datos' : '');   // Configuración de contratos vive en empresa/#datos
   const aqui = limpiar(new URL(location.href));
 
   const css = document.createElement('style');
