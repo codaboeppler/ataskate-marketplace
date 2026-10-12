@@ -187,7 +187,11 @@
           <dl class="pos-specs" id="prContrato"></dl>
         </div>
         <div role="tabpanel" class="ds-tabs__panel" id="posTabUbic" aria-labelledby="posTabUbicBtn" hidden>
-          <p class="pos-note"><b>Sucursal Centro Histórico</b> · Bodega 2 · Anaquel B-14</p>
+          <!-- ubicación = lugar físico donde se guarda el artículo dentro de la sucursal o bodega: grupo (Rack, Bóveda…) y posición (Fila…), como en "Editar almacenamiento" (HU-CE-443-B); no la sucursal -->
+          <dl class="pos-specs">
+            <div class="pos-spec"><dt>Grupo</dt><dd>Rack 2</dd></div>
+            <div class="pos-spec"><dt>Posición</dt><dd>Fila 3</dd></div>
+          </dl>
         </div>
         <div role="tabpanel" class="ds-tabs__panel" id="posTabHist" aria-labelledby="posTabHistBtn" hidden>
           <!-- historial de movimientos del contrato: Fecha · Transacción · Monto (DataTable del DS, la misma tabla del calendario de apartados) -->
@@ -399,8 +403,8 @@
     iva: 16,            // IVA sobre el interés (%)
     diasGracia: 4,      // días de gracia (días moratorios) del plazo
     prendas: [
-      { nombre: 'iPhone 16 512GB Negro · 5G', sub: '512GB · Negro', img: '../assets/iphone16-negro.png', recorte: true, estado: 'Excelente', avaluo: 14000, prestamo: 13000, ubicacion: 'Bodega 2 · Anaquel B-14', actual: true },
-      { nombre: 'Apple iPhone 15 Pro Max (512GB) Negro', sub: '512GB · Negro', img: '../assets/iphone15-pro.png', estado: 'Excelente', avaluo: 11000, prestamo: 9000, ubicacion: 'Bodega 2 · Anaquel B-15' },
+      { nombre: 'iPhone 16 512GB Negro · 5G', sub: '512GB · Negro', img: '../assets/iphone16-negro.png', recorte: true, estado: 'Excelente', avaluo: 14000, prestamo: 13000, ubicacion: 'Rack 2 / Fila 3', actual: true },
+      { nombre: 'Apple iPhone 15 Pro Max (512GB) Negro', sub: '512GB · Negro', img: '../assets/iphone15-pro.png', estado: 'Excelente', avaluo: 11000, prestamo: 9000, ubicacion: 'Rack 2 / Fila 4' },
     ],
   };
   // estado del contrato: Vigente por defecto; ?estado=mora muestra "En mora vigente" (venció, pero aún se puede refrendar o desempeñar)

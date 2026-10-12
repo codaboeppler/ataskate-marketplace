@@ -254,7 +254,7 @@
       toast(it.estado === 'Pausado' ? 'Artículo pausado' : 'Artículo reanudado', it.estado === 'Pausado' ? `${n} ya no se muestra en línea ni en sucursal.` : `${n} vuelve a mostrarse.`);
       pintar();
     }
-    if (a === 'ubicacion') toast('Cambiar ubicación', `Aquí se elige la nueva bodega y ubicación de ${n}.`);
+    if (a === 'ubicacion') toast('Cambiar ubicación', `Aquí se elige el grupo (rack, bóveda…) y la posición (fila) donde se guarda ${n}.`);
   }
 
   // ---------- eventos ----------
