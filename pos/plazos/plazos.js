@@ -333,10 +333,7 @@ const SWITCH_KNOB = '<span class="ds-switch__knob"><svg class="on" viewBox="0 0 
 /* ==========================================================================
    Piezas del DS como funciones (HTML)
    ========================================================================== */
-/* "Configuración de sistema" no tiene pantalla en el prototipo: lleva al Inicio del Administrativo (../home-admin/),
-   lo más cercano a la configuración del sistema. Antes apuntaba a #/plazos (en el listado no hacía nada y en el
-   detalle y el formulario repetía "Plazos"). [Por confirmar con el equipo: M-13] */
-const CRUMB_CONFIG = { label: 'Configuración de sistema', href: '../home-admin/' };
+/* Breadcrumb: Home › Plazos (› plazo); Daniel quitó el nivel intermedio de la vista previa el 2026-10-12 */
 const ui = {
   /* Button del DS. El ícono a la derecha va en su caja de 20 × 20 (.button-icon de Button.tsx) */
   btn: (label, { variant = 'primary', iconLeft, iconRight, iconRightCls = '', attrs = '', full, type = 'button' } = {}) =>
@@ -979,7 +976,7 @@ const filtroOpt = () => { const c = filtroCat(); return (c && c.opciones.find(o 
 
 function renderList(main) {
   main.innerHTML = `<div class="page">
-    ${ui.breadcrumb([CRUMB_CONFIG, { label: 'Plazos' }])}
+    ${ui.breadcrumb([{ label: 'Plazos' }])}
     <div class="title-row title-row--list">
       <h1 class="t-titulo-pagina">Plazos</h1>
       <div class="title-row__actions">${ui.btn('Crear plazo', { iconLeft: 'Add', attrs: 'data-go="#/plazos/nuevo"' })}</div>
@@ -1458,7 +1455,7 @@ function renderDetail(main, id) {
   function pintarEncabezado() {
     const p = actual(), titulo = p ? p.name : 'Cargando plazo';
     page.querySelector('.ds-breadcrumb').outerHTML = ui.breadcrumb([
-      CRUMB_CONFIG, { label: 'Plazos', href: '#/plazos', attrs: 'data-volver' }, { label: titulo },
+      { label: 'Plazos', href: '#/plazos', attrs: 'data-volver' }, { label: titulo },
     ]);
     const acciones = p && !st.loading
       ? `<div class="title-row__actions">${ui.btn('Editar plazo', { variant: 'secondary', iconLeft: 'Edit', attrs: 'data-action="editar"' })}${ui.menu('m-detail', `Más acciones de ${p.name}`, accionesDetalle(p))}</div>` : '';
@@ -1670,7 +1667,7 @@ function renderForm(main, { id, sugerencia }) {
   const sug = sugerencia ? (store.sugerencias.find(s => s.suggestedTermId === sugerencia) || db.sugerencias.find(s => s.suggestedTermId === sugerencia) || null) : null;
   const title = isEdit ? 'Editar plazo' : 'Nuevo plazo';
   main.innerHTML = `<div class="page">
-    ${ui.breadcrumb([CRUMB_CONFIG, { label: 'Plazos', href: '#/plazos' }, { label: title }])}
+    ${ui.breadcrumb([{ label: 'Plazos', href: '#/plazos' }, { label: title }])}
     <div class="title-row"><h1 class="t-titulo-pagina">${title}</h1></div>
     <div id="form-root"></div></div>`;
   const root = main.querySelector('#form-root');
