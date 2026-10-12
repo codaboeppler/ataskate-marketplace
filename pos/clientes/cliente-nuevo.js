@@ -1,7 +1,9 @@
 /* Ataskate POS (Operativo) · Cliente nuevo — propuesta v3 de Product Design (rama del equipo del repo del equipo,
-   commit 8f7723ad6, actualizado con 597ab9214 y e014b0c0a). Abre directo el formulario, con detección de cliente
-   existente (Marketplace / Red ataskate) mientras se captura, layout tipo Cotizador de empeño, cámara para foto e identificación/comprobantes,
-   visor de documentos, registro de huellas y FixedActionFooter. Su JS va completo; el header y el menú son los compartidos del POS. */
+   commit 8f7723ad6, actualizado con 597ab9214, e014b0c0a, 2d1b103b4 y 0859357ca). Abre directo el formulario, con tipo de registro
+   Venta / Empeño, detección de cliente existente (Marketplace / Red ataskate) mientras se captura con verificación antes de ver sus
+   datos, llegada desde el buscador de Clientes (?cargar=, ?buscar=, ?nuevo=, ?modo=), layout tipo Cotizador de empeño, cámara para
+   foto e identificación/comprobantes, visor de documentos, registro de huellas y FixedActionFooter. Su JS va completo; el header y el
+   menú son los compartidos del POS. */
 (() => {
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -34,7 +36,11 @@ function showErr(fld, msg, boxEl) {
 }
 function boxOf(el) { if (el.tagName === 'SELECT' && el._trig) return el._trig; return el.closest('.doble, .date') || el; }
 function paint(el) { const m = problem(el); showErr(el.closest('.fld'), m, boxOf(el)); el.setAttribute('aria-invalid', m ? 'true' : 'false'); return m; }
-const reqs = () => $$('[data-req]');
+/* 2d1b103b4 · Tipo de registro: Venta (contacto + dirección) o Empeño (todo). Solo cuentan los obligatorios de los apartados visibles */
+S.mode = 'empeno';
+const VENTA_SECS = ['contacto', 'direccion'];
+const modeSecs = () => S.mode === 'venta' ? VENTA_SECS : SECS;
+const reqs = () => $$('[data-req]').filter(el => !el.closest('section[hidden]'));
 
 $$('#fs input, #fs select').forEach(el => {
   el.addEventListener('input', () => {
@@ -155,7 +161,7 @@ function update() {
   SECS.forEach(sec => {
     let pct = 0, color = 'gray', txt = 'Pendiente', sum = '';
     if (['contacto', 'personal', 'direccion'].includes(sec)) {
-      const r = secState(sec); done += r.done; total += r.total; pct = Math.round(r.done / r.total * 100);
+      const r = secState(sec); if (modeSecs().includes(sec)) { done += r.done; total += r.total; } pct = Math.round(r.done / r.total * 100);
       if (r.done === r.total) { color = 'green'; txt = 'Completo'; }
       else if (r.err) { color = 'red'; txt = 'Revisar'; }
       else if (r.done) { color = 'purple'; txt = `${r.done} de ${r.total}`; }
@@ -239,8 +245,10 @@ function richSummary() {
 const links = $$('#anchor .step');
 function syncAnchor() {
   let cur = 'contacto';
-  $$('section[data-sec]').forEach(s => { if (s.getBoundingClientRect().top < 160) cur = s.dataset.sec; });
-  if (innerHeight + scrollY >= document.body.scrollHeight - 4) cur = 'bio';
+  /* Corrección al portarlo: los apartados ocultos (registro de Venta) miden 0 y su top 0 < 160 los marcaba como activos;
+     en su archivo, con Venta, el activo siempre era Biometría (oculto) */
+  $$('section[data-sec]').forEach(s => { if (!s.hidden && s.getBoundingClientRect().top < 160) cur = s.dataset.sec; });
+  if (innerHeight + scrollY >= document.body.scrollHeight - 4) cur = modeSecs()[modeSecs().length - 1];
   links.forEach(l => { const on = l.dataset.sec === cur; l.classList.toggle('is-active', on); if (on) l.setAttribute('aria-current', 'true'); else l.removeAttribute('aria-current'); }); $$('[data-cpi]').forEach(d => d.classList.toggle('is-active', d.dataset.cpi === cur));
 }
 addEventListener('scroll', syncAnchor, { passive: true });
@@ -626,6 +634,16 @@ const LK_DB = [
     data: { name: 'Raúl', lastName: 'Campos', secondLastName: 'Medina', email: 'raul.campos@ejemplo.com', phone: '8112345678', civil: 'Casado(a)', gender: 'Masculino', nat: 'Mexicana', dob: '21/09/1988', curp: 'CAMR880921HNLMDL09', rfc: 'CAMR880921K21', activity: 'Comercio', idType: 'INE', idNum: '4567891234567' },
     addr: { nombre: 'Casa', calle: 'Calle Morelos', ext: '845', int: '', col: 'Centro', mun: 'Monterrey', edo: 'Nuevo León', cp: '64000' },
     note: 'Viene de otra casa de empeño de la Red ataskate con sus datos personales, dirección e identificación. Revisa que estén actualizados y registra sus huellas.' },
+  /* 2d1b103b4: los mismos clientes que el buscador de Clientes encuentra en otras fuentes (EXT_CLI de clientes.js), para "Cargar cliente" (?cargar=).
+     Corrección al portarlo: en su archivo la actividad de Jorge es 'Servicios', que no es opción del select; no se cargaba y quedaba en error */
+  { src: 'mk', srcLabel: 'Marketplace', origin: 'Se registró en el Marketplace ataskate el 05/08/2026', email: 'fer.rios@ejemplo.com', phone: '5534127788', idType: 'INE', idNum: '', curp: '',
+    data: { name: 'Fernanda', lastName: 'Ríos', secondLastName: 'Luna', email: 'fer.rios@ejemplo.com', phone: '5534127788', nat: 'Mexicana' },
+    addr: { nombre: 'Casa', calle: 'Calle Durango', ext: '210', int: '3', col: 'Roma Norte', mun: 'Cuauhtémoc', edo: 'Ciudad de México', cp: '06700' },
+    note: 'Del Marketplace solo vienen sus datos de contacto y su dirección de envío. Completa los datos personales, la identificación y las huellas.' },
+  { src: 'red', srcLabel: 'Red ataskate', origin: 'Registrado en Prenda Fácil · Red ataskate', email: 'jorge.salinas@ejemplo.com', phone: '3319876543', idType: 'Pasaporte', idNum: 'G87654321', curp: 'SAPJ850610HJCLZR05',
+    data: { name: 'Jorge', lastName: 'Salinas', secondLastName: 'Paz', email: 'jorge.salinas@ejemplo.com', phone: '3319876543', civil: 'Soltero(a)', gender: 'Masculino', nat: 'Mexicana', dob: '10/06/1985', curp: 'SAPJ850610HJCLZR05', rfc: 'SAPJ850610AB3', activity: 'Servicios profesionales', idType: 'Pasaporte', idNum: 'G87654321' },
+    addr: { nombre: 'Casa', calle: 'Av. Chapultepec', ext: '480', int: '', col: 'Americana', mun: 'Guadalajara', edo: 'Jalisco', cp: '44160' },
+    note: 'Viene de otra casa de empeño de la Red ataskate con sus datos personales, dirección e identificación. Revisa que estén actualizados y registra sus huellas.' },
 ];
 const LK_EX = [
   { k: 'mk', label: 'Cliente del Marketplace', email: 'valeria.ortiz@ejemplo.com', phone: '', idType: 'INE', idNum: '' },
@@ -726,6 +744,8 @@ function lkApply(c) {
   }
   Object.entries(v).forEach(([k, x]) => lkSet(k, x));
   S.lkKeys = Object.keys(v);
+  /* 0859357ca · Cliente de otra casa de empeño (Red ataskate): ya es cliente de empeño → registro completo, sin selector Venta / Empeño */
+  { const red = !!(c && c.src === 'red'), ms = $('.mode-sec'); if (ms) ms.hidden = red; if (red) setMode('empeno'); }
   let a = $('#srcAlert'); if (!a) { a = document.createElement('div'); a.id = 'srcAlert'; $('#form').prepend(a); }
   const src = c ? `<span class="src ${c.src}">${c.srcLabel}</span>` : '<span class="src new">Sin registro</span>';
   a.innerHTML = `<div class="alert ${cls}" role="status"><div class="main"><span class="ico">${c ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M11 17h2v-6h-2Zm1-8q.425 0 .713-.288Q13 8.425 13 8t-.287-.713Q12.425 7 12 7t-.712.287Q11 7.575 11 8t.288.712Q11.575 9 12 9Zm0 13q-2.075 0-3.9-.788q-1.825-.787-3.175-2.137q-1.35-1.35-2.137-3.175Q2 14.075 2 12t.788-3.9q.787-1.825 2.137-3.175q1.35-1.35 3.175-2.138Q9.925 2 12 2t3.9.787q1.825.788 3.175 2.138q1.35 1.35 2.137 3.175Q22 9.925 22 12t-.788 3.9q-.787 1.825-2.137 3.175q-1.35 1.35-3.175 2.137Q14.075 22 12 22Z" fill="currentColor"/></svg>' : '<svg width="24" height="24"><use href="#i-pos"/></svg>'}</span><div class="txt"><p class="ttl">${esc(title)} ${src}</p><p class="msg">${esc(msg)}</p></div></div></div>`;
@@ -747,6 +767,34 @@ function dupFind() {
     if (m.length) return { c, m };
   }
   return null;
+}
+/* 2d1b103b4 · Verificación (DS Modal + TextInput): se pide un dato distinto al que coincidió antes de mostrar o cargar los datos */
+function dupVerify(c, where, m) {
+  const hasE = m.includes('correo electrónico'), hasP = m.includes('teléfono');
+  if (hasE && hasP) return dupPreview(c, where);
+  const ask = hasE ? 'phone' : hasP ? 'email' : 'any';
+  const lbl = { phone: 'Teléfono', email: 'Correo electrónico', any: 'Teléfono o correo electrónico' }[ask];
+  const what = { phone: 'su número de teléfono', email: 'su correo electrónico', any: 'su número de teléfono o su correo electrónico' }[ask];
+  const ph = { phone: '55 1234 5678', email: 'nombre@correo.com', any: 'Ej. 55 1234 5678 o nombre@correo.com' }[ask];
+  const draw = (val, err) => {
+    modal(`<div class="mh"><h3>Verifica al cliente</h3><button type="button" class="mx" aria-label="Cerrar" data-close><svg width="24" height="24"><use href="#i-close"/></svg></button></div>
+      <div class="mb"><p class="dp-sub">${esc(c.data.name + ' ' + c.data.lastName)} ya tiene un registro en <b>${where}</b>. Para ver y cargar sus datos, pide al cliente ${what}.</p>
+        <div class="fld"><label class="lbl" for="vfyIn">${lbl}</label><input class="in ${err ? 'err' : ''}" id="vfyIn" ${ask === 'phone' ? 'inputmode="tel"' : ''} placeholder="${ph}" value="${esc(val)}" autocomplete="off" aria-invalid="${!!err}">${err ? `<span class="lk-err">${lkIco}${esc(err)}</span>` : ''}</div></div>
+      <div class="mf"><button type="button" class="btn ter sm" data-close>Cancelar</button><button type="button" class="btn pri sm" id="vfyGo" ${val.trim() ? '' : 'disabled'}>Verificar</button></div>`, 'dp-modal');
+    const i = $('#vfyIn'), go = $('#vfyGo'); i.focus(); i.setSelectionRange(i.value.length, i.value.length);
+    i.addEventListener('input', () => { go.disabled = !i.value.trim(); if (err) { err = ''; i.classList.remove('err'); const e = i.parentElement.querySelector('.lk-err'); if (e) e.remove(); } });
+    /* Corrección al portarlo: sin preventDefault, el Enter llegaba a "Cargar datos" (el modal enfoca el botón primario al abrir la vista
+       previa) y cargaba los datos sin mostrarlos (pasa igual en su archivo) */
+    i.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); if (!go.disabled) go.click(); } });
+    go.onclick = () => {
+      const v = i.value.trim(), d = digits(v);
+      const okE = v.includes('@') && v.toLowerCase() === c.email, okP = d.length >= 10 && d.slice(-10) === c.phone;
+      const ok = ask === 'phone' ? okP : ask === 'email' ? okE : (okE || okP);
+      if (!ok) return draw(v, 'El dato no coincide con el registro. Confírmalo con el cliente e intenta de nuevo.');
+      dupPreview(c, where);
+    };
+  };
+  draw('', '');
 }
 /* Modal (DS Modal) con la vista previa de los datos que se van a precargar */
 const DUP_LBL = [['name', 'Nombre'], ['lastName', 'Apellido paterno'], ['secondLastName', 'Apellido materno'], ['email', 'Correo electrónico'], ['phone', 'Teléfono'], ['civil', 'Estado civil'], ['gender', 'Género'], ['nat', 'Nacionalidad'], ['dob', 'Fecha de nacimiento'], ['curp', 'CURP'], ['rfc', 'R.F.C'], ['activity', 'Actividad económica'], ['idType', 'Tipo de identificación'], ['idNum', 'Número de documento']];
@@ -772,7 +820,7 @@ function dupCheck() {
   box.dataset.k = key;
   box.hidden = false;
   box.innerHTML = `<div class="ds-alert info" role="status"><div class="ds-alert-ic-c"><span class="ds-alert-ic"><svg width="24" height="24" viewBox="144 156 24 24" fill="none" aria-hidden="true"><path d="M154.774 172.838H156.774V166.838H154.774V172.838ZM155.774 164.838C156.058 164.838 156.295 164.742 156.487 164.55C156.679 164.359 156.774 164.121 156.774 163.838C156.774 163.555 156.679 163.317 156.487 163.125C156.295 162.934 156.058 162.838 155.774 162.838C155.491 162.838 155.254 162.934 155.062 163.125C154.87 163.317 154.774 163.555 154.774 163.838C154.774 164.121 154.87 164.359 155.062 164.55C155.254 164.742 155.491 164.838 155.774 164.838ZM155.774 177.838C154.391 177.838 153.091 177.575 151.874 177.05C150.658 176.525 149.599 175.813 148.699 174.913C147.799 174.013 147.087 172.955 146.562 171.738C146.037 170.521 145.774 169.221 145.774 167.838C145.774 166.455 146.037 165.155 146.562 163.938C147.087 162.721 147.799 161.663 148.699 160.763C149.599 159.863 150.658 159.15 151.874 158.625C153.091 158.1 154.391 157.838 155.774 157.838C157.158 157.838 158.458 158.1 159.674 158.625C160.891 159.15 161.949 159.863 162.849 160.763C163.749 161.663 164.462 162.721 164.987 163.938C165.512 165.155 165.774 166.455 165.774 167.838C165.774 169.221 165.512 170.521 164.987 171.738C164.462 172.955 163.749 174.013 162.849 174.913C161.949 175.813 160.891 176.525 159.674 177.05C158.458 177.575 157.158 177.838 155.774 177.838Z" fill="currentColor"/></svg></span><div class="ds-alert-c"><p class="ds-alert-t">Este cliente ya se encuentra registrado en ${where}</p><p class="ds-alert-x">Coincide su ${list}. ¿Deseas cargar los datos del cliente?</p></div></div><div class="ds-alert-a"><button type="button" class="ds-btn-ter" id="dupLoad">Ver datos</button></div><button type="button" class="ds-alert-close" id="dupX" aria-label="Cerrar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="currentColor"/></svg></button></div>`;
-  $('#dupLoad').onclick = () => dupPreview(r.c, where);
+  $('#dupLoad').onclick = () => dupVerify(r.c, where, r.m);
   $('#dupX').onclick = () => { S.dupClosed = r.c.email; box.hidden = true; };
 }
 ['email', 'phone', 'idNum', 'curp', 'idType'].forEach(id => { const el = $('#' + id); if (el) { el.addEventListener('input', dupCheck); el.addEventListener('change', dupCheck); } });
@@ -780,6 +828,36 @@ function dupCheck() {
 const simType = (id, v) => { const el = $('#' + id); el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); };
 $('#demoMk').onclick = () => { S.dupClosed = S.dupLoaded = null; simType('email', 'valeria.ortiz@ejemplo.com'); $('#email').scrollIntoView({ block: 'center', behavior: 'smooth' }); };
 $('#demoRed').onclick = () => { S.dupClosed = S.dupLoaded = null; const acc = $('#idType').closest('[data-acc]'); if (acc && !acc.classList.contains('open')) acc.querySelector(':scope > button').click(); simType('idType', 'INE'); simType('idNum', '4567891234567'); $('#idNum').scrollIntoView({ block: 'center', behavior: 'smooth' }); };
+
+/* ---------- 2d1b103b4 · Tipo de registro: Venta / Empeño ----------
+   Mismo formulario: con Venta solo se ven Contacto y Dirección (en el formulario y en la lista de la card del cliente, renumerada),
+   y el avance, "Datos completados" y "Faltan N datos" cuentan solo esos obligatorios */
+const MODE_HELP = { venta: 'Para una venta solo se necesitan la información de contacto y la dirección domiciliaria.', empeno: 'Registro completo: datos personales, dirección, identificación, cotitular y huellas.' };
+function setMode(m) {
+  S.mode = m;
+  $$('.mode-chip').forEach(b => { const on = b.dataset.mode === m; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
+  const mh = $('#modeHelp'); if (mh) mh.textContent = MODE_HELP[m];
+  $$('#fs section.sec').forEach(sec => { const k = sec.dataset.sec; sec.hidden = m === 'venta' && !VENTA_SECS.includes(k); });
+  $$('#sSecs [data-cpi]').forEach(a => { a.closest('li').hidden = m === 'venta' && !VENTA_SECS.includes(a.dataset.cpi); });
+  { let n = 0; $$('#sSecs li').forEach(li => { if (li.hidden) return; n++; const d = li.querySelector('.dot'); d.dataset.n = n; if (!li.querySelector('a').classList.contains('is-done')) d.textContent = n; }); }
+  update();
+}
+$$('.mode-chip').forEach(b => { b.onclick = () => setMode(b.dataset.mode); });
+{ const md = new URLSearchParams(location.search).get('modo'); if (md === 'venta' || md === 'empeno') setMode(md); }
+
+/* ---------- 2d1b103b4 · Llegada desde el buscador de Clientes ----------
+   ?cargar=correo → ya se verificó en Clientes ("Verificar y cargar"): se cargan sus datos directo.
+   ?buscar=correo → cliente encontrado en otra fuente: se escribe el correo y aparece el aviso "Ver datos".
+   ?nuevo=texto  → no se encontró: se precarga lo que se buscó (correo, teléfono o nombre). */
+{ const qp = new URLSearchParams(location.search), b = qp.get('buscar'), n = (qp.get('nuevo') || '').trim();
+  const cg = qp.get('cargar'), cc = cg && LK_DB.find(x => x.email === cg.toLowerCase());
+  if (cc) { S.dupLoaded = cc.email; lkApply(cc); }
+  else if (b) simType('email', b);
+  else if (n) {
+    if (n.includes('@')) simType('email', n);
+    else if (/^[\d\s+-]{7,}$/.test(n)) simType('phone', n.replace(/\D/g, '').slice(-10));
+    else { const w = n.split(/\s+/); simType('name', w[0]); if (w[1]) simType('lastName', w[1]); if (w[2]) simType('secondLastName', w.slice(2).join(' ')); }
+  } }
 
 /* Controles del prototipo (pestaña "Prototipo" del riel, ../demo.js): las acciones cierran el panel para que se vea su efecto
    (sin mover el foco); las casillas lo dejan abierto */

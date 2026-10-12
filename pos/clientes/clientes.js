@@ -1,7 +1,8 @@
 /* Ataskate POS (Operativo) · Clientes: listado, filtros y perfil del cliente.
    Prototipo de Product Design (rama del equipo del repo del equipo, commit 8f7723ad6), traído al prototipo del POS:
    el header y el menú lateral son los compartidos (../navbar.js y ../menu-op.js); aquí solo vive el contenido del módulo.
-   Se quitaron las pantallas de Home, Inventario y Nuevo artículo que venían en el mismo archivo (ya existen en ../home/ y ../inventario/). */
+   Se quitaron las pantallas de Home, Inventario y Nuevo artículo que venían en el mismo archivo (ya existen en ../home/ y ../inventario/).
+   Commit 2d1b103b4: búsqueda en otras fuentes (Marketplace / Red ataskate), modal "Verifica al cliente" y estados vacíos nuevos. */
 
 // Íconos exportados directamente desde el archivo de Figma "Inventario"
 const S = (w, h, body) => `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" xmlns="http://www.w3.org/2000/svg">${body}</svg>`;
@@ -88,6 +89,7 @@ const st = {
   screen: 'clients',
   menu: null,
   toast: null,
+  modal: null, // DS Modal abierto ({ type: 'verify', i, val, err }: verificación de un cliente de otra fuente)
   cli: { tab: 'mis', q: '', page: 1, loading: false, f: {}, fd: null, panel: false, score: '', fresh: null },
   prof: { id: null, panel: null, itab: 'personal', editing: false, form: {}, qa: true, q: '', est: '', sort: 'asc', page: 1 },
 };
@@ -105,7 +107,7 @@ function render() {
   rendering = true;
   const changed = st.screen !== lastScreen; lastScreen = st.screen;
   // el header y el menú lateral son los compartidos del POS (fuera de #app); aquí solo va la pantalla del módulo
-  root.innerHTML = `<div class="screen ${changed ? 'fade' : ''}">${screen()}</div>` + toast();
+  root.innerHTML = `<div class="screen ${changed ? 'fade' : ''}">${screen()}</div>` + modal() + toast();
 
   document.querySelectorAll('[data-sk]').forEach(el => { if (scrolls[el.dataset.sk] != null) el.scrollTop = scrolls[el.dataset.sk]; });
   if (fk) { const el = document.querySelector(`[data-fk="${fk}"]`); if (el) { el.focus(); try { el.setSelectionRange(s0, s1); } catch (e) {} } }
@@ -165,6 +167,36 @@ function cliLoad() { st.cli.loading = true; st.cli.page = 1; render(); clearTime
 function sesiones() {
   return `<nav class="cli-sessions" aria-label="Sesiones de trabajo"><span class="cli-sessions__tab" aria-current="page">Ventana principal<span class="cli-sessions__help" title="Cada pestaña es una sesión de trabajo con su propio carrito">${ICONS.help}</span></span><button class="cli-sessions__add" type="button" data-act="toast" data-msg="Nueva ventana de trabajo" aria-label="Abrir otra sesión" title="Abrir otra sesión">${ICONS.addplus}</button></nav>`;
 }
+// ---------- Búsqueda en otras fuentes (Marketplace / Red ataskate) · datos ficticios ----------
+// commit 2d1b103b4 de Product Design: el buscador también encuentra clientes del Marketplace y de la Red ataskate.
+// Solo se muestran datos parciales (correo y teléfono ocultos); "Cargar cliente" pide verificarlo antes de cargar sus datos.
+// Los correos coinciden con LK_DB de cliente-nuevo.js, que los recibe en ?cargar=<correo>.
+const EXT_CLI = [
+  { src: 'mk', name: 'Valeria', last: 'Ortiz Campos', email: 'valeria.ortiz@ejemplo.com', phone: '5587654321', since: 'Registrada en Marketplace · mar 2026' },
+  { src: 'mk', name: 'Fernanda', last: 'Ríos Luna', email: 'fer.rios@ejemplo.com', phone: '5534127788', since: 'Registrada en Marketplace · ago 2026' },
+  { src: 'red', name: 'Raúl', last: 'Campos Medina', email: 'raul.campos@ejemplo.com', phone: '8112345678', since: 'Monte Cristo · Red ataskate' },
+  { src: 'red', name: 'Jorge', last: 'Salinas Paz', email: 'jorge.salinas@ejemplo.com', phone: '3319876543', since: 'Prenda Fácil · Red ataskate' },
+];
+const EXT_SRC = { mk: 'Marketplace', red: 'Red ataskate' };
+const maskEmail = e => { const [u, d] = e.split('@'); return `${u.slice(0, 2)}•••@${d}`; };
+const maskPhone = p => `•• •••• ${p.slice(-4)}`;
+function extFind(q) {
+  const nq = norm(q || '').trim(), dq = (q || '').replace(/\D/g, '');
+  if (nq.length < 3) return [];
+  return EXT_CLI.filter(x => norm(`${x.name} ${x.last}`).includes(nq) || norm(x.email) === nq || (dq.length >= 4 && x.phone.includes(dq)));
+}
+function extBlock(ext) {
+  if (!ext.length) return '';
+  const rows = ext.map(x => `<tr>
+      <td class="user"><div class="u"><span class="avatar">${initials(x)}</span><div class="tx"><p class="m">${esc(x.name + ' ' + x.last)}</p><p class="d">${esc(x.since)}</p></div></div></td>
+      <td><span class="chip-i ext-${x.src}">${EXT_SRC[x.src]}</span></td>
+      <td class="mail">${maskEmail(x.email)}</td>
+      <td class="num">${maskPhone(x.phone)}</td>
+      <td class="ext-act"><button type="button" class="btn btn-ter ext-reg" data-act="extver" data-v="${EXT_CLI.indexOf(x)}" aria-label="Cargar cliente ${esc(x.name + ' ' + x.last)}">Cargar cliente</button></td></tr>`).join('');
+  return `<section class="ext" aria-label="Clientes encontrados en otras fuentes">
+    <div class="ext-h"><p class="ext-t">Encontrados en otras fuentes</p><p class="ext-s">Solo mostramos datos parciales para proteger su información.</p></div>
+    <div class="dtw"><table class="dt neutral"><thead><tr><th>Cliente</th><th>Origen</th><th>Correo electrónico</th><th>Teléfono</th><th class="ib"><span class="sr">Acciones</span></th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+}
 function clientsScreen() {
   const c = st.cli, f = cliAllFilters();
   const all = cliBase(), list = cliFilter(all, c.q, f).filter(x => !c.hoy || venceHoy(x));
@@ -187,7 +219,14 @@ function clientsScreen() {
       <td>${scoreTag(x.score)}</td>
       ${red ? `<td>${x.empresa === '—' ? '<span class="cap">Sin empresa</span>' : esc(x.empresa)}</td>` : ''}
       <td class="ib"><span class="tib">${ICONS.rowRight}</span></td></tr>`).join('');
-  const empty = c.q || chips.length
+  // otras fuentes: solo cuando hay búsqueda (y no mientras carga). Estado vacío según dónde se encontró:
+  // solo afuera → aviso corto y la sección de abajo; en ningún lado (sin más filtros) → Limpiar búsqueda / Crear cliente con lo buscado
+  const ext = c.q && !c.loading ? extFind(c.q) : [];
+  const empty = c.q && !list.length && ext.length
+    ? `<div class="cempty sm"><p class="t">No está en Mis clientes</p><p class="cap">Lo encontramos en otras fuentes. Revísalo abajo o crea un cliente nuevo.</p></div>`
+    : c.q && !chips.filter(x => !x.includes('cliclearq')).length
+    ? `<div class="cempty"><p class="t">No encontramos clientes para “${esc(c.q)}”</p><p class="cap">No está en Mis clientes, en el Marketplace ni en la Red ataskate.</p><div class="cempty-a"><button class="btn btn-ter ext-reg" data-act="cliclearq">Limpiar búsqueda</button><a class="btn btn-primary ic-l" style="height:36px;padding:8px 16px 8px 8px" href="cliente-nuevo.html?nuevo=${encodeURIComponent(c.q)}">${ic('plusWhite')}Crear cliente</a></div></div>`
+    : c.q || chips.length
     ? `<div class="cempty"><p class="t">No encontramos clientes${c.q ? ` para “${esc(c.q)}”` : ''}</p><p class="cap">Revisa lo que escribiste o quita algunos filtros.</p><button class="btn btn-outline" style="height:36px;padding:8px 16px" data-act="cliclearall">Limpiar búsqueda y filtros</button></div>`
     : `<div class="cempty"><p class="t">Aún no tienes clientes</p><p class="cap">Registra tu primer cliente para empezar a operar.</p><a class="btn btn-primary ic-l" style="height:36px;padding:8px 16px" href="cliente-nuevo.html">${ic('plusWhite')}Crear cliente</a></div>`;
   const pager = `<nav class="dpager" aria-label="Paginación"><span class="g"><button data-act="clipage" data-v="1" aria-label="Primera página" ${c.page === 1 ? 'disabled' : ''}>${PG.first}</button><button data-act="clipage" data-v="${c.page - 1}" aria-label="Página anterior" ${c.page === 1 ? 'disabled' : ''}>${PG.prev}</button></span><span class="t">${list.length ? `${from + 1}-${from + slice.length} de ${list.length} resultados` : '0 resultados'}</span><span class="g"><button data-act="clipage" data-v="${c.page + 1}" aria-label="Página siguiente" ${c.page >= pages ? 'disabled' : ''}>${PG.next}</button><button data-act="clipage" data-v="${pages}" aria-label="Última página" ${c.page >= pages ? 'disabled' : ''}>${PG.last}</button></span></nav>`;
@@ -210,7 +249,8 @@ function clientsScreen() {
       </div>
       ${chips.length ? `<div class="cmeta"><div class="fl"><span>Filtrado por:</span>${chips.join('')}<button class="linkbtn" data-act="cliclearall">Limpiar todo</button></div><span class="cap" aria-live="polite">${count}</span></div>` : ''}
       <div class="dtw"><table class="dt neutral">${head}<tbody>${c.loading ? skel : (slice.length ? rowsH : `<tr><td class="empty" colspan="${ncol}">${empty}</td></tr>`)}</tbody></table></div>
-      ${pager}
+      ${!list.length && ext.length ? '' : pager}
+      ${extBlock(ext)}
     </div>
     ${c.panel ? cliPanel() : ''}
   </div>
@@ -437,12 +477,34 @@ function toast() {
   return `<div class="toast ${t.kind} ${fresh ? 'anim' : ''}" role="status"><span class="ico">${icon}</span><div class="tt"><p class="t1">${esc(t.msg)}</p>${t.text ? `<p class="t2">${esc(t.text)}</p>` : ''}</div><button class="tclose" data-act="tclose" aria-label="Cerrar">${ICONS.close.replace('width="24" height="24"', 'width="20" height="20"')}</button></div>`;
 }
 
+// DS Modal "Verifica al cliente" (commit 2d1b103b4): antes de cargar a un cliente del Marketplace o de la Red ataskate se le pide
+// su teléfono o su correo; si coincide abre cliente-nuevo.html?cargar=<correo>. Queda sobre el header compartido (z 80 > 30).
+function modal() {
+  const m = st.modal; if (!m || m.type !== 'verify') return '';
+  const x = EXT_CLI[m.i];
+  // la X del DS Modal en gris (#54575C) como en los modales de Cliente nuevo: el ícono toma el color del botón
+  const X = ICONS.close.replace('fill="#5A5AFF"', 'fill="currentColor"');
+  return `<div class="overlay vfy-ov" data-act="mbg"><div class="modal vfy" role="dialog" aria-modal="true" aria-labelledby="vfyT" aria-describedby="vfyP" data-stop="1">
+      <div class="vfy-h"><h2 id="vfyT">Verifica al cliente</h2><button type="button" class="vfy-x" data-act="mclose" aria-label="Cerrar">${X}</button></div>
+      <div class="vfy-who"><span class="avatar">${initials(x)}</span><div><p class="m">${esc(x.name + ' ' + x.last)}</p><p class="d"><span class="chip-i ext-${x.src}">${EXT_SRC[x.src]}</span></p></div></div>
+      <p class="vfy-p" id="vfyP">Este cliente ya está registrado en ${EXT_SRC[x.src]}. Para cargar sus datos, pide al cliente su número de teléfono o su correo electrónico.</p>
+      <label class="pf"><span>Teléfono o correo electrónico</span><span class="field ${m.err ? 'err' : ''}"><input data-in="vfy" data-fk="vfy" value="${esc(m.val)}" placeholder="Ej. 55 1234 5678 o nombre@correo.com" autocomplete="off" aria-invalid="${!!m.err}" ${m.err ? 'aria-describedby="vfyE"' : ''}></span>${m.err ? `<span class="vfy-err" id="vfyE" role="alert">${X.replace(/width="\d+" height="\d+"/, 'width="16" height="16"')}${esc(m.err)}</span>` : ''}</label>
+      <div class="vfy-f"><button type="button" class="btn btn-ter ext-reg" data-act="mclose">Cancelar</button><button type="button" class="btn btn-primary" data-act="vfyok" ${m.val.trim() ? '' : 'disabled'}>Verificar y cargar</button></div></div></div>`;
+}
+// al cerrar el modal el foco regresa al "Cargar cliente" que lo abrió (el render vuelve a crear el botón)
+function closeModal() {
+  const i = st.modal && st.modal.i; st.modal = null; render();
+  const b = document.querySelector(`[data-act="extver"][data-v="${i}"]`); if (b) b.focus();
+}
+
 // ---------- acciones ----------
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-act]');
   // cerrar menús al hacer clic fuera
   if (st.menu && !(t && (t.dataset.act === 'menu' || t.closest('.menu')))) { st.menu = null; if (!t) { render(); return; } }
   if (!t) return;
+  // un clic dentro del modal no lo cierra: solo el fondo (mbg) y sus botones
+  if (t.dataset.act === 'mbg' && e.target.closest('[data-stop]')) return;
   const a = t.dataset.act, v = t.dataset.v;
   if (a.startsWith('cp') && cpAct(a, v, t)) return;
   switch (a) {
@@ -465,6 +527,25 @@ document.addEventListener('click', e => {
     case 'clifsel': st.cli.fd[t.dataset.k] = v; st.menu = null; break;
     case 'cliapply': st.cli.f = { ...st.cli.fd }; if (st.cli.f.score) { st.cli.score = st.cli.f.score; delete st.cli.f.score; } st.cli.panel = false; cliLoad(); toastMsg('Filtros aplicados', 'info'); return;
     case 'cliopen': { const x = [...CLIENTES, ...RED].find(c => c.id === v); if (!x) return; if (x.id.startsWith('r')) { toastMsg(`${x.name} ${x.last} · NUC ${x.nuc}`, 'info', 'Los contactos de la red ataskate se muestran protegidos.'); return; } st.prof = { id: x.id, panel: null, itab: 'personal', editing: false, form: {}, qa: true, q: '', est: '', sort: 'asc', page: 1 }; go('client'); return; }
+    // otras fuentes: verificar con teléfono o correo antes de cargar al cliente en Cliente nuevo
+    case 'extver': st.modal = { type: 'verify', i: Number(v), val: '', err: '' }; render(); setTimeout(() => { const el = document.querySelector('[data-fk="vfy"]'); if (el) el.focus(); }, 0); return;
+    case 'vfyok': {
+      if (!st.modal) return;
+      const x = EXT_CLI[st.modal.i], val = st.modal.val.trim(), d = val.replace(/\D/g, '');
+      const ok = val.includes('@') ? norm(val) === norm(x.email) : d.length >= 10 && d.slice(-10) === x.phone;
+      // si no coincide, el error queda bajo el campo y el foco regresa al campo (cursor al final) para corregirlo
+      if (!ok) { st.modal.err = 'El dato no coincide con el registro. Confírmalo con el cliente e intenta de nuevo.'; render(); const el = document.querySelector('[data-fk="vfy"]'); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } return; }
+      st.modal = null; location.href = 'cliente-nuevo.html?cargar=' + encodeURIComponent(x.email); return;
+    }
+    case 'mbg': case 'mclose': closeModal(); return;
+    // pestaña "Prototipo" del riel (../demo.js): escribe la búsqueda de prueba en el listado y cierra el panel para que se vea el efecto
+    case 'protoq': {
+      const pn = t.closest('[data-proto-panel]'), tb = document.getElementById('demoProtoTab');
+      if (pn && !pn.hidden) { pn.hidden = true; if (tb) tb.setAttribute('aria-expanded', 'false'); }
+      Object.assign(st.cli, { q: t.dataset.q, f: {}, score: '', hoy: false, panel: false }); st.modal = null;
+      if (st.screen !== 'clients') { st.screen = 'clients'; window.scrollTo(0, 0); }
+      cliLoad(); return;
+    }
     default: return;
   }
   render();
@@ -477,12 +558,25 @@ document.addEventListener('input', e => {
     case 'cpf': st.prof.form[t.dataset.k] = t.value; return;
     case 'cliq': st.cli.q = t.value; clearTimeout(window.__cq); window.__cq = setTimeout(cliLoad, 250); return;
     case 'clif': st.cli.fd[t.dataset.k] = t.value; break;
+    // solo se vuelve a pintar si cambia el error o si el campo pasa de vacío a lleno (habilita "Verificar y cargar")
+    case 'vfy': { if (!st.modal) return; const had = !!st.modal.err, was = !!st.modal.val.trim(); st.modal.val = t.value; st.modal.err = ''; if (had || was !== !!t.value.trim()) render(); return; }
     default: return;
   }
   render();
 });
 document.addEventListener('keydown', e => {
   const t = e.target;
+  if (st.modal) {
+    if (e.key === 'Escape') { closeModal(); return; }
+    if (e.key === 'Enter' && t.dataset && t.dataset.in === 'vfy') { const b = document.querySelector('[data-act="vfyok"]'); if (b && !b.disabled) b.click(); return; }
+    // aria-modal: el Tab no sale del modal
+    if (e.key === 'Tab') {
+      const f = [...document.querySelectorAll('.modal.vfy button:not([disabled]), .modal.vfy input')]; if (!f.length) return;
+      const i = f.indexOf(document.activeElement);
+      if (i < 0) { e.preventDefault(); f[0].focus(); } else if (e.shiftKey && i === 0) { e.preventDefault(); f[f.length - 1].focus(); } else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+    }
+    return;
+  }
   if (e.key === 'Escape' && st.menu) { st.menu = null; render(); }
   if (e.key === 'Escape' && st.cli.panel) { st.cli.panel = false; render(); }
   if (e.key === 'Enter' && t.classList && t.classList.contains('crow')) t.click();
@@ -502,5 +596,7 @@ try {
   }
 } catch (e) {}
 render();
+// al regresar con Atrás el navegador restaura la página desde su caché (bfcache) con el modal "Verifica al cliente" todavía pintado aunque st.modal ya es null: se vuelve a pintar para que coincida con el estado
+window.addEventListener('pageshow', e => { if (e.persisted) render(); });
 window.__st = st;
 })();

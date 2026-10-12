@@ -379,6 +379,65 @@
 .tfc.hoy .hoy-n{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:20px;padding:0 6px;border-radius:100px;background:#FFEBBA;color:#614500;font-size:12px;font-weight:600;line-height:12px}
 .tfc.hoy.sel{background:#F0F0FF}
 
+/* ===== Resultados en otras fuentes (Marketplace / Red ataskate) · commit 2d1b103b4 de Product Design ===== */
+/* la línea de arriba separa la sección dentro de la misma card (divisor, no borde de tarjeta) */
+.ext{display:flex;flex-direction:column;gap:12px;padding-top:16px;border-top:1px solid #D4D6D8}
+.ext-h{display:flex;flex-direction:column;gap:4px;padding:0 16px}
+.ext-t{font-size:16px;line-height:19.2px;font-weight:600;color:#2A2C2F}
+.ext-s{font-size:14px;line-height:16.8px;color:#54575C}
+.chip-i.ext-mk{background:#E5E5FF}
+.chip-i.ext-red{background:#EBF9FF}
+.dt td.ext-act{text-align:right;white-space:nowrap}
+/* DS Button tertiary 36: transparente, #5A5AFF 14/700; hover #F0F0FF */
+.btn.ext-reg{height:36px;padding:8px 16px;background:transparent;color:#5A5AFF;font-size:14px;font-weight:700;line-height:20px;border-radius:100px;text-decoration:none}
+.btn.ext-reg:hover{background:#F0F0FF}
+.btn.ext-reg:focus-visible{outline:2px solid #5A5AFF;outline-offset:1px}
+.cempty.sm{padding:24px 16px}
+.cempty-a{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+/* cuando hay resultados afuera, el paginador sigue pegado a la tabla y la sección queda debajo (sin el hueco del margin-top:auto) */
+.ctable>.dpager:has(+ .ext){margin-top:0}
+
+/* ===== DS Modal "Verifica al cliente" (radio 24, overlay .5, título 24/600, cerrar 40, botones 36 centrados) ===== */
+/* z 80: sobre el header compartido (30), el riel de flujos (29/45) y la barra de sesiones (25); el toast (90) queda arriba */
+.overlay{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center}
+.modal{display:flex;flex-direction:column;max-height:calc(100vh - 48px);overflow-y:auto;background:#fff}
+.overlay.vfy-ov{background:rgba(0,0,0,.5);padding:24px}
+.modal.vfy{width:560px;max-width:100%;gap:24px;border-radius:24px;padding:24px;box-shadow:0 10px 60px rgba(0,0,0,.25)}
+.vfy-h{display:flex;align-items:center;gap:16px}
+.vfy-h h2{flex:1;margin:0;font-size:24px;line-height:28.8px;font-weight:600;color:#2A2C2F}
+.vfy-x{display:flex;width:40px;height:40px;padding:8px;border-radius:100px;background:#fff;color:#54575C;flex:none;transition:background .15s}
+.vfy-x:hover{background:#F4F5F5;color:#2A2C2F}
+/* el cliente dentro del modal: sin borde, con Card-shadow y radio 16 (regla de Product Design; mismo trato que .lk-card en Cliente nuevo) */
+.vfy-who{display:flex;align-items:center;gap:12px;padding:12px 16px;border:0;border-radius:16px;background:#fff;box-shadow:var(--pos-shadow-card)}
+.vfy-who .avatar{width:40px;height:40px;font-size:16px;flex:none}
+.vfy-who .m{font-size:16px;line-height:19.2px;font-weight:600;color:#2A2C2F}
+.vfy-who .d{margin-top:6px}
+.vfy-p{font-size:16px;line-height:19.2px;letter-spacing:.3px;color:#2A2C2F}
+/* TextInput en error (va después de :hover y :focus-within para que el borde rojo gane) */
+.pf .field.err,.pf .field.err:hover,.pf .field.err:focus-within{border-color:#A82424}
+/* el mensaje de error es largo y baja a 2 renglones (3 en 375): el ícono queda a la altura del primer renglón, no entre renglones */
+.vfy-err{display:flex;align-items:flex-start;gap:4px;padding:2px 8px;font-size:14px;line-height:19.6px;color:#A82424}
+.vfy-err svg{flex:none;margin-top:2px}
+.vfy-err svg path{fill:#A82424}
+.vfy-f{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+.vfy-f .btn{height:36px;padding:8px 16px;font-size:14px;line-height:20px;transition:all .2s ease-in-out}
+.vfy-f .btn-primary:hover:not(:disabled){background:var(--navy)}
+.vfy-f .btn-primary:disabled:hover{background:var(--border)}
+
+/* Controles del prototipo (no son parte de la UI): panel blanco de la pestaña "Prototipo" del riel izquierdo
+   (../demo.js: [data-proto-panel] → .demo-proto, fijo, z 45), en columna; mismos estilos que en Cliente nuevo */
+.proto{display:flex;flex-direction:column;align-items:stretch;gap:12px;color:var(--body);font-size:14px;line-height:19.6px}
+.proto-t{font-size:14px;line-height:19.6px;font-weight:600;color:var(--cap)}
+.proto-cap{margin-bottom:-4px;font-size:12px;line-height:16px;color:var(--cap)}
+.proto .sep{height:1px;background:#E8E9EA;flex:none}
+.proto button{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 16px;border:1px solid var(--primary);border-radius:100px;background:#fff;color:var(--primary);font:700 14px/20px 'Nunito',sans-serif;text-align:center;cursor:pointer;transition:background .15s}
+.proto button:hover{background:var(--p50)}
+.proto button:focus-visible{outline:2px solid var(--primary);outline-offset:1px}
+.proto-kv{display:flex;flex-direction:column;gap:6px;margin:0}
+.proto-kv div{display:flex;justify-content:space-between;gap:12px}
+.proto-kv dt{color:var(--body)}
+.proto-kv dd{margin:0;color:var(--title);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+
 /* ---------- Pestañas de sesión al pie: las mismas de ../inventario/ (Figma: Top Container · "Ventana principal" + "+") ---------- */
 .cli-sessions{position:fixed;z-index:25;left:0;right:0;bottom:0;display:flex;align-items:flex-end;gap:1px;height:40px;background:#f4f5f5}
 /* En pantallas táctiles (iPad, celular) Safari pinta lo que queda bajo su barra flotante con el color de esta barra fija:
@@ -415,4 +474,12 @@
   .tfc{padding:4px 12px}
   .cmeta{flex-wrap:wrap}
   .side{width:100vw;border-radius:0}
+}
+@media (max-width: 700px){
+  /* tabla sin filas: sin encabezado, para que el estado vacío (texto y botones) quepa en la card; con el encabezado la tabla
+     medía ~520 px, el estado vacío quedaba centrado en ese ancho y a 375 se cortaban el título y "Crear cliente" */
+  .dt:has(td.empty) thead{display:none}
+  /* otras fuentes: la tabla se desplaza dentro de la card y "Cargar cliente" queda fijo a la derecha, siempre visible */
+  .ext .dt th:last-child,.ext .dt td.ext-act{position:sticky;right:0;background:#fff;box-shadow:-8px 0 8px -8px rgba(0,0,0,.16)}
+  .ext .dt td.ext-act{padding-left:8px}
 }

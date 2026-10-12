@@ -1,5 +1,6 @@
 /* Ataskate POS (Operativo) · Cliente nuevo — estilos de la propuesta v3 de Product Design (rama del equipo, commit 8f7723ad6,
-   actualizado con 597ab9214: cliente existente; e014b0c0a quitó el modal inicial de identificación).
+   actualizado con 597ab9214: cliente existente; e014b0c0a quitó el modal inicial de identificación; 2d1b103b4 y 0859357ca:
+   tipo de registro Venta / Empeño y verificación del cliente existente).
    Se quitaron su header, su barra de ventanas, su breadcrumb y el padding lateral de la página: el header, el menú lateral,
    el breadcrumb del DS y el ancho de pantalla (main.pos-main: 1440 con 64 a los lados, 24 a 900 px o menos) vienen de ../pos.css.
    Tarjetas y contenedores sin borde: solo Card-shadow (var(--pos-shadow-card)) y radio 16; los controles conservan su borde. */
@@ -41,6 +42,8 @@ p{margin:0}
 .proto-t{font-size:14px;line-height:19.6px;font-weight:600;color:var(--t-cap)}
 .proto-cap{margin-bottom:-4px;font-size:12px;line-height:16px;color:var(--t-cap)}
 .proto .sep{height:1px;background:#E8E9EA;flex:none}
+/* 2d1b103b4: datos ficticios para la verificación de "Ver datos" (solo en el panel, no es parte de la UI) */
+.proto-note{font-size:12px;line-height:16px;color:var(--t-cap)}
 .proto button{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 16px;border:1px solid var(--primary);border-radius:100px;background:var(--white);color:var(--primary);font-size:14px;line-height:20px;font-weight:700;text-align:center;transition:background .15s}
 .proto button:hover{background:var(--p50)}
 .proto label{display:flex;align-items:center;gap:8px;min-height:24px;cursor:pointer;color:var(--t-body)}
@@ -415,7 +418,10 @@ a.btn,a.mx{text-decoration:none}
 .lk-ex .row{display:flex;flex-wrap:wrap;gap:8px}
 .lk-chip{display:inline-flex;align-items:center;gap:8px;height:36px;padding:8px 12px;border:1px solid var(--b-default);border-radius:8px;background:var(--white);color:var(--t-body);font-size:14px;transition:background .15s,border-color .15s}
 .lk-chip:hover{background:var(--p50);border-color:var(--primary);color:var(--navy)}
-.lk-err{display:flex;gap:4px;align-items:center;padding:2px 8px;color:var(--destructive);font-size:14px;line-height:19.6px}
+.lk-err{display:flex;gap:4px;align-items:flex-start;padding:2px 8px;color:var(--destructive);font-size:14px;line-height:19.6px}
+/* error de "Verifica al cliente" (2d1b103b4): el texto baja a 2 o 3 renglones; sin flex:none el ícono se encogía a ~8 px en 375,
+   y queda a la altura del primer renglón (igual que en el modal de la lista) */
+.lk-err svg{flex:none;margin-top:2px}
 .lk-card{display:flex;flex-direction:column;gap:16px;padding:16px;border:0;border-radius:16px;background:var(--white);box-shadow:var(--card-shadow)}
 .lk-who{display:flex;align-items:center;gap:12px;min-width:0}
 .lk-who .avatar{width:48px;height:48px;font-size:16px}
@@ -502,6 +508,8 @@ a.btn,a.mx{text-decoration:none}
 .qmain > #fs{gap:0}
 .qmain section.sec{border-radius:0;box-shadow:none;background:transparent;border-bottom:1px solid #E8E9EA;padding:24px}
 .qmain section.sec:last-of-type{border-bottom:0}
+/* Con Venta el último apartado visible es Dirección: sin divisor, para que no salga del radio de la card */
+.qmain #fs > section.sec:not([hidden]):not(:has(~ section.sec:not([hidden]))){border-bottom:0}
 /* DS FixedActionFooter (src/design-system/FixedActionFooter) */
 .qmain .actions-card.fafooter{position:fixed;left:0;right:0;bottom:40px;z-index:26;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;height:68px;padding:16px 24px;box-sizing:border-box;border-radius:0;background:#FAFAFF;backdrop-filter:blur(4px);box-shadow:0 8px 32px rgba(0,0,0,.16)}
 .fafooter .fa-lead{grid-column:2;justify-self:center;margin:0;font-size:16px;line-height:19.2px;font-weight:400;color:#2A2C2F}
@@ -604,6 +612,33 @@ a.btn,a.mx{text-decoration:none}
 /* DS Button primary disabled */
 .btn.pri:disabled{background:#D4D6D8;border-color:#D4D6D8;color:#FFFFFF;cursor:not-allowed}
 .btn.pri:disabled .spin{border-top-color:#FFFFFF}
+
+/* ===== 2d1b103b4 · Tipo de registro Venta / Empeño ===== */
+/* Selector: patrón DS Widget (radio 16, caja de ícono 44 · radio 10) + DS RadioButton 20px.
+   Íconos DS: SellIcon (inventory/label-sale) · IniciarEmpenoIcon (action/Inicar_empeño).
+   Las tarjetas conservan su borde #D4D6D8 y la elegida su anillo #5A5AFF: son un control (role="radio"), como las manos de
+   Biometría; la regla de tarjetas sin borde (solo Card-shadow) es para cards y contenedores. En su archivo primero eran DS Choice
+   chips y luego los sobrescribió con las tarjetas; aquí queda solo el resultado final. Los apartados ocultos en Venta usan el
+   [hidden]{display:none!important} general de arriba. */
+.qmain section.mode-sec{gap:12px}
+.mode-t{font-size:16px;line-height:19.2px;font-weight:600;color:#2A2C2F}
+.mode-chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.mode-chip.mode-card{display:flex;align-items:center;gap:12px;height:auto;min-height:76px;padding:12px 16px 12px 12px;border:1px solid #D4D6D8;border-radius:16px;background:#FFFFFF;color:#2A2C2F;font-family:inherit;font-size:14px;font-weight:400;text-align:left;cursor:pointer;transition:border-color .2s ease-in-out,background .2s ease-in-out}
+.mode-ic{display:flex;align-items:center;justify-content:center;width:44px;min-width:44px;height:44px;border-radius:10px;background:#F4F5F5;color:#2A2C2F;transition:background .2s,color .2s}
+.mode-tx{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
+.mode-tx b{font-size:16px;line-height:19.2px;font-weight:600;color:#2A2C2F}
+.mode-tx span{font-size:14px;line-height:16.8px;color:#54575C}
+.mode-radio{display:flex;align-items:center;justify-content:center;width:20px;height:20px;flex:none;border:1px solid #D4D6D8;border-radius:50%;background:#FFFFFF;box-sizing:border-box;transition:border-color .15s ease-in-out}
+.mode-radio::after{content:"";width:12px;height:12px;border-radius:50%;background:#0D166B;transform:scale(0);transition:transform .15s ease-in-out}
+.mode-chip.mode-card:hover{border-color:#5A5AFF}
+.mode-chip.mode-card:hover .mode-radio{border-color:#5A5AFF}
+.mode-chip.mode-card.on{border-color:#5A5AFF;background:#FAFAFF}
+.mode-chip.mode-card.on .mode-ic{background:#F0F0FF;color:#5A5AFF}
+.mode-chip.mode-card.on .mode-tx b{color:#0D166B}
+.mode-chip.mode-card.on .mode-radio{border-color:#2A2C2F}
+.mode-chip.mode-card.on .mode-radio::after{transform:scale(1)}
+.mode-chip.mode-card:focus-visible{outline:2px solid #5A5AFF;outline-offset:2px}
+@media (max-width:640px){.mode-chips{grid-template-columns:minmax(0,1fr)}}
 
 /* ===== Pestañas de sesión al pie: las mismas de ../inventario/ y de la lista de Clientes ===== */
 .cli-sessions{position:fixed;z-index:25;left:0;right:0;bottom:0;display:flex;align-items:flex-end;gap:1px;height:40px;background:#f4f5f5}

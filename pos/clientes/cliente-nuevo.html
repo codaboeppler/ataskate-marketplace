@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Ataskate POS — Cliente nuevo</title>
-<meta name="description" content="Ataskate POS (Operativo): alta de cliente nuevo con detección de cliente existente, secciones tipo Cotizador, documentos, cámara y huellas. Prototipo de Product Design." />
+<meta name="description" content="Ataskate POS (Operativo): alta de cliente nuevo para venta o empeño, con detección y verificación de cliente existente, secciones tipo Cotizador, documentos, cámara y huellas. Prototipo de Product Design." />
 <meta name="robots" content="noindex" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="../ds/base.css" />
 <link rel="stylesheet" href="../ds/components.css" />
 <link rel="stylesheet" href="../pos.css?v=ux65" />
-<link rel="stylesheet" href="cliente-nuevo.css?v=5" />
+<link rel="stylesheet" href="cliente-nuevo.css?v=8" />
 </head>
 <!-- Operativo: el menú lateral es cajón (se abre con la hamburguesa), igual que en ../inventario/ -->
 <body class="pos cn-page" data-plataforma-fija="op">
@@ -117,7 +117,7 @@
   <symbol id="flag-mx" viewBox="0 0 24 24"><rect width="8" height="24" fill="#006847"/><rect x="8" width="8" height="24" fill="#fff"/><rect x="16" width="8" height="24" fill="#CE1126"/><circle cx="12" cy="12" r="2.2" fill="#8C6239"/></symbol>
 </svg>
 
-<!-- Cliente nuevo (propuesta v3 de Product Design · rama del equipo, commits 8f7723ad6, 597ab9214 y e014b0c0a) -->
+<!-- Cliente nuevo (propuesta v3 de Product Design · rama del equipo, commits 8f7723ad6, 597ab9214, e014b0c0a, 2d1b103b4 y 0859357ca) -->
 <div class="pos-cuerpo">
   <!-- controles del prototipo de Product Design (no son parte del producto). Ya no van en una barra arriba del contenido:
        ../demo.js los pone en la pestaña "Prototipo" del riel izquierdo (panel blanco en columna). -->
@@ -126,6 +126,8 @@
     <span class="proto-cap">Cliente existente</span>
     <button type="button" id="demoMk">Simular cliente de Marketplace</button>
     <button type="button" id="demoRed">Simular cliente de Red ataskate</button>
+    <!-- 2d1b103b4: "Ver datos" pide un dato distinto al que coincidió; estos son los de los clientes ficticios de las simulaciones -->
+    <span class="proto-note">Para verificar en <b>Ver datos</b> (datos ficticios):<br>Valeria: 55&nbsp;8765&nbsp;4321<br>Raúl: 81&nbsp;1234&nbsp;5678 o raul.campos@ejemplo.com</span>
     <span class="sep" aria-hidden="true"></span>
     <span class="proto-cap">Captura y guardado</span>
     <button type="button" id="demoFill">Llenar con datos de ejemplo</button>
@@ -172,6 +174,16 @@
     <form class="formcol qmain" id="form" novalidate autocomplete="off">
       <!-- DS Alert info: cliente ya registrado en Marketplace / Red ataskate (se llena mientras se captura) -->
       <div id="dupNote" class="dup-note" aria-live="polite" hidden></div>
+      <!-- 2d1b103b4 · Tipo de registro: Venta (solo contacto y dirección) o Empeño (registro completo). Mismo formulario: se muestran solo
+           los apartados necesarios. Patrón DS Widget + DS RadioButton, íconos DS SellIcon / IniciarEmpenoIcon. Con un cliente de la
+           Red ataskate se oculta y queda en Empeño (0859357ca) -->
+      <section class="sec mode-sec" aria-labelledby="modeT">
+        <div class="mode-h"><span class="mode-t" id="modeT">¿Para qué vas a registrar al cliente?</span></div>
+        <div class="mode-chips" role="radiogroup" aria-labelledby="modeT">
+          <button type="button" class="mode-chip mode-card" role="radio" data-mode="venta" aria-checked="false"><span class="mode-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12.85 22C12.5667 22 12.3 21.9457 12.05 21.837C11.8 21.729 11.5833 21.5833 11.4 21.4L2.6 12.6C2.41667 12.4167 2.271 12.2 2.163 11.95C2.05433 11.7 2 11.4333 2 11.15V4C2 3.45 2.196 2.979 2.588 2.587C2.97933 2.19567 3.45 2 4 2H11.15C11.4333 2 11.7 2.054 11.95 2.162C12.2 2.27067 12.4167 2.41667 12.6 2.6L21.4 11.425C21.7833 11.8083 21.975 12.279 21.975 12.837C21.975 13.3957 21.7833 13.8667 21.4 14.25L14.25 21.4C14.0667 21.5833 13.8543 21.729 13.613 21.837C13.371 21.9457 13.1167 22 12.85 22ZM12.825 20L19.975 12.85L11.15 4H4V11.15L12.825 20ZM6.5 8C6.91667 8 7.27067 7.854 7.562 7.562C7.854 7.27067 8 6.91667 8 6.5C8 6.08333 7.854 5.72933 7.562 5.438C7.27067 5.146 6.91667 5 6.5 5C6.08333 5 5.72933 5.146 5.438 5.438C5.146 5.72933 5 6.08333 5 6.5C5 6.91667 5.146 7.27067 5.438 7.562C5.72933 7.854 6.08333 8 6.5 8Z" fill="currentColor"/></svg></span><span class="mode-tx"><b>Venta</b><span>Información de contacto y dirección domiciliaria</span></span><span class="mode-radio" aria-hidden="true"></span></button>
+          <button type="button" class="mode-chip mode-card on" role="radio" data-mode="empeno" aria-checked="true"><span class="mode-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.2 5H10.8L13 8L7.5 12.8L2 8L4.2 5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 8H13" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.2 5L5.6 8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.8 5L9.4 8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.6 8L7.5 12.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.4 8L7.5 12.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 8L7.9 5L9.8 8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.2 12H18.8L17.4 13.7H14.6L13.2 12Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.5 13.7C11.4 15 11 18.7 13.5 20.5C14.6 21.2 17.4 21.2 18.5 20.5C21 18.7 20.6 15 17.5 13.7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 15.4V19.1" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.2 16.1C17.2 15.2 14.8 15.2 14.8 16.4C14.8 17.5 17.2 17.1 17.2 18.2C17.2 19.2 14.8 19.2 14.8 18.3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M11.6 20.9C9.28358 20.7459 7.11629 19.7027 5.55095 17.9883C3.9856 16.2738 3.14329 14.0208 3.2 11.7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M1.6 13L3.2 11.4L4.9 13" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.4 3.1C14.7164 3.25408 16.8837 4.29731 18.4491 6.01173C20.0144 7.72616 20.8567 9.97915 20.8 12.3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.1 11L20.8 12.6L22.4 11" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="mode-tx"><b>Empeño</b><span>Registro completo: datos, dirección, identificación y huellas</span></span><span class="mode-radio" aria-hidden="true"></span></button>
+        </div>
+      </section>
       <div id="formAlert" hidden></div>
       <fieldset id="fs" class="formcol">
 
@@ -352,7 +364,7 @@
 <div id="modalRoot"></div>
 <div id="toastRoot"></div>
 
-<script src="cliente-nuevo.js?v=4"></script>
+<script src="cliente-nuevo.js?v=5"></script>
 <script src="../navbar.js?v=3"></script>
 <script src="../menu-op.js?v=13"></script>
 <script src="../demo.js?v=14"></script>

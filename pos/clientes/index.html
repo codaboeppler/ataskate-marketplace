@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="../ds/base.css" />
 <link rel="stylesheet" href="../ds/components.css" />
 <link rel="stylesheet" href="../pos.css?v=ux65" />
-<link rel="stylesheet" href="clientes.css?v=94" />
+<link rel="stylesheet" href="clientes.css?v=97" />
 </head>
 <!-- Operativo: el menú lateral es cajón (se abre con la hamburguesa), igual que en ../inventario/ -->
 <body class="pos cli-page" data-plataforma-fija="op">
@@ -82,15 +82,33 @@
 
 
 
-<!-- Clientes (prototipo de Product Design · rama del equipo, commit 8f7723ad6): listado y perfil del cliente.
+<!-- Clientes (prototipo de Product Design · rama del equipo, commits 8f7723ad6 y 2d1b103b4): listado y perfil del cliente.
      clientes.js pinta aquí el breadcrumb del DS, el título y la pantalla; "Crear cliente" abre cliente-nuevo.html -->
 <div class="pos-cuerpo">
+  <!-- controles del prototipo (no son parte del producto): ../demo.js los pone en la pestaña "Prototipo" del riel izquierdo.
+       Escriben en el buscador las pruebas del README de Product Design (raúl, fernanda…); clientes.js los atiende (data-act="protoq"). -->
+  <div class="proto" data-proto-panel="Prototipo" aria-label="Controles del prototipo" hidden>
+    <b class="proto-t">Controles del prototipo</b>
+    <span class="proto-cap">Búsqueda en otras fuentes</span>
+    <button type="button" data-act="protoq" data-q="Raúl">Buscar cliente de Red ataskate</button>
+    <button type="button" data-act="protoq" data-q="Fernanda">Buscar en Mis clientes y Marketplace</button>
+    <button type="button" data-act="protoq" data-q="Zoe Treviño">Buscar cliente que no existe</button>
+    <span class="sep" aria-hidden="true"></span>
+    <span class="proto-cap">Datos para verificar (ficticios)</span>
+    <dl class="proto-kv">
+      <div><dt>Valeria Ortiz</dt><dd>55 8765 4321</dd></div>
+      <div><dt>Fernanda Ríos</dt><dd>55 3412 7788</dd></div>
+      <div><dt>Raúl Campos</dt><dd>81 1234 5678</dd></div>
+      <div><dt>Jorge Salinas</dt><dd>33 1987 6543</dd></div>
+    </dl>
+  </div>
+
   <main class="pos-main cli-main" id="cliMain">
     <div id="app" class="app"></div>
   </main>
 </div>
 
-<script src="clientes.js?v=2"></script>
+<script src="clientes.js?v=6"></script>
 <script src="../navbar.js?v=3"></script>
 <script src="../menu-op.js?v=13"></script>
 <script src="../demo.js?v=14"></script>
