@@ -33,7 +33,7 @@
   const getPercentWithCommaLabel = (v) => v + '%,';
   const DEV_MOCK_DETAILS = { createdAt: '12 Sep 2026', createdBy: 'Ana R.', updatedAt: '3 Oct 2026', updatedBy: 'Luis M.', inUse: true, branchZone: 'Ciudad de México' };
   const UNIT_TABS = [{ id: 'gram', label: 'Gramo' }, { id: 'ounce', label: 'Onza' }];
-  const TROY_OUNCE_IN_GRAMS = 28.3495;
+  const TROY_OUNCE_IN_GRAMS = 31.1035;   /* onza troy (la de 28.3495 g es la onza común) */
   const QUALITY_COLUMNS = [
     { key: 'exellentAmount', label: 'Excelente', conservationKey: 'excellent' },
     { key: 'wellAmount', label: 'Bueno', conservationKey: 'good' },
@@ -53,7 +53,7 @@
   /* NewMetalTabulator: precio por pureza = precio base × pureza; Excelente 91 %, Bueno 80 %, Regular 75 %, Malo 60 % (PERCENTAGES) */
   const PERCENTAGES = { excellent: 0.91, good: 0.8, regular: 0.75, bad: 0.6 };
   const round = (v) => Math.round(v * 100) / 100;
-  const BASE_PRICE_GRAM = 2182.66;   /* 24K por gramo (MXN); × 28.3495 ≈ su BASE_PRICE de 61,877.35 por onza */
+  const BASE_PRICE_GRAM = 2182.66;   /* 24K por gramo (MXN); × 31.1035 ≈ 67,888.73 por onza */
   const KARATS = [['8K', 33.3], ['10K', 41.7], ['12K', 50], ['14K', 58.5], ['18K', 75], ['21K', 87.5], ['22K', 91.6], ['24K', 99.9]];
   /* names: purezas que trae el tabulador (todas si no se indica) */
   const buildGoldTabulator = (basePrice, names) => KARATS.filter(([name]) => !names || names.includes(name)).map(([name, pct], i) => {

@@ -55,26 +55,10 @@
     /* el del ejemplo del Figma de Configuración de contratos (Londres 247) */
     '04100': {estado:'Ciudad de México', municipio:'Coyoacán', colonias:['Del Carmen']}
   });
-  /* Servicio real (QA): CatColony/GetColonysByPostalCode. Si no responde (por ejemplo, dentro del artifact), se usa la simulación local. */
-  const CP_API = 'https://qa-api.ataskate.com.mx/web/api/v1/CatColony/GetColonysByPostalCode?postalCode=';
+  /* Código postal con datos locales del prototipo (sin peticiones al API de QA; en la app es CatColony/GetColonysByPostalCode) */
   const CP_CACHE = {};
   async function fetchCP(v) {
-    if (v in CP_CACHE) return CP_CACHE[v];
-    try {
-      const r = await fetch(CP_API + encodeURIComponent(v), {headers:{Accept:'application/json'}});
-      const txt = await r.text();
-      let j = null; try { j = JSON.parse(txt); } catch (e) { j = null; }
-      if (j && j.succeeded && j.data && j.data.colonys && j.data.colonys.length) {
-        const d = j.data;
-        CP_CACHE[v] = {estado:d.stateName, municipio:d.municipalityName, colonias:[...new Set(d.colonys.map(c => c.colonyName))].sort((a, b) => a.localeCompare(b, 'es')), auto:true, fuente:'api'};
-      } else if (r.status < 500 && !j) {
-        CP_CACHE[v] = false;
-      } else {
-        CP_CACHE[v] = lookupCPLocal(v);
-      }
-    } catch (e) {
-      CP_CACHE[v] = lookupCPLocal(v);
-    }
+    if (!(v in CP_CACHE)) CP_CACHE[v] = lookupCPLocal(v);
     return CP_CACHE[v];
   }
   function lookupCP(v) {
@@ -199,7 +183,7 @@
         : `<li><a href="#${it.r}" class="ds-breadcrumb__link" data-go="${it.r}">${esc(it.l)}</a>${SEP}</li>`).join('')}</ol></nav>`;
   }
   /* Home siempre lleva al Home con widgets (../home/), igual en todos los flujos del prototipo */
-  const HOME = {l:'Home', href:'../home/'}, GUIA = {l:'Configura tu empresa', r:'inicio'};
+  const HOME = {l:'Inicio', href:'../home/'}, GUIA = {l:'Configura tu empresa', r:'inicio'};
   const ruta = (actual) => crumbs([HOME, GUIA, {l:actual}]);
   /* Configuración de contratos (contrato.js): recibe los helpers del módulo; S va por getter porque "Reiniciar" lo cambia */
   const CTR = CTRM.crear({

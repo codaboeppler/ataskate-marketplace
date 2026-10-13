@@ -657,7 +657,7 @@
   const buildList = () => {
     main.innerHTML = ''
       + '<nav aria-label="Breadcrumb" class="ds-breadcrumb"><ol class="pos-crumbs">'
-      + '<li><a href="../home/" class="ds-breadcrumb__link" data-home>Home</a>' + crumbSep + '</li>'
+      + '<li><a href="../home/" class="ds-breadcrumb__link" data-home>Inicio</a>' + crumbSep + '</li>'
       + '<li><span class="ds-breadcrumb__current" aria-current="page">' + esc(T.pageTitle) + '</span></li></ol></nav>'
       + '<div class="ac-head"><h1 class="ac-title" tabindex="-1">' + esc(T.pageTitle) + '</h1>'
       + btn('primary', T.generateButton, 'data-create data-k="head-create"', { icon: ico('Add', 20) }) + '</div>'
@@ -845,7 +845,7 @@
     const r = selectedRecord();
     const resendable = getRowActions(r).includes('resend');
     main.innerHTML = '<nav aria-label="Breadcrumb" class="ds-breadcrumb"><ol class="pos-crumbs">'
-      + '<li><a href="../home/" class="ds-breadcrumb__link" data-home>Home</a>' + crumbSep + '</li>'
+      + '<li><a href="../home/" class="ds-breadcrumb__link" data-home>Inicio</a>' + crumbSep + '</li>'
       + '<li><button type="button" class="ac-crumb-btn" data-back data-k="crumb-back">' + esc(T.pageTitle) + '</button>' + crumbSep + '</li>'
       + '<li><span class="ds-breadcrumb__current" aria-current="page">' + esc(r.companyName) + '</span></li></ol></nav>'
       + '<div class="ac-head"><h1 class="ac-title" tabindex="-1">' + esc(r.companyName) + '</h1>'
