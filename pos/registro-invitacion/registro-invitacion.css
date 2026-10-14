@@ -1,6 +1,6 @@
 /* ============================================================
-   Registro por invitación — reconstrucción estática del código de Product Design
-   Rama rama del equipo del repo del equipo:
+   Registro por invitación — reconstrucción estática del código del equipo
+   Rama rama del equipo del repo del equipo (correo hero de 0bce0a2b7; maqueta 11f0f32d5):
    - 829cbd3dc vista previa en React (src/components/InviteSignUp/**, preview/registro-invitacion): manda donde difiere.
    - 3d3f1439e maqueta HTML (public/maquetas/registro-por-invitacion): base estática y notas del panel de revisión.
    - 3982e49c7 CodeField alfanumérico y Alert responsive.
@@ -215,34 +215,62 @@ button, input { font-family: inherit; }
 .ri-codefield.is-success .ri-codefield__helper, .ri-codefield.is-success .ri-codefield__text { color: var(--ri-success-icon); }
 @media (max-width: 520px) { .ri-codefield__cells { gap: 8px; } }
 
-/* ---------------- Correo de invitación (InviteEmail · inviteEmail.styles.ts) ----------------
-   Plantilla de Figma: archivo Suscripción, frame "email" (4173:6192). 683 de ancho, padding 64/100, 32 entre bloques. */
+/* ---------------- Correo de invitación (InviteEmail · inviteEmail.styles.ts, propuesta hero) ----------------
+   Card de 600 con Card-shadow y radio 16 sobre fondo neutral-100: banda purple-200 con el cerebro patinando y destellos,
+   texto centrado y el código como protagonista, sin caja. Debajo de 600 px las secciones pasan de 48 a 24 de padding. */
 .ri-mail { display: flex; flex-direction: column; align-items: center; gap: 16px; min-height: 100vh; padding: 48px 16px; background: var(--ri-neutral-100); }
 .ri-mail__meta {
-  display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; width: 100%; max-width: 683px; margin: 0;
-  font-size: 14px; color: var(--ri-neutral-600);
+  display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; width: 100%; max-width: 600px; margin: 0;
+  font-size: 14px; line-height: 16.8px; color: var(--ri-neutral-600);                                  /* caption · textCaptions */
 }
 .ri-mail__meta dt, .ri-mail__meta dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.ri-mail__meta dd { font-weight: 600; color: var(--ri-neutral-800); }
+.ri-mail__preheader { width: 100%; max-width: 600px; margin: 0; font-size: 14px; line-height: 16.8px; color: var(--ri-neutral-600); }
 .ri-mail__card {
-  display: flex; flex-direction: column; align-items: center; gap: 32px; width: 100%; max-width: 683px;
-  padding: 64px 100px; background: #fff; text-align: center;
+  width: 100%; max-width: 600px; overflow: hidden; border-radius: 16px; background: #fff;
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, .06); text-align: center;                                    /* shadows.cardHover, sin borde */
 }
 .ri-mail__card img { display: block; }
-.ri-mail__title { margin: 0; font-size: 24px; line-height: 28.8px; font-weight: 600; color: var(--ri-neutral-800); }    /* titulos */
-.ri-mail__text { margin: 0; font-size: 16px; line-height: 19.2px; font-weight: 400; letter-spacing: .3px; color: var(--ri-neutral-800); } /* textoRegular · textTitle */
-.ri-mail__code {
-  display: flex; align-items: center; justify-content: center; padding: 16px; border-radius: 16px; background: var(--ri-purple-400);
-  font-size: 28px; font-weight: 600; line-height: 1.2; color: #fff; white-space: nowrap;
+.ri-mail__hero { position: relative; padding: 48px 24px 40px; background: var(--ri-purple-200); line-height: 0; }
+.ri-mail__sparkle { position: absolute; display: block; }
+.ri-mail__hero-img {
+  position: relative; width: 200px; height: auto; margin: 0 auto; transform-origin: 50% 100%;
+  animation: ri-skate 1.6s ease-in-out infinite;
 }
-.ri-mail__footer { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 539px; max-width: calc(100vw - 64px); }
-.ri-mail__social { display: flex; flex-direction: column; align-items: center; gap: 8px; padding-bottom: 16px; }
-.ri-mail__social p { margin: 0; font-size: 16px; line-height: 19.2px; font-weight: 600; letter-spacing: .3px; color: var(--ri-purple-400); } /* textoSemiBold · buttonLink */
+@keyframes ri-skate {
+  0%, 100% { transform: translateX(-10px) translateY(0) rotate(2deg); }
+  25% { transform: translateX(4px) translateY(-5px) rotate(7deg); }
+  50% { transform: translateX(12px) translateY(0) rotate(4deg); }
+  75% { transform: translateX(0) translateY(-3px) rotate(6deg); }
+}
+@media (prefers-reduced-motion: reduce) { .ri-mail__hero-img { animation: none; } }
+.ri-mail__sec { display: flex; flex-direction: column; align-items: center; padding: 32px 48px 0; }
+.ri-mail__sec--lg { padding-top: 40px; }
+.ri-mail__sec--sm { padding-top: 20px; }
+.ri-mail__title { margin: 0 0 12px; font-size: 28px; line-height: 1.2; font-weight: 800; color: var(--ri-purple-400); }
+.ri-mail__text { margin: 0; font-size: 16px; line-height: 1.5; font-weight: 400; color: var(--ri-neutral-700); }   /* textoRegular */
+.ri-mail__text + .ri-mail__text { margin-top: 4px; }
+.ri-mail__text--muted { color: var(--ri-neutral-600); }
+.ri-mail__text strong { color: var(--ri-neutral-800); }
+.ri-mail__code-label { margin: 0 0 12px; font-size: 20px; line-height: 1.2; font-weight: 700; color: var(--ri-neutral-800); }
+.ri-mail__code {
+  margin: 0; font-size: 36px; line-height: 1.2; font-weight: 800; letter-spacing: 10px; white-space: nowrap; color: var(--ri-purple-400);
+}
+.ri-mail__caption { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ri-neutral-600); }                 /* caption */
+.ri-mail__caption strong { color: var(--ri-neutral-800); }
+.ri-mail__caption--note { margin-top: 12px; }
+.ri-mail__caption--body { color: var(--ri-neutral-700); }
+.ri-mail__link { font-size: 14px; line-height: 1.5; font-weight: 600; color: var(--ri-purple-300); }
+.ri-mail__warning { margin: 0; padding-bottom: 40px; font-size: 13px; line-height: 1.5; color: var(--ri-neutral-600); }
+.ri-mail__footer {
+  display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 24px 48px;
+  border-top: 1px solid var(--ri-neutral-100); background: #fbfbfe;                                    /* surfacePage */
+}
 .ri-mail__icons { display: flex; gap: 24px; }
-/* separador como borde (antes una imagen de 1 px) */
-.ri-mail__sep { display: block; width: 100%; height: 0; margin: 0; border: 0; border-top: 1px solid #D4D6D8; }
+.ri-mail__legal-wrap { display: flex; flex-direction: column; gap: 4px; }
 .ri-mail__legal { margin: 0; font-size: 12px; line-height: 12px; font-weight: 400; color: var(--ri-neutral-600); }   /* labelRegular */
 .ri-mail__legal--bold { font-weight: 700; }                                                                         /* labelBold */
-@media (max-width: 720px) { .ri-mail__card { padding: 48px 16px; } }
+@media (max-width: 600px) { .ri-mail__sec, .ri-mail__footer { padding-left: 24px; padding-right: 24px; } }
 
 /* ---------------- AppToast (src/components/General/Atoms/AppToast) ----------------
    530 de ancho, padding 16, radio 8, ícono 20, cierre 24 y barra de tiempo de 3 (3 s, duración por omisión de showToast).

@@ -337,6 +337,8 @@
 /* type="icon-button" */
 .dt .ib{padding:12px 0;width:40px;text-align:center}
 .dt .ib:last-of-type{padding-right:16px}
+/* la flecha va pegada a la derecha aunque la columna se ensanche por "Cargar cliente" */
+.dt td.ib{text-align:right}
 .dt .ib .tib{display:inline-flex;padding:6px;background:transparent}
 /* type="user" + text-description (main 14/1.2 #2A2C2F, desc 12/12 #54575C, mt 4) */
 .dt td.user{padding:4px 8px 4px 16px}
@@ -378,13 +380,24 @@
 /* "Vencen hoy" junto a Score y Filtro (TableFilterChip 40px) con contador ChipBadge */
 .tfc.hoy .hoy-n{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:20px;padding:0 6px;border-radius:100px;background:#FFEBBA;color:#614500;font-size:12px;font-weight:600;line-height:12px}
 .tfc.hoy.sel{background:#F0F0FF}
+/* Ajustes de diseño del listado (2026-10-14): Search del DS a 572 px (mín. 280) y chips 36 px estilo Chip "filter" del DS
+   (borde #E8E9EA, seleccionado lila #F0F0FF/#E5E5FF con texto #0D166B, hover #E5E5FF); "vencen hoy" pasa a check al activarse */
+.cli-tools{justify-content:space-between}
+.cli-tools .dsearch{flex:0 1 572px;max-width:572px;min-width:280px}
+.cli-tools .tfc-g{margin-left:0}
+.cli-tools .tfc{height:36px;padding:8px;border-color:#e8e9ea;color:#2a2c2f;font-size:14px;line-height:16.8px;letter-spacing:normal;box-shadow:none;transition:background .15s ease-in-out,border-color .15s ease-in-out}
+.cli-tools .tfc>svg{color:#2a2c2f}
+.cli-tools .tfc.sel{background:#f0f0ff;border-color:#e5e5ff;color:#0d166b}
+.cli-tools .tfc.open{border-color:#e5e5ff;color:#0d166b}
+.cli-tools .tfc:hover{background:#e5e5ff;border-color:transparent;color:#0d166b}
+.cli-tools .tfc.sel>svg,.cli-tools .tfc.open>svg,.cli-tools .tfc:hover>svg{color:#0d166b}
+.cli-tools .tfc:focus-visible{outline:2px solid #5a5aff;outline-offset:2px}
+.cli-tools .tfc.hoy .hoy-n{min-width:20px;padding:0 4px;font-weight:700}
+.cli-tools .tfc-list{top:40px}
 
 /* ===== Resultados en otras fuentes (Marketplace / Red ataskate) · commit 2d1b103b4 de Product Design ===== */
 /* la línea de arriba separa la sección dentro de la misma card (divisor, no borde de tarjeta) */
-.ext{display:flex;flex-direction:column;gap:12px;padding-top:16px;border-top:1px solid #D4D6D8}
-.ext-h{display:flex;flex-direction:column;gap:4px;padding:0 16px}
-.ext-t{font-size:16px;line-height:19.2px;font-weight:600;color:#2A2C2F}
-.ext-s{font-size:14px;line-height:16.8px;color:#54575C}
+.dt .u .d.ext-d{display:flex;align-items:center;gap:8px}
 .chip-i.ext-mk{background:#E5E5FF}
 .chip-i.ext-red{background:#EBF9FF}
 .dt td.ext-act{text-align:right;white-space:nowrap}
@@ -392,7 +405,6 @@
 .btn.ext-reg{height:36px;padding:8px 16px;background:transparent;color:#5A5AFF;font-size:14px;font-weight:700;line-height:20px;border-radius:100px;text-decoration:none}
 .btn.ext-reg:hover{background:#F0F0FF}
 .btn.ext-reg:focus-visible{outline:2px solid #5A5AFF;outline-offset:1px}
-.cempty.sm{padding:24px 16px}
 .cempty-a{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
 /* cuando hay resultados afuera, el paginador sigue pegado a la tabla y la sección queda debajo (sin el hueco del margin-top:auto) */
 .ctable>.dpager:has(+ .ext){margin-top:0}
@@ -453,7 +465,7 @@
 /* ---------- Responsivo (el prototipo original era fijo de 1280 y se escalaba con zoom) ---------- */
 @media (max-width: 1100px){
   .ctools{flex-wrap:wrap}
-  .dsearch{flex:1 1 100%;max-width:none}
+  .dsearch,.cli-tools .dsearch{flex:1 1 100%;max-width:none;min-width:0}
   .tfc-g{margin-left:0;flex-wrap:wrap;gap:8px}
   .cp-kpis{padding-left:0}
 }
@@ -472,6 +484,7 @@
   .cp-info .utabs button{flex:0 0 auto}
   .qa-card{flex-basis:min(316px, calc(100vw - 96px))}
   .tfc{padding:4px 12px}
+  .cli-tools .tfc{padding:8px}
   .cmeta{flex-wrap:wrap}
   .side{width:100vw;border-radius:0}
 }
@@ -480,6 +493,6 @@
      medía ~520 px, el estado vacío quedaba centrado en ese ancho y a 375 se cortaban el título y "Crear cliente" */
   .dt:has(td.empty) thead{display:none}
   /* otras fuentes: la tabla se desplaza dentro de la card y "Cargar cliente" queda fijo a la derecha, siempre visible */
-  .ext .dt th:last-child,.ext .dt td.ext-act{position:sticky;right:0;background:#fff;box-shadow:-8px 0 8px -8px rgba(0,0,0,.16)}
-  .ext .dt td.ext-act{padding-left:8px}
+  .dt td.ext-act{position:sticky;right:0;background:#fff;box-shadow:-8px 0 8px -8px rgba(0,0,0,.16)}
+  .dt td.ext-act{padding-left:8px}
 }

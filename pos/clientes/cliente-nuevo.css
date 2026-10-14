@@ -384,7 +384,9 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .fld .cam-btn{display:inline-flex;flex-direction:row;align-items:center;justify-content:center;gap:8px}
 .cam-btn svg{flex:none}
 .modal.cam{width:560px}
-.cam-view{position:relative;width:100%;aspect-ratio:1/1;max-height:60vh;border-radius:16px;background:#1D1E20;overflow:hidden;display:grid;place-items:center}
+.modal.cam{max-height:calc(100vh - 48px)}
+/* ancho limitado por el modal y por la altura de la pantalla (--ar = ancho/alto); la proporción se conserva */
+.cam-view{position:relative;width:min(100%, calc(min(60vh, 100vh - 340px) * var(--ar, 1)));margin:0 auto;flex:none;aspect-ratio:1/1;border-radius:16px;background:#1D1E20;overflow:hidden;display:grid;place-items:center}
 .cam-view video,.cam-view img{width:100%;height:100%;object-fit:cover;display:block}
 .cam-view video.mirror{transform:scaleX(-1)}
 .cam-view .guide{position:absolute;inset:12%;border:2px dashed rgba(255,255,255,.7);border-radius:50%;pointer-events:none}
@@ -399,7 +401,6 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .cam-view.g-card .guide{inset:8%;border-radius:12px}
 .cam-view.g-page .guide{inset:6%;border-radius:8px}
 .cam-view video:not(.mirror){transform:none}
-.modal.cam-tall .cam-view{max-height:58vh;margin:0 auto;width:auto;height:58vh}
 .cam-doc{align-self:flex-start;margin-top:8px}
 .fld .cam-doc{display:inline-flex;flex-direction:row;align-items:center;gap:8px}
 
@@ -679,3 +680,109 @@ a.btn,a.mx{text-decoration:none}
   .fafooter .fa-acts .btn{flex:1}
   .pos-main.cn-main{padding-bottom:180px}
 }
+
+/* ---- Encabezados de sección con acción a la derecha (Dirección / Cotitular) ---- */
+.sec-h.qsh:has(.sec-act){display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:16px;row-gap:8px;align-items:center}
+.sec-h.qsh:has(.sec-act) .qsh-t{grid-column:1;grid-row:1}
+.sec-h.qsh:has(.sec-act) .sec-sub{grid-column:1;grid-row:2}
+.sec-act{grid-column:2;grid-row:1 / span 2;align-self:center;display:flex;justify-content:flex-end}
+.sec-btn{height:36px;padding:8px 16px;border-radius:100px;white-space:nowrap;transition:background .15s}
+.sec-btn:hover{background:#F0F0FF}
+.lnk-add.sec-btn{padding:8px 16px 8px 8px}
+@media (max-width:640px){.sec-h.qsh:has(.sec-act){grid-template-columns:minmax(0,1fr)}.sec-act{grid-column:1;grid-row:auto;justify-content:flex-start;margin-left:-16px}}
+
+/* ---- Foto del cliente circular y compacta ---- */
+.g-personal{grid-template-columns:172px minmax(0,1fr)}
+.photo-fld{align-items:center;text-align:center}
+.photo-fld > .lbl{align-self:flex-start}
+#photoHost{display:flex;justify-content:center;width:100%}
+.phu{width:140px;max-width:140px;aspect-ratio:1/1;border-radius:50%}
+.phu .circ,.phu .ring,.phu .x{width:44px;height:44px}
+.photo-fld .cam-btn{align-self:center;width:auto;max-width:none}
+.photo-fld .fhelp,.photo-fld .ferr{text-align:center;justify-content:center;padding-inline:0}
+@media (max-width:600px){.g-personal{grid-template-columns:minmax(0,1fr)}.photo-fld{align-items:flex-start;text-align:left}#photoHost{justify-content:flex-start}.photo-fld .cam-btn{align-self:flex-start}}
+
+/* ---- Huellas: una sola selección (mano + dedo sobre la ilustración) ---- */
+.fp2{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,1fr);gap:24px;align-items:start}
+.fp2-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.hcard{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid #D4D6D8;border-radius:16px;background:#FFFFFF;cursor:pointer;transition:border-color .2s ease-in-out,background .2s ease-in-out}
+.hcard:hover{border-color:#5A5AFF}
+.hcard.on{border-color:#5A5AFF;background:#FAFAFF}
+.hcard-h{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.hcard .hl{padding:4px;border-radius:4px;background:var(--b-card);color:var(--t-body);font-size:12px;font-weight:700;line-height:16px;white-space:nowrap}
+.hcard.on .hl{background:var(--p100);color:var(--navy)}
+.hcard .hand-c{font-size:12px}
+.hcard .big{display:flex;justify-content:center}
+.hcard .big svg{width:100%;max-width:170px;height:auto}
+.tip-f{cursor:pointer;outline:none}
+.tip-f .tip-bg{fill:#FFFFFF;stroke:#D4D6D8;stroke-width:1.5;transition:stroke .15s,fill .15s}
+.tip-f:hover .tip-bg{stroke:#5A5AFF}
+.tip-f.ok .tip-bg{fill:#EFFAF4;stroke:#309C60}
+.tip-f.sel .tip-bg{fill:#F0F0FF;stroke:#5A5AFF;stroke-width:3}
+.tip-f:focus-visible .tip-bg{stroke:#0D166B;stroke-width:3}
+.fp2-leg{display:flex;flex-wrap:wrap;gap:16px;margin-top:12px;font-size:12px;line-height:12px;color:#54575C}
+.fp2-leg span{display:inline-flex;align-items:center;gap:6px}
+.fp2-leg .lg{width:12px;height:12px;border-radius:50%;background:#FFFFFF;border:1.5px solid #D4D6D8}
+.fp2-leg .lg.sel{background:#F0F0FF;border:2px solid #5A5AFF}
+.fp2-leg .lg.ok{background:#EFFAF4;border-color:#309C60}
+.fp2-cap .fpanel{display:block;padding:0;border:0}
+.fp2-cap .fpanel.empty{display:flex;align-items:center;justify-content:center;min-height:200px;padding:16px;border-left:1px solid var(--b-card);border-radius:0;color:var(--t-cap);font-size:14px;text-align:center}
+.fp2-cap .fpanel:not(.empty){padding-left:24px;border-left:1px solid var(--b-card)}
+@container (max-width:760px){.fp2{grid-template-columns:minmax(0,1fr)}.fp2-cap .fpanel:not(.empty),.fp2-cap .fpanel.empty{padding-left:0;border-left:0}.fp2-cap .fpanel.empty{min-height:80px}}
+@container (max-width:380px){.fp2-row{grid-template-columns:minmax(0,1fr)}}
+
+/* Foto del cliente: misma zona de carga que antes, sin el lila; solo cambia a forma circular */
+.phu.upload{border:1px dashed #A1A5AA;background:#FAFAFA}
+.phu.upload:hover,.phu.upload.over{border-color:#5A5AFF;background:#FAFAFA}
+.phu.upload .circ{background:#FFFFFF;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.phu.filed,.phu.uploading{border:1px solid #D4D6D8}
+
+/* ---- Foto del cliente: un solo círculo que toma la foto ("Tomar foto" adentro) y, debajo, "o sube una imagen" ---- */
+.photo-fld .cam-btn[hidden]{display:none}
+#photoHost{flex-direction:column;align-items:center;gap:10px}
+.phu{width:148px;max-width:148px;padding:0;font:inherit;color:inherit;appearance:none}
+.phu.upload{border:1.5px dashed #ACACFF;background:radial-gradient(circle at 50% 35%,#FFFFFF 0%,#F5F5FF 70%);transition:border-color .2s,background .2s,box-shadow .2s}
+.phu.upload:hover,.phu.upload.over{border-color:#5A5AFF;background:radial-gradient(circle at 50% 35%,#FFFFFF 0%,#EDEDFF 70%);box-shadow:0 0 0 6px #F0F0FF}
+.phu:focus-visible{outline:2px solid #0D166B;outline-offset:3px}
+.phu .ph-cta{display:flex;flex-direction:column;align-items:center;gap:8px;color:#5A5AFF}
+.phu .ph-cta .circ{width:48px;height:48px;color:#5A5AFF;background:#FFFFFF;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.phu .ph-t{font-size:14px;line-height:16px;font-weight:700}
+.phu.filed{border:3px solid #FFFFFF;box-shadow:0 2px 10px rgba(0,0,0,.12);overflow:visible}
+.phu.filed img{border-radius:50%}
+.phu.filed .hov{border-radius:50%;background:rgba(13,22,107,.55)}
+.phu.filed .hov .ph-cta{color:#FFFFFF}
+.phu .ph-badge{position:absolute;right:2px;bottom:2px;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;color:#FFFFFF;background:#5A5AFF;border:3px solid #FFFFFF;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.phu .ph-badge svg{width:18px;height:18px}
+.ph-up{position:relative;font-size:14px;line-height:20px;font-weight:700;color:#5A5AFF;cursor:pointer;border-radius:4px}
+.ph-up:hover{text-decoration:underline}
+.ph-up:focus-within{outline:2px solid #5A5AFF;outline-offset:2px}
+.ph-up input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+@media (max-width:600px){#photoHost{align-items:flex-start}}
+
+/* ===== Ajustes de diseño del equipo (2026-10-14) · sin subtítulos bajo los títulos de sección (decisión de Daniel) ===== */
+/* títulos: página "titulos" 24/600 y secciones "subtitulos" 20/600/24 del DS */
+.qsh .sec-t{font-size:20px;line-height:24px}
+.qsh .sec-t .opt{font-size:14px;line-height:16.8px;font-weight:400;color:#54575C}
+/* Datos personales: 3 columnas; la foto (nuestro círculo + "o sube una imagen") ocupa las dos primeras filas y queda
+   alineada con Estado civil/Género y Nacionalidad/Fecha; CURP, R.F.C y Actividad económica van en una fila de 3 */
+.g-personal{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
+.photo-fld{grid-row:span 2;align-self:stretch;justify-content:center;gap:0}
+#photoHost{gap:8px}
+.photo-fld .phu{width:112px;max-width:112px}
+.photo-fld .phu .ph-cta{gap:6px}
+.photo-fld .phu .ph-cta .circ{width:40px;height:40px}
+@media (max-width:768px){.g-personal{grid-template-columns:minmax(0,1fr)}.photo-fld{grid-row:auto;align-items:flex-start}#photoHost{align-items:flex-start}}
+/* Dirección: el buscador y "Agregar dirección de forma manual" en la misma fila; con el manual abierto el buscador se apaga */
+.addr-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
+.addr-row .srch{flex:1 1 320px;min-width:0}
+.addr-row .sec-btn{flex:none}
+.addr-row.manual-on .srch-box{background:#F7F7F8;border-color:#E8E9EA}
+.srch-box input:disabled{cursor:not-allowed;color:#A1A5AA}
+@media (max-width:640px){.addr-row .sec-btn{margin-left:-16px}}
+/* Identificación: más aire (cuerpo 24, zona de carga 24/16 con gap 12) y sin el texto de ayuda repetido sobre cada zona */
+.acc .body{gap:24px;padding:8px 0 24px}
+.dz{gap:12px;padding:24px 16px}
+/* Huellas: sección opcional; "Huellas registradas" a la derecha de la leyenda, sin la línea de arriba */
+.fp-legrow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 16px}
+.fp-legrow .fp2-leg{margin-top:0}
+.fp-legrow .fp-reg{justify-content:flex-end;padding-top:0;border-top:0}

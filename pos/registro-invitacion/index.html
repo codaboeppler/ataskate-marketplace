@@ -4,53 +4,72 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Ataskate POS — Registro por invitación</title>
-<meta name="description" content="Ataskate (acceso): registro por invitación — correo de invitación, código de acceso y alta de la cuenta (Product Design)." />
+<meta name="description" content="Ataskate (acceso): registro por invitación — correo de invitación, código de acceso y alta de la cuenta; al crearla entra directo al Inicio del Administrativo." />
 <meta name="robots" content="noindex" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="registro-invitacion.css?v=4" />
+<link rel="stylesheet" href="registro-invitacion.css?v=5" />
 </head>
-<!-- Registro por invitación. Reconstrucción estática del código de Product Design (rama del equipo de AtaskateFrontend):
-     src/components/InviteSignUp/** y la vista previa src/app/design-system/preview/registro-invitacion (829cbd3dc),
-     sobre su maqueta public/maquetas/registro-por-invitacion (3d3f1439e). Ver README.md.
+<!-- Registro por invitación. Reconstrucción estática del código del equipo (rama del equipo de AtaskateFrontend):
+     src/components/InviteSignUp/** y la vista previa src/app/design-system/preview/registro-invitacion (0bce0a2b7),
+     sobre su maqueta public/maquetas/registro-por-invitacion (11f0f32d5). Ver README.md.
+     Desde el 2026-10-12 no hay pantalla "Cuenta creada": al crear la cuenta entra directo a ../home-admin/ (estado Cuenta nueva).
      Es previa al inicio de sesión: layout de acceso propio, sin header ni menú del POS. Cada pantalla es una <section>;
-     registro-invitacion.js muestra una a la vez (?pantalla=correo|iniciar-sesion|codigo|cuenta|cuenta-creada). -->
+     registro-invitacion.js muestra una a la vez (?pantalla=correo|iniciar-sesion|codigo|cuenta). -->
 <body>
 
-<!-- ============ 1 · Correo de invitación (InviteEmail): lo envía Marketing desde Generación de códigos ============ -->
+<!-- ============ 1 · Correo de invitación (InviteEmail, propuesta hero): lo envía Marketing desde Generación de códigos.
+     Es referencia de diseño para back: el correo real se arma con tablas y estilos en línea. ============ -->
 <section class="ri-screen" data-screen="email" aria-label="Correo de invitación" hidden>
   <div class="ri-mail">
     <dl class="ri-mail__meta">
       <dt>De:</dt><dd>Ataskate &lt;hola@ataskate.com&gt;</dd>
       <dt>Para:</dt><dd id="riMailTo"></dd>
-      <dt>Asunto:</dt><dd>Tu código de acceso a Ataskate</dd>
+      <dt>Asunto:</dt><dd id="riMailSubject"></dd>
     </dl>
+    <p class="ri-mail__preheader" id="riMailPreheader"></p>
     <article class="ri-mail__card">
-      <img src="assets/correo/logo-ataskate.svg" width="130" height="24" alt="Ataskate" />
-      <img src="assets/correo/ilustracion-llave.svg" width="175" height="134" alt="" />
-      <h1 class="ri-mail__title" id="riMailHello"></h1>
-      <p class="ri-mail__text" id="riMailIntro"></p>
-      <div class="ri-mail__code" role="img" id="riMailCode"></div>
-      <button class="ri-btn ri-btn--primary" type="button" id="riMailCta"><span>Crear mi cuenta</span></button>
-      <div>
-        <p class="ri-mail__text">El código sirve una sola vez para crear tu cuenta.</p>
-        <p class="ri-mail__text">No compartas el código con nadie.</p>
+      <!-- banda morada con el cerebro patinando; los destellos van dentro de la imagen en el correo real -->
+      <div class="ri-mail__hero">
+        <svg class="ri-mail__sparkle" style="left:22%;top:30%" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z" fill="#0D166B"/></svg>
+        <svg class="ri-mail__sparkle" style="left:74%;top:18%" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z" fill="#FFFFFF"/></svg>
+        <svg class="ri-mail__sparkle" style="left:70%;top:62%" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z" fill="#FF98EF"/></svg>
+        <svg class="ri-mail__sparkle" style="left:28%;top:68%" width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z" fill="#FFFFFF"/></svg>
+        <img class="ri-mail__hero-img" src="assets/correo/hero-cerebro-patinando.svg" width="200" height="184" alt="Cerebro de Ataskate patinando" />
       </div>
-      <div class="ri-mail__footer">
-        <div class="ri-mail__social">
-          <p>¡Tú eres importante para nosotros!</p>
-          <div class="ri-mail__icons">
-            <img src="assets/correo/facebook.svg" width="24" height="24" alt="Facebook" />
-            <img src="assets/correo/whatsapp.svg" width="24" height="24" alt="WhatsApp" />
-            <img src="assets/correo/instagram.svg" width="24" height="24" alt="Instagram" />
-          </div>
+      <div class="ri-mail__sec ri-mail__sec--lg">
+        <h1 class="ri-mail__title">Tu acceso a Ataskate está listo</h1>
+        <p class="ri-mail__text">Hola, <strong id="riMailName"></strong>.</p>
+        <p class="ri-mail__text ri-mail__text--muted">Ya puedes crear la cuenta de <strong id="riMailCompany"></strong>. Usa este código para registrarte:</p>
+      </div>
+      <div class="ri-mail__sec">
+        <p class="ri-mail__code-label">Código de acceso</p>
+        <p class="ri-mail__code" role="img" id="riMailCode"></p>
+        <p class="ri-mail__caption ri-mail__caption--note">Sirve <strong>una sola vez</strong> y no vence.</p>
+      </div>
+      <div class="ri-mail__sec">
+        <button class="ri-btn ri-btn--primary" type="button" id="riMailCta"><span>Crear mi cuenta</span></button>
+      </div>
+      <div class="ri-mail__sec ri-mail__sec--sm">
+        <p class="ri-mail__caption">¿El botón no funciona? Entra a esta dirección y escribe el código:</p>
+        <a class="ri-mail__link" href="#" id="riMailLink">ataskate.com/registro</a>
+      </div>
+      <div class="ri-mail__sec ri-mail__sec--lg">
+        <p class="ri-mail__warning" id="riMailWarning"></p>
+      </div>
+      <footer class="ri-mail__footer">
+        <p class="ri-mail__caption ri-mail__caption--body">¿Dudas? Escríbenos a <a class="ri-mail__link" href="#">[Correo de contacto]</a> o llama al <a class="ri-mail__link" href="#">[Teléfono]</a>.</p>
+        <div class="ri-mail__icons">
+          <img src="assets/correo/facebook.svg" width="24" height="24" alt="Facebook" />
+          <img src="assets/correo/whatsapp.svg" width="24" height="24" alt="WhatsApp" />
+          <img src="assets/correo/instagram.svg" width="24" height="24" alt="Instagram" />
         </div>
-        <hr class="ri-mail__sep" />
-        <p class="ri-mail__legal ri-mail__legal--bold">Un producto de [Razón social].</p>
-        <p class="ri-mail__legal">[Razón social]. [Domicilio fiscal].</p>
-        <p class="ri-mail__legal">[Correo de contacto] | [Teléfono]</p>
-      </div>
+        <div class="ri-mail__legal-wrap">
+          <p class="ri-mail__legal ri-mail__legal--bold">Ataskate es un producto de [Razón social]</p>
+          <p class="ri-mail__legal">[Domicilio fiscal]</p>
+        </div>
+      </footer>
     </article>
   </div>
 </section>
@@ -251,38 +270,12 @@
   </div>
 </section>
 
-<!-- ============ 5 · Cuenta creada (InviteDone) ============ -->
-<section class="ri-screen" data-screen="done" aria-labelledby="riDoneTitle" hidden>
-  <div class="ri-auth">
-    <div class="ri-photo" role="img" aria-label="Persona usando Ataskate en su negocio"></div>
-    <main class="ri-pane">
-      <div class="ri-inner ri-inner--center">
-        <div class="ri-stack">
-          <div class="ri-stack ri-stack--8">
-            <h1 class="ri-h1" id="riDoneTitle">Cuenta creada</h1>
-            <p class="ri-text" id="riDoneText"></p>
-          </div>
-          <div class="ri-alert ri-alert--info">
-            <div class="ri-alert__wrap">
-              <span class="ri-ico ri-alert__ico" data-icon="EstadosInfoIcon" data-size="24"></span>
-              <div class="ri-alert__content"><p class="ri-alert__text">La próxima vez entra con tu correo y tu contraseña. El código de acceso ya no se necesita.</p></div>
-            </div>
-          </div>
-          <div class="ri-actions">
-            <button class="ri-btn ri-btn--primary ri-btn--icon-right" type="button" data-toast="enter"><span>Entrar a la demo</span><span class="ri-ico" data-icon="ArrowForwardIcon" data-size="20"></span></button>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
-</section>
-
 <noscript><p style="padding:24px;font-size:16px">Esta maqueta necesita JavaScript para mostrar las pantallas.</p></noscript>
 
 <!-- avisos (AppToast): van al final del body, como el portal de ToastProvider -->
 <div class="ri-toasts" id="riToasts" role="region" aria-label="Avisos" aria-live="polite"></div>
 
-<!-- Panel de revisión de Product Design (no es UI del producto). ../demo.js lo vuelve la pestaña "Revisión" del riel de flujos;
+<!-- Panel de revisión de la maqueta (no es UI del producto). ../demo.js lo vuelve la pestaña "Revisión" del riel de flujos;
      los chips y las notas los pinta registro-invitacion.js -->
 <div class="ri-review" id="riReview" data-proto-panel="Revisión" hidden>
   <p class="ri-review__title">Solo para revisar la maqueta</p>
@@ -300,8 +293,8 @@
   <ol class="ri-review__notes" id="riNotes"></ol>
 </div>
 
-<script src="registro-invitacion.js?v=1"></script>
-<script src="../demo.js?v=14"></script>
-<script src="../comentarios.js?v=5"></script>
+<script src="registro-invitacion.js?v=2"></script>
+<script src="../demo.js?v=15"></script>
+<script src="../comentarios.js?v=6"></script>
 </body>
 </html>

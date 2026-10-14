@@ -6,6 +6,7 @@
   const base = new URL('.', document.currentScript.src);   // …/pos/
   const DEMOS = [
     ['Home Operativo 3.0', 'POS · Inicio por widgets', 'home/'],
+    ['Home Operativo vacío', 'POS · sucursal sin datos todavía', 'home/?vacio=1'],
     ['Inventario', 'POS · artículos a la venta (comercial)', 'inventario/'],
     ['Inventario prendario', 'POS · artículos empeñados', 'inventario/?tipo=prendario'],
     ['Inventario vacío', 'POS · sin artículos todavía', 'inventario/?vacio=1'],

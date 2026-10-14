@@ -8,7 +8,7 @@
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const S = { address: null, files: {}, photo: null, co: [], prints: { izq: new Set(), der: new Set() }, hand: null, finger: null, touched: new Set(), dirty: false, saving: false };
+const S = { address: null, files: {}, photo: null, co: [], prints: { izq: new Set(), der: new Set() }, hand: 'der', finger: 'Pulgar', touched: new Set(), dirty: false, saving: false };
 const FINGERS = ['Pulgar', 'Índice', 'Medio', 'Anular', 'Meñique'];
 const HN = { izq: 'izquierdo', der: 'derecho' };
 
@@ -278,21 +278,25 @@ function renderFile(key) {
   if (f) { host.innerHTML = dzFilled(f.name, key); wireKebab(host); $$('[data-view]', host).forEach(b => b.onclick = () => docView(key)); return; }
   host.innerHTML = dzEmpty('f-' + key, key === 'idFront' || key === 'idBack' ? 'Arrastra el archivo aquí' : 'Arrastra elementos aquí', true, false, { key, title: CAM_DOCS[key] ? CAM_DOCS[key].title : 'documento' });
   host.querySelector('[data-cam]').onclick = e => { e.preventDefault(); e.stopPropagation(); camDoc(key); };
-  { const fi = host.querySelector('input[type=file]'); if (fi && $('#h-' + key)) { fi.setAttribute('aria-labelledby', 't-' + key); fi.setAttribute('aria-describedby', 'h-' + key); } }
+  { const fi = host.querySelector('input[type=file]'); if (fi && $('#t-' + key)) fi.setAttribute('aria-labelledby', 't-' + key); }
   const inp = $('#f-' + key); wireDrop(host.querySelector('.dz'), inp);
   inp.addEventListener('change', () => { const file = inp.files[0]; if (!file) return; S.dirty = true; upload(host, () => { S.files[key] = { name: file.name, url: URL.createObjectURL(file), type: file.type, size: file.size }; renderFile(key); accTags(); update(); toast('Archivo cargado', file.name); }); });
 }
 function renderPhoto(state, pct) {
   const host = $('#photoHost'); const ph = S.photo;
   state = state || (ph ? 'filed' : 'upload');
+  const CAM = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 17.5q1.875 0 3.188-1.312Q16.5 14.875 16.5 13q0-1.875-1.312-3.188Q13.875 8.5 12 8.5q-1.875 0-3.188 1.312Q7.5 11.125 7.5 13q0 1.875 1.312 3.188Q10.125 17.5 12 17.5Zm0-2q-1.05 0-1.775-.725Q9.5 14.05 9.5 13q0-1.05.725-1.775Q10.95 10.5 12 10.5q1.05 0 1.775.725Q14.5 11.95 14.5 13q0 1.05-.725 1.775Q13.05 15.5 12 15.5ZM4 21q-.825 0-1.412-.587Q2 19.825 2 19V7q0-.825.588-1.412Q3.175 5 4 5h3.15L9 3h6l1.85 2H20q.825 0 1.413.588Q22 6.175 22 7v12q0 .825-.587 1.413Q20.825 21 20 21Zm0-2h16V7h-4.05l-1.825-2h-4.25L8.05 7H4v12Zm8-6Z" fill="currentColor"/></svg>';
   const inner = {
-    upload: `<span class="c"><span class="circ"><svg width="24" height="24"><use href="#i-uptop"/></svg></span></span>`,
+    upload: `<span class="c"><span class="ph-cta"><span class="circ">${CAM}</span><span class="ph-t">Tomar foto</span></span></span>`,
     uploading: `<span class="c"><span class="ring" style="--p:${pct || 0}%"></span></span>`,
     error: `<span class="c"><span class="x"><svg width="26" height="26" style="color:#fff"><use href="#i-close"/></svg></span></span>`,
-    filed: ph ? `<img src="${ph.url}" alt="Foto del cliente"><span class="hov"><span class="circ"><svg width="26" height="26"><use href="#i-swap"/></svg></span></span>` : ''
+    filed: ph ? `<img src="${ph.url}" alt="Foto del cliente"><span class="hov"><span class="ph-cta"><span class="circ">${CAM}</span><span class="ph-t">Tomar otra</span></span></span><span class="ph-badge" aria-hidden="true">${CAM}</span>` : ''
   }[state];
-  const label = { upload: 'Cargar foto del cliente', uploading: 'Cargando foto', error: 'Error al cargar, elegir otra foto', filed: 'Cambiar foto del cliente' }[state];
-  host.innerHTML = `<label class="phu ${state}" for="photo" aria-label="${label}" title="${state === 'upload' ? 'Arrastra la foto del cliente o haz clic para buscarla' : label}">${inner}<input type="file" id="photo" accept="image/jpeg,image/png"></label>`;
+  const label = { upload: 'Tomar foto del cliente con la cámara', uploading: 'Cargando foto', error: 'Error al cargar, tomar otra foto', filed: 'Tomar otra foto del cliente' }[state];
+  // el círculo abre la cámara (y acepta soltar una imagen); "Subir imagen" busca el archivo
+  host.innerHTML = `<button type="button" class="phu ${state}" aria-label="${label}" ${state === 'uploading' ? 'disabled' : ''}>${inner}</button>
+    <label class="ph-up" for="photo">${ph ? 'Cambiar por una imagen' : 'o sube una imagen'}<input type="file" id="photo" accept="image/jpeg,image/png"></label>`;
+  host.querySelector('.phu').onclick = () => $('#camBtn').click();
   const box = host.querySelector('.phu'), inp = $('#photo');
   box.addEventListener('dragover', e => { e.preventDefault(); box.classList.add('over'); });
   box.addEventListener('dragleave', () => box.classList.remove('over'));
@@ -343,7 +347,7 @@ const CAM_DOCS = {
 };
 const camStop = () => { if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; } };
 const camClose = () => { camStop(); camShot = null; const rf = camCfg && camCfg.retFocus; $('#modalRoot').innerHTML = ''; if (camCfg && camCfg.onClose) return camCfg.onClose(); rf && $(rf) && $(rf).focus(); };
-const camView = (inner, cls) => `<div class="cam-view ${cls || ''} g-${camCfg.guide}" style="aspect-ratio:${camCfg.w} / ${camCfg.h}">${inner}</div>`;
+const camView = (inner, cls) => `<div class="cam-view ${cls || ''} g-${camCfg.guide}" style="aspect-ratio:${camCfg.w} / ${camCfg.h};--ar:${camCfg.w / camCfg.h}">${inner}</div>`;
 function camModal(view, hint, foot) {
   modal(`<div class="mh"><h3>${camCfg.title}</h3><button type="button" class="mx" id="camX" aria-label="Cerrar"><svg width="24" height="24"><use href="#i-close"/></svg></button></div>${view}${hint ? `<p class="cam-hint">${hint}</p>` : ''}<div class="mf">${foot}</div>`, 'cam' + (camCfg.h > camCfg.w ? ' cam-tall' : ''));
   $('#camX').onclick = camClose;
@@ -460,7 +464,7 @@ function saveAddr(a) {
   update();
 }
 function fillManual(a) { Object.entries({ 'a-nombre': a.nombre, 'a-cp': a.cp, 'a-calle': a.calle, 'a-ext': a.ext, 'a-int': a.int, 'a-col': a.col, 'a-mun': a.mun, 'a-edo': a.edo }).forEach(([k, v]) => $('#' + k).value = v);  syncAll(); }
-function openManual(o) { $('#manual').hidden = !o; $('#manualToggle').setAttribute('aria-expanded', o); $('#manualChev').style.transform = o ? 'rotate(180deg)' : ''; }
+function openManual(o) { $('#manual').hidden = !o; $('#addrSearch').disabled = !!o; if (o) $('#addrDD').hidden = true; $('.addr-row').classList.toggle('manual-on', !!o); $('#manualToggle').setAttribute('aria-expanded', o); $('#manualChev').style.transform = o ? 'rotate(180deg)' : ''; }
 $('#manualToggle').onclick = () => openManual($('#manual').hidden);
 $('#addrCancel').onclick = () => { openManual(false); if (S.address) saveAddr(S.address); };
 $('#addrSave').onclick = () => {
@@ -495,17 +499,23 @@ function renderCo() {
 const TIPS = { Pulgar: [208.2, 170.4, -30], 'Índice': [143.5, 34.6, 0], Medio: [94.4, 15.8, 0], Anular: [53.6, 34.6, 0], 'Meñique': [12.9, 72.1, 0] };
 const SHORT = { izq: 'izq.', der: 'der.' };
 S.printImg = {}; S.fpState = 'idle';
-function bigHand() {
-  const flip = S.hand === 'der', done = S.prints[S.hand];
-  const tips = FINGERS.map(f => { const [x, y, r] = TIPS[f]; const col = S.finger === f ? '#5A5AFF' : done.has(f) ? '#309C60' : '#E8E9EA'; return `<g class="tip-f" data-f="${f}" transform="translate(${x} ${y}) rotate(${r}) translate(-12 -12)" style="color:${col}"><title>${f}</title><rect width="24" height="24" fill="transparent"/><use href="#i-fp" width="24" height="24"/></g>`; }).join('');
-  return `<svg viewBox="0 0 226 349" aria-label="Mano ${HN[S.hand]}: toca un dedo"><g${flip ? ' transform="translate(226 0) scale(-1 1)"' : ''}><use href="#i-bighand" width="226" height="349"/>${tips}</g></svg>`;
+function bigHand(h) {
+  h = h || S.hand; const flip = h === 'der', done = S.prints[h];
+  const tips = S.hand !== h ? '' : FINGERS.map(f => { const [x, y, r] = TIPS[f]; const sel = S.hand === h && S.finger === f, ok = done.has(f), col = sel ? '#5A5AFF' : ok ? '#309C60' : '#A1A5AA'; return `<g class="tip-f ${sel ? 'sel' : ''} ${ok ? 'ok' : ''}" data-h="${h}" data-f="${f}" role="button" tabindex="0" aria-pressed="${sel}" aria-label="${f} ${HN[h]}${ok ? ', registrada' : ''}" transform="translate(${x} ${y}) rotate(${r}) translate(-12 -12)" style="color:${col}"><title>${f} ${HN[h]}</title><circle class="tip-bg" cx="12" cy="12" r="15"/><use href="#i-fp" width="24" height="24"/></g>`; }).join('');
+  return `<svg viewBox="0 0 226 349" aria-label="Mano ${HN[h] === 'izquierdo' ? 'izquierda' : 'derecha'}: toca un dedo"><g${flip ? ' transform="translate(226 0) scale(-1 1)"' : ''}><use href="#i-bighand" width="226" height="349"/>${tips}</g></svg>`;
 }
 const nextFinger = () => FINGERS.find(f => !S.prints[S.hand].has(f));
 function pickFinger(f) { S.finger = f; S.fpState = S.prints[S.hand].has(f) ? 'done' : 'idle'; renderFp(); }
 function renderFp() {
   $$('.hand').forEach(h => h.setAttribute('aria-pressed', h.dataset.hand === S.hand));
-  ['izq', 'der'].forEach(h => { const n = S.prints[h].size, el = $(`[data-hc="${h}"]`); el.textContent = n ? `${n} huella${n > 1 ? 's' : ''}` : 'Sin huellas'; el.classList.toggle('ok', !!n); });
+  ['izq', 'der'].forEach(h => { const n = S.prints[h].size, el = $(`[data-hc="${h}"]`); if (!el) return; el.textContent = n ? `${n} huella${n > 1 ? 's' : ''}` : 'Sin huellas'; el.classList.toggle('ok', !!n); });
   renderReg();
+  const hs = $('#fpHands');
+  if (hs) {
+    hs.innerHTML = ['izq', 'der'].map(h => { const n = S.prints[h].size; return `<div class="hcard ${S.hand === h ? 'on' : ''}" data-hcard="${h}"><div class="hcard-h"><span class="hl">Mano ${h === 'izq' ? 'izquierda' : 'derecha'}</span><span class="hand-c ${n ? 'ok' : ''}">${n ? `${n} de 5 huellas` : 'Sin huellas'}</span></div><div class="big">${bigHand(h)}</div></div>`; }).join('');
+    $$('.hcard', hs).forEach(c => c.onclick = e => { if (e.target.closest('.tip-f')) return; S.hand = c.dataset.hcard; S.finger = nextFinger() || null; S.fpState = S.finger ? 'idle' : 'done'; renderFp(); });
+    $$('.tip-f', hs).forEach(g => { const go = e => { e.stopPropagation(); S.hand = g.dataset.h; pickFinger(g.dataset.f); setTimeout(() => { const t = $(`#fpHands .tip-f[data-h="${g.dataset.h}"][data-f="${g.dataset.f}"]`); t && t.focus(); }, 0); }; g.onclick = go; g.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(e); } }; });
+  }
   const p = $('#fpanel');
   if (!S.hand) { p.className = 'fpanel empty'; p.innerHTML = 'Elige una mano para ver sus dedos.'; return; }
   p.className = 'fpanel';
@@ -526,8 +536,7 @@ function renderFp() {
     cap = `<div class="cap-box"><div class="slot ${st === 'busy' ? 'busy' : st === 'done' ? 'done' : st === 'err' ? 'err' : ''}" id="slot"><div class="box" role="button" tabindex="0" aria-label="Tomar huella">${box}</div></div>
       <div class="cap-info"><div class="slot-lbl"><span>${f} ${HN[S.hand]}</span>${st === 'done' ? '<span class="tag green">Capturada</span>' : ''}</div>${msg ? `<p class="cap-msg" aria-live="polite">${msg}</p>` : ''}${err}<div class="cap-act">${acts}</div></div></div>`;
   }
-  p.innerHTML = `<div class="big" id="big">${bigHand()}</div><div class="fright"><div><p class="fp-step"><span class="dot">2</span>Elige el dedo</p><div class="fchips">${chips}</div></div><div><p class="fp-step"><span class="dot">3</span>Toma la huella</p>${cap}</div></div>`;
-  $$('.tip-f', p).forEach(g => g.onclick = () => pickFinger(g.dataset.f));
+  p.innerHTML = `<div class="fright"><div><p class="fp-step"><span class="dot">2</span>Elige el dedo</p><div class="fchips">${chips}</div></div><div><p class="fp-step"><span class="dot">3</span>Toma la huella</p>${cap}</div></div>`;
   $$('.fchip', p).forEach(b => b.onclick = () => pickFinger(b.dataset.f));
   const take = () => {
     if (S.fpState === 'busy' || S.fpState === 'done') return;

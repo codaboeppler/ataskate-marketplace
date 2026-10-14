@@ -1,11 +1,11 @@
-/* Registro por invitación — reconstrucción estática de la vista previa en React de Product Design
-   (rama del equipo de AtaskateFrontend, 829cbd3dc: src/components/InviteSignUp/** y preview/registro-invitacion),
-   sobre su maqueta HTML (3d3f1439e). Correo → código de acceso → crear cuenta → cuenta creada; quien ya tiene cuenta
-   entra por el login, sin código.
+/* Registro por invitación — reconstrucción estática de la vista previa en React del equipo
+   (rama del equipo de AtaskateFrontend, 0bce0a2b7: src/components/InviteSignUp/** y preview/registro-invitacion),
+   sobre su maqueta HTML (11f0f32d5). Correo → código de acceso → crear cuenta → entra directo al Inicio del Administrativo
+   (../home-admin/, estado "Cuenta nueva"), sin pantalla ni aviso de confirmación. Quien ya tiene cuenta entra por el login, sin código.
    - Constantes y textos: inviteSignUp.constants.ts, inviteSignUpSteps.constants.ts.
    - Servicio simulado: inviteSignUp.utils.ts (latencia de 900 ms, mismos registros que Códigos de acceso).
    - Cada pantalla "se monta" de nuevo al entrar (como el componente de React): sus campos vuelven al estado inicial.
-   - El panel "Revisión" (data-proto-panel, lo mueve ../demo.js al riel) reemplaza los chips de su vista previa. */
+   - El panel "Revisión" (data-proto-panel, lo mueve ../demo.js al riel) reemplaza el panel flotante de su vista previa. */
 (() => {
   'use strict';
 
@@ -18,7 +18,7 @@
 
   /* Mismos registros que el módulo Códigos de acceso (accessCodes.mocks.ts y ../codigos-acceso/) */
   const INVITES = [
-    { code: 'P23E6R', status: 'sent', companyName: 'Empeños Cerrito', firstName: 'el equipo', lastName: 'Del Río', email: 'empenos@cerrito.com', branches: 4 },
+    { code: 'P23E6R', status: 'sent', companyName: 'Empeños Cerrito', firstName: 'Ramiro', lastName: 'Del Río', email: 'empenos@cerrito.com', branches: 4 },
     { code: 'H7XQ2M', status: 'used', companyName: 'Montepío Querétaro Centro', firstName: 'Laura', lastName: 'Méndez', email: 'lmendez@montepioqro.mx', branches: 7 },
   ];
   const LINK_CODE = 'P23E6R';
@@ -34,7 +34,6 @@
     { id: 'login', label: 'Iniciar sesión', url: 'iniciar-sesion' },
     { id: 'code', label: 'Código de acceso', url: 'codigo' },
     { id: 'account', label: 'Crea tu cuenta', url: 'cuenta' },
-    { id: 'done', label: 'Cuenta creada', url: 'cuenta-creada' },
   ];
   const SCENARIOS = [
     { id: 'normal', label: 'Normal', url: 'normal' },
@@ -45,10 +44,13 @@
   ];
 
   const EMAIL_TEXTS = {
-    greeting: (name) => `Bienvenido, ${name}`,
-    intro: (company) => `Tu solicitud de demo fue aprobada. Usa este código de acceso para crear tu cuenta de ${company}.`,
+    subject: (company) => `Crea la cuenta de ${company} en Ataskate`,
+    preheader: (code) => `Usa el código ${code} y crea tu cuenta en dos pasos.`,
     codeAriaLabel: (code) => `Código de acceso ${code}`,
+    warning: (company) => `No compartas este código: es solo para crear la cuenta de ${company}. Si no solicitaste una demo, ignora este correo; nadie podrá crear la cuenta sin el código.`,
   };
+  /* Sin pantalla ni aviso de confirmación: al crear la cuenta entra directo al Inicio del Administrativo (pre-review 2026-10-12) */
+  const CREATED_REDIRECT = '../home-admin/?nueva=1';
   const LOGIN_TEXTS = { loggedIn: 'Sesión iniciada. Aquí entra al Operativo.' };
   const CODE_TEXTS = {
     fromLink: 'Copiamos el código de tu correo. Valídalo para continuar.',
@@ -91,26 +93,26 @@
     number: (v) => /[0-9]/.test(v),
     special: (v) => /[!@#$%^&*]/.test(v),
   };
-  const DONE_TEXTS = { text: (company) => `Ya puedes explorar la demo de Ataskate para ${company}.` };
   const MIN_MOCK_PASSWORD_LENGTH = 8;   // InviteLogin: con menos, el login simulado falla
 
   /* Avisos (showToast) de los destinos que quedan fuera del flujo */
   const TOASTS = {
     demo: ['info', 'Aquí se abre el formulario "Ver un demo" de la landing.'],
     legal: ['info', 'Aquí se abre el Modal con el texto legal vigente.'],
-    enter: ['info', 'Aquí entra a la demo con la sesión ya iniciada.'],
     forgot: ['info', 'Aquí empieza la recuperación de contraseña, fuera de este flujo.'],   // del prototipo: en su código el enlace no hace nada
   };
 
   /* Notas del panel de revisión de su maqueta (decisiones y gaps de cada pantalla) */
   const NOTES = {
     email: [
-      'Plantilla de correo de Figma (Suscripción · frame "email" 4173:6192): logo, ilustración, saludo, código en bloque navy, aviso, redes y pie legal. Assets descargados del frame.',
-      'Se agregó el botón "Crear mi cuenta" (Button primary): la plantilla original no tiene botón porque es un código de verificación. Lleva al registro con el código ya escrito (propuesta: enlace con ?codigo=).',
-      'El código se muestra como en la plantilla, carácter por carácter (P 2 3 E 6 R), y coincide con las 6 celdas del CodeField.',
-      'Lo envía Marketing a mano desde Códigos de acceso; llenar el formulario no lo manda.',
-      'Copy: la plantilla dice "Bienvenido" (masculino). Sugerencia: "Te damos la bienvenida, …". Además la plantilla de verificación tiene un error de dedo: "código se seguridad".',
-      '[Pendiente Producto] ¿El código vence? La plantilla de verificación dice "Vigencia de 30 minutos"; para la invitación no está definido.',
+      'Propuesta hero (2026-10-14): banda morada (purple-200) con el cerebro de Ataskate patinando y destellos, texto centrado y el código como protagonista, sin caja.',
+      'Card de 600 px con Card-shadow y radio 16 sobre fondo gris; debajo de 600 px el padding de las secciones baja de 48 a 24.',
+      'Es la referencia de diseño para back: el correo real se arma con tablas y estilos en línea, y los destellos van dentro de la imagen del hero. La animación del cerebro solo es de la vista previa.',
+      'Copy con la voz de Ataskate: asunto "Crea la cuenta de {empresa} en Ataskate", título "Tu acceso a Ataskate está listo" y saludo neutro "Hola, {nombre}." en lugar de "Bienvenido".',
+      'Preheader: "Usa el código P23E6R y crea tu cuenta en dos pasos." (Código de acceso y Tu cuenta). Es lo que se ve junto al asunto en la bandeja.',
+      'El código sirve una sola vez y no vence (reglas de Códigos de acceso). El aviso de no compartirlo va al final, en texto chico.',
+      '[Pendiente Producto] URL real del registro: se usa ataskate.com/registro como texto provisional. El botón debe llevar el código en el enlace (propuesta: ?codigo=).',
+      '[Pendiente Marketing] Correo y teléfono de ayuda, razón social y domicilio del pie, y si las redes son las de la empresa o las de Ataskate. Aquí van como marcadores.',
     ],
     login: [
       'El login no pide código: quien ya tiene cuenta entra con su correo y su contraseña.',
@@ -133,11 +135,7 @@
       'Requisitos de contraseña: filas de helperText (_criterios de Figma). El ícono de éxito (SuccessFilledIcon) hay que validarlo contra la variante "Éxito" de Figma.',
       '[Pendiente Backend] La solicitud guarda el contacto en un solo texto; hay que separar nombres y apellidos para prellenarlos.',
       'Sin aceptar términos no se crea la cuenta: el Checkbox se marca en error. Los textos legales se abren con "Leer Términos y condiciones" y "Leer Declaración de privacidad" (Button tertiary).',
-    ],
-    done: [
-      'Confirmación sobria y un solo siguiente paso: entrar a la demo.',
-      'Se quitó el círculo verde con palomita de la versión anterior: no existe en el DS.',
-      'Al crear la cuenta, el código pasa a "Usado" en Códigos de acceso.',
+      'Decisión 2026-10-12: ya no hay pantalla "Cuenta creada" ni aviso. Al crear la cuenta entra directo al Inicio del Administrativo con la sesión iniciada, en estado "Cuenta nueva". [Pendiente Producto] confirmar que la sesión queda iniciada.',
     ],
   };
 
@@ -205,7 +203,6 @@
     return '';
   };
   const isPasswordValid = (value) => Object.values(PASSWORD_RULES).every((test) => test(value));
-  const formatCodeForEmail = (code) => code.split('').join(' ');
 
   /* ======================= Estado ======================= */
   const state = {
@@ -275,7 +272,7 @@
     state.scenario = scenario;
     paintReview();
     if (opts.retry) { syncUrl('replace'); return; }
-    if (state.screen === 'email' || state.screen === 'login' || state.screen === 'done') { go('code'); return; }
+    if (state.screen === 'email' || state.screen === 'login') { go('code'); return; }
     if (state.screen === 'code') resetCodeForScenario();
     syncUrl('replace');
   }
@@ -284,15 +281,22 @@
   ENTER.email = () => {
     const invite = DEFAULT_INVITE;
     $('#riMailTo').textContent = invite.email;
-    $('#riMailHello').textContent = EMAIL_TEXTS.greeting(`${invite.firstName} ${invite.lastName}`);
-    $('#riMailIntro').textContent = EMAIL_TEXTS.intro(invite.companyName);
-    $('#riMailCode').textContent = formatCodeForEmail(invite.code);
+    $('#riMailSubject').textContent = EMAIL_TEXTS.subject(invite.companyName);
+    $('#riMailPreheader').textContent = EMAIL_TEXTS.preheader(invite.code);
+    $('#riMailName').textContent = invite.firstName;
+    $('#riMailCompany').textContent = invite.companyName;
+    $('#riMailWarning').textContent = EMAIL_TEXTS.warning(invite.companyName);
+    $('#riMailCode').textContent = invite.code;
     $('#riMailCode').setAttribute('aria-label', EMAIL_TEXTS.codeAriaLabel(invite.code));
   };
-  $('#riMailCta').addEventListener('click', () => {
+  /* el botón y el enlace de respaldo llevan al código ya escrito (escenario "Llegó con el botón del correo") */
+  const fromEmail = (e) => {
+    e.preventDefault();
     state.scenario = 'link';
     go('code');
-  });
+  };
+  $('#riMailCta').addEventListener('click', fromEmail);
+  $('#riMailLink').addEventListener('click', fromEmail);
 
   /* ======================= Contraseña con ojo (TextInput type="password") ======================= */
   const resetEye = (inputId) => {
@@ -519,8 +523,9 @@
     setLoading(acc.btn, true);
     const result = await createInviteAccount(state.scenario);
     if (visit !== state.visit) return;
+    /* entra directo al Inicio del Administrativo; el botón sigue en "cargando" mientras cambia de página */
+    if (result.ok) { location.href = CREATED_REDIRECT; return; }
     setLoading(acc.btn, false);
-    if (result.ok) { go('done'); return; }
     acc.alert = result.reason;
     paintAccount();
   }
@@ -537,9 +542,6 @@
     setScenario('normal', { retry: true });
     submitAccount();
   });
-
-  /* ======================= 5 · Cuenta creada ======================= */
-  ENTER.done = () => { $('#riDoneText').textContent = DONE_TEXTS.text(state.invite.companyName); };
 
   /* ======================= Enlaces y avisos comunes ======================= */
   $$('[data-go]').forEach((btn) => btn.addEventListener('click', () => (btn.dataset.go === 'code' ? goToCode() : go(btn.dataset.go))));

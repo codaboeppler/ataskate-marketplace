@@ -15,8 +15,12 @@
   const ruta = location.pathname.replace(/index\.html$/, '').replace(/\/?$/, '/');
   const rel = ruta.startsWith(base.pathname) ? ruta.slice(base.pathname.length) : null;
   const enMora = new URLSearchParams(location.search).get('estado') === 'mora';
-  const PAGINA = { '': 'v1', 'v2/': 'v2', 'v2-prendario/': enMora ? 'prendario-mora' : 'prendario', 'v2-marketplace/': 'marketplace' }[rel];
+  // otras páginas (el sitio de marketing) dicen su página en el script: <script src="/comentarios.js" data-pagina="web-inicio">
+  const PAGINA = document.currentScript.dataset.pagina
+    || { '': 'v1', 'v2/': 'v2', 'v2-prendario/': enMora ? 'prendario-mora' : 'prendario', 'v2-marketplace/': 'marketplace' }[rel];
   if (!PAGINA) return;
+  // si el script trae data-autor (p. ej. el sitio de marketing, donde solo comenta una persona), no se pide nombre
+  const AUTOR_FIJO = (document.currentScript.dataset.autor || '').trim().slice(0, 40);
 
   // ---------- quién soy (solo en este navegador) ----------
   const LS = 'ataskate-comentarios';
@@ -229,7 +233,9 @@
 :where(body:has(.ds-modal-overlay:not([hidden]))) .demo-menu { z-index: 1402; }
 .cm-activo .demo-rail { z-index: 2003; }
 .cm-activo .demo-menu { z-index: 2004; }
-.cm-capa { position: fixed; inset: 0; z-index: 2000; cursor: crosshair; background: transparent; }
+.cm-capa { position: fixed; inset: 0; z-index: 2000; background: transparent;
+  /* puntero de comentario: globo morado con + (la punta abajo a la izquierda marca dónde cae el pin); borde morado = modo comentar */
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Cpath d='M3 33V17C3 9.3 9.3 3 17 3s14 6.3 14 14-6.3 14-14 14H3Z' fill='%235A5AFF' stroke='%23fff' stroke-width='2.5' stroke-linejoin='round'/%3E%3Cpath d='M17 11v12M11 17h12' stroke='%23fff' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E") 3 33, crosshair; box-shadow: inset 0 0 0 3px rgba(90, 90, 255, .55); }
 .cm-pins { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 2001; font-family: 'Nunito', sans-serif; }
 .cm-pin {
   position: absolute; box-sizing: border-box; width: 32px; height: 32px; margin: 0; padding: 3px; border: 0;
@@ -484,10 +490,10 @@ textarea.cm-campo { min-height: 64px; max-height: 160px; resize: vertical; }
   // antes de cerrar algo donde hay texto a medio escribir se pregunta
   const descartarOk = () => !textoPendiente() || window.confirm('¿Descartar lo que estás escribiendo?');
   const formulario = (placeholder, etiqueta, alEnviar, alCancelar) => {
-    const nombre = h('input', { class: 'cm-campo', type: 'text', maxlength: '40', placeholder: 'Tu nombre', 'aria-label': 'Tu nombre', autocomplete: 'name', value: yo.nombre || '', hidden: !!yo.nombre });
+    const nombre = h('input', { class: 'cm-campo', type: 'text', maxlength: '40', placeholder: 'Tu nombre', 'aria-label': 'Tu nombre', autocomplete: 'name', value: AUTOR_FIJO || yo.nombre || '', hidden: !!(AUTOR_FIJO || yo.nombre) });
     const texto = h('textarea', { class: 'cm-campo', maxlength: '2000', rows: '2', placeholder, 'aria-label': placeholder });
     const quien = h('span', { class: 'cm-form__quien' });
-    const pintarQuien = () => quien.replaceChildren(...(yo.nombre && nombre.hidden
+    const pintarQuien = () => quien.replaceChildren(...(AUTOR_FIJO ? [] : yo.nombre && nombre.hidden
       ? ['Comentas como ', h('b', { text: yo.nombre }), ' · ', h('button', { type: 'button', class: 'cm-link', text: 'Cambiar', onclick: () => { nombre.hidden = false; pintarQuien(); nombre.focus(); nombre.select(); } })]
       : []));
     pintarQuien();
@@ -498,14 +504,14 @@ textarea.cm-campo { min-height: 64px; max-height: 160px; resize: vertical; }
     const f = h('form', { class: 'cm-form', novalidate: true, onsubmit: async (e) => {
       e.preventDefault();
       if (enviando || enviar.disabled) return;
-      const n = nombre.value.trim(), t = texto.value.trim();
+      const n = AUTOR_FIJO || nombre.value.trim(), t = texto.value.trim();
       if (!n) { error.textContent = 'Escribe tu nombre para comentar.'; nombre.hidden = false; nombre.focus(); return; }
       if (!t) { error.textContent = 'Escribe un comentario.'; texto.focus(); return; }
       error.textContent = '';
-      yo.nombre = n.slice(0, 40); guardarYo();
+      if (!AUTOR_FIJO) { yo.nombre = n.slice(0, 40); guardarYo(); }
       enviando = true; enviar.disabled = true;
       // el campo no se vacía hasta que el envío termina bien: si falla o se cierra la tarjeta mientras viaja, el texto no se pierde sin aviso
-      try { await alEnviar(yo.nombre, t); if (texto.value.trim() === t) texto.value = ''; nombre.hidden = true; pintarQuien(); }
+      try { await alEnviar(AUTOR_FIJO || yo.nombre, t); if (texto.value.trim() === t) texto.value = ''; nombre.hidden = true; pintarQuien(); }
       catch (err) { error.textContent = err.message; }
       enviando = false; enviar.disabled = false;
     } }, nombre, texto, error,
@@ -614,7 +620,7 @@ textarea.cm-campo { min-height: 64px; max-height: 160px; resize: vertical; }
     pins.append(tarjeta);
     pintarPins();
     despejarPin(ancla);
-    (yo.nombre ? form.cmTexto : form.cmNombre).focus({ preventScroll: true });
+    (AUTOR_FIJO || yo.nombre ? form.cmTexto : form.cmNombre).focus({ preventScroll: true });
   };
   // resolver y borrar trabajan con el comentario vigente (el sondeo reemplaza los objetos), no con el de cuando se abrió la tarjeta
   const resolver = async (id) => {

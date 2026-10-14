@@ -19,6 +19,7 @@
   --surface-page: var(--pos-surface-page, #FBFBFE);      /* colors.surfacePage */
   --surface-card: var(--ats-white, #FFFFFF);             /* colors.surfaceCard */
   --surface-empty: #EFF0F0;                              /* colors.surfaceEmpty (no está en ../ds) */
+  --surface-card-gray: #F7F7F7;                          /* colors.surfaceCardGray (no está en ../ds) */
   --border-default: var(--ats-neutral-300, #D4D6D8);     /* colors.borderDefault */
   --border-hover: var(--ats-primary-300, #5A5AFF);       /* colors.borderHover */
   --border-active: var(--ats-primary-400, #0D166B);      /* colors.borderActive */
@@ -47,7 +48,7 @@
   --ill-pink100: var(--ats-pink-300, #FF98EF);           /* colors.illustrationPink100 */
 
   /* spacing[*] */
-  --sp-4: 4px; --sp-8: 8px; --sp-12: 12px; --sp-16: 16px;
+  --sp-4: 4px; --sp-8: 8px; --sp-12: 12px; --sp-16: 16px; --sp-20: 20px;
   --sp-24: 24px; --sp-32: 32px; --sp-48: 48px; --sp-64: 64px;
 
   /* borderRadius.* */
@@ -447,7 +448,7 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
 .plz .ds-formtree__search { flex: 1 1 auto; min-width: 0; }
 .plz .ds-formtree__divider { width: 1px; height: 24px; flex-shrink: 0; background: var(--border-default); }
 .plz .ds-formtree__search-row .ds-icon-btn svg { width: 24px; height: 24px; }
-.plz .ds-formtree__list { display: flex; flex-direction: column; gap: var(--sp-8); padding: var(--sp-16); box-sizing: border-box; background: var(--surface-empty); border-radius: var(--r-sm); overflow-y: auto; }
+.plz .ds-formtree__list { display: flex; flex-direction: column; gap: var(--sp-8); padding: var(--sp-16); box-sizing: border-box; background: var(--surface-card-gray); border-radius: var(--r-sm); overflow-y: auto; }
 .plz .ds-formtree__all { display: flex; align-items: center; min-height: 56px; padding: var(--sp-8) var(--sp-8) var(--sp-8) 44px; box-sizing: border-box; background: var(--surface-card); border-radius: var(--r-sm); }
 .plz .ds-formtree__nodes { display: contents; }
 .plz .ft-node {
@@ -859,23 +860,37 @@ body:not(.show-notes) .plz .design-notes { display: none; }
    con "Detalles del plazo" porque el breadcrumb y el título quedan fuera del grid */
 .plz .form-aviso { margin-bottom: var(--sp-16); }
 .plz .form-page { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: var(--sp-16); align-items: start; }
-.plz .form-main { display: flex; flex-direction: column; gap: var(--sp-24); min-width: 0; }
+.plz .form-main { display: flex; flex-direction: column; gap: var(--sp-16); min-width: 0; }
 .plz .form-sim { position: sticky; top: calc(var(--pos-header-h, 60px) + var(--sp-24)); margin-top: 0; min-width: 0; }
-/* FormCard: gap 24, padding 24, sin borde */
-.plz .fcard { display: flex; flex-direction: column; gap: var(--sp-24); padding: var(--sp-24); box-sizing: border-box; min-width: 0; }
-.plz .fcard__head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-16); }
+/* FormCard: gap 16, padding 20, sin borde */
+.plz .fcard { display: flex; flex-direction: column; gap: var(--sp-16); padding: var(--sp-20); box-sizing: border-box; min-width: 0; }
+/* SectionHeader: título y su acción en la misma línea; la descripción va debajo */
+.plz .fcard__head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--sp-16); }
 .plz .fcard__heading { display: flex; flex-direction: column; gap: var(--sp-8); min-width: 0; }
-.plz .fblock { display: flex; flex-direction: column; gap: var(--sp-16); width: 100%; }
+.plz .fblock { display: flex; flex-direction: column; gap: var(--sp-12); width: 100%; }
 .plz .fblock--tight { gap: var(--sp-8); }
 .plz .row3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: var(--sp-16); }
 .plz .row2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: var(--sp-16); }
 .plz .inline-row { display: flex; align-items: center; flex-wrap: wrap; gap: var(--sp-8); }
 .plz .narrow { width: 256px; max-width: 100%; }
+/* DetailsRow: Nombre (2fr) · Inicio (1fr) · [Fin (1fr)] · acción de fin de vigencia */
+.plz .details-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto; align-items: start; gap: var(--sp-16); }
+.plz .details-row--fin { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) auto; }
 /* "Fin de vigencia" alineado con el input (24) y la X de 28 centrada con el input (28) */
 .plz .end-add { display: flex; align-items: flex-start; padding-top: 24px; }
-.plz .end-row { display: flex; align-items: flex-start; gap: var(--sp-4); min-width: 0; }
-.plz .end-row > :first-child { flex: 1; min-width: 0; }
 .plz .end-row__x { display: flex; padding-top: 28px; }
+/* AlignToInput: control sin etiqueta (radios, checkbox, switch) a la altura del input de 40 de su fila */
+.plz .align-input { display: flex; align-items: center; flex-wrap: wrap; gap: var(--sp-8); min-height: 40px; margin-top: 20px; min-width: 0; }
+.plz .align-input > .ds-switch { flex-shrink: 0; }
+.plz .align-input:has(> .ds-switch) { flex-wrap: nowrap; }
+/* con un switch como acción, el título se parte antes que bajar el switch a otra línea */
+.plz .fcard__head:has(> .ds-switch) { flex-wrap: nowrap; }
+.plz .info-trigger { display: inline-flex; align-items: center; color: var(--text-placeholder); cursor: help; border-radius: 50%; }
+.plz .info-trigger svg { width: 16px; height: 16px; }
+.plz .info-trigger:focus-visible { outline: 2px solid var(--button-primary); outline-offset: 2px; }
+/* Cliente objetivo y Refinanciación lado a lado mientras ambos están apagados (PairRow) */
+.plz .form-pair { display: flex; flex-direction: column; gap: var(--sp-16); min-width: 0; }
+.plz .form-pair.is-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
 /* DobleField: se sube 4 px para alinear su campo con los TextInput de la misma fila */
 .plz .doble-field { margin-top: -4px; min-width: 0; }
 .plz .switch-row { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-16); }
@@ -887,7 +902,7 @@ body:not(.show-notes) .plz .design-notes { display: none; }
 .plz .ds-table--rangos { min-width: 420px; }
 .plz .ds-table--amort { min-width: 640px; } /* AMORTIZATION_MIN_WIDTH: hace scroll dentro del modal */
 /* intereses: lista gris con ítems blancos de radio 16 y Card-shadow */
-.plz .interest-list { display: flex; flex-direction: column; gap: var(--sp-8); padding: var(--sp-16); border-radius: var(--r-sm); background: var(--neutral50); }
+.plz .interest-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; gap: var(--sp-8); padding: var(--sp-16); border-radius: var(--r-sm); background: var(--neutral50); }
 .plz .interest-item { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-8); padding: var(--sp-16); border-radius: var(--r-md); background: var(--surface-card); box-shadow: var(--shadow-card); }
 .plz .interest-text { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
 .plz .interest-name { overflow-wrap: anywhere; }
@@ -901,8 +916,8 @@ body:not(.show-notes) .plz .design-notes { display: none; }
 .plz .condition__head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-16); }
 .plz .condition__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: var(--sp-16); }
 .plz .condition__ctrl { min-width: 0; }
-/* ButtonsCard: al final de la columna principal, centrada */
-.plz .buttons-card { flex-direction: row; align-items: center; justify-content: center; gap: var(--sp-16); flex-wrap: wrap; }
+/* ButtonsRow: al final de la columna principal, sin card y alineada a la derecha */
+.plz .buttons-row { display: flex; align-items: center; justify-content: flex-end; gap: var(--sp-16); flex-wrap: wrap; }
 /* Simulación del plazo (SimulationTable real) */
 .plz .sim { display: flex; flex-direction: column; gap: var(--sp-16); padding: var(--sp-24); box-sizing: border-box; }
 .plz .sim__title { display: flex; flex-direction: column; gap: var(--sp-4); }
@@ -948,8 +963,9 @@ body:not(.show-notes) .plz .design-note { display: none; }
 /* Cortes de la vista previa (por ventana, con padding 24) llevados al área útil del prototipo:
    con el menú lateral fijo (más de 900 px) el área útil es la ventana − 244 − 128 de padding;
    a 900 px o menos el menú es cajón y el área útil es la ventana − 48.
-   - PairRow y FormPage en 1 columna con ≤1052 útiles                  → ventana ≤ 1424.
+   - PairRow del detalle en 1 columna con ≤1052 útiles                → ventana ≤ 1424.
    - DetailLayout en 1 columna y FieldsGrid en 2 con ≤852 útiles      → ventana ≤ 1224.
+   - Formulario (FormPage, Row2/Row3, DetailsRow, PairRow, intereses) en 1 columna con ≤852 útiles → ventana ≤ 1224.
    - Row2, Row3 y ConditionBody en 1 columna con ≤652 útiles          → ventana ≤ 700, o 901–1024 con el menú fijo.
    - FieldsGrid y SegmentColumns en 1 columna con ≤512 útiles         → ventana ≤ 560.
    - Árbol arriba de la tabla con menos de ~725 px útiles             → ventana ≤ 724, o 901–1096 con el menú fijo.
@@ -957,10 +973,15 @@ body:not(.show-notes) .plz .design-note { display: none; }
    a 1280 (908) el detalle sigue en 2 con PairRow en 1 y el formulario en 1. Las tablas hacen scroll dentro de su card o modal. */
 @media (max-width: 1424px) {
   .plz .pair-row { grid-template-columns: minmax(0, 1fr); }
-  .plz .form-page { grid-template-columns: minmax(0, 1fr); }
-  .plz .form-sim { position: static; margin-top: 0; }
 }
 @media (max-width: 1224px) {
+  /* formulario: su corte de 900 px de ventana (≤852 útiles) → FormPage, filas del formulario, PairRow e intereses en 1 columna */
+  .plz .form-page { grid-template-columns: minmax(0, 1fr); }
+  .plz .form-sim { position: static; margin-top: 0; }
+  .plz .form-main .row2, .plz .form-main .row3, .plz .details-row, .plz .details-row--fin,
+  .plz .form-main .condition__body, .plz .interest-list, .plz .form-pair.is-pair { grid-template-columns: minmax(0, 1fr); }
+  .plz .align-input { margin-top: 0; }
+  .plz .details-row .end-add, .plz .details-row .end-row__x { padding-top: 0; }
   .plz .detail-layout { grid-template-columns: minmax(0, 1fr); }
   .plz .fields-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

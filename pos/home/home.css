@@ -101,3 +101,35 @@
   .home-grid, .home-col:nth-child(3) { grid-template-columns: minmax(0, 1fr); }
 }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ---------- estado vacío de cada widget (?vacio=1): una sucursal sin datos todavía ----------
+   La tarjeta conserva título y flecha. Arriba va un "fantasma" de la gráfica en lavanda (en el mismo orden que la
+   tarjeta con datos) con un ícono del DS al centro; abajo, qué va a aparecer ahí. */
+.hw-vacio { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+.hw-vacio__arte {
+  position: relative; align-self: stretch; height: 104px; margin-bottom: 12px; border-radius: 12px;
+  background: radial-gradient(120% 100% at 50% 0%, #f3f3ff 0%, #f9f9ff 55%, #fff 100%); box-shadow: inset 0 0 0 1px #ececfb;
+}
+.hw-vacio__arte svg { display: block; width: 100%; height: 100%; padding: 8px 4px; box-sizing: border-box; }
+.hw-vacio__arte .hwv-l { fill: #ecedf3; }
+.hw-vacio__arte .hwv-a { fill: #e2e2ff; }
+.hw-vacio__arte .hwv-b { fill: #eee6ff; }
+.hw-vacio__arte .hwv-c { fill: #e1f2fb; }
+.hw-vacio__arte .hwv-raya { fill: #f1f1f6; }
+.hw-vacio__arte .hwv-anillo { stroke: #ececfb; }
+.hw-vacio__arte .hwv-arco { stroke: #d6d6ff; }
+.hw-vacio__arte .hwv-barra { fill: #e8f4fb; }
+.hw-vacio__arte .hwv-hoy { stroke: #30d8ff; }
+.hw-vacio__arte .hwv-palomita { fill: #e3f6e3; }
+.hw-vacio__arte .hwv-palomita-trazo { stroke: #5aa95a; }
+.hw-vacio__medalla {
+  position: absolute; top: 50%; left: 50%; display: grid; place-items: center; width: 48px; height: 48px; margin: -24px 0 0 -24px;
+  border-radius: 50%; background: #fff; color: #5a5aff;
+  box-shadow: 0 0 0 6px rgb(255 255 255 / 0.7), 0 10px 22px -8px rgb(90 90 255 / 0.5);
+  animation: hwv-flota 3.2s ease-in-out infinite alternate;
+}
+.hw-vacio--ok .hw-vacio__medalla { color: #0a520a; box-shadow: 0 0 0 6px rgb(255 255 255 / 0.7), 0 10px 22px -8px rgb(10 82 10 / 0.35); }
+@keyframes hwv-flota { from { transform: translateY(2px); } to { transform: translateY(-3px); } }
+.hw-vacio__t { margin: 0; font-size: 14px; line-height: 1.3; font-weight: 600; color: #1d1e20; }
+.hw-vacio__d { max-width: 34ch; margin: 0; font-size: 13px; line-height: 1.4; color: #54575c; }
+@media (prefers-reduced-motion: reduce) { .hw-vacio__medalla { animation: none; } }

@@ -627,6 +627,11 @@ body.pos {
 .pos-canal__est { display: none; }
 .pos-canal.is-off .pos-canal__est { display: inline; }
 .pos-canal.is-off { animation: pos-pop .35s var(--easing-spring-snappy, cubic-bezier(.2, .8, .2, 1.2)); }
+/* Publicación en un solo renglón que se lee de corrido: "Publicación: [En línea] [En sucursal] desde 01-02-2026".
+   Solo piezas del DS (chips informativos azules y texto de 12px); lo que las une es la cercanía: 4px entre todas
+   (antes 8px y la fecha en un chip gris aparte, por eso se veían como cuatro cosas). */
+.pos-pub { column-gap: var(--spacing-1); }
+.pos-pub .pos-fecha { font-size: 12px; line-height: 12px; color: var(--ats-neutral-600); white-space: nowrap; }
 
 /* ---------------- Menú de tres puntos ----------------
    Lista desplegable del design system (panel del Select): fondo blanco, radio 16, sombra 0 4 16 al 12 %,

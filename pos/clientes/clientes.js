@@ -172,30 +172,31 @@ function sesiones() {
 // Solo se muestran datos parciales (correo y teléfono ocultos); "Cargar cliente" pide verificarlo antes de cargar sus datos.
 // Los correos coinciden con LK_DB de cliente-nuevo.js, que los recibe en ?cargar=<correo>.
 const EXT_CLI = [
-  { src: 'mk', name: 'Valeria', last: 'Ortiz Campos', email: 'valeria.ortiz@ejemplo.com', phone: '5587654321', since: 'Registrada en Marketplace · mar 2026' },
-  { src: 'mk', name: 'Fernanda', last: 'Ríos Luna', email: 'fer.rios@ejemplo.com', phone: '5534127788', since: 'Registrada en Marketplace · ago 2026' },
-  { src: 'red', name: 'Raúl', last: 'Campos Medina', email: 'raul.campos@ejemplo.com', phone: '8112345678', since: 'Monte Cristo · Red ataskate' },
-  { src: 'red', name: 'Jorge', last: 'Salinas Paz', email: 'jorge.salinas@ejemplo.com', phone: '3319876543', since: 'Prenda Fácil · Red ataskate' },
+  { src: 'mk', name: 'Valeria', last: 'Ortiz Campos', nat: 'Mexicana', email: 'valeria.ortiz@ejemplo.com', phone: '5587654321', ref: 'Registrada en mar 2026' },
+  { src: 'mk', name: 'Fernanda', last: 'Ríos Luna', nat: 'Mexicana', email: 'fer.rios@ejemplo.com', phone: '5534127788', ref: 'Registrada en ago 2026' },
+  { src: 'red', name: 'Raúl', last: 'Campos Medina', nat: 'Mexicana', email: 'raul.campos@ejemplo.com', phone: '8112345678', casa: 'Monte Cristo', ref: 'Monte Cristo · NUC 2214' },
+  { src: 'red', name: 'Jorge', last: 'Salinas Paz', nat: 'Mexicana', email: 'jorge.salinas@ejemplo.com', phone: '3319876543', casa: 'Prenda Fácil', ref: 'Prenda Fácil · NUC 0873' },
 ];
 const EXT_SRC = { mk: 'Marketplace', red: 'Red ataskate' };
-const maskEmail = e => { const [u, d] = e.split('@'); return `${u.slice(0, 2)}•••@${d}`; };
-const maskPhone = p => `•• •••• ${p.slice(-4)}`;
+// datos protegidos: se conserva el formato y la longitud; solo se ven los primeros y los últimos caracteres
+const maskEmail = e => { const [u, d] = e.split('@'), i = d.indexOf('.'); return `${u.slice(0, 2)}${'•'.repeat(Math.max(u.length - 2, 1))}@${d[0]}${'•'.repeat(Math.max(i - 1, 1))}${d.slice(i)}`; };
+const maskPhone = p => `${p.slice(0, 2)}${'•'.repeat(Math.max(p.length - 6, 1))}${p.slice(-4)}`;
 function extFind(q) {
   const nq = norm(q || '').trim(), dq = (q || '').replace(/\D/g, '');
   if (nq.length < 3) return [];
   return EXT_CLI.filter(x => norm(`${x.name} ${x.last}`).includes(nq) || norm(x.email) === nq || (dq.length >= 4 && x.phone.includes(dq)));
 }
-function extBlock(ext) {
-  if (!ext.length) return '';
-  const rows = ext.map(x => `<tr>
-      <td class="user"><div class="u"><span class="avatar">${initials(x)}</span><div class="tx"><p class="m">${esc(x.name + ' ' + x.last)}</p><p class="d">${esc(x.since)}</p></div></div></td>
-      <td><span class="chip-i ext-${x.src}">${EXT_SRC[x.src]}</span></td>
-      <td class="mail">${maskEmail(x.email)}</td>
-      <td class="num">${maskPhone(x.phone)}</td>
-      <td class="ext-act"><button type="button" class="btn btn-ter ext-reg" data-act="extver" data-v="${EXT_CLI.indexOf(x)}" aria-label="Cargar cliente ${esc(x.name + ' ' + x.last)}">Cargar cliente</button></td></tr>`).join('');
-  return `<section class="ext" aria-label="Clientes encontrados en otras fuentes">
-    <div class="ext-h"><p class="ext-t">Encontrados en otras fuentes</p><p class="ext-s">Solo mostramos datos parciales para proteger su información.</p></div>
-    <div class="dtw"><table class="dt neutral"><thead><tr><th>Cliente</th><th>Origen</th><th>Correo electrónico</th><th>Teléfono</th><th class="ib"><span class="sr">Acciones</span></th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+// los de Marketplace y Red ataskate van al final de la misma tabla de resultados, con las mismas columnas que Mis clientes:
+// su origen y su referencia en la columna Cliente, correo y teléfono protegidos y "Cargar cliente" en lugar de la flecha
+function extRows(ext, q, red) {
+  return ext.map(x => `<tr class="ext-row">
+      <td class="user"><div class="u"><span class="avatar">${initials(x)}</span><div class="tx"><p class="m">${hl(x.name + ' ' + x.last, q)}</p><p class="d ext-d"><span class="chip-i ext-${x.src}">${EXT_SRC[x.src]}</span>${esc(x.ref)}</p></div></div></td>
+      <td>${esc(x.nat)}</td>
+      <td class="mail" aria-label="Correo protegido">${maskEmail(x.email)}</td>
+      <td class="num" aria-label="Teléfono protegido">${maskPhone(x.phone)}</td>
+      <td><span class="cap">Sin score</span></td>
+      ${red ? `<td>${x.casa ? esc(x.casa) : '<span class="cap">Sin empresa</span>'}</td>` : ''}
+      <td class="ext-act"><button type="button" class="btn btn-ter ext-reg" data-act="extver" data-v="${EXT_CLI.indexOf(x)}" aria-label="Cargar cliente ${esc(x.name + ' ' + x.last)} de ${EXT_SRC[x.src]}">Cargar cliente</button></td></tr>`).join('');
 }
 function clientsScreen() {
   const c = st.cli, f = cliAllFilters();
@@ -219,12 +220,11 @@ function clientsScreen() {
       <td>${scoreTag(x.score)}</td>
       ${red ? `<td>${x.empresa === '—' ? '<span class="cap">Sin empresa</span>' : esc(x.empresa)}</td>` : ''}
       <td class="ib"><span class="tib">${ICONS.rowRight}</span></td></tr>`).join('');
-  // otras fuentes: solo cuando hay búsqueda (y no mientras carga). Estado vacío según dónde se encontró:
-  // solo afuera → aviso corto y la sección de abajo; en ningún lado (sin más filtros) → Limpiar búsqueda / Crear cliente con lo buscado
+  // otras fuentes: solo cuando hay búsqueda (y no mientras carga); van al final de los resultados (última página), en la misma tabla.
+  // Si no está en ningún lado (sin más filtros) → Limpiar búsqueda / Crear cliente con lo buscado
   const ext = c.q && !c.loading ? extFind(c.q) : [];
-  const empty = c.q && !list.length && ext.length
-    ? `<div class="cempty sm"><p class="t">No está en Mis clientes</p><p class="cap">Lo encontramos en otras fuentes. Revísalo abajo o crea un cliente nuevo.</p></div>`
-    : c.q && !chips.filter(x => !x.includes('cliclearq')).length
+  const extH = ext.length && c.page >= pages ? extRows(ext, c.q, red) : '';
+  const empty = c.q && !chips.filter(x => !x.includes('cliclearq')).length
     ? `<div class="cempty"><p class="t">No encontramos clientes para “${esc(c.q)}”</p><p class="cap">No está en Mis clientes, en el Marketplace ni en la Red ataskate.</p><div class="cempty-a"><button class="btn btn-ter ext-reg" data-act="cliclearq">Limpiar búsqueda</button><a class="btn btn-primary ic-l" style="height:36px;padding:8px 16px 8px 8px" href="cliente-nuevo.html?nuevo=${encodeURIComponent(c.q)}">${ic('plusWhite')}Crear cliente</a></div></div>`
     : c.q || chips.length
     ? `<div class="cempty"><p class="t">No encontramos clientes${c.q ? ` para “${esc(c.q)}”` : ''}</p><p class="cap">Revisa lo que escribiste o quita algunos filtros.</p><button class="btn btn-outline" style="height:36px;padding:8px 16px" data-act="cliclearall">Limpiar búsqueda y filtros</button></div>`
@@ -235,22 +235,21 @@ function clientsScreen() {
   const CARET = '<span class="car"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 15L7 10H17L12 15Z" fill="currentColor"/></svg></span>';
   const scoreOpen = st.menu === 'cliscore';
   const scoreSel = `<div style="position:relative"><button type="button" class="tfc ${c.score ? 'sel' : ''} ${scoreOpen ? 'open' : ''}" data-act="menu" data-id="cliscore" aria-haspopup="listbox" aria-expanded="${scoreOpen}">${AWARD}<span>${c.score ? esc(c.score) : 'Score'}</span>${CARET}</button>${scoreOpen ? `<div class="tfc-list" role="listbox">${SCORES.map(o => `<div role="option" aria-selected="${o === c.score}" class="${o === c.score ? 'on' : ''}" data-act="cliscore" data-v="${o === c.score ? '' : o}">${o}</div>`).join('')}</div>` : ''}</div>`;
-  const count = c.loading ? 'Buscando…' : (c.q || chips.length ? `<b>${list.length}</b> de ${all.length} ${red ? 'contactos' : 'clientes'}` : `${all.length} ${red ? 'contactos' : 'clientes'}`);
+  const count = c.loading ? 'Buscando…' : (c.q || chips.length ? `<b>${list.length}</b> de ${all.length} ${red ? 'contactos' : 'clientes'}${ext.length ? ` · <b>${ext.length}</b> en otras fuentes` : ''}` : `${all.length} ${red ? 'contactos' : 'clientes'}`);
   return `<div class="cli">
     <nav aria-label="Breadcrumb" class="ds-breadcrumb"><ol class="pos-crumbs"><li><a href="../home/" class="ds-breadcrumb__link">Inicio</a><span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt="" /></span></li><li><span class="ds-breadcrumb__current" aria-current="page">Clientes</span></li></ol></nav>
     <div class="cli-head"><div><h1 class="cli-title">Clientes</h1><p class="cli-sub">Busca clientes registrados o da de alta uno nuevo.</p></div>
       <div class="acts"><a class="btn btn-primary btn-l ic-l" href="cliente-nuevo.html">${ic('plusWhite')}Crear cliente</a></div></div>
     <div class="ctable">
       ${red ? `<div class="redinfo"><span class="cap" style="font-size:14px">Contactos registrados por otras casas de empeño de la red ataskate. Sus datos se muestran protegidos.</span><span class="chip-i">${ICONS.info.replace(/width="\d+" height="\d+"/, 'width="12" height="12"')}Suscripción activa</span></div>` : ''}
-      <div class="ctools">
+      <div class="ctools cli-tools">
         <div class="dsearch"><input placeholder="Buscar por nombre, NUC, correo o teléfono" aria-label="Buscar clientes" data-in="cliq" data-fk="cliq" value="${esc(c.q)}">${c.q ? `<button class="sclear" data-act="cliclearq" aria-label="Limpiar búsqueda">${ICONS.close.replace('width="24" height="24"', 'width="20" height="20"')}</button>` : `<span class="s" aria-hidden="true">${ic('search')}</span>`}</div>
-        <div class="tfc-g"><button type="button" class="tfc hoy ${c.hoy ? 'sel' : ''}" data-act="clihoy" aria-pressed="${!!c.hoy}" title="Muestra solo a los clientes que tienen contratos que vencen hoy" aria-label="Clientes con contratos que vencen hoy: ${venceHoyN}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 22q-.825 0-1.412-.587Q3 20.825 3 20V6q0-.825.588-1.412Q4.175 4 5 4h1V2h2v2h8V2h2v2h1q.825 0 1.413.588Q21 5.175 21 6v14q0 .825-.587 1.413Q19.825 22 19 22Zm0-2h14V10H5Zm0-12h14V6H5Zm0 0V6Zm7 6q-.425 0-.712-.288Q11 13.425 11 13t.288-.713Q11.575 12 12 12t.713.287Q13 12.575 13 13t-.287.712Q12.425 14 12 14Zm-4 0q-.425 0-.713-.288Q7 13.425 7 13t.287-.713Q7.575 12 8 12t.713.287Q9 12.575 9 13t-.287.712Q8.425 14 8 14Zm8 0q-.425 0-.712-.288Q15 13.425 15 13t.288-.713Q15.575 12 16 12t.712.287Q17 12.575 17 13t-.288.712Q16.425 14 16 14Zm-4 4q-.425 0-.712-.288Q11 17.425 11 17t.288-.712Q11.575 16 12 16t.713.288Q13 16.575 13 17t-.287.712Q12.425 18 12 18Zm-4 0q-.425 0-.713-.288Q7 17.425 7 17t.287-.712Q7.575 16 8 16t.713.288Q9 16.575 9 17t-.287.712Q8.425 18 8 18Zm8 0q-.425 0-.712-.288Q15 17.425 15 17t.288-.712Q15.575 16 16 16t.712.288Q17 16.575 17 17t-.288.712Q16.425 18 16 18Z" fill="currentColor"/></svg><span>Contratos que vencen hoy</span><span class="hoy-n">${venceHoyN}</span></button>${scoreSel}
+        <div class="tfc-g"><button type="button" class="tfc hoy ${c.hoy ? 'sel' : ''}" data-act="clihoy" aria-pressed="${!!c.hoy}" title="Muestra solo a los clientes que tienen contratos que vencen hoy" aria-label="Clientes con contratos que vencen hoy: ${venceHoyN}">${c.hoy ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9.55 18L3.85 12.3L5.275 10.875L9.55 15.15L18.725 5.975L20.15 7.4L9.55 18Z" fill="currentColor"/></svg>` : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 22q-.825 0-1.412-.587Q3 20.825 3 20V6q0-.825.588-1.412Q4.175 4 5 4h1V2h2v2h8V2h2v2h1q.825 0 1.413.588Q21 5.175 21 6v14q0 .825-.587 1.413Q19.825 22 19 22Zm0-2h14V10H5Zm0-12h14V6H5Zm0 0V6Zm7 6q-.425 0-.712-.288Q11 13.425 11 13t.288-.713Q11.575 12 12 12t.713.287Q13 12.575 13 13t-.287.712Q12.425 14 12 14Zm-4 0q-.425 0-.713-.288Q7 13.425 7 13t.287-.713Q7.575 12 8 12t.713.287Q9 12.575 9 13t-.287.712Q8.425 14 8 14Zm8 0q-.425 0-.712-.288Q15 13.425 15 13t.288-.713Q15.575 12 16 12t.712.287Q17 12.575 17 13t-.288.712Q16.425 14 16 14Zm-4 4q-.425 0-.712-.288Q11 17.425 11 17t.288-.712Q11.575 16 12 16t.713.288Q13 16.575 13 17t-.287.712Q12.425 18 12 18Zm-4 0q-.425 0-.713-.288Q7 17.425 7 17t.287-.712Q7.575 16 8 16t.713.288Q9 16.575 9 17t-.287.712Q8.425 18 8 18Zm8 0q-.425 0-.712-.288Q15 17.425 15 17t.288-.712Q15.575 16 16 16t.712.288Q17 16.575 17 17t-.288.712Q16.425 18 16 18Z" fill="currentColor"/></svg>`}<span>Contratos que vencen hoy</span><span class="hoy-n">${venceHoyN}</span></button>${scoreSel}
         <button type="button" class="tfc ${nf ? 'sel' : ''} ${c.panel ? 'open' : ''}" data-act="clipanel" aria-haspopup="dialog" aria-expanded="${!!c.panel}">${FIL}<span>${nf ? `Filtro (${nf})` : 'Filtro'}</span>${CARET}</button></div>
       </div>
       ${chips.length ? `<div class="cmeta"><div class="fl"><span>Filtrado por:</span>${chips.join('')}<button class="linkbtn" data-act="cliclearall">Limpiar todo</button></div><span class="cap" aria-live="polite">${count}</span></div>` : ''}
-      <div class="dtw"><table class="dt neutral">${head}<tbody>${c.loading ? skel : (slice.length ? rowsH : `<tr><td class="empty" colspan="${ncol}">${empty}</td></tr>`)}</tbody></table></div>
+      <div class="dtw"><table class="dt neutral">${head}<tbody>${c.loading ? skel : (slice.length || extH ? rowsH + extH : `<tr><td class="empty" colspan="${ncol}">${empty}</td></tr>`)}</tbody></table></div>
       ${!list.length && ext.length ? '' : pager}
-      ${extBlock(ext)}
     </div>
     ${c.panel ? cliPanel() : ''}
   </div>
@@ -590,7 +589,7 @@ try {
   if (nc && nc.name) {
     localStorage.removeItem('ataskate.newClient');
     const nuc = Math.max(...CLIENTES.map(c => c.nuc)) + 1;
-    const c = { id: 'c' + nuc, name: nc.name, last: nc.last || '', nuc, nat: nc.nat || 'Mexicana', email: nc.email || '—', phone: nc.phone || '—', score: 'Nuevo', alta: new Date(TODAY) };
+    const c = { id: 'c' + nuc, name: nc.name, last: nc.last || '', nuc, nat: nc.nat || '', email: nc.email || '—', phone: nc.phone || '—', score: 'Nuevo', alta: new Date(TODAY) };
     CLIENTES.unshift(c); st.cli.fresh = c.id; st.screen = 'clients';
     setTimeout(() => toastMsg('Cliente creado', 'ok', `${c.name} ${c.last} ya está en tu lista con NUC ${nuc}.`), 50);
   }
