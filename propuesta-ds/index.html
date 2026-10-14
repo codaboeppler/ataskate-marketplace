@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>DS vs prototipo Ataskate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: una fila por diferencia; a la izquierda el DS de hoy, a la derecha el prototipo, con las medidas abajo.
+   Las muestras usan los colores reales del producto (siempre claros, como en la app); el resto de la página sigue el tema. */
+:root {
+  --bg: #f6f6fb;
+  --surface: #ffffff;
+  --ink: #1b1e3a;
+  --muted: #5b5f78;
+  --line: #e2e2ee;
+  --accent: #5a5aff;
+  --ds-tag: #eceef3;
+  --tu-tag: #e5e5ff;
+  --tu-tag-ink: #0d166b;
+  --sans: 'Nunito', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #121423; --surface: #1b1e33; --ink: #ececf6; --muted: #a8abc4; --line: #2c3050; --accent: #9b9bff; --ds-tag: #2a2d40; --tu-tag: #2a2b66; --tu-tag-ink: #dcdcff; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #121423; --surface: #1b1e33; --ink: #ececf6; --muted: #a8abc4; --line: #2c3050; --accent: #9b9bff; --ds-tag: #2a2d40; --tu-tag: #2a2b66; --tu-tag-ink: #dcdcff; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 64px; }
+header.top h1 { margin: 0; font-size: clamp(28px, 4vw, 40px); line-height: 1.1; font-weight: 800; letter-spacing: -0.01em; text-wrap: balance; }
+header.top p { margin: 10px 0 0; max-width: 66ch; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 18px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font: 600 12px/1.6 var(--sans); }
+.pill--ds { background: var(--ds-tag); color: var(--muted); }
+.pill--tu { background: var(--tu-tag); color: var(--tu-tag-ink); }
+
+.list { display: grid; gap: 28px; margin-top: 36px; }
+.row { display: grid; gap: 14px; padding: 22px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); }
+.row h2 { margin: 0; font-size: 19px; line-height: 1.25; font-weight: 800; text-wrap: balance; }
+.row h2 small { display: block; margin-top: 4px; font-size: 14px; font-weight: 500; color: var(--muted); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.side { display: grid; gap: 10px; min-width: 0; align-content: start; }
+.side > .pill { justify-self: start; }
+.stage { border-radius: 12px; padding: 22px; min-height: 150px; display: grid; align-content: center; background: #fbfbfe; overflow: hidden; color: #2a2c2f; font-family: 'Nunito', sans-serif; }
+.spec { margin: 0; font: 12px/1.6 var(--mono); color: var(--muted); }
+.spec b { color: var(--ink); font-weight: 500; }
+.why { margin: 0; font-size: 14px; color: var(--muted); max-width: 80ch; }
+.why b { color: var(--ink); }
+@media (max-width: 720px) { .pair { grid-template-columns: 1fr; } .row { padding: 16px; } .stage { padding: 16px; } }
+
+/* ---------- muestras (colores reales del producto) ---------- */
+.crumb { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #6d7075; }
+.crumb b { color: #1d1e20; font-weight: 600; }
+.t-ds { margin: 8px 0 0; font-size: 28px; line-height: 33.6px; font-weight: 700; color: #1d1e20; }
+.t-tu { margin: 8px 0 0; font-size: 28px; line-height: 34px; font-weight: 500; color: #2a2c2f; }
+
+.screen { position: relative; height: 150px; border-radius: 8px; background: #eef0f6; overflow: hidden; }
+.screen .hdr { height: 18px; background: #e5e5ff; }
+.screen .page { position: absolute; top: 18px; bottom: 0; }
+.screen .page--ds { left: 0; right: 0; padding: 8px 6px; }
+.screen .page--tu { left: 50%; transform: translateX(-50%); width: 82%; padding: 6px 16px; }
+.blk { border-radius: 3px; background: #c9cbe0; }
+.blk--crumb { height: 4px; width: 22%; }
+.blk--title { height: 8px; width: 38%; background: #8f93b8; }
+.blk--card { height: 74px; background: #fff; border-radius: 5px; }
+.gap6 { height: 6px; } .gap2 { height: 2px; } .gap4 { height: 4px; }
+.screen .page--ds .blk--card { border: 1px solid #d4d6d8; }
+.screen .page--tu .blk--card { box-shadow: 0 1px 5px rgba(0,0,0,.08); }
+.edge { position: absolute; top: 18px; bottom: 0; width: 9%; background: repeating-linear-gradient(135deg, rgba(90,90,255,.14) 0 4px, transparent 4px 8px); }
+.edge--l { left: 0; } .edge--r { right: 0; }
+
+.card-ds, .card-tu { padding: 16px; background: #fff; }
+.card-ds { border: 1px solid #e8e9ea; border-radius: 8px; }
+.card-tu { border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,.06); }
+.card-t { margin: 0 0 6px; font-size: 16px; font-weight: 600; color: #1d1e20; }
+.card-row { display: flex; justify-content: space-between; font-size: 14px; padding: 6px 0; }
+
+.tbl { width: 100%; border-collapse: collapse; font-size: 14px; background: #fff; border-radius: 8px; overflow: hidden; }
+.tbl th { text-align: left; font-weight: 600; padding: 10px 12px; background: #f3f3f8; color: #2a2c2f; }
+.tbl td { padding: 10px 12px; }
+.tbl--ds tr + tr td { border-top: 1px solid #fbfbfe; }
+.tbl--tu tr + tr td { border-top: 1px solid #d4d6d8; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 20px; border: 0; border-radius: 100px; background: #5a5aff; color: #fff; font: 700 14px/20px 'Nunito', sans-serif; }
+.btn--focus-tu { outline: 2px solid #5a5aff; outline-offset: 2px; }
+.btns { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.kbd { font: 12px var(--mono); color: #6d7075; }
+
+.shadows { display: flex; flex-wrap: wrap; gap: 12px; }
+.sw { width: 56px; height: 40px; border-radius: 10px; background: #fff; }
+.sw-cap { font: 10px/1.3 var(--mono); color: #6d7075; margin-top: 6px; width: 56px; }
+
+.dd { width: 100%; max-width: 260px; background: #fff; overflow: hidden; }
+.dd--ds { border: 1px solid #d4d6d8; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,.08); }
+.dd--tu { border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,.12); padding: 6px 0; }
+.dd div { font-size: 14px; padding: 9px 16px; }
+.dd div.on { background: #f0f0ff; color: #0d166b; font-weight: 600; }
+
+.hbar { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 10px; background: #e5e5ff; }
+.hb { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: #2a2c2f; }
+.hb--on { background: #0d166b; color: #fff; }
+.hb svg { width: 20px; height: 20px; }
+
+.photo { height: 130px; border-radius: 12px; display: grid; place-items: center; }
+.photo--ds { background: #f7f7f7; } .photo--tu { background: #f1f2f8; }
+.phone { width: 44px; height: 88px; border-radius: 10px; background: linear-gradient(160deg, #3b3d44, #1f2025); box-shadow: 14px 0 0 -4px #d9dbe6; }
+
+.chip { display: inline-flex; align-items: center; height: 24px; padding: 4px 8px; border-radius: 8px; background: #ebf9ff; color: #2a2c2f; font-size: 14px; }
+.chip svg { width: 16px; height: 16px; }
+.chip--ds { gap: 8px; } .chip--tu { gap: 4px; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.more { margin-top: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.more section { padding: 20px 22px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); min-width: 0; }
+.more h3 { margin: 0 0 10px; font-size: 16px; font-weight: 800; }
+.more ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; color: var(--muted); }
+.more li b { color: var(--ink); }
+@media (max-width: 720px) { .more { grid-template-columns: 1fr; } }
+footer { margin-top: 32px; font-size: 13px; color: var(--muted); }
+code { font: 12.5px var(--mono); }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Lo que cambia entre el DS y tu prototipo</h1>
+    <p>Las 10 diferencias que más pesan en cómo se ve el POS. Cada fila pone lado a lado lo que hoy tiene el design system en código (14 oct 2026) y lo que usa tu prototipo, con las medidas tomadas en Chrome a 1440 px. En botones, campos, chips de estado, toasts, modales, tabs y paginación los dos ya coinciden, por eso no aparecen.</p>
+    <div class="legend"><span><i class="pill pill--ds">DS hoy</i> lo que está en código</span><span><i class="pill pill--tu">Tu diseño</i> la propuesta</span></div>
+  </header>
+
+  <div class="list">
+
+    <article class="row">
+      <h2>1. Título de página<small>El cambio que más se nota: el título deja de gritar.</small></h2>
+      <div class="pair">
+        <div class="side"><i class="pill pill--ds">DS hoy</i>
+          <div class="stage"><div class="crumb">Inicio › <b>Inventario</b></div><p class="t-ds">Inventario</p></div>
+          <p class="spec">tituloDePagina · <b>28/33.6 · 700</b> · #1D1E20</p></div>
+        <div class="side"><i class="pill pill--tu">Tu diseño</i>
+          <div class="stage"><div class="crumb">Inicio › <b>Inventario</b></div><p class="t-tu">Inventario</p></div>
+          <p class="spec"><b>28/34 · 500</b> · #2A2C2F</p></div>
+      </div>
+      <p class="why"><b>Para el DS:</b> <code>typography.tituloDePagina</code> a peso 500, interlínea 34 px y color #2A2C2F.</p>
+    </article>
+
+    <article class="row">
+      <h2>2. Layout de la página<small>El DS no define ancho ni ritmo vertical; tu prototipo sí.</small></h2>
+      <div class="pair">
+        <div class="side"><i class="pill pill--ds">DS hoy</i>
+          <div class="stage"><div class="screen"><div class="hdr"></div><div class="page page--ds"><div class="blk blk--crumb"></div><div class="gap6"></div><div class="blk blk--title"></div><div class="gap6"></div><div class="blk blk--card"></div></div></div></div>
+          <p class="spec">100 % del ancho · padding <b>24</b> · gap 24 sin regla</p></div>
+        <div class="side"><i class="pill pill--tu">Tu diseño</i>
+          <div class="stage"><div class="screen"><div class="hdr"></div><span class="edge edge--l"></span><span class="edge edge--r"></span><div class="page page--tu"><div class="blk blk--crumb"></div><div class="gap2"></div><div class="blk blk--title"></div><div class="gap4"></div><div class="blk blk--card"></div></div></div></div>
+          <p class="spec">máx. <b>1440</b> · padding <b>64</b> (24 a ≤900) · header→breadcrumb→título→contenido <b>16 / 8 / 16</b></p></div>
+      </div>
+      <p class="why"><b>Para el DS:</b> un <code>PageLayout</code> con <code>maxWidth: 1440px</code>, margen 64/24 y ese ritmo de 16 / 8 / 16 con fila de título de 36 px.</p>
+    </article>
+
+    <article class="row">
+      <h2>3. Tarjeta<small>Sin borde, con sombra suave y radio 16.</small></h2>
+      <div class="pair">
+        <div class="side"><i class="pill pill--ds">DS hoy</i>
+          <div class="stage"><div class="card-ds"><p class="card-t">Flujo de caja</p><div class="card-row"><span>Saldo actual</span><b>$23,218.00</b></div></div></div>
+          <p class="spec">sin componente Card · widgets con <b>borde 1 px</b></p></div>
+        <div class="side"><i class="pill pill--tu">Tu diseño</i>
+          <div class="stage"><div class="card-tu"><p class="card-t">Flujo de caja</p><div class="card-row"><span>Saldo actual</span><b>$23,218.00</b></div></div></div>
+          <p class="spec">radio <b>16</b> · sin borde · sombra <b>0 2 10 rgba(0,0,0,.06)</b></p></div>
+      </div>
+      <p class="why"><b>Para el DS:</b> renombrar <code>shadows.cardHover</code> a <code>shadows.card</code> y crear <code>Card</code> con radio 16, sin borde y padding 16 o 24.</p>
+    </article>
+
+    <article class="row">
+      <h2>4. Separador de filas en tablas<small>El del DS casi no se ve sobre blanco.</small></h2>
+      <div class="pair">
+        <div class="side"><i class="pill pill--ds">DS hoy</i>
+          <div class="stage"><table class="tbl tbl--ds"><tr><th>Categoría</th><th class="num">Interés</th></tr><tr><td>Electrónicos</td><td class="num">2.5–3.5%</td></tr><tr><td>Juguetes</td><td class="num">3.0–4.0%</td></tr><tr><td>Herramientas</td><td class="num">4.0–5.0%</td></tr></table></div>
+          <p class="spec">--table-row-border · <b>#FBFBFE</b></p></div>
+        <div class="side"><i class="pill pill--tu">Tu diseño</i>
+          <div class="stage"><table class="tbl tbl--tu"><tr><th>Categoría</th><th class="num">Interés</th></tr><tr><td>Electrónicos</td><td class="num">2.5–3.5%</td></tr><tr><td>Juguetes</td><td class="num">3.0–4.0%</td></tr><tr><td>Herramientas</td><td class="num">4.0–5.0%</td></tr></table></div>
+          <p class="spec"><b>#D4D6D8</b> (neutral300)</p></div>
+      </div>
+    </article>
+
+    <article class="row">
+      <h2>5. Foco con teclado<small>Accesibilidad: hoy el DS no muestra dónde está el foco.</small></h2>
+      <div class="pair">
+        <div class="side"><i class="pill pill--ds">DS hoy</i>
+          <div class="stage"><div class="btns"><span class="btn">Guardar</span><span class="kbd">Tab ↹ · sin indicador</span></div></div>
+          <p class="spec">outline: <b>none</b></p></div>
+        <div class="side"><i class="pill pill--tu">Tu diseño</i>
+          <div class="stage"><div class="btns"><span class="btn btn--focus-tu">Guardar</span><span class="kbd">Tab ↹ · contorno visible</span></div></div>
+          <p class="spec">outline <b>2 px #5A5AFF</b> · separación <b>2 px</b></p></div>
+      </div>
+      <p class="why"><b>Para el DS:</b> ese contorno en Button, IconButton, Tabs, Chip y los botones del header.</p>
+    </article>
+
+    <article class="row">
+      <h2>6. Sombras<small>Menos sombras, más consistencia.</small></h2>
+      <div class="pair">
+        <div class="side"><i class="pill pill--ds">DS hoy</i>
+          <div class="stage"><div class="shadows">
+            <div><div class="sw" style="box-shadow:0 2px 10px rgba(0,0,0,.06)"></div><div class="sw-cap">cardHover</div></div>
+            <div><div class="sw" style="box-shadow:0 3px 9.4px rgba(0,0,0,.19)"></div><div class="sw-cap">drag</div></div>
+            <div><div class="sw" style="box-shadow:0 4px 16px rgba(0,0,0,.12)"></div><div class="sw-cap">dropdown</div></div>
+            <div><div class="sw" style="box-shadow:0 8px 32px rgba(0,0,0,.16)"></div><div class="sw-cap">popup</div></div>
+            <div><div class="sw" style="box-shadow:0 11px 26.6px rgba(0,0,0,.06)"></div><div class="sw-cap">+4 sueltas</div></div>
+          </div></div>
+          <p class="spec"><b>4 tokens + 4</b> sombras sueltas en componentes</p></div>
+        <div class="side"><i class="pill pill--tu">Tu diseño</i>
+          <div class="stage"><div class="shadows">
+            <div><div class="sw" style="box-shadow:0 2px 10px rgba(0,0,0,.06)"></div><div class="sw-cap">card</div></div>
+            <div><div class="sw" style="box-shadow:0 4px 16px rgba(0,0,0,.12)"></div><div class="sw-cap">dropdown</div></div>
+            <div><div class="sw" style="box-shadow:0 10px 60px rgba(0,0,0,.25)"></div><div class="sw-cap">popup</div></div>
+          </div></div>
+          <p class="spec"><b>card · dropdown · popup</b></p></div>
+      </div>
+    </article>
+
+    <article class="row">
+      <h2>7. Desplegable<small>Un solo estilo en lugar de dos.</small></h2>
+      <div class="pair">
+        <div class="side"><i class="pill pill--ds">DS hoy</i>
+          <div class="stage"><div class="dd dd--ds"><div class="on">Más recientes</div><div>Precio: menor a mayor</div><div>Precio: mayor a menor</div></div></div>
+          <p class="spec">SearchFieldV2 radio <b>8 con borde</b> · AutoSelect radio 16 con otra sombra</p></div>
+        <div class="side"><i class="pill pill--tu">Tu diseño</i>
+          <div class="stage"><div class="dd dd--tu"><div class="on">Más recientes</div><div>Precio: menor a mayor</div><div>Precio: mayor a menor</div></div></div>
+          <p class="spec">radio <b>16</b> · sin borde · sombra dropdown · opciones de <b>40 px</b></p></div>
+      </div>
+    </article>
+
+    <article class="row">
+      <h2>8. Botón del header con su panel abierto<small>Dice qué panel tienes abierto.</small></h2>
+      <div class="pair">
+        <div class="side"><i class="pill pill--ds">DS hoy</i>
+          <div class="stage"><div class="hbar"><span class="hb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9l8-6 8 6v12h-6v-7h-4v7z"/></svg></span><span class="hb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.4 13a7.5 7.5 0 0 0 0-2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-1.7-1L15 3h-4l-.4 2.6a7 7 0 0 0-1.7 1l-2.4-1-2 3.4L6.6 11a7.5 7.5 0 0 0 0 2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 1.7 1L11 21h4l.4-2.6a7 7 0 0 0 1.7-1l2.4 1 2-3.4zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg></span><span class="kbd">panel abierto · sin cambio</span></div></div>
+          <p class="spec">sin estado activo</p></div>
+        <div class="side"><i class="pill pill--tu">Tu diseño</i>
+          <div class="stage"><div class="hbar"><span class="hb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9l8-6 8 6v12h-6v-7h-4v7z"/></svg></span><span class="hb hb--on"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.4 13a7.5 7.5 0 0 0 0-2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-1.7-1L15 3h-4l-.4 2.6a7 7 0 0 0-1.7 1l-2.4-1-2 3.4L6.6 11a7.5 7.5 0 0 0 0 2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 1.7 1L11 21h4l.4-2.6a7 7 0 0 0 1.7-1l2.4 1 2-3.4zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg></span><span class="kbd">panel abierto · navy</span></div></div>
+          <p class="spec">aria-expanded=true → fondo <b>primary400</b> · ícono blanco</p></div>
+      </div>
+    </article>
+
+    <article class="row">
+      <h2>9. Fondo de las fotos de producto<small>Un gris con un toque lila, más fino que el gris plano.</small></h2>
+      <div class="pair">
+        <div class="side"><i class="pill pill--ds">DS hoy</i>
+          <div class="stage" style="background:#fff"><div class="photo photo--ds"><span class="phone"></span></div></div>
+          <p class="spec">surfaceCardGray · <b>#F7F7F7</b></p></div>
+        <div class="side"><i class="pill pill--tu">Tu diseño</i>
+          <div class="stage" style="background:#fff"><div class="photo photo--tu"><span class="phone"></span></div></div>
+          <p class="spec">token nuevo surfaceMedia · <b>#F1F2F8</b></p></div>
+      </div>
+    </article>
+
+    <article class="row">
+      <h2>10. Chip informativo con ícono<small>El ícono va pegado a su texto.</small></h2>
+      <div class="pair">
+        <div class="side"><i class="pill pill--ds">DS hoy</i>
+          <div class="stage"><div class="chips"><span class="chip chip--ds"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm-1-5h2v-6h-2zm0-8h2V7h-2z"/></svg>En línea</span><span class="chip chip--ds"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 11v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8l2-6h14zM5 19h14v-7H5z"/></svg>En sucursal</span></div></div>
+          <p class="spec">gap <b>8</b> · tamaños de 20 y 35 px</p></div>
+        <div class="side"><i class="pill pill--tu">Tu diseño</i>
+          <div class="stage"><div class="chips"><span class="chip chip--tu"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm-1-5h2v-6h-2zm0-8h2V7h-2z"/></svg>En línea</span><span class="chip chip--tu"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 11v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8l2-6h14zM5 19h14v-7H5z"/></svg>En sucursal</span></div></div>
+          <p class="spec">gap <b>4</b> · tamaño nuevo de <b>24 px</b> con texto 14</p></div>
+      </div>
+    </article>
+  </div>
+
+  <div class="more">
+    <section>
+      <h3>Correcciones al DS que van en la misma propuesta</h3>
+      <ul>
+        <li><b>textoBold</b> está en 600, igual que semibold: debería ser 700.</li>
+        <li><b>tablaHeader</b> dice 700, pero la tabla usa 600: dejarlo en 600.</li>
+        <li>Falta un componente <b>EmptyState</b> (ilustración de 150, gap 12, padding 32/16).</li>
+        <li>No hay variante del <b>menú lateral del Operativo</b> (200 px) ni del header Administrativo de 60 px.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Dónde tu prototipo debe alinearse al DS</h3>
+      <ul>
+        <li><b>Títulos de sección:</b> hay 5 combinaciones; usar 20/24 · 600 en tarjetas y 16 · 600 en widgets.</li>
+        <li><b>Texto de 14 px:</b> muchos tienen interlínea 21; el DS usa 16.8 y se ve mejor.</li>
+        <li><b>Valores sueltos:</b> radios 6, 10, 12, 30, 32, 80 y espacios 6, 10, 18 fuera de la escala.</li>
+        <li><b>Componentes rehechos a mano:</b> botones en Inventario vacío y Códigos; tarjetas del listado de Inventario distintas de CardInventario.</li>
+        <li><b>Tarjetas de las manos</b> en Cliente nuevo llevan borde, contra tu propia regla.</li>
+      </ul>
+    </section>
+  </div>
+
+  <footer>Medido el 14 de octubre de 2026 en el prototipo del POS (10 pantallas a 1440 px) contra el design system en código. Los títulos de página se quedan en peso 500 por decisión de producto.</footer>
+</div>
+
+</body>
+</html>
