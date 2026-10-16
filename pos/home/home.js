@@ -6,7 +6,7 @@
   };
   document.querySelectorAll('.hw__tabs').forEach((tabs) => tabs.addEventListener('click', (e) => {
     const b = e.target.closest('button'); if (!b) return;
-    tabs.querySelectorAll('button').forEach((x) => x.setAttribute('aria-selected', x === b));
+    tabs.querySelectorAll('button').forEach((x) => { x.setAttribute('aria-selected', x === b); x.classList.toggle('ds-chip--on', x === b); });
     const metal = b.dataset.metal; if (!metal) return;
     const w = tabs.closest('.hw');
     w.querySelector('[data-precio]').innerHTML = PRECIOS[metal].mercado;

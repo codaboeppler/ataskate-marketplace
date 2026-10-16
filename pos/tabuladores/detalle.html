@@ -14,8 +14,9 @@
 <link rel="stylesheet" href="../ds/elevation.css" />
 <link rel="stylesheet" href="../ds/base.css" />
 <link rel="stylesheet" href="../ds/components.css" />
-<link rel="stylesheet" href="../pos.css?v=ux68" />
-<link rel="stylesheet" href="tabuladores.css?v=3" />
+<link rel="stylesheet" href="../pos.css?v=ux68-ds1" />
+<link rel="stylesheet" href="../carrito.css?v=2" />
+<link rel="stylesheet" href="tabuladores.css?v=4" />
 </head>
 <!-- Detalles de tabulador (HU-CP-377-F). Reconstrucción estática del código de Product Design (rama del equipo de AtaskateFrontend):
      src/components/MetalTabulator/TabulatorDetails/NewTabulatorDetails/** (página Operational/MetalTabulator/TabulatorDetails). Ver README.md.
@@ -98,7 +99,7 @@
 
     <div class="tb-head">
       <h1 class="tb-title" id="tbTitle"></h1>
-      <button type="button" class="cd-btn cd-btn--secondary" id="tbArchivar"><span class="cd-btn__txt"></span></button>
+      <button type="button" class="ds-btn ds-btn--md ds-btn--secondary" id="tbArchivar"><span class="cd-btn__txt"></span></button>
     </div>
 
     <div class="tb-grid">
@@ -128,7 +129,7 @@
               <span class="tb-t tb-t--subtitulos" id="tabulator-automation-title">Automatización</span>
               <button type="button" class="tb-help" data-tip="Configura hasta 4 reglas que ajusten tus precios base automáticamente según el comportamiento del mercado." aria-label="Configura hasta 4 reglas que ajusten tus precios base automáticamente según el comportamiento del mercado."><span data-ico="Info"></span></button>
             </span>
-            <span class="cd-chip cd-chip--informativa-blue" id="tbReglasN"></span>
+            <span class="ds-chip ds-chip--info tb-chip" id="tbReglasN"></span>
           </div>
           <ul class="tb-list" id="tbReglas"></ul>
         </section>
@@ -136,7 +137,7 @@
         <section class="tb-card" aria-labelledby="tabulator-locations-title">
           <div class="tb-card__head">
             <span class="tb-t tb-t--subtitulos" id="tabulator-locations-title">Ubicaciones</span>
-            <span class="cd-chip cd-chip--informativa-blue" id="tbSucN"></span>
+            <span class="ds-chip ds-chip--info tb-chip" id="tbSucN"></span>
           </div>
           <ul class="tb-list" id="tbSucursales"></ul>
         </section>
@@ -149,10 +150,11 @@
 <div id="tbModales"></div>
 
 <script src="datos.js?v=1"></script>
-<script src="tabuladores.js?v=3"></script>
+<script src="tabuladores.js?v=4"></script>
+<script src="../carrito.js?v=2"></script>
 <script src="../navbar.js?v=3"></script>
-<script src="../menu-op.js?v=13"></script>
-<script src="../demo.js?v=15"></script>
+<script src="../menu-op.js?v=14"></script>
+<script src="../demo.js?v=18"></script>
 <script src="../comentarios.js?v=6"></script>
 </body>
 </html>

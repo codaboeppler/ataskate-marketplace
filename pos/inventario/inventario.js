@@ -98,7 +98,7 @@
       <div class="inv-fgroup__body" id="invG-${key}" ${abierto ? '' : 'hidden'}>${cuerpo}</div>
     </div>`;
   }
-  const opcion = (name, val, label, n, on) => `<label class="inv-opt${n ? '' : ' is-vacio'}"><input type="checkbox" name="${name}" value="${esc(val)}" ${on ? 'checked' : ''} /><span class="inv-opt__box"></span><span>${esc(label)} <span class="inv-opt__n">(${n})</span></span></label>`;
+  const opcion = (name, val, label, n, on) => `<label class="ds-check inv-opt${n ? '' : ' is-vacio'}"><input type="checkbox" name="${name}" value="${esc(val)}" ${on ? 'checked' : ''} /><span class="ds-check__wrap"><span class="ds-check__box"></span></span><span>${esc(label)} <span class="inv-opt__n">(${n})</span></span></label>`;
   function pintarFiltros() {
     const base = items();
     const cats = CATS.filter((c) => slug(c).includes(slug(st.catQ)));
@@ -108,17 +108,17 @@
           <button type="button" data-tipo="prendario" aria-pressed="${st.tipo === 'prendario'}">Prendario</button></div>`) +
       grupo('cat', 'Categoria', `<div class="inv-fsearch"><input type="search" id="invCatQ" placeholder="Buscar aquí" aria-label="Buscar categoría" value="${esc(st.catQ)}" /><span class="inv-ico inv-ico--24" data-ico="search"></span></div>
           ${cats.map((c) => opcion('cat', c, c, base.filter((it) => it.cat === c).length, st.cats.has(c))).join('') || '<p class="inv-opt is-vacio">Sin coincidencias</p>'}
-          <button class="inv-link inv-fmore" type="button" data-pronto="categorías">Mostrar 10<span class="inv-ico inv-ico--20" data-ico="down"></span></button>`) +
+          <button class="ds-btn ds-btn--link inv-link inv-fmore" type="button" data-pronto="categorías">Mostrar 10<span class="inv-ico inv-ico--20" data-ico="down"></span></button>`) +
       grupo('precio', st.tipo === 'comercial' ? 'Precios de venta' : 'Monto del préstamo', RANGOS.map((r, i) => opcion('rango', i, r[0], base.filter((it) => it.precio >= r[1] && it.precio <= r[2]).length, st.rangos.has(i))).join('') +
-          '<button class="inv-link inv-fmore" type="button" data-pronto="rangos">Mostrar más<span class="inv-ico inv-ico--20" data-ico="down"></span></button>') +
+          '<button class="ds-btn ds-btn--link inv-link inv-fmore" type="button" data-pronto="rangos">Mostrar más<span class="inv-ico inv-ico--20" data-ico="down"></span></button>') +
       grupo('cond', 'Estado de conservación', CONDS.map((c) => opcion('cond', c, c, base.filter((it) => it.cond === c).length, st.conds.has(c))).join('')) +
-      `<div class="inv-fgroup"><button class="inv-link" type="button" data-pronto="todos los filtros">Ver todos los filtros<span class="inv-ico inv-ico--20" data-ico="down"></span></button></div>`;
+      `<div class="inv-fgroup"><button class="ds-btn ds-btn--link inv-link" type="button" data-pronto="todos los filtros">Ver todos los filtros<span class="inv-ico inv-ico--20" data-ico="down"></span></button></div>`;
     pintarIconos($('invFiltersInner'));
   }
 
   // ---------- tarjetas ----------
   // chip de estado del DS (CardInventario · "Colores del chip de estado")
-  const COLOR_ESTADO = { Activo: 'green', Publicado: 'green', Pausado: 'yellow', 'Reactivación': 'yellow', Vendido: 'white', Vigente: 'blue', Vencido: 'red' };
+  const COLOR_ESTADO = { Activo: 'verde', Publicado: 'verde', Pausado: 'amarillo', 'Reactivación': 'amarillo', Vendido: 'blanco', Vigente: 'azul', Vencido: 'rojo' };
   const vence = (d) => (d <= 0 ? 'Vence hoy' : `Vence: ${d} día${d === 1 ? '' : 's'}`);
   function tarjeta(it) {
     const com = st.tipo === 'comercial';
@@ -126,10 +126,10 @@
     const sel = st.sel.has(it.id);
     const tags = [];
     if (st.multi) tags.push(`<span class="inv-card__check" aria-hidden="true"><span></span></span>`);
-    else if (com && it.desc) tags.push(`<span class="inv-tag inv-tag--tl inv-tag--pink">-${it.desc}%</span>`);
-    if (!com && it.vence !== undefined) tags.push(`<span class="inv-tag inv-tag--tr inv-tag--white">${vence(it.vence)}</span>`);
-    tags.push(`<span class="inv-tag inv-tag--bl inv-tag--${COLOR_ESTADO[it.estado] || 'gray'}">${esc(it.estado)}</span>`);
-    if (com && it.similares && !st.multi) tags.push(`<span class="inv-tag inv-tag--br inv-tag--white" title="${it.similares} artículos similares">+${it.similares}</span>`);
+    else if (com && it.desc) tags.push(`<span class="ds-tag ds-tag--rosa inv-tag inv-tag--tl">-${it.desc}%</span>`);
+    if (!com && it.vence !== undefined) tags.push(`<span class="ds-tag ds-tag--blanco inv-tag inv-tag--tr">${vence(it.vence)}</span>`);
+    tags.push(`<span class="ds-tag ds-tag--${COLOR_ESTADO[it.estado] || 'gris'} inv-tag inv-tag--bl">${esc(it.estado)}</span>`);
+    if (com && it.similares && !st.multi) tags.push(`<span class="ds-tag ds-tag--blanco inv-tag inv-tag--br" title="${it.similares} artículos similares">+${it.similares}</span>`);
     const viejo = anterior(it);
     const media = st.multi
       ? `<button type="button" class="inv-card__media" data-sel="${it.id}" aria-pressed="${sel}" aria-label="Seleccionar ${esc(it.nombre)}">`
@@ -138,10 +138,10 @@
       ${media}<img src="${IMG}${it.img}" alt="" loading="lazy" />${tags.join('')}${st.multi ? '</button>' : '</a>'}
       <div class="inv-card__body">
         <a class="inv-card__title" href="${href}" title="${esc(it.nombre)}">${esc(it.nombre)}</a>
-        <span class="inv-card__meta"><span class="inv-tag inv-tag--${COLOR_ESTADO[it.estado] || 'gray'}">${esc(it.estado)}</span>${!com && it.vence !== undefined ? `<span class="inv-tag inv-tag--white">${vence(it.vence)}</span>` : ''}</span>
+        <span class="inv-card__meta"><span class="ds-tag ds-tag--${COLOR_ESTADO[it.estado] || 'gris'} inv-tag">${esc(it.estado)}</span>${!com && it.vence !== undefined ? `<span class="ds-tag ds-tag--blanco inv-tag">${vence(it.vence)}</span>` : ''}</span>
         <div class="inv-card__row">
           <p class="inv-price"><b>${mx(it.precio)}</b>${viejo && !st.multi ? `<s>${mx(viejo)}</s>` : (viejo ? `<s>${mx(viejo)}</s>` : '')}</p>
-          <button class="inv-more" type="button" data-menu="${it.id}" aria-haspopup="menu" aria-expanded="false" aria-label="Acciones de ${esc(it.nombre)}"><img src="../assets/ds/MoreVert.svg" alt="" /></button>
+          <button class="ds-btn ds-btn--tertiary ds-btn--icon-md inv-more" type="button" data-menu="${it.id}" aria-haspopup="menu" aria-expanded="false" aria-label="Acciones de ${esc(it.nombre)}"><img src="../assets/ds/MoreVert.svg" alt="" /></button>
         </div>
       </div>
     </article>`;
@@ -166,7 +166,7 @@
       ...[...st.rangos].map((i) => ['rango', i, RANGOS[i][0]]),
       ...[...st.conds].map((c) => ['cond', c, c]),
     ];
-    $('invChips').innerHTML = chips.map(([k, v, l]) => `<button class="inv-fchip" type="button" data-quitar="${k}" data-val="${esc(v)}" aria-label="Quitar filtro ${esc(l)}">${esc(l)}<span class="inv-ico inv-ico--20" data-ico="close"></span></button>`).join('');
+    $('invChips').innerHTML = chips.map(([k, v, l]) => `<button class="ds-chip ds-chip--input inv-fchip" type="button" data-quitar="${k}" data-val="${esc(v)}" aria-label="Quitar filtro ${esc(l)}">${esc(l)}<span class="inv-ico inv-ico--20" data-ico="close"></span></button>`).join('');
     pintarIconos($('invChips'));
     const total = items().length;
     const que = st.tipo === 'comercial' ? 'a la venta' : 'en empeño';
@@ -200,14 +200,11 @@
     t.addEventListener('mouseleave', () => { t.classList.remove('is-paused'); reloj = setTimeout(() => t.remove(), 2500); });
     t.querySelector('.ds-toast__close').addEventListener('click', () => t.remove());
   }
-  let carrito = 0;
-  const alCarrito = (titulo, texto) => {
-    carrito += 1;
-    const n = $('posCartN');
-    if (n) n.textContent = carrito;
-    const b = $('posCart');
-    if (b) b.setAttribute('aria-label', `Carrito, ${carrito} artículo${carrito === 1 ? '' : 's'}`);
-    toast(titulo, texto);
+  // el carrito compartido (../carrito.js) guarda la operación y pinta la cantidad del header
+  const alCarrito = (titulo, texto, item, cliente) => {
+    if (!window.atsCarrito) { toast(titulo, texto); return; }
+    const id = cliente ? atsCarrito.agregarDe(cliente, item) : atsCarrito.agregar(item);
+    if (id) toast(titulo, texto);
   };
 
   // ---------- menús: "Artículo" del buscador y ⋮ de cada tarjeta ----------
@@ -245,10 +242,16 @@
     const it = items().find((x) => x.id === id);
     if (!it) return;
     const n = it.nombre;
-    if (a === 'comprar') alCarrito('Agregado al carrito', `${n} · ${mx(it.precio)}`);
-    if (a === 'refrendar') alCarrito('Refrendo agregado al carrito', n);
-    if (a === 'extender') alCarrito('Extensión agregada al carrito', n);
-    if (a === 'desempenar') alCarrito('Desempeño agregado al carrito', n);
+    const imagen = new URL('../assets/inventario/' + it.img, location.href).pathname;
+    if (a === 'comprar') alCarrito('Agregado al carrito', `${n} · ${mx(it.precio)}`, { tipo: 'compra', titulo: 'Compra artículo', detalle: 'Artículo: ' + n, monto: it.precio, imagen });
+    if (it.contrato) {
+      // refrendo de muestra: 10 % del préstamo; desempeño = préstamo + refrendo; extensión de 3 días
+      const refrendo = Math.round(it.precio * 0.1), cli = it.nuc ? { nuc: Number(it.nuc), nombre: it.cliente } : null;
+      const op = { tipo: '', contrato: it.contrato, detalle: n, imagen, prestamo: it.precio };
+      if (a === 'refrendar') alCarrito('Refrendo agregado al carrito', n, { ...op, tipo: 'refrendo', titulo: 'Refrendo', monto: refrendo }, cli);
+      if (a === 'extender') alCarrito('Extensión agregada al carrito', n, { tipo: 'extension', titulo: 'Extensión', detalle: '3 días', monto: Math.round(refrendo / 60 * 3 * 100) / 100, contrato: it.contrato, dias: 3 }, cli);
+      if (a === 'desempenar') alCarrito('Desempeño agregado al carrito', n, { ...op, tipo: 'desempeno', titulo: 'Desempeño', monto: it.precio + refrendo }, cli);
+    }
     if (a === 'pausar') {
       it.estado = it.estado === 'Pausado' ? 'Activo' : 'Pausado';
       toast(it.estado === 'Pausado' ? 'Artículo pausado' : 'Artículo reanudado', it.estado === 'Pausado' ? `${n} ya no se muestra en línea ni en sucursal.` : `${n} vuelve a mostrarse.`);
@@ -410,7 +413,7 @@
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); it[(i + (e.key === 'ArrowDown' ? 1 : -1) + it.length) % it.length].focus(); }
     if (e.key === 'Escape') { e.stopPropagation(); menuPor.hidden = true; $('invByBtn').setAttribute('aria-expanded', 'false'); $('invByBtn').focus(); }
   });
-  const sw = (id, fn) => $(id).addEventListener('click', () => { const on = $(id).getAttribute('aria-checked') !== 'true'; $(id).setAttribute('aria-checked', on); fn(on); });
+  const sw = (id, fn) => $(id).addEventListener('change', () => fn($(id).checked));   // Switch del DS: input checkbox con role=switch
   // ---------- exportar / importar ----------
   // Exportar: CSV (abre en Excel) con lo que se ve —filtros y orden aplicados—; con Multi selección, solo lo marcado
   const csvCelda = (v) => { const t = String(v ?? ''); return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };

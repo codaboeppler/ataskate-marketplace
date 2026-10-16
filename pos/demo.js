@@ -10,13 +10,18 @@
     ['Inventario', 'POS · artículos a la venta (comercial)', 'inventario/'],
     ['Inventario prendario', 'POS · artículos empeñados', 'inventario/?tipo=prendario'],
     ['Inventario vacío', 'POS · sin artículos todavía', 'inventario/?vacio=1'],
+    ['Cotizador de empeño', 'POS · contratos, artículos y evaluación (PawnQuoterV4)', 'cotizador/'],
+    ['Cotizador: selección de plazos', 'POS · plazos, cotitulares y extender fecha', 'cotizador/?paso=2'],
     ['Comercial V1', 'POS · popup de apartados', ''],
     ['Comercial V2', 'POS · pestañas Compra | Apartado', 'v2/'],
     ['Prendario', 'POS · artículo en contrato vigente', 'v2-prendario/'],
     ['Prendario en mora', 'POS · contrato en mora vigente', 'v2-prendario/?estado=mora'],
     ['Marketplace', 'Ficha del cliente', 'v2-marketplace/'],
+    ['Pasarela de pago', 'POS · cobro del carrito: tarjeta, transferencia, efectivo y eWallet', 'pasarela/'],
     ['Clientes', 'Operativo · listado y perfil', 'clientes/'],
     ['Cliente nuevo', 'Operativo · alta de cliente', 'clientes/cliente-nuevo.html'],
+    ['Carrito', 'Operativo · operaciones del cliente y resumen del cobro', 'home/?carrito=1'],
+    ['Carrito desde el perfil', 'Operativo · refrendo, desempeño y cuota de apartado al carrito', 'clientes/#perfil/c1131'],
     ['Configura tu empresa', 'Administrativo · guía de configuración inicial', 'empresa/'],
     ['Configuración de contratos', 'Administrativo · datos de la empresa y diseño del contrato', 'empresa/#datos'],
     ['Plazos', 'Administrativo · plazos', 'plazos/'],
@@ -32,6 +37,8 @@
     + (u.searchParams.get('estado') === 'mora' ? '?estado=mora' : '')
     + (u.searchParams.get('tipo') === 'prendario' ? '?tipo=prendario' : '')
     + (u.searchParams.get('vacio') === '1' ? '?vacio=1' : '')
+    + (u.searchParams.get('vista') ? '?vista=' + u.searchParams.get('vista') : '')
+    + (u.searchParams.get('paso') === '2' ? '?paso=2' : '')
     + (u.searchParams.get('escenario') ? '?escenario=' + u.searchParams.get('escenario') : '')
     + (/^#(datos|contratos?)(\/|$)/.test(u.hash) ? '#datos' : '');   // Configuración de contratos vive en empresa/#datos
   const aqui = limpiar(new URL(location.href));
@@ -53,37 +60,37 @@
 .demo-tab {
   box-sizing: border-box; width: 18px; margin: 0; padding: 8px 3px; border: 0; border-radius: 8px 0 0 8px;
   writing-mode: vertical-rl; transform: rotate(180deg);
-  background: #e5e5ff; color: #0d166b; cursor: pointer; opacity: .8;
+  background: var(--ats-primary-100); color: var(--ats-primary-400); cursor: pointer; opacity: .8;
   font: 600 11px/12px 'Nunito', sans-serif; letter-spacing: .4px; white-space: nowrap;
   transition: opacity .15s, background .15s;
 }
 .demo-tab:hover, .demo-tab:focus-visible, .demo-tab[aria-expanded='true'] { opacity: 1; }
-.demo-tab[aria-expanded='true'] { background: #0d166b; color: #fff; }
-.demo-tab:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; }
+.demo-tab[aria-expanded='true'] { background: var(--ats-primary-400); color: var(--color-base-white); }
+.demo-tab:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
 .demo-menu {
   position: fixed; left: 26px; top: calc(var(--pos-header-h, 56px) + 8px); z-index: 45;
   box-sizing: border-box; width: min(288px, calc(100vw - 38px)); max-height: calc(100vh - var(--pos-header-h, 56px) - 24px); overflow-y: auto;
-  margin: 0; padding: 8px 0; border-radius: 16px; background: #fff; box-shadow: 0 10px 60px 0 rgba(0, 0, 0, .25);
+  margin: 0; padding: 8px 0; border-radius: 16px; background: var(--color-base-white); box-shadow: var(--pos-shadow-popup);
   font-family: 'Nunito', sans-serif; text-align: left;
 }
 .demo-menu[hidden] { display: none; }
-.demo-menu__title { margin: 0; padding: 8px 16px 4px; font-size: 12px; line-height: 1.2; font-weight: 600; color: #54575c; }
+.demo-menu__title { margin: 0; padding: 8px 16px 4px; font-size: 12px; line-height: 1.2; font-weight: 600; color: var(--ats-neutral-600); }
 .demo-menu a {
   display: flex; flex-direction: column; gap: 2px; padding: 8px 16px; text-decoration: none;
-  font-size: 14px; line-height: 1.2; font-weight: 400; color: #2a2c2f; transition: background .15s;
+  font-size: 14px; line-height: 1.2; font-weight: 400; color: var(--ats-neutral-700); transition: background .15s;
 }
-.demo-menu a small { font-size: 12px; line-height: 1.2; font-weight: 400; color: #54575c; }
-.demo-menu a:hover, .demo-menu a:focus-visible { background: #f0f0ff; color: #2a2c2f; }
-.demo-menu a:focus-visible { outline: 2px solid #5a5aff; outline-offset: -2px; }
-.demo-menu a[aria-current='page'] { font-weight: 700; color: #0d166b; }
-.demo-menu a[aria-current='page'] small::after { content: ' · estás aquí'; color: #0d166b; }
+.demo-menu a small { font-size: 12px; line-height: 1.2; font-weight: 400; color: var(--ats-neutral-600); }
+.demo-menu a:hover, .demo-menu a:focus-visible { background: var(--ats-primary-50); color: var(--ats-neutral-700); }
+.demo-menu a:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: -2px; }
+.demo-menu a[aria-current='page'] { font-weight: 700; color: var(--ats-primary-400); }
+.demo-menu a[aria-current='page'] small::after { content: ' · estás aquí'; color: var(--ats-primary-400); }
 @media (max-width: 720px) { .demo-tab { width: 14px; padding: 8px 1px; font-size: 10px; } .demo-menu { left: 20px; width: min(288px, calc(100vw - 32px)); } }
 @media (prefers-reduced-motion: reduce) { .demo-tab, .demo-menu a { transition: none; } }
 /* panel de controles propio de una maqueta (data-proto-panel): flota junto al riel, igual que el menú de flujos */
 .demo-proto {
   position: fixed !important; left: 26px; top: calc(var(--pos-header-h, 56px) + 8px); z-index: 45;
   box-sizing: border-box; width: min(320px, calc(100vw - 38px)); max-height: calc(100vh - var(--pos-header-h, 56px) - 24px); overflow-y: auto;
-  margin: 0; padding: 12px 16px 16px; border-radius: 16px; background: #fff; box-shadow: 0 10px 60px 0 rgba(0, 0, 0, .25);
+  margin: 0; padding: 12px 16px 16px; border-radius: 16px; background: var(--color-base-white); box-shadow: var(--pos-shadow-popup);
   font-family: 'Nunito', sans-serif; text-align: left;
 }
 .demo-proto[hidden] { display: none !important; }

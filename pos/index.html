@@ -13,7 +13,8 @@
 <link rel="stylesheet" href="ds/elevation.css" />
 <link rel="stylesheet" href="ds/base.css" />
 <link rel="stylesheet" href="ds/components.css" />
-<link rel="stylesheet" href="pos.css?v=ux68" />
+<link rel="stylesheet" href="pos.css?v=ux68-ds1" />
+<link rel="stylesheet" href="carrito.css?v=2-ds1" />
 </head>
 <body class="pos" data-plataforma-fija="op">
 
@@ -301,7 +302,6 @@
   }));
 
   // ---------- carrito + toast (ds-toast) ----------
-  let enCarrito = 0;
   // Toast del DS (variante positiva): icono EstadosSuccess, título y texto, cerrar y barra de tiempo de 5 s
   const TOAST_ICO = '<svg aria-hidden="true" width="24" height="24" viewBox="96 156 24 24" fill="none"><path d="M108 178C106.617 178 105.317 177.737 104.1 177.212C102.883 176.687 101.825 175.975 100.925 175.075C100.025 174.175 99.3127 173.117 98.788 171.9C98.2627 170.683 98 169.383 98 168C98 166.617 98.2627 165.317 98.788 164.1C99.3127 162.883 100.025 161.825 100.925 160.925C101.825 160.025 102.883 159.312 104.1 158.787C105.317 158.262 106.617 158 108 158C109.383 158 110.683 158.262 111.9 158.787C113.117 159.312 114.175 160.025 115.075 160.925C115.975 161.825 116.687 162.883 117.212 164.1C117.737 165.317 118 166.617 118 168C118 169.383 117.737 170.683 117.212 171.9C116.687 173.117 115.975 174.175 115.075 175.075C114.175 175.975 113.117 176.687 111.9 177.212C110.683 177.737 109.383 178 108 178ZM106.6 172.6L113.65 165.55L112.25 164.15L106.6 169.8L103.75 166.95L102.35 168.35L106.6 172.6Z" fill="currentColor"/></svg>';
   const CLOSE_20 = '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="currentColor"/></svg>';
@@ -413,22 +413,25 @@
   // los toasts van justo debajo del header fijo, que en teléfono ocupa dos renglones
   const cabecera = document.querySelector('.pos-header');
   new ResizeObserver(() => document.documentElement.style.setProperty('--pos-header-h', cabecera.offsetHeight + 'px')).observe(cabecera);
-  const pintarCarrito = () => {
-    $('posCartN').textContent = enCarrito;
-    $('posCart').setAttribute('aria-label', 'Carrito, ' + enCarrito + (enCarrito === 1 ? ' artículo' : ' artículos'));
-  };
-  const agregar = (detalle, titulo) => {
-    enCarrito += 1;
-    pintarCarrito();
+  // el carrito compartido (../carrito.js) guarda la operación y pinta la cantidad del header
+  const IMG_ART = new URL('assets/iphone16-negro.png', location.href).pathname;
+  const COMPRA = { tipo: 'compra', titulo: 'Compra artículo', detalle: 'Artículo: iPhone 16 512GB Negro · 5G', monto: 17969, imagen: IMG_ART };
+  const itemApartado = (p) => ({ tipo: 'apartado', titulo: 'Cuota de apartado', detalle: p.nombre + ' · iPhone 16 512GB Negro · 5G', monto: p.hoyMonto, contrato: 'APT-024118', prestamo: Math.round((p.total - p.hoyMonto) * 100) / 100, imagen: IMG_ART });
+  const agregar = (detalle, titulo, item) => {
+    const id = window.atsCarrito ? atsCarrito.agregar(item || COMPRA) : null;
     // el toast ofrece "Deshacer": quita del carrito lo que se acaba de agregar y lo confirma
     toast(titulo || 'Agregado al carrito', detalle, null, null, () => {
-      enCarrito = Math.max(0, enCarrito - 1);
-      pintarCarrito();
+      if (id) atsCarrito.quitar(id);
       toast('Se quitó del carrito', detalle);
     });
   };
   $('posAdd').addEventListener('click', () => agregar('iPhone 16 512GB Negro de contado · $17,969'));
-  $('posBuy').addEventListener('click', () => toast('Listo para cobrar', 'iPhone 16 512GB Negro de contado · $17,969. Continúa en la pasarela de cobro.'));
+  // "Cobrar ahora": la compra entra al carrito (una sola vez) y se abre para vincular al cliente y comenzar el pago
+  $('posBuy').addEventListener('click', () => {
+    if (!window.atsCarrito) return;
+    if (!atsCarrito.leer().items.some((x) => x.tipo === 'compra' && x.detalle === COMPRA.detalle)) atsCarrito.agregar(COMPRA);
+    atsCarrito.abrir();
+  });
   $('posShare').addEventListener('click', () => {
     if (navigator.share) navigator.share({ title: 'iPhone 16 512GB Negro · 5G', url: location.href }).catch(() => {});
     else navigator.clipboard && navigator.clipboard.writeText(location.href).then(() => toast('Enlace copiado', 'Ya puedes compartir este artículo'));
@@ -761,7 +764,7 @@
   $('posApartar').addEventListener('click', () => {
     calcular();
     const p = planDesde();
-    agregar(p.nombre + ': hoy ' + mxnC(p.hoyMonto) + ' y total ' + mxnC(p.total) + '. Se entrega al liquidar.', 'Apartado agregado al carrito');
+    agregar(p.nombre + ': hoy ' + mxnC(p.hoyMonto) + ' y total ' + mxnC(p.total) + '. Se entrega al liquidar.', 'Apartado agregado al carrito', itemApartado(p));
   });
   if (location.hash === '#plazos') abrir();
   $('posPlazosCancel').addEventListener('click', cerrar);
@@ -789,12 +792,13 @@
     }
     const p = PLANES[elegido];
     cerrar();
-    agregar(p.nombre + ': hoy ' + mxnC(p.hoyMonto) + ' y total ' + mxnC(p.total) + '. Se entrega al liquidar.', 'Apartado agregado al carrito');
+    agregar(p.nombre + ': hoy ' + mxnC(p.hoyMonto) + ' y total ' + mxnC(p.total) + '. Se entrega al liquidar.', 'Apartado agregado al carrito', itemApartado(p));
   });
 })();
 </script>
+<script src="carrito.js?v=2-ds1"></script>
 <script src="navbar.js?v=3"></script>
-<script src="demo.js?v=15"></script>
+<script src="demo.js?v=18-ds1"></script>
 <script src="comentarios.js?v=6"></script>
 </body>
 </html>

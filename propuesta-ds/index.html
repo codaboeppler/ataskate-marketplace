@@ -123,6 +123,13 @@ header.top p { margin: 10px 0 0; max-width: 66ch; color: var(--muted); }
 .more ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; color: var(--muted); }
 .more li b { color: var(--ink); }
 @media (max-width: 720px) { .more { grid-template-columns: 1fr; } }
+.impl { margin-top: 36px; padding: 20px 22px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); }
+.impl h3 { margin: 0 0 8px; font-size: 16px; font-weight: 800; }
+.tblwrap { overflow-x: auto; margin-top: 12px; }
+.impl-t { width: 100%; border-collapse: collapse; font-size: 14px; }
+.impl-t th { text-align: left; font-weight: 700; padding: 8px 10px; color: var(--muted); border-bottom: 1px solid var(--line); }
+.impl-t td { padding: 8px 10px; border-top: 1px solid var(--line); vertical-align: top; }
+.impl-t td:first-child { color: var(--muted); font-variant-numeric: tabular-nums; }
 footer { margin-top: 32px; font-size: 13px; color: var(--muted); }
 code { font: 12.5px var(--mono); }
 </style>
@@ -294,6 +301,26 @@ code { font: 12.5px var(--mono); }
       </ul>
     </section>
   </div>
+
+  <section class="impl">
+    <h3>Ya implementado en código, en una rama aparte para revisión</h3>
+    <p class="why">Cada propuesta tiene su commit en una rama dedicada al design system, separada de las funcionalidades. Los cambios son compatibles hacia atrás: los nombres viejos quedan como alias marcados como obsoletos.</p>
+    <div class="tblwrap"><table class="impl-t">
+      <tr><th>#</th><th>Cambio</th><th>En el DS</th></tr>
+      <tr><td>1</td><td>Título de página 28/34 · 500 · #2A2C2F</td><td><code>typography.tituloDePagina</code></td></tr>
+      <tr><td>2</td><td>Layout de página: máx. 1440, márgenes 64/24, ritmo 16/8/36/16</td><td>componente <code>PageLayout</code></td></tr>
+      <tr><td>3</td><td>Tarjeta sin borde con sombra tenue, radio 16</td><td><code>shadows.card</code> + componente <code>Card</code>; GroupCard y Widget sin borde en reposo</td></tr>
+      <tr><td>4</td><td>Separador de filas visible</td><td>Table → <code>neutral300</code></td></tr>
+      <tr><td>5</td><td>Foco visible con teclado</td><td>token <code>focusRing</code> en Button, IconButton, Tabs y header</td></tr>
+      <tr><td>6</td><td>Escala de sombras: card · dropdown · popup</td><td><code>shadows.popup</code> nuevo valor; <code>drag</code> obsoleto</td></tr>
+      <tr><td>7</td><td>Un solo estilo de desplegable</td><td>SearchFieldV2 y AutoSelect: radio 16, sin borde, opciones de 40</td></tr>
+      <tr><td>8</td><td>Botón del header activo en navy</td><td><code>aria-expanded</code> → primary400 · ícono blanco</td></tr>
+      <tr><td>9</td><td>Fondo de fotos de producto</td><td>token <code>colors.surfaceMedia</code> #F1F2F8</td></tr>
+      <tr><td>10</td><td>Chip informativo con gap 4 y tamaño de 24</td><td>prop <code>size="compact"</code></td></tr>
+      <tr><td>—</td><td>Correcciones</td><td><code>textoBold</code> 700 · <code>tablaHeader</code> 600</td></tr>
+      <tr><td>—</td><td>Estado vacío</td><td>componente <code>EmptyState</code> y pestaña "Layout" en el showcase</td></tr>
+    </table></div>
+  </section>
 
   <footer>Medido el 14 de octubre de 2026 en el prototipo del POS (10 pantallas a 1440 px) contra el design system en código. Los títulos de página se quedan en peso 500 por decisión de producto.</footer>
 </div>

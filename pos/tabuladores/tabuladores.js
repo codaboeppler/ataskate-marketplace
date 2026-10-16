@@ -8,7 +8,7 @@
 (() => {
   'use strict';
 
-  const ICO = {"Info":["0 0 20 20","<g clip-path=\"url(#clip0_10099_28392)\"><path d=\"M9 15H11V9H9V15ZM10 7C10.2833 7 10.5208 6.90417 10.7125 6.7125C10.9042 6.52083 11 6.28333 11 6C11 5.71667 10.9042 5.47917 10.7125 5.2875C10.5208 5.09583 10.2833 5 10 5C9.71667 5 9.47917 5.09583 9.2875 5.2875C9.09583 5.47917 9 5.71667 9 6C9 6.28333 9.09583 6.52083 9.2875 6.7125C9.47917 6.90417 9.71667 7 10 7ZM10 20C8.61667 20 7.31667 19.7375 6.1 19.2125C4.88333 18.6875 3.825 17.975 2.925 17.075C2.025 16.175 1.3125 15.1167 0.7875 13.9C0.2625 12.6833 0 11.3833 0 10C0 8.61667 0.2625 7.31667 0.7875 6.1C1.3125 4.88333 2.025 3.825 2.925 2.925C3.825 2.025 4.88333 1.3125 6.1 0.7875C7.31667 0.2625 8.61667 0 10 0C11.3833 0 12.6833 0.2625 13.9 0.7875C15.1167 1.3125 16.175 2.025 17.075 2.925C17.975 3.825 18.6875 4.88333 19.2125 6.1C19.7375 7.31667 20 8.61667 20 10C20 11.3833 19.7375 12.6833 19.2125 13.9C18.6875 15.1167 17.975 16.175 17.075 17.075C16.175 17.975 15.1167 18.6875 13.9 19.2125C12.6833 19.7375 11.3833 20 10 20ZM10 18C12.2333 18 14.125 17.225 15.675 15.675C17.225 14.125 18 12.2333 18 10C18 7.76667 17.225 5.875 15.675 4.325C14.125 2.775 12.2333 2 10 2C7.76667 2 5.875 2.775 4.325 4.325C2.775 5.875 2 7.76667 2 10C2 12.2333 2.775 14.125 4.325 15.675C5.875 17.225 7.76667 18 10 18Z\" fill=\"currentColor\"></path></g><defs><clipPath id=\"clip0_10099_28392\"><rect width=\"20\" height=\"20\" fill=\"white\"></rect></clipPath></defs>"],"Close":["0 0 24 24","<path d=\"M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z\" fill=\"currentColor\"></path>"]};
+  const ICO = {"Info":["0 0 20 20","<g clip-path=\"url(#clip0_10099_28392)\"><path d=\"M9 15H11V9H9V15ZM10 7C10.2833 7 10.5208 6.90417 10.7125 6.7125C10.9042 6.52083 11 6.28333 11 6C11 5.71667 10.9042 5.47917 10.7125 5.2875C10.5208 5.09583 10.2833 5 10 5C9.71667 5 9.47917 5.09583 9.2875 5.2875C9.09583 5.47917 9 5.71667 9 6C9 6.28333 9.09583 6.52083 9.2875 6.7125C9.47917 6.90417 9.71667 7 10 7ZM10 20C8.61667 20 7.31667 19.7375 6.1 19.2125C4.88333 18.6875 3.825 17.975 2.925 17.075C2.025 16.175 1.3125 15.1167 0.7875 13.9C0.2625 12.6833 0 11.3833 0 10C0 8.61667 0.2625 7.31667 0.7875 6.1C1.3125 4.88333 2.025 3.825 2.925 2.925C3.825 2.025 4.88333 1.3125 6.1 0.7875C7.31667 0.2625 8.61667 0 10 0C11.3833 0 12.6833 0.2625 13.9 0.7875C15.1167 1.3125 16.175 2.025 17.075 2.925C17.975 3.825 18.6875 4.88333 19.2125 6.1C19.7375 7.31667 20 8.61667 20 10C20 11.3833 19.7375 12.6833 19.2125 13.9C18.6875 15.1167 17.975 16.175 17.075 17.075C16.175 17.975 15.1167 18.6875 13.9 19.2125C12.6833 19.7375 11.3833 20 10 20ZM10 18C12.2333 18 14.125 17.225 15.675 15.675C17.225 14.125 18 12.2333 18 10C18 7.76667 17.225 5.875 15.675 4.325C14.125 2.775 12.2333 2 10 2C7.76667 2 5.875 2.775 4.325 4.325C2.775 5.875 2 7.76667 2 10C2 12.2333 2.775 14.125 4.325 15.675C5.875 17.225 7.76667 18 10 18Z\" fill=\"currentColor\"></path></g><defs><clipPath id=\"clip0_10099_28392\"><rect width=\"20\" height=\"20\" style=\"fill:var(--ats-white)\"></rect></clipPath></defs>"],"Close":["0 0 24 24","<path d=\"M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z\" fill=\"currentColor\"></path>"]};
   const ico = (n, s = 24) => '<svg class="cd-ico" width="' + s + '" height="' + s + '" viewBox="' + ICO[n][0] + '" fill="none" aria-hidden="true" focusable="false">' + ICO[n][1] + '</svg>';
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -162,7 +162,7 @@
       + (createdDate && createdBy ? item(TXT.INFO_CREATED, t('bold', getUserDateLabel(createdDate, createdBy))) : '')
       + (updatedDate && updatedBy ? item(TXT.INFO_UPDATED, t('bold', getUserDateLabel(updatedDate, updatedBy))) : '')
       + item(TXT.INFO_APPLIES_IN, t('bold', getBranchesCountLabel(activeBranches)))
-      + (inUse !== undefined ? item(TXT.INFO_STATUS, '<span class="cd-chip cd-chip--' + (inUse ? 'status-green' : 'status-gray') + '">' + (inUse ? TXT.STATUS_IN_USE : TXT.STATUS_UNASSIGNED) + '</span>') : '');
+      + (inUse !== undefined ? item(TXT.INFO_STATUS, '<span class="ds-tag ds-tag--' + (inUse ? 'verde' : 'gris') + '">' + (inUse ? TXT.STATUS_IN_USE : TXT.STATUS_UNASSIGNED) + '</span>') : '');
   };
   const renderUnit = () => {
     $('tbUnidad').innerHTML = UNIT_TABS.map((u) => '<button type="button" role="tab" class="cd-tab" aria-selected="' + (u.id === activeUnitId) + '" tabindex="' + (u.id === activeUnitId ? 0 : -1) + '" data-unit="' + u.id + '">' + esc(u.label) + '</button>').join('');
@@ -211,8 +211,8 @@
     if (!b) return;
     b.classList.toggle('is-loading', on); b.disabled = on;
     if (on) b.setAttribute('aria-busy', 'true'); else b.removeAttribute('aria-busy');
-    const sp = b.querySelector('.cd-spinner');
-    if (on && !sp) b.insertAdjacentHTML('afterbegin', '<span class="cd-spinner" aria-hidden="true"></span>');
+    const sp = b.querySelector('.ds-spinner');
+    if (on && !sp) b.insertAdjacentHTML('afterbegin', '<span class="ds-spinner ds-spinner--sm" aria-hidden="true"></span>');
     if (!on && sp) sp.remove();
   }
 
@@ -260,12 +260,12 @@
     const description = archiving ? getArchiveDescription(details.tabName) : getActivateDescription(details.tabName);
     const confirmLabel = archiving ? ARCHIVE_MODAL.ARCHIVE_BTN : ARCHIVE_MODAL.ACTIVATE_BTN;
     const el = document.createElement('div');
-    el.className = 'cd-overlay'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-labelledby', 'tbModalTitle'); el.setAttribute('aria-describedby', 'tbModalDesc');
-    el.innerHTML = '<div class="cd-modal"><div class="cd-modal__head"><h3 class="cd-modal__title" id="tbModalTitle">' + esc(title) + '</h3>'
-      + '<button type="button" class="cd-modal__x" aria-label="Cerrar" data-close>' + ico('Close', 24) + '</button></div>'
-      + '<div class="cd-modal__body"><p id="tbModalDesc">' + esc(description) + '</p></div>'
-      + '<div class="cd-modal__foot"><button type="button" class="cd-btn cd-btn--tertiary" data-close><span class="cd-btn__txt">' + ARCHIVE_MODAL.CANCEL + '</span></button>'
-      + '<button type="button" class="cd-btn cd-btn--primary" data-confirm><span class="cd-btn__txt">' + esc(confirmLabel) + '</span></button></div></div>';
+    el.className = 'cd-overlay ds-modal-overlay'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-labelledby', 'tbModalTitle'); el.setAttribute('aria-describedby', 'tbModalDesc');
+    el.innerHTML = '<div class="ds-modal cd-modal"><div class="ds-modal__header"><h3 class="ds-modal__title" id="tbModalTitle">' + esc(title) + '</h3>'
+      + '<button type="button" class="ds-btn ds-btn--tertiary ds-btn--icon-md cd-modal__x" aria-label="Cerrar" data-close>' + ico('Close', 24) + '</button></div>'
+      + '<div class="ds-modal__body"><p id="tbModalDesc">' + esc(description) + '</p></div>'
+      + '<div class="ds-modal__footer"><button type="button" class="ds-btn ds-btn--md ds-btn--tertiary" data-close><span class="cd-btn__txt">' + ARCHIVE_MODAL.CANCEL + '</span></button>'
+      + '<button type="button" class="ds-btn ds-btn--md ds-btn--primary" data-confirm><span class="cd-btn__txt">' + esc(confirmLabel) + '</span></button></div></div>';
     modalRoot.appendChild(el);
     const onKey = (e) => {
       if (e.key === 'Escape') { e.preventDefault(); cancel(); return; }
@@ -289,12 +289,12 @@
   const confirmToggle = () => {
     if (updateStatusLoading) return;
     updateStatusLoading = true; renderHeader(); setBtnLoading(modal && modal.el.querySelector('[data-confirm]'), true);
-    setTimeout(() => {
+    (() => {
       details.statusTabId = isArchived() ? TABS_IDS.ACTIVE : TABS_IDS.ARCHIVED;
       details.statusTabName = isArchived() ? 'Archivado' : 'Activo';
       if (D) D.guardarEstatus(details.tabId, details.statusTabId);
       updateStatusLoading = false; renderHeader(); closeModal();
-    }, 600 + Math.round(Math.random() * 300));
+    })();
   };
   $('tbArchivar').addEventListener('click', openArchiveModal);
 
@@ -303,7 +303,7 @@
   tip.className = 'cd-tip'; tip.setAttribute('role', 'tooltip'); tip.hidden = true;
   document.body.appendChild(tip);
   const showTip = (anchor, text) => {
-    tip.innerHTML = esc(text) + '<svg class="cd-tip__arrow" viewBox="0 0 16 8" width="16" height="8" fill="none" aria-hidden="true"><path d="M0 0 L16 0 L8 8 Z" fill="#0D166B"/></svg>';
+    tip.innerHTML = esc(text) + '<svg class="cd-tip__arrow" viewBox="0 0 16 8" width="16" height="8" fill="none" aria-hidden="true"><path d="M0 0 L16 0 L8 8 Z" style="fill:var(--ats-primary-400)"/></svg>';
     tip.hidden = false;
     const a = anchor.getBoundingClientRect(); const w = tip.offsetWidth; const h = tip.offsetHeight;
     let left = a.left + a.width / 2 - w / 2; left = Math.max(8, Math.min(left, innerWidth - w - 8));

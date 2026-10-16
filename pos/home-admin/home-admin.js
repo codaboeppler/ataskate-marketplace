@@ -55,8 +55,8 @@
     plata: { price: '$612 .999/oz', rows: [['.999', 612], ['.950', 581.4], ['.925', 566.1], ['.900', 550.8]] },
   };
   const DATA = {
-    users: { list: [{ ini: 'C', name: 'Carlos', bg: '#ffebba' }, { ini: 'M', name: 'María', bg: '#ebf9ff' }, { ini: 'J', name: 'Jorge', bg: '#effaf4' }], total: 15 },
-    market: [{ label: 'Arriba del mercado', n: 42, c: '#a82424' }, { label: 'Debajo del mercado', n: 84, c: '#cc9200' }, { label: 'Dentro del rango', n: 986, c: '#008fcc' }],
+    users: { list: [{ ini: 'C', name: 'Carlos', bg: 'var(--pos-warning-surface)' }, { ini: 'M', name: 'María', bg: 'var(--ats-info-blue-50)' }, { ini: 'J', name: 'Jorge', bg: 'var(--ats-success-green-50)' }], total: 15 },
+    market: [{ label: 'Arriba del mercado', n: 42, c: 'var(--ats-error-red-200)' }, { label: 'Debajo del mercado', n: 84, c: 'var(--ats-alert-yellow-200)' }, { label: 'Dentro del rango', n: 986, c: 'var(--ats-info-blue-200)' }],
     brand: { store: 'ataskate.com/empenos-fernandez', status: 'Publicada', issues: [['Banner principal sin imagen', 'Agregar imagen'], ['Página de contacto vacía', 'Completar página']] },
     locations: { stats: [['Sucursales', 14], ['Bodegas', 6], ['Grupos', 3]], rows: [['Regional Centro', 2, 6], ['Regional Norte', 2, 4], ['Regional Sur', 2, 4]] },
     layaways: { eligible: 801, current: 3, paused: 1, issues: [['1 apartado sin vigencia', 'Definir vigencia'], ['4 categorías sin apartados', 'Habilitar apartados']] },
@@ -64,7 +64,7 @@
     devices: { withAccess: 112, inactive: 9, rows: [['San Juanico', 6], ['Sucursal norte', 4], ['Sucursal Roma', null]], warning: ['3 sucursales sin dispositivo', 'Asignar'] },
     conservation: { active: 3, inactive: 1, rows: [['Excelente', '90%'], ['Bueno', '75%'], ['Regular', '60%'], ['Malo', null]] },
     extensions: { total: 9, withExt: 6, without: [['Electrónicos', 32], ['Juguetes', 15], ['Herramientas', 20]], expiringSoon: 1 },
-    files: { usedGB: 750, totalGB: 3000, rows: [{ label: 'Imágenes', files: 30450, gb: 550, c: '#309c60' }, { label: 'Documentos', files: 2300, gb: 100, c: '#acacff' }, { label: 'Otros', files: 700, gb: 100, c: '#008fcc' }] },
+    files: { usedGB: 750, totalGB: 3000, rows: [{ label: 'Imágenes', files: 30450, gb: 550, c: 'var(--ats-success-green-200)' }, { label: 'Documentos', files: 2300, gb: 100, c: 'var(--ats-primary-200)' }, { label: 'Otros', files: 700, gb: 100, c: 'var(--ats-info-blue-200)' }] },
     promotions: { stats: [['Categorías con descuento', 5], ['Activas', 3], ['Pausadas', 2]], rows: [['Buen Fin', 'Electrónicos y 2 más · hasta el 30 nov', '25%'], ['Black Friday', 'Juguetes y 3 más · hasta el 28 nov', '30%'], ['Cyber Monday', 'Tecnología y 4 más · hasta el 1 dic', '20%']] },
     addons: [{ name: 'Módulo de envíos', icon: 'addonBox', color: 'var(--ha-pink-200)', bg: 'var(--ha-purple-50)' }, { name: 'Reportes avanzados', icon: 'addonChart', color: 'var(--ha-ok-title)', bg: 'var(--ha-green-100)' }],
   };
@@ -112,17 +112,22 @@
     const route = ROUTES[id];
     const attrs = route ? `href="${route}"` : `href="#" data-go="${esc(TITLES[id])}"`;
     return `<div class="ha-card__head"><h2 class="ha-card__title">${esc(TITLES[id])}</h2>`
-      + `<a class="ha-ibtn" ${attrs} aria-label="Ir a ${esc(TITLES[id])}">${ICON.arrow}</a></div>`;
+      + `<a class="ds-btn ds-btn--tertiary ds-btn--icon-sm ha-ibtn" ${attrs} aria-label="Ir a ${esc(TITLES[id])}">${ICON.arrow}</a></div>`;
   };
   const headOnly = (id) => `<div class="ha-card__head"><h2 class="ha-card__title">${esc(TITLES[id])}</h2></div>`;
   const stats = (list) => `<dl class="ha-stats">${list.map(([l, v, mod]) => `<div class="ha-stat${mod ? ` ha-stat--${mod}` : ''}"><dt>${esc(l)}</dt><dd>${v}</dd></div>`).join('')}</dl>`;
-  const btn = (label, ctx, cls = '') => `<button type="button" class="ha-btn ${cls}" data-act="${esc(label)}"${ctx ? ` data-ctx="${esc(ctx)}"` : ''}>${esc(label)}</button>`;
+  const btn = (label, ctx, cls = '') => `<button type="button" class="ds-btn ${/secondary/.test(cls) ? '' : 'ds-btn--tertiary '}ds-btn--md ha-btn ${cls}" data-act="${esc(label)}"${ctx ? ` data-ctx="${esc(ctx)}"` : ''}>${esc(label)}</button>`;
   const bar = (segs, total, label) => `<div class="ha-chart__track" role="img" aria-label="${esc(label)}">${segs.map((s) => `<span style="flex:0 0 ${(s.v / total * 100).toFixed(2)}%;background:${s.c}"></span>`).join('')}</div>`;
-  const issue = ([text, action]) => `<div class="ha-tr"><div class="ha-td ha-td--row"><span class="ha-issue-ico">${ICON.error}</span><span>${esc(text)}</span></div><div class="ha-td ha-td--fit">${btn(action, text)}</div></div>`;
+  const issue = ([text, action]) => row([td(`<span class="ha-issue-ico">${ICON.error}</span><span>${esc(text)}</span>`, 'ha-td--row'), td(btn(action, text), 'ha-td--fit ha-td--right')]);
   const warn = ([text, action]) => `<div class="ha-warn" role="status"><div class="ha-warn__txt">${ICON.warning}<span>${esc(text)}</span></div>${btn(action, text)}</div>`;
-  const row = (cells) => `<div class="ha-tr">${cells.join('')}</div>`;
-  const td = (html, cls = '', style = '') => `<div class="ha-td ${cls}"${style ? ` style="${style}"` : ''}>${html}</div>`;
-  const th = (labels) => `<div class="ha-tr ha-tr--head">${labels.map(([l, cls = '', style = '']) => td(esc(l), cls, style)).join('')}</div>`;
+  const row = (cells) => `<tr class="ha-tr">${cells.join('')}</tr>`;
+  /* Tabla del DS (.ds-table): las celdas con varias piezas llevan un contenedor flex adentro */
+  const td = (html, cls = '', style = '', tag = 'td') => {
+    const flex = /ha-td--row/.test(cls);
+    const st = style && !flex ? ` style="${style}"` : '';
+    return `<${tag} class="ha-td ${cls}"${st}>${flex ? `<div class="ha-td__flex"${style ? ` style="${style}"` : ''}>${html}</div>` : html}</${tag}>`;
+  };
+  const th = (labels) => `<thead><tr class="ha-tr ha-tr--head">${labels.map(([l, cls = '', style = '']) => td(esc(l), cls, style, 'th')).join('')}</tr></thead>`;
 
   /* ======================= Tarjetas ======================= */
   const RENDER = {
@@ -141,7 +146,7 @@
         <div class="ha-net${due ? ' ha-net--due' : ''}"><span>${due ? 'Total a pagar' : 'Neto a depositar'}</span><strong>${mxn(Math.abs(net))}</strong></div>
         <div class="ha-hr"></div>
         <div class="ha-summary${due ? ' ha-summary--due' : ''}">${ICON.calendar}<span>${due ? 'Próximo cobro' : 'Próximo depósito'}</span><time>${esc(b.nextPayment)}</time></div>
-        <div class="ha-pay"><span class="ha-pay__ico">${ICON.card}</span><span class="ha-pay__n">${esc(b.bank)} •••• ${esc(b.last4)}</span><span class="ha-tag ha-tag--white">Predeterminada</span></div>
+        <div class="ha-pay"><span class="ha-pay__ico">${ICON.card}</span><span class="ha-pay__n">${esc(b.bank)} •••• ${esc(b.last4)}</span><span class="ds-tag ds-tag--blanco">Predeterminada</span></div>
         <div class="ha-hr ha-hr--gray"></div>
         <div class="ha-btn-stack">${btn('Cambiar plan')}${btn('Ver recibos de pago')}</div>`;
     },
@@ -149,29 +154,29 @@
       const u = DATA.users;
       const more = u.total - u.list.length;
       return `${head('users')}<ul class="ha-users">
-        ${u.list.map((x) => `<li><button type="button" class="ha-user" data-act="Ver usuario" data-ctx="${esc(x.name)}"><span class="ha-av" style="background:${x.bg}" aria-hidden="true">${esc(x.ini)}</span><span class="ha-user__lbl">${esc(x.name)}</span></button></li>`).join('')}
-        ${more > 0 ? `<li><a class="ha-user" href="${ROUTES.users}"><span class="ha-av" style="background:var(--ha-ok-surface)" aria-hidden="true"><img src="assets/ilust-usuarios-mas.svg" alt="" /></span><span class="ha-user__lbl">${more} más</span></a></li>` : ''}
-        <li><button type="button" class="ha-user ha-user--add" data-act="Agregar usuario"><span class="ha-av" aria-hidden="true">${ICON.add24}</span><span class="ha-user__lbl">Agregar</span></button></li></ul>`;
+        ${u.list.map((x) => `<li><button type="button" class="ha-user" data-act="Ver usuario" data-ctx="${esc(x.name)}"><span class="ds-avatar ds-avatar--md ha-av" style="background:${x.bg}" aria-hidden="true">${esc(x.ini)}</span><span class="ha-user__lbl">${esc(x.name)}</span></button></li>`).join('')}
+        ${more > 0 ? `<li><a class="ha-user" href="${ROUTES.users}"><span class="ds-avatar ds-avatar--md ha-av" style="background:var(--ha-ok-surface)" aria-hidden="true"><img src="assets/ilust-usuarios-mas.svg" alt="" /></span><span class="ha-user__lbl">${more} más</span></a></li>` : ''}
+        <li><button type="button" class="ha-user ha-user--add" data-act="Agregar usuario"><span class="ds-avatar ds-avatar--md ha-av" aria-hidden="true">${ICON.add24}</span><span class="ha-user__lbl">Agregar</span></button></li></ul>`;
     },
     market() {
       const rows = DATA.market;
       const total = rows.reduce((a, r) => a + r.n, 0);
       return `${head('market')}
         <div class="ha-chart"><span class="ha-chart__caption">${plural(total, 'artículo', 'artículos')}</span>${bar(rows.map((r) => ({ v: r.n, c: r.c })), total, TITLES.market)}</div>
-        <div class="ha-tbl">${rows.map((r) => row([td(`<span class="ha-legend"><span class="ha-legend__dot" style="--c:${r.c}"></span>${esc(r.label)}</span>`, '', 'min-height:0;padding:0'), td(plural(r.n, 'artículo', 'artículos'), 'ha-td--fit ha-td--right', 'width:100px')])).join('')}</div>
+        <table class="ds-table ha-tbl">${rows.map((r) => row([td(`<span class="ha-legend"><span class="ha-legend__dot" style="--c:${r.c}"></span>${esc(r.label)}</span>`, '', 'min-height:0;padding:0'), td(plural(r.n, 'artículo', 'artículos'), 'ha-td--fit ha-td--right', 'width:100px')])).join('')}</table>
         <div class="ha-btn-stack">${btn('Ver artículos en inventario')}${btn('Ajustar % de pase almoneda')}</div>`;
     },
     brand() {
       const d = DATA.brand;
       return `${head('brand')}
-        ${stats([['Enlace a tienda', `<a class="ha-store" href="#" data-act="Abrir tienda" data-ctx="${esc(d.store)}" title="${esc(d.store)}">${esc(d.store)}</a>`], ['Estado', `<span class="ha-tag ha-tag--green">${esc(d.status)}</span>`, 'fit']])}
-        <div class="ha-tbl">${d.issues.map(issue).join('')}</div>`;
+        ${stats([['Enlace a tienda', `<a class="ha-store" href="#" data-act="Abrir tienda" data-ctx="${esc(d.store)}" title="${esc(d.store)}">${esc(d.store)}</a>`], ['Estado', `<span class="ds-tag ds-tag--verde">${esc(d.status)}</span>`, 'fit']])}
+        <table class="ds-table ha-tbl">${d.issues.map(issue).join('')}</table>`;
     },
     locations() {
       const l = DATA.locations;
       return `${head('locations')}${stats(l.stats)}
-        <div class="ha-tbl">${th([['Grupo'], ['Sucursales', 'ha-td--fit ha-td--right', 'width:80px']])}
-        ${l.rows.map(([g, w, b]) => row([td(`<span class="ha-td__main">${esc(g)}</span><span class="ha-td__sub">${plural(w, 'bodega', 'bodegas')}</span>`), td(b, 'ha-td--fit ha-td--right', 'width:80px')])).join('')}</div>`;
+        <table class="ds-table ha-tbl">${th([['Grupo'], ['Sucursales', 'ha-td--fit ha-td--right', 'width:80px']])}
+        ${l.rows.map(([g, w, b]) => row([td(`<span class="ha-td__main">${esc(g)}</span><span class="ha-td__sub">${plural(w, 'bodega', 'bodegas')}</span>`), td(b, 'ha-td--fit ha-td--right', 'width:80px')])).join('')}</table>`;
     },
     extensions() {
       const x = DATA.extensions;
@@ -179,22 +184,22 @@
       const withExt = x.withExt + view.createdExt.length;
       const label = `${withExt} de ${x.total} plazos con extensión activa`;
       return `${head('extensions')}
-        <div class="ha-chart"><span class="ha-chart__caption">${label}</span>${bar([{ v: withExt, c: '#309c60' }], x.total, label)}</div>
-        <div class="ha-tbl">${th([['Plazos sin extensión']])}
-        ${without.length ? without.map(([n, c]) => row([td(`<span class="ha-td__main">${esc(n)}</span><span class="ha-td__sub">${plural(c, 'contrato activo', 'contratos activos')}</span>`), td(`<button type="button" class="ha-btn ha-btn--icon" data-ext="${esc(n)}">${ICON.add20}Crear extensión</button>`, 'ha-td--fit ha-td--row')])).join('')
-          : row([td('Todos los plazos tienen extensión.', 'ha-td--muted')])}</div>
+        <div class="ha-chart"><span class="ha-chart__caption">${label}</span>${bar([{ v: withExt, c: 'var(--ats-success-green-200)' }], x.total, label)}</div>
+        <table class="ds-table ha-tbl">${th([['Plazos sin extensión']])}
+        ${without.length ? without.map(([n, c]) => row([td(`<span class="ha-td__main">${esc(n)}</span><span class="ha-td__sub">${plural(c, 'contrato activo', 'contratos activos')}</span>`), td(`<button type="button" class="ds-btn ds-btn--tertiary ds-btn--md ha-btn ha-btn--icon" data-ext="${esc(n)}">${ICON.add20}Crear extensión</button>`, 'ha-td--fit ha-td--row')])).join('')
+          : row([td('Todos los plazos tienen extensión.', 'ha-td--muted')])}</table>
         ${x.expiringSoon ? warn([`${plural(x.expiringSoon, 'extensión vence', 'extensiones vencen')} en 5 días`, 'Revisar']) : ''}`;
     },
     terms() {
       const t = DATA.terms;
       return `${head('terms')}${stats([['Categorías sin plazo', t.noTerm, 'auto'], ['Plazos inactivos', t.inactive]])}
-        <div class="ha-tbl">${th([['Plazo'], ['Duración'], ['Interés']])}${t.rows.map((r) => row(r.map((c) => td(esc(c))))).join('')}</div>`;
+        <table class="ds-table ha-tbl">${th([['Plazo'], ['Duración'], ['Interés']])}${t.rows.map((r) => row(r.map((c) => td(esc(c))))).join('')}</table>`;
     },
     devices() {
       const d = DATA.devices;
       return `${head('devices')}${stats([['Con acceso', d.withAccess], ['Inactivos', d.inactive]])}
-        <div class="ha-tbl">${th([['Sucursal'], ['Dispositivos', 'ha-td--fit ha-td--right', 'width:112px']])}
-        ${d.rows.map(([s, n]) => row([td(`<span class="ha-td__main">${esc(s)}</span>`), td(n ? n : '<span class="ha-tag ha-tag--gray">Sin dispositivos</span>', 'ha-td--fit ha-td--right', 'width:112px')])).join('')}</div>
+        <table class="ds-table ha-tbl">${th([['Sucursal'], ['Dispositivos', 'ha-td--fit ha-td--right', 'width:112px']])}
+        ${d.rows.map(([s, n]) => row([td(`<span class="ha-td__main">${esc(s)}</span>`), td(n ? n : '<span class="ds-tag ds-tag--gris">Sin dispositivos</span>', 'ha-td--fit ha-td--right', 'width:112px')])).join('')}</table>
         ${warn(d.warning)}`;
     },
     files() {
@@ -202,54 +207,54 @@
       const label = `${num(f.usedGB)} GB usados de ${f.totalGB / 1000} TB`;
       return `${head('files')}
         <div class="ha-chart"><span class="ha-chart__caption">${label}</span>${bar(f.rows.map((r) => ({ v: r.gb, c: r.c })), f.totalGB, label)}</div>
-        ${f.rows.length ? `<div class="ha-tbl">${f.rows.map((r) => row([td(`<span class="ha-legend" style="padding:0"><span class="ha-legend__dot" style="--c:${r.c}"></span></span><span style="display:flex;flex-direction:column;gap:2px"><span>${esc(r.label)}</span><span class="ha-td__sub">${num(r.files)} archivos</span></span>`, 'ha-td--row', 'gap:4px'), td(`${num(r.gb)} GB`, 'ha-td--fit ha-td--right', 'width:80px')])).join('')}</div>` : ''}`;
+        ${f.rows.length ? `<table class="ds-table ha-tbl">${f.rows.map((r) => row([td(`<span class="ha-legend" style="padding:0"><span class="ha-legend__dot" style="--c:${r.c}"></span></span><span style="display:flex;flex-direction:column;gap:2px"><span>${esc(r.label)}</span><span class="ha-td__sub">${num(r.files)} archivos</span></span>`, 'ha-td--row', 'gap:4px'), td(`${num(r.gb)} GB`, 'ha-td--fit ha-td--right', 'width:80px')])).join('')}</table>` : ''}`;
     },
     tabulators() {
       const t = TABULATORS[view.metal];
       return `${head('tabulators')}
         <div class="ha-tab-head"><div class="ha-chips" role="group" aria-label="Metal">
-          <button type="button" class="ha-choice" data-metal="oro" aria-pressed="${view.metal === 'oro'}">Oro</button>
-          <button type="button" class="ha-choice" data-metal="plata" aria-pressed="${view.metal === 'plata'}">Plata</button></div>
+          <button type="button" class="ds-chip ds-chip--choice ha-choice${view.metal === 'oro' ? ' ds-chip--on' : ''}" data-metal="oro" aria-pressed="${view.metal === 'oro'}">Oro</button>
+          <button type="button" class="ds-chip ds-chip--choice ha-choice${view.metal === 'plata' ? ' ds-chip--on' : ''}" data-metal="plata" aria-pressed="${view.metal === 'plata'}">Plata</button></div>
           <div class="ha-tab-price"><span>Precio de mercado hoy</span><span>${esc(t.price)}</span></div></div>
-        <div class="ha-tbl">${th([['Pureza'], ['Precio por oz', 'ha-td--right']])}${t.rows.map(([p, v]) => row([td(esc(p)), td(mxn(v), 'ha-td--right')])).join('')}</div>`;
+        <table class="ds-table ha-tbl">${th([['Pureza'], ['Precio por oz', 'ha-td--right']])}${t.rows.map(([p, v]) => row([td(esc(p)), td(mxn(v), 'ha-td--right')])).join('')}</table>`;
     },
     conservation() {
       const c = DATA.conservation;
       return `${head('conservation')}${stats([['Activos', c.active], ['Inactivos', c.inactive]])}
-        <div class="ha-tbl">${th([['Estado'], ['% del avalúo']])}
-        ${c.rows.map(([s, p]) => row([td(esc(s), p ? '' : 'ha-td--muted'), td(p ? esc(p) : '<span><span class="ha-tag ha-tag--gray">Inactivo</span></span>')])).join('')}</div>`;
+        <table class="ds-table ha-tbl">${th([['Estado'], ['% del avalúo']])}
+        ${c.rows.map(([s, p]) => row([td(esc(s), p ? '' : 'ha-td--muted'), td(p ? esc(p) : '<span><span class="ds-tag ds-tag--gris">Inactivo</span></span>')])).join('')}</table>`;
     },
     layaways() {
       const a = DATA.layaways;
       return `${head('layaways')}${stats([['Artículos apartables', num(a.eligible), 'auto'], ['Vigentes', a.current], ['Pausados', a.paused]])}
-        <div class="ha-tbl">${a.issues.map(issue).join('')}</div>`;
+        <table class="ds-table ha-tbl">${a.issues.map(issue).join('')}</table>`;
     },
     promotions() {
       const d = DATA.promotions;
       return `${head('promotions')}${stats([[d.stats[0][0], d.stats[0][1], 'auto'], d.stats[1], d.stats[2]])}
-        <div class="ha-tbl">${th([['Campaña'], ['Descuento', 'ha-td--fit ha-td--right', 'width:72px']])}
-        ${d.rows.map(([n, s, p]) => row([td(`<span class="ha-td__main">${esc(n)}</span><span class="ha-td__sub">${esc(s)}</span>`), td(esc(p), 'ha-td--fit ha-td--right', 'width:72px')])).join('')}</div>`;
+        <table class="ds-table ha-tbl">${th([['Campaña'], ['Descuento', 'ha-td--fit ha-td--right', 'width:72px']])}
+        ${d.rows.map(([n, s, p]) => row([td(`<span class="ha-td__main">${esc(n)}</span><span class="ha-td__sub">${esc(s)}</span>`), td(esc(p), 'ha-td--fit ha-td--right', 'width:72px')])).join('')}</table>`;
     },
     addons() {
       return `${head('addons')}<div class="ha-addons">${DATA.addons.map((m) => `<div class="ha-addon">
         <span class="ha-addon__ico" style="background:${m.bg};color:${m.color}">${ICON[m.icon]}</span><span class="ha-addon__name">${esc(m.name)}</span>
-        <button type="button" class="ha-ibtn ha-ibtn--lg" data-act="Agregar app" data-ctx="${esc(m.name)}" aria-label="Agregar ${esc(m.name)}">${ICON.add24}</button></div>`).join('')}</div>`;
+        <button type="button" class="ds-btn ds-btn--tertiary ds-btn--icon-md ha-ibtn ha-ibtn--lg" data-act="Agregar app" data-ctx="${esc(m.name)}" aria-label="Agregar ${esc(m.name)}">${ICON.add24}</button></div>`).join('')}</div>`;
     },
   };
 
   /* AdminHomeV2View.renderCard: cargando → error → vacío (cuenta nueva) → tarjeta con datos */
   function cardHTML(id) {
-    if (view.state === 'loading') return `${headOnly(id)}<div class="ha-loading"><div class="ha-spinner" role="status" aria-label="Cargando ${esc(TITLES[id])}"></div></div>`;
+    if (view.state === 'loading') return `${headOnly(id)}<div class="ha-loading"><div class="ds-spinner ds-spinner--lg ds-spinner--brand" role="status" aria-label="Cargando ${esc(TITLES[id])}"></div></div>`;
     if (view.state === 'error' && ERROR_CARDS.includes(id) && !view.retried.includes(id)) {
-      return `${headOnly(id)}<div class="ha-alert" role="alert"><div class="ha-alert__body"><span class="ha-alert__ico">${ICON.alertError}</span>
-        <p class="ha-alert__txt">No se pudo cargar esta información. El resto del Inicio está actualizado.</p></div>
-        <div class="ha-alert__action"><button type="button" class="ha-btn" data-retry="${id}">Reintentar</button></div></div>`;
+      return `${headOnly(id)}<div class="ds-alert ds-alert--error ha-alert" role="alert"><div class="ha-alert__body"><span class="ha-alert__ico">${ICON.alertError}</span>
+        <p class="ds-alert__body ha-alert__txt">No se pudo cargar esta información. El resto del Inicio está actualizado.</p></div>
+        <div class="ha-alert__action"><button type="button" class="ds-btn ds-btn--tertiary ds-btn--md ha-btn" data-retry="${id}">Reintentar</button></div></div>`;
     }
     if (view.state === 'empty' && EMPTY[id]) {
       const [icon, title, text, action, add] = EMPTY[id];
       return `${head(id)}<div class="ha-empty"><span class="ha-empty__ico">${ICON[icon]}</span>
         <p class="ha-empty__txt"><b>${esc(title)}</b><span>${esc(text)}</span></p>
-        <button type="button" class="ha-btn ha-btn--secondary${add ? ' ha-btn--icon' : ''}" data-act="${esc(action)}">${add ? ICON.add20 : ''}${esc(action)}</button></div>`;
+        <button type="button" class="ds-btn ds-btn--secondary ds-btn--md ha-btn${add ? ' ha-btn--icon' : ''}" data-act="${esc(action)}">${add ? ICON.add20 : ''}${esc(action)}</button></div>`;
     }
     return RENDER[id]();
   }
@@ -264,7 +269,7 @@
   function paintCard(id) {
     if (!els[id]) {
       els[id] = document.createElement('section');
-      els[id].className = 'ha-card';
+      els[id].className = 'ds-card ha-card';
       els[id].setAttribute('aria-label', TITLES[id]);
     }
     els[id].setAttribute('aria-busy', String(view.state === 'loading'));
@@ -300,12 +305,12 @@
   /* ======================= Toast (design-system/Toast): 5 s ======================= */
   function toast(kind, title, text) {
     const t = document.createElement('div');
-    t.className = `ha-toast${kind === 'info' ? ' ha-toast--info' : ''}`;
+    t.className = `ds-toast ds-toast--${kind === 'info' ? 'info' : 'success'}`;
     t.setAttribute('role', 'status');
-    t.innerHTML = `<span class="ha-toast__ico">${kind === 'info' ? ICON.toastInfo : ICON.toastSuccess}</span>
-      <div class="ha-toast__content"><p class="ha-toast__title">${esc(title)}</p><p class="ha-toast__text">${esc(text)}</p></div>
-      <button type="button" class="ha-toast__x" aria-label="Cerrar aviso">${ICON.close}</button><span class="ha-toast__bar" aria-hidden="true"></span>`;
-    t.querySelector('.ha-toast__x').addEventListener('click', () => t.remove());
+    t.innerHTML = `<span class="ds-toast__icon">${kind === 'info' ? ICON.toastInfo : ICON.toastSuccess}</span>
+      <div class="ds-toast__body-wrap"><p class="ds-toast__title">${esc(title)}</p><p class="ds-toast__body">${esc(text)}</p></div>
+      <button type="button" class="ds-toast__close" aria-label="Cerrar aviso">${ICON.close}</button><span class="ds-toast__timer" aria-hidden="true"></span>`;
+    t.querySelector('.ds-toast__close').addEventListener('click', () => t.remove());
     const root = $('#haToasts');
     root.prepend(t);
     setTimeout(() => t.remove(), 5000);
@@ -347,12 +352,12 @@
 
   /* ======================= Panel "Revisión" ======================= */
   const chips = (root, options, key) => {
-    root.innerHTML = options.map(([id, label]) => `<button type="button" class="ha-choice" data-id="${id}" aria-pressed="${view[key] === id}">${esc(label)}</button>`).join('');
+    root.innerHTML = options.map(([id, label]) => `<button type="button" class="ds-chip ds-chip--choice ha-choice${view[key] === id ? ' ds-chip--on' : ''}" data-id="${id}" aria-pressed="${view[key] === id}">${esc(label)}</button>`).join('');
     root.addEventListener('click', (e) => {
       const b = e.target.closest('[data-id]');
       if (!b) return;
       view[key] = b.dataset.id;
-      root.querySelectorAll('[data-id]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      root.querySelectorAll('[data-id]').forEach((x) => { x.setAttribute('aria-pressed', String(x === b)); x.classList.toggle('ds-chip--on', x === b); });
       if (key === 'state') { view.retried = []; view.createdExt = []; }
       if (key === 'balance') { if (els.billing && visible().includes('billing')) paintCard('billing'); return; }
       renderAll();

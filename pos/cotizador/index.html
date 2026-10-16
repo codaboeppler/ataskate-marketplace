@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ataskate POS — Cotizador de empeño</title>
+<meta name="description" content="Ataskate POS (Operativo): cotizador de empeño — contratos y artículos, cotización de artículo y selección de plazos, igual que PawnQuoterV4." />
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../ds/primitives.css" />
+<link rel="stylesheet" href="../ds/semantic.css" />
+<link rel="stylesheet" href="../ds/elevation.css" />
+<link rel="stylesheet" href="../ds/base.css" />
+<link rel="stylesheet" href="../ds/components.css" />
+<link rel="stylesheet" href="../pos.css?v=ux68-ds1" />
+<link rel="stylesheet" href="../carrito.css?v=2-ds1" />
+<link rel="stylesheet" href="cotizador.css?v=2-ds1" />
+</head>
+<body class="pos cot" data-plataforma-fija="op">
+<header class="pos-header">
+  <div class="pos-header__menu">
+    <button class="pos-hbtn pos-hbtn--plain pos-menu" type="button" aria-label="Menú">
+      <img src="../assets/menu.svg" width="24" height="24" alt="" />
+    </button>
+    <a class="pos-brand" href="./" aria-label="Ataskate · Operativo">
+      <img class="pos-brand__logo" src="../assets/logo-ataskate.svg" alt="ataskate" />
+      <span class="pos-brand__role">Operativo</span>
+    </a>
+  </div>
+
+  <form class="pos-search" role="search" onsubmit="return false">
+    <input class="pos-search__input" type="search" placeholder="Buscar" aria-label="Buscar" />
+    <button class="pos-search__go" type="submit" aria-label="Buscar"><img src="../assets/search.svg" width="24" height="24" alt="" /></button>
+  </form>
+
+  <div class="pos-header__ctas">
+    <button class="pos-hbtn pos-hide-sm" type="button" aria-label="Notificaciones">
+      <img src="../assets/notification.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-hide-xs" type="button" id="posCaja" aria-label="Flujo de fondos · caja abierta" aria-haspopup="dialog" aria-expanded="false" aria-controls="posCajaPanel">
+      <img src="../assets/pos-terminal.svg" width="24" height="24" alt="" />
+      <span class="pos-hbtn__status" aria-hidden="true"></span>
+    </button>
+    <button class="pos-hbtn pos-hide-sm" type="button" id="posAjustes" aria-label="Configuración" aria-haspopup="menu" aria-expanded="false" aria-controls="posAjustesMenu">
+      <img src="../assets/settings.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-cart" type="button" id="posCart" aria-label="Carrito, 0 artículos">
+      <img src="../assets/cart.svg" width="24" height="24" alt="" />
+      <span id="posCartN">0</span>
+    </button>
+    <button class="pos-hbtn pos-profile" type="button" aria-label="RP · Cambiar de usuario">
+      <span class="ds-avatar">RP</span>
+      <img src="../assets/sync.svg" width="24" height="24" alt="" />
+    </button>
+  </div>
+</header>
+
+<!-- paneles del Header (HU-CE-595-F / 573-F): se anclan bajo la barra; los abre y cierra ../navbar.js -->
+<div class="pos-navpanel pos-caja" id="posCajaPanel" role="dialog" aria-labelledby="posCajaTitulo" hidden>
+  <div class="pos-caja__head">
+    <h2 id="posCajaTitulo">Flujo de fondos</h2>
+    <button class="ds-btn ds-btn--primary pos-caja__btn" type="button">Cerrar flujo</button>
+    <button class="pos-caja__x" type="button" aria-label="Cerrar"><img src="../assets/navbar/close.svg" alt="" /></button>
+  </div>
+  <dl class="pos-caja__tiles">
+    <div class="pos-caja__tile"><dt>Saldo total</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Ingresos</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Salidas</dt><dd>$8,038</dd></div>
+  </dl>
+</div>
+<div class="pos-navpanel pos-ajustes" id="posAjustesMenu" role="menu" aria-label="Configuración · sesión de Omar, omar@ejemplo.com" hidden>
+  <div class="pos-ajustes__user" role="presentation">
+    <span class="ds-avatar ds-avatar--md pos-ajustes__av" aria-hidden="true">OM</span>
+    <span><b>Omar</b><small>omar@ejemplo.com</small></span>
+  </div>
+  <button class="pos-ajustes__item pos-ajustes__item--plat" type="button" role="menuitem"><img src="../assets/navbar/menu-admin.png" alt="" />Ir a Administrativo</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/sync.svg" alt="" />Sucursal Polanco</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/navbar/logout.svg" alt="" />Cerrar sesión</button>
+</div>
+
+
+<!-- Cotizador de empeño = PawnQuoterV4 del repo del equipo (HU-CE-574-F y sus HU: 575 evaluación, 576 plazos, 577 cotitulares,
+     578 extender fecha, 579 vincular cliente, 582 borrador, 586 info legal, 596.1 plata, 598 borrar al pasar, 599 fecha límite, 608 selector de fecha).
+     Mismos pasos, textos, validaciones y cálculos; lo que en la app responde el servicio aquí lo simula cotizador.js con datos ficticios. -->
+<main class="pos-main cot-main" id="cotMain">
+  <nav aria-label="Breadcrumb" class="ds-breadcrumb">
+    <ol class="pos-crumbs">
+      <li><a href="../home/" class="ds-breadcrumb__link" data-salir>Inicio</a><span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt="" /></span></li>
+      <li><span class="ds-breadcrumb__current" aria-current="page">Cotizador de empeño</span></li>
+    </ol>
+  </nav>
+  <div class="cot-head">
+    <h1 class="cot-title">Cotizador de empeño</h1>
+    <!-- Steps del DS, layout inline -->
+    <ol class="ds-stepper cot-steps" aria-label="Pasos de la cotización">
+      <li class="ds-stepper__step" id="cotPaso1"><span class="ds-stepper__dot"><span class="ds-stepper__dot-number">1</span></span><span class="ds-stepper__label">Cotización de artículo</span></li>
+      <li class="ds-stepper__rail" aria-hidden="true"></li>
+      <li class="ds-stepper__step" id="cotPaso2"><span class="ds-stepper__dot"><span class="ds-stepper__dot-number">2</span></span><span class="ds-stepper__label">Selección de plazos</span></li>
+    </ol>
+  </div>
+  <div class="cot-body">
+    <aside class="cot-izq" id="cotIzq" aria-label="Listado de artículos"></aside>
+    <section class="cot-der" id="cotDer" aria-live="polite"></section>
+  </div>
+</main>
+
+<!-- ActionFooterBar variante quoter-fixed: [volver] · Total a prestar · [acción] -->
+<div class="cot-bar" id="cotBar"></div>
+
+<div id="cotModalRoot"></div>
+<div class="ds-toast-region cot-toasts" id="posToasts" role="region" aria-live="polite" aria-label="Avisos"></div>
+
+<!-- Herramientas de la maqueta: ../demo.js las cuelga como otra pestaña del riel izquierdo.
+     Simulan lo que en la app contesta cada servicio (búsqueda, validación de contrato, info legal, cotitulares). -->
+<div class="cot-proto" id="cotProto" data-proto-panel="Estados de la maqueta" hidden>
+  <p class="cot-proto__title">Solo para revisar la maqueta</p>
+  <label class="ds-field"><span class="ds-label">Buscar artículo (en el contrato)</span>
+    <select class="ds-select--standalone" id="protoBusqueda">
+      <option value="ok">Responde normal</option>
+      <option value="lenta">Cargando (fijo)</option>
+      <option value="vacia">Sin resultados</option>
+      <option value="error">Error</option>
+    </select>
+  </label>
+  <label class="ds-field"><span class="ds-label">Validar artículos del contrato</span>
+    <select class="ds-select--standalone" id="protoValida">
+      <option value="familia">Oro y plata no se juntan con generales</option>
+      <option value="si">Siempre se pueden juntar</option>
+      <option value="no">Nunca se pueden juntar</option>
+    </select>
+  </label>
+  <label class="ds-field"><span class="ds-label">Información legal de la empresa</span>
+    <select class="ds-select--standalone" id="protoLegal">
+      <option value="ok">Completa</option>
+      <option value="falta">Incompleta</option>
+    </select>
+  </label>
+  <label class="ds-field"><span class="ds-label">Guardar cotitular</span>
+    <select class="ds-select--standalone" id="protoCotit">
+      <option value="ok">Responde bien</option>
+      <option value="error">Falla</option>
+    </select>
+  </label>
+  <div class="cot-proto__btns">
+    <button class="ds-btn ds-btn--secondary ds-btn--sm" type="button" data-proto="vacio">Cotización vacía</button>
+    <button class="ds-btn ds-btn--secondary ds-btn--sm" type="button" data-proto="ejemplo">Ejemplo con dos contratos</button>
+    <button class="ds-btn ds-btn--secondary ds-btn--sm" type="button" data-proto="plazos">Ir a Selección de plazos</button>
+    <button class="ds-btn ds-btn--secondary ds-btn--sm" type="button" data-proto="sincar">Artículo sin características</button>
+  </div>
+</div>
+
+<script src="../tabuladores/datos.js"></script>
+<script src="../carrito.js?v=2-ds1"></script>
+<script src="cotizador.js?v=2-ds1"></script>
+<script src="../navbar.js?v=3"></script>
+<script src="../menu-op.js?v=14-ds1"></script>
+<script src="../demo.js?v=18-ds1"></script>
+<script src="../comentarios.js?v=6"></script>
+</body>
+</html>

@@ -14,8 +14,9 @@
 <link rel="stylesheet" href="../ds/elevation.css" />
 <link rel="stylesheet" href="../ds/base.css" />
 <link rel="stylesheet" href="../ds/components.css" />
-<link rel="stylesheet" href="../pos.css?v=ux68" />
-<link rel="stylesheet" href="clientes.css?v=100" />
+<link rel="stylesheet" href="../pos.css?v=ux68-ds1" />
+<link rel="stylesheet" href="../carrito.css?v=2" />
+<link rel="stylesheet" href="clientes.css?v=107" />
 </head>
 <!-- Operativo: el menú lateral es cajón (se abre con la hamburguesa), igual que en ../inventario/ -->
 <body class="pos cli-page" data-plataforma-fija="op">
@@ -94,12 +95,20 @@
     <button type="button" data-act="protoq" data-q="Fernanda">Buscar en Mis clientes y Marketplace</button>
     <button type="button" data-act="protoq" data-q="Zoe Treviño">Buscar cliente que no existe</button>
     <span class="sep" aria-hidden="true"></span>
+    <span class="proto-cap">Estados del listado</span>
+    <button type="button" data-act="protocarga">Ver estado de carga</button>
+    <span class="proto-cap">Perfil del cliente: ver ejemplo</span>
+    <button type="button" data-act="protoperfil" data-v="c1131">Empeño</button>
+    <button type="button" data-act="protoperfil" data-v="c1127">Empeño con datos parciales</button>
+    <button type="button" data-act="protoperfil" data-v="c1129">Venta</button>
+    <button type="button" data-act="protoperfil" data-v="mk-1">Marketplace</button>
+    <span class="sep" aria-hidden="true"></span>
     <span class="proto-cap">Datos para verificar (ficticios)</span>
     <dl class="proto-kv">
-      <div><dt>Valeria Ortiz</dt><dd>55 8765 4321</dd></div>
-      <div><dt>Fernanda Ríos</dt><dd>55 3412 7788</dd></div>
-      <div><dt>Raúl Campos</dt><dd>81 1234 5678</dd></div>
-      <div><dt>Jorge Salinas</dt><dd>33 1987 6543</dd></div>
+      <div><dt>Valeria Ortiz</dt><dd>55 0000 0101</dd></div>
+      <div><dt>Fernanda Ríos</dt><dd>55 0000 0102</dd></div>
+      <div><dt>Raúl Campos</dt><dd>55 0000 0201</dd></div>
+      <div><dt>Jorge Salinas</dt><dd>55 0000 0202</dd></div>
     </dl>
   </div>
 
@@ -108,10 +117,12 @@
   </main>
 </div>
 
-<script src="clientes.js?v=9"></script>
+<script src="perfil-datos.js?v=4"></script>
+<script src="clientes.js?v=14"></script>
+<script src="../carrito.js?v=2"></script>
 <script src="../navbar.js?v=3"></script>
-<script src="../menu-op.js?v=13"></script>
-<script src="../demo.js?v=15"></script>
+<script src="../menu-op.js?v=14"></script>
+<script src="../demo.js?v=18"></script>
 <script src="../comentarios.js?v=6"></script>
 </body>
 </html>

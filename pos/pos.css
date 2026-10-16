@@ -8,14 +8,19 @@
 
 /* Variables que el Figma usa y el DS en código todavía no tiene */
 :root {
-  --pos-surface-page: #fbfbfe;          /* surface/surface-page */
-  --pos-surface-media: #f1f2f8;         /* fondo de fotos de artículo: gris con un toque azul (el DS usa #f7f7f7); el mismo del inventario */
+  --pos-surface-page: #fbfbfe;          /* sin token en el DS: propuesta · surface/surface-page del Figma (fondo de página) */
+  --pos-surface-media: #f1f2f8;         /* sin token en el DS: propuesta · fondo de fotos de artículo, gris con un toque azul (el DS usa #f7f7f7) */
   --pos-info-tile: var(--ats-info-blue-50); /* feedback/info/surface #EBF9FF (tiles de envío / sucursal) */
-  --pos-warning-surface: #ffebba;       /* feedback/warning/surface */
-  --pos-text-title: #1d1e20;            /* text/title */
+  --pos-warning-surface: #ffebba;       /* sin token en el DS: propuesta · feedback/warning/surface del Figma */
+  --pos-text-title: #1d1e20;            /* sin token en el DS: propuesta · text/title del Figma */
+  --pos-border-soft: #e8e9ea;           /* sin token en el DS: propuesta · línea suave entre filas de widgets y listas (entre neutral100 y neutral300) */
   --pos-table-line: var(--ats-neutral-300); /* border/default #D4D6D8 */
-  --pos-shadow-card: 0 2px 10px 0 rgba(0, 0, 0, 0.06);  /* Card-shadow: tarjetas y contenedores van sin borde, solo con esta sombra (regla de Product Design, 2026-10-08) */
-  --pos-shadow-popup: 0 10px 60px 0 rgba(0, 0, 0, 0.25); /* Pop ups */
+  /* Las 3 sombras (propuesta al DS): tarjeta, dropdown y pop up. El color sale del token negro con color-mix. */
+  --pos-shadow-card: 0 2px 10px 0 color-mix(in srgb, var(--color-base-black) 6%, transparent);       /* Card-shadow: tarjetas y contenedores van sin borde, solo con esta sombra (regla de Product Design, 2026-10-08) */
+  --pos-shadow-dropdown: 0 4px 16px 0 color-mix(in srgb, var(--color-base-black) 12%, transparent);  /* desplegables, menús y paneles del header (un solo desplegable: radio 16) */
+  --pos-shadow-popup: 0 10px 60px 0 color-mix(in srgb, var(--color-base-black) 25%, transparent);    /* pop ups */
+  --pos-overlay: color-mix(in srgb, var(--color-base-black) 50%, transparent);                       /* fondo detrás de los modales */
+  --pos-focus-ring: 0 0 0 3px color-mix(in srgb, var(--ats-primary-300) 18%, transparent);           /* anillo de foco de los campos (el mismo del DS) */
 }
 
 /* los display de los componentes del DS le ganan al atributo hidden */
@@ -183,7 +188,7 @@ body.pos {
 }
 .pos-thumbs::-webkit-scrollbar { display: none; }
 /* flechas del HorizontalCarousel del DS: icon button Medium (36) con ArrowBackIos / ArrowForwardIos 20 */
-.pos-thumbs-nav { position: absolute; top: 50%; z-index: 2; transform: translateY(-50%); box-shadow: 0 11px 13.3px 0 rgba(0, 0, 0, .06); }
+.pos-thumbs-nav { position: absolute; top: 50%; z-index: 2; transform: translateY(-50%); box-shadow: var(--pos-shadow-dropdown); }
 .pos .pos-thumbs-nav:active:not(:disabled) { transform: translateY(-50%); }
 .pos-thumbs-nav--prev { left: var(--spacing-2); }
 .pos-thumbs-nav--next { right: var(--spacing-2); }
@@ -241,7 +246,7 @@ body.pos {
 .pos-chip--14 { height: 24px; font-size: 14px; line-height: 16px; }
 .pos-chip--14 svg { width: 16px; height: 16px; }
 .pos-chip--blue { background: var(--ats-info-blue-50); }
-.pos-chip--grey { background: #e8e9ea; }
+.pos-chip--grey { background: var(--pos-border-soft); }
 .pos-chip--purple { background: var(--ats-primary-100); color: var(--ats-primary-400); }
 /* rojo suave del DS (feedback / error): superficie #FFEBEB y título #501111 */
 .pos-chip--red { background: var(--ats-error-red-50); color: var(--ats-error-red-300); }
@@ -359,7 +364,7 @@ body.pos {
 .pos .pos-more { align-self: center; padding: 7px 8px 7px 16px; }
 
 /* ---------------- Modal "Selecciona un apartado" (DS Modal) ---------------- */
-.pos .ds-modal-overlay { background: rgba(0, 0, 0, .5); backdrop-filter: none; padding: var(--spacing-5); animation: none; }
+.pos .ds-modal-overlay { background: var(--pos-overlay); backdrop-filter: none; padding: var(--spacing-5); animation: none; }
 .pos .ds-modal.pos-plazos {
   max-width: 943px; max-height: min(calc(100vh - 48px), 720px); max-height: min(calc(100dvh - 48px), 720px); overflow: hidden; animation: none;
   border: 0; border-radius: var(--radius-lg);
@@ -451,7 +456,7 @@ body.pos {
   padding: 8px; border-radius: var(--radius-sm);
   background: var(--ats-primary-400); color: var(--color-base-white);
   font-size: 14px; font-weight: var(--font-weight-regular); line-height: 1.2; letter-spacing: normal;
-  box-shadow: 0 11px 26.6px 0 rgba(0, 0, 0, .06);
+  box-shadow: var(--pos-shadow-dropdown);
   transition: opacity .15s ease-in-out;
 }
 .ds-tooltip__arrow { position: absolute; display: block; pointer-events: none; top: 100%; left: 50%; transform: translateX(-50%); }
@@ -500,7 +505,7 @@ body.pos {
   gap: 16px; padding: 16px; border: 0; border-radius: var(--radius-sm); overflow: hidden;
   font-size: inherit; line-height: normal;
   background: var(--ats-success-green-50);
-  box-shadow: -2px 2px 10.6px 0 rgba(0, 0, 0, .08);
+  box-shadow: var(--pos-shadow-card);
   animation: none; transition: none;
 }
 .pos .ds-toast__icon { width: 24px; height: 24px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: none; border-radius: 0; color: var(--ats-success-green-200); font-size: 0; }
@@ -522,7 +527,7 @@ body.pos {
   box-sizing: border-box; height: 36px; padding: 8px var(--spacing-4); border-radius: 100px; white-space: nowrap;
   font-size: 14px; line-height: 20px; font-weight: var(--font-weight-bold); color: var(--ats-primary-300); transition: background .15s;
 }
-.pos .ds-toast__action:hover { background: rgba(90, 90, 255, .06); color: var(--ats-primary-300); }
+.pos .ds-toast__action:hover { background: color-mix(in srgb, var(--ats-primary-300) 6%, transparent); color: var(--ats-primary-300); }
 .pos .ds-toast__action:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
 .ds-toast__timer { position: absolute; bottom: 0; left: 0; height: 3px; width: 100%; background-color: var(--ats-success-green-200); animation: ds-toast-timer 5s linear forwards; }
 @keyframes ds-toast-timer { from { width: 100%; } to { width: 0%; } }
@@ -533,6 +538,13 @@ body.pos {
 .pos .ds-toast--warning .ds-toast__icon { color: var(--ats-alert-yellow-200); }
 .pos .ds-toast--warning .ds-toast__title { color: var(--ats-alert-yellow-300); }
 .pos .ds-toast--warning .ds-toast__timer { background-color: var(--ats-alert-yellow-200); }
+.pos .ds-toast--info { background: var(--ats-info-blue-50); }
+.pos .ds-toast--info .ds-toast__icon { color: var(--ats-info-blue-200); }
+.pos .ds-toast--info .ds-toast__title { color: var(--ats-info-blue-300); }
+.pos .ds-toast--info .ds-toast__timer { background-color: var(--ats-info-blue-200); }
+
+/* Card del DS (propuesta): sin borde, Card-shadow y radio 16 (regla de Product Design, 2026-10-08) */
+.pos .ds-card { border: 0; border-radius: var(--radius-md); box-shadow: var(--pos-shadow-card); }
 
 
 @media (max-width: 1180px) {
@@ -640,7 +652,7 @@ body.pos {
 .pos-opts__menu {
   position: absolute; top: calc(100% + 8px); right: 0; z-index: 25; min-width: 232px; padding: 8px 0;
   display: flex; flex-direction: column; overflow: hidden;
-  background: var(--color-base-white); border-radius: 16px; box-shadow: 0 4px 16px 0 rgba(0, 0, 0, .12);
+  background: var(--color-base-white); border-radius: 16px; box-shadow: var(--pos-shadow-dropdown);
   transform-origin: top right; animation: pos-menu-in .16s ease-out;
 }
 .pos-opts__menu[hidden], .pos-opts__item[hidden] { display: none; }
@@ -693,7 +705,7 @@ body.pos {
 .pos-side {
   position: fixed; z-index: 35; top: var(--pos-header-h, 56px); left: 0; bottom: 0; width: 200px;
   box-sizing: border-box; display: flex; flex-direction: column; gap: 40px; padding: 16px 8px; overflow-y: auto;
-  background: #fafaff; border-right: .5px solid #e5e5ff; box-shadow: var(--pos-shadow-card);
+  background: var(--ats-primary-10); border-right: .5px solid var(--ats-primary-100); box-shadow: var(--pos-shadow-card);
 }
 .pos-side[hidden] { display: none; }
 .pos-side[data-modo='admin'] { width: 244px; }
@@ -701,24 +713,24 @@ body.pos {
 .pos-side__item, .pos-side__foot, .pos-side__ghead {
   display: flex; align-items: center; gap: 8px; width: 100%; box-sizing: border-box; padding: 8px; margin: 0;
   border: 0; border-radius: 8px; background: transparent; cursor: pointer; text-align: left; text-decoration: none;
-  font-family: var(--font-family-sans); color: #2a2c2f;
+  font-family: var(--font-family-sans); color: var(--ats-neutral-700);
 }
 .pos-side__item, .pos-side__foot { font-size: 16px; line-height: 19.2px; font-weight: 400; }
-.pos-side__item:hover, .pos-side__foot:hover { color: #5a5aff; }
-.pos-side__item:focus-visible, .pos-side__foot:focus-visible, .pos-side__ghead:focus-visible { outline: 2px solid #5a5aff; outline-offset: -2px; }
+.pos-side__item:hover, .pos-side__foot:hover { color: var(--ats-primary-300); }
+.pos-side__item:focus-visible, .pos-side__foot:focus-visible, .pos-side__ghead:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: -2px; }
 /* elegido: en el Operativo, fondo lila y texto oscuro (Figma); en el Administrativo, purple100 y texto #5A5AFF (MenuAdmin) */
-.pos-side__item.is-active { background: #f0f0ff; color: #2a2c2f; }
-.pos-side[data-modo='admin'] .pos-side__item.is-active { background: #e5e5ff; color: #5a5aff; }
+.pos-side__item.is-active { background: var(--ats-primary-50); color: var(--ats-neutral-700); }
+.pos-side[data-modo='admin'] .pos-side__item.is-active { background: var(--ats-primary-100); color: var(--ats-primary-300); }
 .pos-side__ico { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; color: inherit; }
 .pos-side__txt { flex: 1 0 0; min-width: 0; }
 .pos-side__ghead { font-size: 14px; line-height: 16.8px; font-weight: 400; }
 .pos-side__glabel { flex: 1 0 0; }
-.pos-side__chev { flex: none; display: inline-flex; color: #2a2c2f; transition: transform .15s ease-in-out; }
+.pos-side__chev { flex: none; display: inline-flex; color: var(--ats-neutral-700); transition: transform .15s ease-in-out; }
 .pos-side__group.is-open .pos-side__chev { transform: rotate(180deg); }
 .pos-side__gitems { display: none; flex-direction: column; }
 .pos-side__group.is-open .pos-side__gitems { display: flex; }
 .pos-side__footer { margin-top: auto; display: flex; flex-direction: column; gap: 4px; }
-.pos-side__foot.is-emphasis { color: #5a5aff; }
+.pos-side__foot.is-emphasis { color: var(--ats-primary-300); }
 
 /* ---------- Tuerquita: HeaderMenu del DS ----------
    260 de ancho, fondo primary50 #F0F0FF, radio 8, sombra 0 11 26.6 rgba(0,0,0,.06). Usuario sobre blanco (padding 16, avatar 32,
@@ -726,51 +738,51 @@ body.pos {
    "Agregar sucursal" y "Cerrar sesión" sobre blanco (8/16; fila 8 con radio 4, 16/1.2 #2A2C2F, hover #FAFAFA). */
 .pos-navpanel.pos-hm {
   width: min(260px, calc(100vw - 24px)); display: flex; flex-direction: column; overflow: hidden;
-  border-radius: 8px; background: #f0f0ff; box-shadow: 0 11px 26.6px 0 rgba(0, 0, 0, .06);
+  border-radius: 8px; background: var(--ats-primary-50); box-shadow: var(--pos-shadow-dropdown);
 }
-.pos-hm__av { flex: none; width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--ats-info-blue-50); color: #2a2c2f; font-size: 14px; font-weight: var(--font-weight-semibold); }
-.pos-hm__user { display: flex; align-items: center; gap: 8px; padding: 16px; background: #fff; }
+.pos-hm__av { flex: none; width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--ats-info-blue-50); color: var(--ats-neutral-700); font-size: 14px; font-weight: var(--font-weight-semibold); }
+.pos-hm__user { display: flex; align-items: center; gap: 8px; padding: 16px; background: var(--color-base-white); }
 .pos-hm__info { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-.pos-hm__info b { font-size: 16px; line-height: 1.5; font-weight: 700; letter-spacing: .3px; color: #1d1e20; white-space: nowrap; }
-.pos-hm__info small { font-size: 12px; line-height: 12px; color: #54575c; overflow: hidden; text-overflow: ellipsis; }
+.pos-hm__info b { font-size: 16px; line-height: 1.5; font-weight: 700; letter-spacing: .3px; color: var(--pos-text-title); white-space: nowrap; }
+.pos-hm__info small { font-size: 12px; line-height: 12px; color: var(--ats-neutral-600); overflow: hidden; text-overflow: ellipsis; }
 .pos-hm__cuentas { display: flex; flex-direction: column; }
 .pos-hm__cuenta {
   display: flex; align-items: center; gap: 16px; width: 100%; box-sizing: border-box; padding: 8px 24px; border: 0; background: none;
-  cursor: pointer; text-align: left; font-family: var(--font-family-sans); font-size: 14px; line-height: 1.2; font-weight: 400; color: #1d1e20; transition: background .15s;
+  cursor: pointer; text-align: left; font-family: var(--font-family-sans); font-size: 14px; line-height: 1.2; font-weight: 400; color: var(--pos-text-title); transition: background .15s;
 }
-.pos-hm__cuenta:hover, .pos-hm__cuenta.is-actual { background: #e5e5ff; }
+.pos-hm__cuenta:hover, .pos-hm__cuenta.is-actual { background: var(--ats-primary-100); }
 .pos-hm__cuenta.is-actual { cursor: default; }
 .pos-hm__nombre { white-space: nowrap; }
-.pos-hm__items { display: flex; flex-direction: column; padding: 8px 16px; background: #fff; }
+.pos-hm__items { display: flex; flex-direction: column; padding: 8px 16px; background: var(--color-base-white); }
 .pos-hm__items--fin { padding-top: 0; }
 .pos-hm__item {
-  display: flex; align-items: center; gap: 8px; width: 100%; box-sizing: border-box; padding: 8px; border: 0; border-radius: 4px; background: #fff;
-  cursor: pointer; text-align: left; font-family: var(--font-family-sans); font-size: 16px; line-height: 1.2; font-weight: 400; letter-spacing: .3px; color: #2a2c2f; transition: background .15s;
+  display: flex; align-items: center; gap: 8px; width: 100%; box-sizing: border-box; padding: 8px; border: 0; border-radius: 4px; background: var(--color-base-white);
+  cursor: pointer; text-align: left; font-family: var(--font-family-sans); font-size: 16px; line-height: 1.2; font-weight: 400; letter-spacing: .3px; color: var(--ats-neutral-700); transition: background .15s;
 }
 .pos-hm__item span { flex: 1; }
-.pos-hm__item svg { flex: none; color: #2a2c2f; }
-.pos-hm__item:hover { background: #fafafa; }
-.pos-hm__cuenta:focus-visible, .pos-hm__item:focus-visible { outline: 2px solid #5a5aff; outline-offset: -2px; }
+.pos-hm__item svg { flex: none; color: var(--ats-neutral-700); }
+.pos-hm__item:hover { background: var(--ats-neutral-50); }
+.pos-hm__cuenta:focus-visible, .pos-hm__item:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: -2px; }
 /* pastilla del header: Operativo #3DFF3D, Admin #FF98EF (HeaderAdminBar del DS) */
-:root[data-plataforma='admin'] .pos-brand__role { background: #ff98ef; }
+:root[data-plataforma='admin'] .pos-brand__role { background: var(--ats-pink-300); }
 
 /* ---------- Header del Administrativo (HeaderAdminBar del DS, versión Admin) ----------
    60 de alto, padding 8/24, fondo primary50. Buscador de 550×40 blanco con borde #D4D6D8 y radio 100, lupa de 20 a la izquierda.
    Botones de ícono blancos y redondos (padding 8, ícono 20 #2A2C2F, hover neutral100). Avatar con flecha de 16 a 4 de distancia. */
 :root:not([data-plataforma='admin']) .pos-admin-solo, :root[data-plataforma='admin'] .pos-op-solo { display: none !important; }
-:root[data-plataforma='admin'] .pos-header { height: 60px; padding: 8px 24px; background: #f0f0ff; }
+:root[data-plataforma='admin'] .pos-header { height: 60px; padding: 8px 24px; background: var(--ats-primary-50); }
 .pos-admin-search {
   display: flex; align-items: center; gap: 8px; box-sizing: border-box; width: min(550px, 40vw); height: 40px; flex-shrink: 0;
-  margin: 0; padding: 0 16px; border: 1px solid #d4d6d8; border-radius: 100px; background: #fff; color: #a1a5aa;
+  margin: 0; padding: 0 16px; border: 1px solid var(--ats-neutral-300); border-radius: 100px; background: var(--color-base-white); color: var(--ats-neutral-400);
 }
 .pos-admin-search svg { flex: none; }
-.pos-admin-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font-family: var(--font-family-sans); font-size: 16px; color: #2a2c2f; }
-.pos-admin-search input::placeholder { color: #a1a5aa; }
-.pos-admin-search:focus-within { border-color: #0d166b; }
-.pos-admin-ico { color: #2a2c2f; }
-.pos-admin-ico:hover { background: #f3f3f3; }
-.pos-admin-avatar { display: flex; align-items: center; gap: 4px; padding: 0; border: 0; background: none; cursor: pointer; color: #2a2c2f; }
-.pos-admin-avatar:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; border-radius: 100px; }
+.pos-admin-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font-family: var(--font-family-sans); font-size: 16px; color: var(--ats-neutral-700); }
+.pos-admin-search input::placeholder { color: var(--ats-neutral-400); }
+.pos-admin-search:focus-within { border-color: var(--ats-primary-400); }
+.pos-admin-ico { color: var(--ats-neutral-700); }
+.pos-admin-ico:hover { background: var(--ats-neutral-100); }
+.pos-admin-avatar { display: flex; align-items: center; gap: 4px; padding: 0; border: 0; background: none; cursor: pointer; color: var(--ats-neutral-700); }
+.pos-admin-avatar:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; border-radius: 100px; }
 /* en el Administrativo la tuerca no se ve, pero sigue en el layout (navbar.js cierra el panel si su botón deja de existir);
    el avatar la acciona por dentro */
 :root[data-plataforma='admin'] #posAjustes.pos-op-solo {
@@ -806,7 +818,7 @@ body.pos {
    Clientes y Cliente nuevo (Product Design), Configura tu empresa (el equipo), Plazos (el equipo) y las pantallas de Product Design
    traían otras medidas; aquí se igualan sin tocar su estructura. */
 .inv-title, .cli-title, .cn-title, .cte .t-page, .ac-title, .tb-title, .t-titulo-pagina {
-  margin: 0; font-size: 28px !important; line-height: 34px !important; font-weight: 500 !important; color: #2a2c2f !important; letter-spacing: normal;
+  margin: 0; font-size: 28px !important; line-height: 34px !important; font-weight: 500 !important; color: var(--ats-neutral-700) !important; letter-spacing: normal;
 }
 .ac-head, .tb-head { min-height: 36px; align-items: center; }
 /* Generación de códigos separaba todo a 24: el breadcrumb queda a 8 del título y las secciones a 16, como en el Inventario */

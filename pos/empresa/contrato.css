@@ -9,57 +9,61 @@
    - Tarjetas sin borde: Card-shadow y radio 16 (regla de Product Design). Los controles conservan su borde.
    ============================================================ */
 
+:root {
+  --propuesta-neutral-200: #e8e9ea; /* sin token en el DS: propuesta */
+  --propuesta-text-title: #1d1e20; /* sin token en el DS: propuesta */
+}
 /* ---------- Título y barra de pestañas ---------- */
 .cte .ctr-titulo { min-height:36px; align-items:center; }
 .cte .ctr-barra { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
 /* TabsButton del DS (src/design-system/TabsButton/tabsButton.styles.ts): 40 de alto, 0 16, radio 8 por fuera;
-   activo #F0F0FF con borde #ACACFF y 600; inactivo blanco, borde #D4D6D8 (sin el izquierdo del segundo) y 400 */
+   activo var(--ats-primary-50) con borde var(--ats-primary-200) y 600; inactivo blanco, borde var(--ats-neutral-300) (sin el izquierdo del segundo) y 400 */
 .cte .ctr-tabs { display:inline-flex; overflow:hidden; border-radius:8px; max-width:100%; }
 .cte .ctr-tab { height:40px; padding:0 16px; display:inline-flex; align-items:center; justify-content:center; gap:8px; flex:1 1 auto;
-  border:1px solid #D4D6D8; border-left:0; background:#FFFFFF; color:#54575C; font-size:16px; line-height:1.2; font-weight:400;
+  border:1px solid var(--ats-neutral-300); border-left:0; background:var(--ats-white); color:var(--ats-neutral-600); font-size:16px; line-height:1.2; font-weight:400;
   letter-spacing:.3px; white-space:nowrap; cursor:pointer; transition:all .15s; }
-.cte .ctr-tab:first-child { border-left:1px solid #D4D6D8; border-radius:8px 0 0 8px; }
+.cte .ctr-tab:first-child { border-left:1px solid var(--ats-neutral-300); border-radius:8px 0 0 8px; }
 .cte .ctr-tab:last-child { border-radius:0 8px 8px 0; }
-.cte .ctr-tab[aria-selected="true"] { background:#F0F0FF; border-color:#ACACFF; border-left:1px solid #ACACFF; color:#2A2C2F; font-weight:600; letter-spacing:0; }
-.cte .ctr-tab:hover { background:#F0F0FF; color:#2A2C2F; }
+.cte .ctr-tab[aria-selected="true"] { background:var(--ats-primary-50); border-color:var(--ats-primary-200); border-left:1px solid var(--ats-primary-200); color:var(--ats-neutral-700); font-weight:600; letter-spacing:0; }
+.cte .ctr-tab:hover { background:var(--ats-primary-50); color:var(--ats-neutral-700); }
 /* el contenedor recorta (overflow hidden): el anillo de foco va por dentro */
-.cte .ctr-tab:focus-visible { outline:2px solid var(--ds-primary); outline-offset:-3px; }
+.cte .ctr-tab:focus-visible { outline:2px solid var(--ats-primary-300); outline-offset:-3px; }
 .cte .ctr-acciones { display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-left:auto; }
 .cte .ctr-acciones .btn-tertiary { background:transparent; }
-.cte .ctr-acciones .btn-tertiary:hover { background:var(--color-primary-50); }
+.cte .ctr-acciones .btn-tertiary:hover { background:var(--ats-primary-50); }
 
 /* ---------- Paneles y tarjetas ---------- */
 .cte .ctr-panel { display:flex; flex-direction:column; gap:16px; min-width:0; }
 .cte .ctr-panel[hidden] { display:none; }
 .cte .ctr-card { padding:16px; gap:16px; }
-.cte .ctr-card__t { margin:0; font-size:20px; line-height:1.2; font-weight:600; color:#1D1E20; letter-spacing:normal; }
-.cte .ctr-sub { margin:0; font-size:16px; line-height:1.2; font-weight:600; color:#2A2C2F; letter-spacing:normal; }
-.cte .ctr-div { height:1px; margin:0; border:0; background:#E8E9EA; }
+.cte .ctr-card__t { margin:0; font-size:20px; line-height:1.2; font-weight:600; color:var(--propuesta-text-title); letter-spacing:normal; }
+.cte .ctr-sub { margin:0; font-size:16px; line-height:1.2; font-weight:600; color:var(--ats-neutral-700); letter-spacing:normal; }
+.cte .ctr-div { height:1px; margin:0; border:0; background:var(--propuesta-neutral-200); }
 .cte .ctr-grid { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:16px; margin:0; }
 
-/* ---------- Campos (DS Text input V2): etiqueta Medium 14 ls .3 #1D1E20, 4 de aire, control de 40 ---------- */
-.cte .ctr .field > label, .cte .ctr .field > .lbl { font-weight:500; letter-spacing:.3px; color:#1D1E20; line-height:1.2; }
+/* ---------- Campos (DS Text input V2): etiqueta Medium 14 ls .3 var(--propuesta-text-title), 4 de aire, control de 40 ---------- */
+.cte .ctr .field > label, .cte .ctr .field > .lbl { font-weight:500; letter-spacing:.3px; color:var(--propuesta-text-title); line-height:1.2; }
 .cte .ctr .opt { font-weight:400; letter-spacing:normal; }
 .cte .ctr .field .errmsg { padding:2px 8px; }
-/* error: borde #A82424 (empresa.css) y el texto en rojo; las fechas vacías muestran DD/MM/AAAA en rojo (Figma 4700:11359) */
-.cte .ctr .inp.err, .cte .ctr .inp.err::placeholder { color:var(--ds-destructive); }
-.cte .ctr .sel-btn svg { width:24px; height:24px; color:#2A2C2F; }
+/* error: borde var(--ats-error-red-200) (empresa.css) y el texto en rojo; las fechas vacías muestran DD/MM/AAAA en rojo (Figma 4700:11359) */
+.cte .ctr .inp.err, .cte .ctr .inp.err::placeholder { color:var(--ats-error-red-200); }
+.cte .ctr .sel-btn svg { width:24px; height:24px; color:var(--ats-neutral-700); }
 /* calendario de 24 como en el Figma (el de el equipo era de 20) */
 .cte .ctr .cal-btn { top:8px; }
 .cte .ctr .inp-wrap .inp { padding-right:44px; }
 /* Teléfono: bandera de México y +52 fijos, con línea a la derecha (Phone input del DS) */
-.cte .ctr-tel .pre { cursor:default; border-right:1px solid var(--ds-border); }
+.cte .ctr-tel .pre { cursor:default; border-right:1px solid var(--ats-neutral-300); }
 .cte .ctr-tel input { padding:0 16px; }
 
-/* RPCA: ícono de ayuda dentro del campo y Tooltip del DS (bg #0D166B, texto blanco 14, radio 8, padding 8, flecha arriba) */
+/* RPCA: ícono de ayuda dentro del campo y Tooltip del DS (bg var(--ats-primary-400), texto blanco 14, radio 8, padding 8, flecha arriba) */
 .cte .ctr-tip { position:absolute; right:12px; top:8px; display:flex; }
-.cte .ctr-tip__btn { display:flex; padding:0; border:0; border-radius:50%; background:transparent; color:var(--color-primary-200); cursor:help; }
-.cte .ctr-tip__btn:hover { color:var(--ds-primary); }
+.cte .ctr-tip__btn { display:flex; padding:0; border:0; border-radius:50%; background:transparent; color:var(--ats-primary-200); cursor:help; }
+.cte .ctr-tip__btn:hover { color:var(--ats-primary-300); }
 .cte .ctr-tip__box { position:absolute; top:calc(100% + 8px); left:50%; transform:translateX(-50%); z-index:5; width:max-content;
-  max-width:min(320px, calc(100vw - 48px)); padding:8px; border-radius:8px; background:#0D166B; color:#FFFFFF; font-size:14px; line-height:1.2;
-  letter-spacing:normal; text-align:left; box-shadow:0 11px 26.6px rgba(0,0,0,.06); opacity:0; visibility:hidden; pointer-events:none; transition:opacity .15s, visibility .15s; }
+  max-width:min(320px, calc(100vw - 48px)); padding:8px; border-radius:8px; background:var(--ats-primary-400); color:var(--ats-white); font-size:14px; line-height:1.2;
+  letter-spacing:normal; text-align:left; box-shadow:0 11px 26.6px color-mix(in srgb, var(--ats-black) 6%, transparent); opacity:0; visibility:hidden; pointer-events:none; transition:opacity .15s, visibility .15s; }
 .cte .ctr-tip__box::before { content:""; position:absolute; bottom:100%; left:50%; transform:translateX(-50%);
-  border-left:8px solid transparent; border-right:8px solid transparent; border-bottom:8px solid #0D166B; }
+  border-left:8px solid transparent; border-right:8px solid transparent; border-bottom:8px solid var(--ats-primary-400); }
 .cte .ctr-tip:hover .ctr-tip__box, .cte .ctr-tip:focus-within .ctr-tip__box { opacity:1; visibility:visible; }
 .cte .ctr-tip.is-oculto .ctr-tip__box { opacity:0; visibility:hidden; }
 
@@ -67,16 +71,16 @@
 .cte .ctr-alerta .at { font-size:16px; line-height:1.2; }
 .cte .ctr-pie { display:flex; justify-content:center; align-items:center; gap:16px; padding:16px 0; flex-wrap:wrap; }
 .cte .ctr-pie .btn-tertiary { background:transparent; }
-.cte .ctr-pie .btn-tertiary:hover { background:var(--color-primary-50); }
+.cte .ctr-pie .btn-tertiary:hover { background:var(--ats-primary-50); }
 
 /* ---------- Solo lectura (frame 426): etiqueta + valor en una fila de 40, mismo ritmo que los campos ---------- */
 .cte .ctr-dato { display:flex; flex-direction:column; gap:4px; min-width:0; }
-.cte .ctr-dato dt { padding:0 8px; font-size:14px; line-height:1.2; font-weight:500; letter-spacing:.3px; color:#1D1E20; }
+.cte .ctr-dato dt { padding:0 8px; font-size:14px; line-height:1.2; font-weight:500; letter-spacing:.3px; color:var(--propuesta-text-title); }
 .cte .ctr-dato dd { margin:0; min-height:40px; padding:0 8px; display:flex; align-items:center; font-size:16px; line-height:1.2;
-  letter-spacing:.3px; color:#2A2C2F; overflow-wrap:anywhere; }
+  letter-spacing:.3px; color:var(--ats-neutral-700); overflow-wrap:anywhere; }
 
-/* ---------- Carga (frame Loading 4623:4362): bloques #F4F5F5 radio 8 con el brillo del Skeleton del DS ---------- */
-.cte .ctr-sk { display:block; background:#F4F5F5; border-radius:8px; }
+/* ---------- Carga (frame Loading 4623:4362): bloques var(--ats-neutral-100) radio 8 con el brillo del Skeleton del DS ---------- */
+.cte .ctr-sk { display:block; background:var(--ats-neutral-100); border-radius:8px; }
 .cte .ctr-sk-a { flex-direction:row; align-items:center; }
 .cte .ctr-sk-lineas { display:flex; flex-direction:column; gap:4px; flex:1; min-width:0; }
 .cte .ctr-sk--logo { width:72px; height:72px; flex-shrink:0; }

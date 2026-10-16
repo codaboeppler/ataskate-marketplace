@@ -13,7 +13,8 @@
 <link rel="stylesheet" href="../ds/elevation.css" />
 <link rel="stylesheet" href="../ds/base.css" />
 <link rel="stylesheet" href="../ds/components.css" />
-<link rel="stylesheet" href="../pos.css?v=ux68" />
+<link rel="stylesheet" href="../pos.css?v=ux68-ds1" />
+<link rel="stylesheet" href="../carrito.css?v=2-ds1" />
 <link rel="stylesheet" href="../v2/v2.css?v=10" />
 <link rel="stylesheet" href="prendario.css?v=8" />
 </head>
@@ -551,13 +552,23 @@
     desempeno: { nombre: 'Desempeño', monto: () => K.desempeno },
   };
   let operacion = null;
+  // la operación vive en el carrito compartido (../carrito.js): una sola por contrato
+  const enCarrito = () => (window.atsCarrito ? atsCarrito.leer().items.find((i) => i.contrato === CONTRATO.folio && OPER[i.tipo]) : null);
   const pintarCarrito = () => {
-    const n = operacion ? 1 : 0;
-    $('posCartN').textContent = n;
-    $('posCart').setAttribute('aria-label', 'Carrito, ' + n + (n === 1 ? ' artículo' : ' artículos'));
+    if (!window.atsCarrito) return;
+    const x = enCarrito();
+    if (x && x.tipo === operacion) return;
+    if (x) atsCarrito.quitar(x.id);
+    if (operacion) atsCarrito.agregar({
+      tipo: operacion, titulo: OPER[operacion].nombre, monto: OPER[operacion].monto() / 100, contrato: CONTRATO.folio,
+      detalle: CONTRATO.prendas.map((p) => p.nombre).join(', '),
+      prestamo: CONTRATO.prendas.reduce((t, p) => t + p.prestamo, 0),
+      imagen: new URL(CONTRATO.prendas[0].img, location.href).pathname,
+    });
   };
   const operar = (tipo) => {
     const o = OPER[tipo];
+    operacion = (enCarrito() || {}).tipo || null;
     const detalle = 'Contrato ' + CONTRATO.folio + ' · ' + prendasTxt + ' · ' + mxn(o.monto());
     if (operacion === tipo) {
       toast('Ya está en el carrito', o.nombre + ' del contrato ' + CONTRATO.folio + '.', 'warning', ICO_AVISO);
@@ -586,8 +597,9 @@
   porHash();
 })();
 </script>
+<script src="../carrito.js?v=2-ds1"></script>
 <script src="../navbar.js?v=3"></script>
-<script src="../demo.js?v=15"></script>
+<script src="../demo.js?v=18-ds1"></script>
 <script src="../comentarios.js?v=6"></script>
 </body>
 </html>

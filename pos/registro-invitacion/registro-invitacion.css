@@ -11,13 +11,11 @@
    ============================================================ */
 
 :root {
+  --propuesta-surface-page: #fbfbfe; /* sin token en el DS: propuesta */
+  --propuesta-text-title: #1d1e20; /* sin token en el DS: propuesta */
+}
+:root {
   /* Colors/colors.ts */
-  --ri-purple-50: #f0f0ff; --ri-purple-100: #e5e5ff; --ri-purple-200: #acacff; --ri-purple-300: #5a5aff; --ri-purple-400: #0d166b;
-  --ri-neutral-50: #fafafa; --ri-neutral-100: #f4f5f5; --ri-neutral-300: #d4d6d8; --ri-neutral-400: #a1a5aa;
-  --ri-neutral-600: #54575c; --ri-neutral-700: #2a2c2f; --ri-neutral-800: #1d1e20;
-  --ri-success-surface: #effaf4; --ri-success-icon: #309c60; --ri-success-title: #174a2e;
-  --ri-error-surface: #ffebeb;   --ri-error-icon: #a82424;   --ri-error-title: #501111;
-  --ri-info-surface: #ebf9ff;    --ri-info-icon: #008fcc;    --ri-info-title: #004461;
   /* Sin header del POS: el riel de flujos (../demo.js) se pega arriba en vez de quedar 56 px abajo */
   --pos-header-h: 0px;
 }
@@ -26,7 +24,7 @@
 [hidden] { display: none !important; }
 html, body { margin: 0; min-height: 100%; }
 body {
-  font-family: 'Nunito', sans-serif; color: var(--ri-neutral-700); background: #fff;
+  font-family: 'Nunito', sans-serif; color: var(--ats-neutral-700); background: var(--ats-white);
   -webkit-font-smoothing: antialiased;
 }
 button, input { font-family: inherit; }
@@ -36,7 +34,7 @@ button, input { font-family: inherit; }
 
 /* ---------------- Layout de acceso (InviteAuthLayout · inviteSignUp.styles.ts) ----------------
    AuthGrid 46 % foto + panel (igual que SignUp/index.tsx); a 900 px o menos se oculta la foto. */
-.ri-auth { display: grid; grid-template-columns: 46% minmax(0, 1fr); min-height: 100vh; background: #fff; }
+.ri-auth { display: grid; grid-template-columns: 46% minmax(0, 1fr); min-height: 100vh; background: var(--ats-white); }
 .ri-photo { background: url('assets/signup-image.jpg') center / cover no-repeat; }
 .ri-pane { display: flex; flex-direction: column; min-width: 0; padding: 64px; }
 .ri-inner {
@@ -54,18 +52,18 @@ button, input { font-family: inherit; }
 .ri-foot { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: auto; padding-top: 24px; }
 .ri-foot__row {
   display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0;
-  font-size: 16px; line-height: 19.2px; color: var(--ri-neutral-700);       /* textoRegular · colors.textBody */
+  font-size: 16px; line-height: 19.2px; color: var(--ats-neutral-700);       /* textoRegular · colors.textBody */
 }
 
 /* ---------------- Typography/typography.ts ---------------- */
-.ri-h1 { margin: 0; font-size: 28px; line-height: 33.6px; font-weight: 700; letter-spacing: normal; color: var(--ri-neutral-800); }  /* tituloDePagina */
-.ri-text { margin: 0; font-size: 16px; line-height: 19.2px; font-weight: 400; letter-spacing: .3px; color: var(--ri-neutral-700); } /* textoRegular */
+.ri-h1 { margin: 0; font-size: 28px; line-height: 33.6px; font-weight: 600; letter-spacing: normal; color: var(--propuesta-text-title); }  /* tituloDePagina (600 desde da2e7dbe6) */
+.ri-text { margin: 0; font-size: 16px; line-height: 19.2px; font-weight: 400; letter-spacing: .3px; color: var(--ats-neutral-700); } /* textoRegular */
 /* LinkButton (hyperlink): botón con aspecto de enlace */
 .ri-link {
   align-self: flex-start; padding: 0; border: 0; background: none; cursor: pointer;
-  font-size: 16px; line-height: 16px; font-weight: 400; color: var(--ri-purple-400); text-decoration: underline;
+  font-size: 16px; line-height: 16px; font-weight: 400; color: var(--ats-primary-400); text-decoration: underline;
 }
-.ri-link:focus-visible { outline: 2px solid var(--ri-purple-300); outline-offset: 2px; border-radius: 4px; }
+.ri-link:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; border-radius: 4px; }
 
 /* ---------------- Steps (steps.styles.ts · layout="inline") ---------------- */
 /* Corrección: el Steps del DS no envuelve; aquí el segundo paso baja de renglón si no cabe (pantallas de menos de 356 px), para no desbordar */
@@ -73,102 +71,62 @@ button, input { font-family: inherit; }
 .ri-steps li { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; position: relative; }
 .ri-steps__num {
   width: 32px; height: 32px; border-radius: 100px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-  background: #d4d6d8; color: #54575c; font-size: 14px; font-weight: 600; position: relative; z-index: 1;
+  background: var(--ats-neutral-300); color: var(--ats-neutral-600); font-size: 14px; font-weight: 600; position: relative; z-index: 1;
 }
-.ri-steps__lbl { font-size: 16px; line-height: 1.2; font-weight: 400; color: #54575c; white-space: nowrap; }
-.ri-steps__conn { width: 32px; height: 1px; flex-shrink: 0; background: #d4d6d8; }
-.ri-steps li.is-active .ri-steps__num { background: #0d166b; color: #fafafa; }
-.ri-steps li.is-active .ri-steps__lbl { font-weight: 600; color: #0d166b; }
-.ri-steps li.is-done .ri-steps__num { background: #309c60; color: #fafafa; box-shadow: 0 0 5px rgba(103, 110, 118, .08), 0 0 1px rgba(0, 0, 0, .12); }
-.ri-steps li.is-done .ri-steps__conn { background: #309c60; }
+.ri-steps__lbl { font-size: 16px; line-height: 1.2; font-weight: 400; color: var(--ats-neutral-600); white-space: nowrap; }
+.ri-steps__conn { width: 32px; height: 1px; flex-shrink: 0; background: var(--ats-neutral-300); }
+.ri-steps li.is-active .ri-steps__num { background: var(--ats-primary-400); color: var(--ats-neutral-50); }
+.ri-steps li.is-active .ri-steps__lbl { font-weight: 600; color: var(--ats-primary-400); }
+.ri-steps li.is-done .ri-steps__num { background: var(--ats-success-green-200); color: var(--ats-neutral-50); box-shadow: 0 0 5px color-mix(in srgb, var(--ats-neutral-500) 8%, transparent), 0 0 1px color-mix(in srgb, var(--ats-black) 12%, transparent); }
+.ri-steps li.is-done .ri-steps__conn { background: var(--ats-success-green-200); }
 
 /* ---------------- Button (button.styles.ts · size default) + Spinner small ---------------- */
-.ri-btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 8px 16px;
-  border-radius: 100px; border: 1px solid transparent; outline: none; cursor: pointer; white-space: nowrap; text-align: center;
-  font-size: 14px; line-height: 20px; font-weight: 700; transition: all .2s ease-in-out; text-decoration: none;
-}
-.ri-btn .ri-ico { width: 20px; height: 20px; }
+
+.ds-btn .ri-ico { width: 20px; height: 20px; }
 .ri-btn--icon-left { padding-left: 8px; padding-right: 16px; }
 .ri-btn--icon-right { padding-left: 16px; padding-right: 8px; }
-.ri-btn--primary { background: var(--ri-purple-300); color: #fff; }
-.ri-btn--primary:hover, .ri-btn--primary:active { background: var(--ri-purple-400); }
-.ri-btn--tertiary { background: #fff; color: var(--ri-purple-300); }
-.ri-btn--tertiary:hover, .ri-btn--tertiary:active { background: var(--ri-purple-50); }
+
 .ri-btn--full { display: flex; width: 100%; }
 /* Corrección de accesibilidad: el Button del DS pone outline: none y no dibuja foco */
-.ri-btn:focus-visible { outline: 2px solid var(--ri-purple-300); outline-offset: 2px; }
+
 /* loading: Spinner small (24 px, borde 2) con el mismo texto; el ícono se oculta y el botón queda deshabilitado */
-.ri-btn[aria-busy='true'] { pointer-events: none; position: relative; padding-left: 16px; padding-right: 16px; }
-.ri-btn[aria-busy='true'] .ri-ico { display: none; }
-.ri-spinner {
-  width: 24px; height: 24px; border-radius: 50%; border: 2px solid rgba(0, 0, 0, .1); border-top-color: #fff;
-  animation: ri-spin .7s linear infinite; display: inline-block; flex-shrink: 0;
-}
-.ri-btn--tertiary .ri-spinner { border-top-color: #5a5aff; }
-@keyframes ri-spin { to { transform: rotate(360deg); } }
+.ds-btn[aria-busy='true'] { pointer-events: none; position: relative; padding-left: 16px; padding-right: 16px; }
+.ds-btn[aria-busy='true'] .ri-ico { display: none; }
+
 
 /* ---------------- Alert (alert.styles.ts · filled="color" · fullWidth) ---------------- */
-.ri-alert {
-  position: relative; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; row-gap: 16px;
-  width: 100%; max-width: 100%; min-height: 56px; padding: 16px; border-radius: 8px; border: 1px solid transparent; overflow: hidden;
-  container-type: inline-size;
-}
-.ri-alert__wrap { display: flex; align-items: flex-start; gap: 8px; flex: 1; min-width: 0; }
-.ri-alert__ico { width: 24px; height: 24px; }
-.ri-alert__content { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0; }
-.ri-alert__title { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.5; letter-spacing: .3px; }
-.ri-alert__text { margin: 0; font-size: 16px; font-weight: 400; line-height: 1.2; letter-spacing: .3px; color: var(--ri-neutral-700); }
-.ri-alert__action { flex-shrink: 0; }
+
 /* Si el Alert mide ≤480 px por dentro, la acción baja debajo del texto, alineada con él (ícono 24 + 8) */
-@container (max-width: 480px) {
-  .ri-alert__action { order: 1; flex-basis: 100%; padding-left: 32px; }
-}
-.ri-alert--error { background: var(--ri-error-surface); }
-.ri-alert--error .ri-alert__title { color: var(--ri-error-title); }
-.ri-alert--error .ri-alert__ico { color: var(--ri-error-icon); }
-.ri-alert--info { background: var(--ri-info-surface); }
-.ri-alert--info .ri-alert__title { color: var(--ri-info-title); }
-.ri-alert--info .ri-alert__ico { color: var(--ri-info-icon); }
-.ri-alert--success { background: var(--ri-success-surface); }
-.ri-alert--success .ri-alert__title { color: var(--ri-success-title); }
-.ri-alert--success .ri-alert__ico { color: var(--ri-success-icon); }
 
 /* ---------------- TextInput (textInput.styles.ts) ---------------- */
 .ri-field { display: flex; flex-direction: column; gap: 4px; width: 100%; min-width: 0; }
 .ri-field__label-row { display: flex; align-items: center; gap: 4px; padding: 0 8px; }
 /* labelStyles pide 500; la app no carga Nunito 500 y se ve como 400 (CLAUDE.md del DS) */
-.ri-field__label { font-size: 14px; font-weight: 400; line-height: 1.2; color: var(--ri-neutral-800); }
+.ri-field__label { font-size: 14px; font-weight: 400; line-height: 1.2; color: var(--propuesta-text-title); }
 .ri-control { position: relative; display: flex; align-items: center; }
-.ri-input {
-  width: 100%; height: 40px; border-radius: 100px; border: 1px solid var(--ri-neutral-300); background: #fff;
-  font-size: 16px; font-weight: 400; letter-spacing: .3px; color: var(--ri-neutral-700); padding: 8px 12px;
-  outline: none; transition: border-color .2s ease-in-out;
-}
-.ri-input::placeholder { color: var(--ri-neutral-400); }
-.ri-input:focus { border-color: var(--ri-purple-400); }
-.ri-input[aria-invalid='true'], .ri-input[aria-invalid='true']:focus { border-color: var(--ri-error-icon); }
+
+.ri-input[aria-invalid='true'], .ri-input[aria-invalid='true']:focus { border-color: var(--ats-error-red-200); }
 /* readOnly usa disabledFieldStyles (fondo neutral50, texto neutral400); su :focus queda en purple400 como en el DS */
-.ri-input[readonly] { background: var(--ri-neutral-50); border-color: var(--ri-neutral-300); color: var(--ri-neutral-400); cursor: not-allowed; }
-.ri-input[readonly]:focus { border-color: var(--ri-purple-400); }
+.ri-input[readonly] { background: var(--ats-neutral-50); border-color: var(--ats-neutral-300); color: var(--ats-neutral-400); cursor: not-allowed; }
+.ri-input[readonly]:focus { border-color: var(--ats-primary-400); }
 /* Al final a propósito: en el DS `&:hover:not(:disabled)` (0,3,0) gana a error y a readOnly; se replica tal cual */
-.ri-input:hover:not(:disabled) { border-color: var(--ri-purple-300); }
+
 .ri-control--password .ri-input { padding-right: 40px; }
 /* passwordIconGroupStyles + passwordEyeBtnStyles · ViewOn/ViewOff 20 px purple200 */
 .ri-eye-group { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 8px; }
-.ri-eye { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer; outline: none; color: var(--ri-purple-200); }
+.ri-eye { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer; outline: none; color: var(--ats-primary-200); }
 .ri-helper {
   display: flex; align-items: center; gap: 4px; margin: 0; padding: 2px 8px;
-  font-size: 14px; font-weight: 400; line-height: 1.4; color: var(--ri-neutral-600);
+  font-size: 14px; font-weight: 400; line-height: 1.4; color: var(--ats-neutral-600);
 }
-.ri-helper--error { color: var(--ri-error-icon); }
+.ri-helper--error { color: var(--ats-error-red-200); }
 .ri-helper .ri-ico { width: 16px; height: 16px; }
 
 /* Requisitos de contraseña (PasswordCriteria): filas de helperText (`_criterios` de Figma) */
 .ri-criteria { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
-.ri-criteria li { display: flex; align-items: center; gap: 4px; padding: 2px 8px; font-size: 14px; line-height: 1.4; color: var(--ri-neutral-600); }
-.ri-criteria li.is-error { color: var(--ri-error-icon); }
-.ri-criteria li.is-ok .ri-ico { color: var(--ri-success-icon); }
+.ri-criteria li { display: flex; align-items: center; gap: 4px; padding: 2px 8px; font-size: 14px; line-height: 1.4; color: var(--ats-neutral-600); }
+.ri-criteria li.is-error { color: var(--ats-error-red-200); }
+.ri-criteria li.is-ok .ri-ico { color: var(--ats-success-green-200); }
 .ri-criteria li .ri-ico { width: 16px; height: 16px; }
 .ri-criteria li .ri-ico:empty { display: none; }
 
@@ -176,20 +134,20 @@ button, input { font-family: inherit; }
 .ri-check { display: inline-flex; align-items: flex-start; gap: 4px; cursor: pointer; align-self: flex-start; }
 .ri-check input { position: absolute; opacity: 0; width: 0; height: 0; margin: 0; }
 .ri-check__box {
-  width: 20px; height: 20px; border-radius: 4px; border: 1px solid #a1a5aa; background: #fff; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center; color: #0d166b;
+  width: 20px; height: 20px; border-radius: 4px; border: 1px solid var(--ats-neutral-400); background: var(--ats-white); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; color: var(--ats-primary-400);
   transition: border-color .15s ease-in-out, background-color .15s ease-in-out;
 }
 .ri-check__box svg { visibility: hidden; }
-/* El hover va en la caja, no en el texto; también con la casilla marcada (#5a5aff) */
-.ri-check .ri-check__box:hover, .ri-check input:checked + .ri-check__box:hover { border-color: #5a5aff; }
-.ri-check input:checked + .ri-check__box { border-color: #acacff; background: #e5e5ff; }
+/* El hover va en la caja, no en el texto; también con la casilla marcada (var(--ats-primary-300)) */
+.ri-check .ri-check__box:hover, .ri-check input:checked + .ri-check__box:hover { border-color: var(--ats-primary-300); }
+.ri-check input:checked + .ri-check__box { border-color: var(--ats-primary-200); background: var(--ats-primary-100); }
 .ri-check input:checked + .ri-check__box svg { visibility: visible; }
-.ri-check.is-error .ri-check__box, .ri-check.is-error .ri-check__box:hover { border-color: #a82424; background: #fff; }
+.ri-check.is-error .ri-check__box, .ri-check.is-error .ri-check__box:hover { border-color: var(--ats-error-red-200); background: var(--ats-white); }
 /* Corrección de accesibilidad: el Checkbox del DS no dibuja foco */
-.ri-check input:focus-visible + .ri-check__box { outline: 2px solid var(--ri-purple-300); outline-offset: 2px; }
+.ri-check input:focus-visible + .ri-check__box { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
 .ri-check__label { display: flex; flex-direction: column; gap: 4px; align-self: stretch; justify-content: center; }
-.ri-check__text { font-size: 14px; font-weight: 400; line-height: 16.8px; color: #2a2c2f; }
+.ri-check__text { font-size: 14px; font-weight: 400; line-height: 16.8px; color: var(--ats-neutral-700); }
 .ri-terms-links { display: flex; flex-wrap: wrap; gap: 4px; padding-left: 16px; }
 
 /* ---------------- CodeField (codeField.styles.ts · charset="alphanumeric") ---------------- */
@@ -198,40 +156,40 @@ button, input { font-family: inherit; }
 .ri-codefield__cells { display: flex; align-items: center; gap: 16px; max-width: 100%; min-width: 0; }
 .ri-codefield__cell {
   flex: 0 1 60px; width: 60px; min-width: 0; height: auto; aspect-ratio: 1 / 1; padding: 0;
-  border-radius: 8px; border: 1px solid var(--ri-neutral-300); background: #fff;
-  font-size: 20px; font-weight: 600; color: var(--ri-neutral-700); text-align: center; text-transform: uppercase;
-  outline: none; caret-color: var(--ri-purple-400); transition: border-color .15s ease; cursor: text;
+  border-radius: 8px; border: 1px solid var(--ats-neutral-300); background: var(--ats-white);
+  font-size: 20px; font-weight: 600; color: var(--ats-neutral-700); text-align: center; text-transform: uppercase;
+  outline: none; caret-color: var(--ats-primary-400); transition: border-color .15s ease; cursor: text;
 }
-.ri-codefield:not(.is-error):not(.is-success) .ri-codefield__cell:hover:not(:focus) { border-color: var(--ri-purple-300); }
-.ri-codefield:not(.is-error):not(.is-success) .ri-codefield__cell:focus { border-color: var(--ri-purple-400); }
-.ri-codefield.is-error .ri-codefield__cell { border-color: var(--ri-error-icon); }
-.ri-codefield.is-success .ri-codefield__cell { border-color: var(--ri-success-icon); }
+.ri-codefield:not(.is-error):not(.is-success) .ri-codefield__cell:hover:not(:focus) { border-color: var(--ats-primary-300); }
+.ri-codefield:not(.is-error):not(.is-success) .ri-codefield__cell:focus { border-color: var(--ats-primary-400); }
+.ri-codefield.is-error .ri-codefield__cell { border-color: var(--ats-error-red-200); }
+.ri-codefield.is-success .ri-codefield__cell { border-color: var(--ats-success-green-200); }
 .ri-codefield__helper { display: flex; align-items: center; justify-content: center; gap: 4px; padding: 2px 8px; max-width: 100%; }
 .ri-codefield__helper .ri-ico { width: 16px; height: 16px; }
 .ri-codefield__helper .ri-ico:empty { display: none; }
-.ri-codefield__text { font-size: 14px; font-weight: 400; line-height: 1.2; color: var(--ri-neutral-600); text-align: center; }
-.ri-codefield.is-error .ri-codefield__helper { color: var(--ri-error-icon); }
-.ri-codefield.is-error .ri-codefield__text { color: var(--ri-error-icon); }
-.ri-codefield.is-success .ri-codefield__helper, .ri-codefield.is-success .ri-codefield__text { color: var(--ri-success-icon); }
+.ri-codefield__text { font-size: 14px; font-weight: 400; line-height: 1.2; color: var(--ats-neutral-600); text-align: center; }
+.ri-codefield.is-error .ri-codefield__helper { color: var(--ats-error-red-200); }
+.ri-codefield.is-error .ri-codefield__text { color: var(--ats-error-red-200); }
+.ri-codefield.is-success .ri-codefield__helper, .ri-codefield.is-success .ri-codefield__text { color: var(--ats-success-green-200); }
 @media (max-width: 520px) { .ri-codefield__cells { gap: 8px; } }
 
 /* ---------------- Correo de invitación (InviteEmail · inviteEmail.styles.ts, propuesta hero) ----------------
    Card de 600 con Card-shadow y radio 16 sobre fondo neutral-100: banda purple-200 con el cerebro patinando y destellos,
    texto centrado y el código como protagonista, sin caja. Debajo de 600 px las secciones pasan de 48 a 24 de padding. */
-.ri-mail { display: flex; flex-direction: column; align-items: center; gap: 16px; min-height: 100vh; padding: 48px 16px; background: var(--ri-neutral-100); }
+.ri-mail { display: flex; flex-direction: column; align-items: center; gap: 16px; min-height: 100vh; padding: 48px 16px; background: var(--ats-neutral-100); }
 .ri-mail__meta {
   display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; width: 100%; max-width: 600px; margin: 0;
-  font-size: 14px; line-height: 16.8px; color: var(--ri-neutral-600);                                  /* caption · textCaptions */
+  font-size: 14px; line-height: 16.8px; color: var(--ats-neutral-600);                                  /* caption · textCaptions */
 }
 .ri-mail__meta dt, .ri-mail__meta dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
-.ri-mail__meta dd { font-weight: 600; color: var(--ri-neutral-800); }
-.ri-mail__preheader { width: 100%; max-width: 600px; margin: 0; font-size: 14px; line-height: 16.8px; color: var(--ri-neutral-600); }
+.ri-mail__meta dd { font-weight: 600; color: var(--propuesta-text-title); }
+.ri-mail__preheader { width: 100%; max-width: 600px; margin: 0; font-size: 14px; line-height: 16.8px; color: var(--ats-neutral-600); }
 .ri-mail__card {
-  width: 100%; max-width: 600px; overflow: hidden; border-radius: 16px; background: #fff;
-  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, .06); text-align: center;                                    /* shadows.cardHover, sin borde */
+  width: 100%; max-width: 600px; overflow: hidden; border-radius: 16px; background: var(--ats-white);
+  box-shadow: 0 2px 10px 0 color-mix(in srgb, var(--ats-black) 6%, transparent); text-align: center;                                    /* shadows.cardHover, sin borde */
 }
 .ri-mail__card img { display: block; }
-.ri-mail__hero { position: relative; padding: 48px 24px 40px; background: var(--ri-purple-200); line-height: 0; }
+.ri-mail__hero { position: relative; padding: 48px 24px 40px; background: var(--ats-primary-200); line-height: 0; }
 .ri-mail__sparkle { position: absolute; display: block; }
 .ri-mail__hero-img {
   position: relative; width: 200px; height: auto; margin: 0 auto; transform-origin: 50% 100%;
@@ -247,28 +205,28 @@ button, input { font-family: inherit; }
 .ri-mail__sec { display: flex; flex-direction: column; align-items: center; padding: 32px 48px 0; }
 .ri-mail__sec--lg { padding-top: 40px; }
 .ri-mail__sec--sm { padding-top: 20px; }
-.ri-mail__title { margin: 0 0 12px; font-size: 28px; line-height: 1.2; font-weight: 800; color: var(--ri-purple-400); }
-.ri-mail__text { margin: 0; font-size: 16px; line-height: 1.5; font-weight: 400; color: var(--ri-neutral-700); }   /* textoRegular */
+.ri-mail__title { margin: 0 0 12px; font-size: 28px; line-height: 1.2; font-weight: 800; color: var(--ats-primary-400); }
+.ri-mail__text { margin: 0; font-size: 16px; line-height: 1.5; font-weight: 400; color: var(--ats-neutral-700); }   /* textoRegular */
 .ri-mail__text + .ri-mail__text { margin-top: 4px; }
-.ri-mail__text--muted { color: var(--ri-neutral-600); }
-.ri-mail__text strong { color: var(--ri-neutral-800); }
-.ri-mail__code-label { margin: 0 0 12px; font-size: 20px; line-height: 1.2; font-weight: 700; color: var(--ri-neutral-800); }
+.ri-mail__text--muted { color: var(--ats-neutral-600); }
+.ri-mail__text strong { color: var(--propuesta-text-title); }
+.ri-mail__code-label { margin: 0 0 12px; font-size: 20px; line-height: 1.2; font-weight: 700; color: var(--propuesta-text-title); }
 .ri-mail__code {
-  margin: 0; font-size: 36px; line-height: 1.2; font-weight: 800; letter-spacing: 10px; white-space: nowrap; color: var(--ri-purple-400);
+  margin: 0; font-size: 36px; line-height: 1.2; font-weight: 800; letter-spacing: 10px; white-space: nowrap; color: var(--ats-primary-400);
 }
-.ri-mail__caption { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ri-neutral-600); }                 /* caption */
-.ri-mail__caption strong { color: var(--ri-neutral-800); }
+.ri-mail__caption { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ats-neutral-600); }                 /* caption */
+.ri-mail__caption strong { color: var(--propuesta-text-title); }
 .ri-mail__caption--note { margin-top: 12px; }
-.ri-mail__caption--body { color: var(--ri-neutral-700); }
-.ri-mail__link { font-size: 14px; line-height: 1.5; font-weight: 600; color: var(--ri-purple-300); }
-.ri-mail__warning { margin: 0; padding-bottom: 40px; font-size: 13px; line-height: 1.5; color: var(--ri-neutral-600); }
+.ri-mail__caption--body { color: var(--ats-neutral-700); }
+.ri-mail__link { font-size: 14px; line-height: 1.5; font-weight: 600; color: var(--ats-primary-300); }
+.ri-mail__warning { margin: 0; padding-bottom: 40px; font-size: 13px; line-height: 1.5; color: var(--ats-neutral-600); }
 .ri-mail__footer {
   display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 24px 48px;
-  border-top: 1px solid var(--ri-neutral-100); background: #fbfbfe;                                    /* surfacePage */
+  border-top: 1px solid var(--ats-neutral-100); background: var(--propuesta-surface-page);                                    /* surfacePage */
 }
 .ri-mail__icons { display: flex; gap: 24px; }
 .ri-mail__legal-wrap { display: flex; flex-direction: column; gap: 4px; }
-.ri-mail__legal { margin: 0; font-size: 12px; line-height: 12px; font-weight: 400; color: var(--ri-neutral-600); }   /* labelRegular */
+.ri-mail__legal { margin: 0; font-size: 12px; line-height: 12px; font-weight: 400; color: var(--ats-neutral-600); }   /* labelRegular */
 .ri-mail__legal--bold { font-weight: 700; }                                                                         /* labelBold */
 @media (max-width: 600px) { .ri-mail__sec, .ri-mail__footer { padding-left: 24px; padding-right: 24px; } }
 
@@ -282,46 +240,41 @@ button, input { font-family: inherit; }
 .ri-toast {
   position: relative; display: flex; align-items: center; justify-content: space-between; gap: 16px;
   width: min(530px, calc(100vw - 40px)); margin: 8px 0; padding: 16px; border-radius: 8px; overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, .1); pointer-events: auto; animation: ri-toast-in .3s ease-in-out;
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--ats-black) 10%, transparent); pointer-events: auto; animation: ri-toast-in .3s ease-in-out;
 }
 @keyframes ri-toast-in { from { transform: translateY(-20px); opacity: 0; } to { transform: none; opacity: 1; } }
-.ri-toast--success { background: #e4f7ec; }
-.ri-toast--info { background: #dbf4ff; }
-.ri-toast__row { display: flex; align-items: flex-start; gap: 8px; min-width: 0; flex: 1; }
-.ri-toast__ico { width: 20px; height: 20px; }
-.ri-toast--success .ri-toast__ico { color: #309c60; }
-.ri-toast--info .ri-toast__ico { color: #008fcc; }
-.ri-toast__msg { margin: 0; font-size: 16px; font-weight: 400; line-height: 1.2; color: #2a2c2f; overflow-wrap: anywhere; }
+.ri-toast--success { background: var(--ats-success-green-50); }
+.ri-toast--info { background: var(--ats-cyan-100); }
+
 /* Corrección: en la app el cierre es una imagen con onClick (sin foco); aquí es un botón */
-.ri-toast__x { flex-shrink: 0; display: flex; width: 24px; height: 24px; padding: 0; border: 0; background: none; color: #2a2c2f; cursor: pointer; }
-.ri-toast__x:focus-visible { outline: 2px solid #5a5aff; outline-offset: 2px; border-radius: 4px; }
+
 .ri-toast__timer { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; transform-origin: left center; animation: ri-toast-timer linear forwards; }
-.ri-toast--success .ri-toast__timer { background: #309c60; }
-.ri-toast--info .ri-toast__timer { background: #008fcc; }
+.ri-toast--success .ri-toast__timer { background: var(--ats-success-green-200); }
+.ri-toast--info .ri-toast__timer { background: var(--ats-info-blue-200); }
 @keyframes ri-toast-timer { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 
 /* ---------------- Panel "Revisión" (no es UI del producto) ----------------
    Vive en una pestaña del riel de flujos (data-proto-panel de ../demo.js), que le pone la caja flotante.
    Pantalla y escenario con el Chip del DS (variant="choice"), como la barra de su vista previa en React. */
-.ri-review { display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--ri-neutral-700); }
-.ri-review__title { margin: 0; font-size: 12px; line-height: 1.2; font-weight: 600; color: var(--ri-neutral-600); }
+.ri-review { display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--ats-neutral-700); }
+.ri-review__title { margin: 0; font-size: 12px; line-height: 1.2; font-weight: 600; color: var(--ats-neutral-600); }
 .ri-review__group { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; border: 0; min-width: 0; }
-.ri-review__group legend { padding: 0; margin-bottom: 8px; font-size: 14px; line-height: 16.8px; color: var(--ri-neutral-600); }  /* caption */
+.ri-review__group legend { padding: 0; margin-bottom: 8px; font-size: 14px; line-height: 16.8px; color: var(--ats-neutral-600); }  /* caption */
 .ri-review__chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .ri-chip {
   display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 8px 12px; border-radius: 8px;
-  border: 1px solid var(--ri-neutral-300); background: #fff; cursor: pointer; outline: none; user-select: none;
-  font-size: 14px; font-weight: 400; color: var(--ri-neutral-700); white-space: nowrap;
+  border: 1px solid var(--ats-neutral-300); background: var(--ats-white); cursor: pointer; outline: none; user-select: none;
+  font-size: 14px; font-weight: 400; color: var(--ats-neutral-700); white-space: nowrap;
   transition: background .15s ease-in-out, border-color .15s ease-in-out, color .15s ease-in-out;
 }
-.ri-chip[aria-pressed='true'] { border-color: var(--ri-purple-300); background: var(--ri-purple-50); color: var(--ri-purple-400); font-weight: 600; }
-.ri-chip:hover { background: var(--ri-purple-50); border-color: var(--ri-purple-300); color: var(--ri-purple-300); font-weight: 600; filter: drop-shadow(4px 4px 2px rgba(90, 90, 255, .16)); }
-.ri-chip:focus-visible { outline: 2px solid var(--ri-purple-300); outline-offset: 2px; }
-.ri-review__codes { margin: 0; font-size: 12px; line-height: 1.5; color: var(--ri-neutral-600); }
-.ri-review__codes code { font-family: inherit; font-weight: 700; color: var(--ri-neutral-800); }
-.ri-review__codes a { color: var(--ri-purple-400); }
-.ri-review__notes-title { margin: 4px 0 0; font-size: 14px; line-height: 1.2; font-weight: 700; color: var(--ri-neutral-800); }
-.ri-review__notes { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; line-height: 1.35; color: var(--ri-neutral-700); }
+.ri-chip[aria-pressed='true'] { border-color: var(--ats-primary-300); background: var(--ats-primary-50); color: var(--ats-primary-400); font-weight: 600; }
+.ri-chip:hover { background: var(--ats-primary-50); border-color: var(--ats-primary-300); color: var(--ats-primary-300); font-weight: 600; filter: drop-shadow(4px 4px 2px color-mix(in srgb, var(--ats-primary-300) 16%, transparent)); }
+.ri-chip:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
+.ri-review__codes { margin: 0; font-size: 12px; line-height: 1.5; color: var(--ats-neutral-600); }
+.ri-review__codes code { font-family: inherit; font-weight: 700; color: var(--propuesta-text-title); }
+.ri-review__codes a { color: var(--ats-primary-400); }
+.ri-review__notes-title { margin: 4px 0 0; font-size: 14px; line-height: 1.2; font-weight: 700; color: var(--propuesta-text-title); }
+.ri-review__notes { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; line-height: 1.35; color: var(--ats-neutral-700); }
 
 /* ---------------- Responsive del layout de acceso (≤900 px: sin foto, formulario a todo el ancho) ---------------- */
 @media (max-width: 900px) {
@@ -333,5 +286,23 @@ button, input { font-family: inherit; }
 
 @media (prefers-reduced-motion: reduce) {
   .ri-toast, .ri-toast__timer { animation: none; }
-  .ri-spinner { animation-duration: 1.4s; }
+
 }
+
+/* ===== Componentes del DS (limpieza 2026-10-16) ===== */
+/* DS Button: foco de 2 px primary a 2 px (no carga ../pos.css) */
+.ds-btn:focus-visible { box-shadow: none; outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
+.ds-btn { text-decoration: none; }
+/* DS TextInput de 40 px como el resto del acceso */
+.ri-input.ds-input--standalone { height: 40px; padding: 8px 12px; font-size: 16px; letter-spacing: .3px; color: var(--ats-neutral-700); }
+.ri-input[aria-invalid='true'] { border-color: var(--ats-error-red-200); }
+/* DS Alert y DS Toast: el ícono es el del DS de Figma (svg), sin el círculo de color */
+.ri-alert .ds-alert__icon, .ri-toast .ds-toast__icon { background: none; border-radius: 0; }
+.ds-alert--error .ds-alert__icon { color: var(--ats-error-red-200); }
+.ds-alert--info .ds-alert__icon { color: var(--ats-info-blue-200); }
+.ds-alert--success .ds-alert__icon { color: var(--ats-success-green-200); }
+.ds-alert__title, .ds-alert__body { margin: 0; }
+.ri-toast { position: relative; width: min(530px, calc(100vw - 40px)); margin: 8px 0; pointer-events: auto; }
+.ds-toast--success .ds-toast__icon { color: var(--ats-success-green-200); }
+.ds-toast--info .ds-toast__icon { color: var(--ats-info-blue-200); }
+.ds-toast__body { margin: 0; overflow-wrap: anywhere; }

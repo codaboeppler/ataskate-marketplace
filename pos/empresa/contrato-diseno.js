@@ -55,13 +55,13 @@
     qr: ['0 0 24 24', '<path d="M3 11V3H11V11H3ZM5 9H9V5H5V9ZM3 21V13H11V21H3ZM5 19H9V15H5V19ZM13 11V3H21V11H13ZM15 9H19V5H15V9ZM19 21V19H21V21H19ZM13 15V13H15V15H13ZM15 17V15H17V17H15ZM13 19V17H15V19H13ZM15 21V19H17V21H15ZM17 19V17H19V19H17ZM17 15V13H19V15H17ZM19 17V15H21V17H19Z" fill="currentColor"/>'],
     /* redes sociales (Diseño de contrato 18): marcas en un solo color */
     facebook: ['0 0 24 24', '<path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.7 4.53-4.7 1.31 0 2.69.24 2.69.24v2.97h-1.52c-1.49 0-1.96.93-1.96 1.89v2.26h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07Z" fill="currentColor"/>'],
-    instagram: ['0 0 24 24', '<rect x="2" y="2" width="20" height="20" rx="5.5" fill="currentColor"/><circle cx="12" cy="12" r="4.3" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.4" cy="6.6" r="1.25" fill="#fff"/>'],
+    instagram: ['0 0 24 24', '<rect x="2" y="2" width="20" height="20" rx="5.5" fill="currentColor"/><circle cx="12" cy="12" r="4.3" fill="none" style="stroke:var(--ats-white)" stroke-width="2"/><circle cx="17.4" cy="6.6" r="1.25" style="fill:var(--ats-white)"/>'],
     x: ['0 0 24 24', '<path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.65l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23Zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64Z" fill="currentColor"/>'],
   };
   const ic = (n, s, cls) => `<svg width="${s || 20}" height="${s || 20}" viewBox="${IC[n][0]}" fill="none" aria-hidden="true" focusable="false"${cls ? ` class="${cls}"` : ''}>${IC[n][1]}</svg>`;
   /* palomita y tache del pulgar del Switch del DS (Switch.tsx) */
-  const PULGAR_ON = '<svg width="12" height="9" viewBox="0 0 12 9" fill="none" aria-hidden="true" focusable="false"><path d="M1 4L4.5 7.5L11 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const PULGAR_OFF = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true" focusable="false"><path d="M8.5 1.5L1.5 8.5M1.5 1.5L8.5 8.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>';
+  const PULGAR_ON = '<svg width="12" height="9" viewBox="0 0 12 9" fill="none" aria-hidden="true" focusable="false"><path d="M1 4L4.5 7.5L11 1" style="stroke:var(--ats-white)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const PULGAR_OFF = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true" focusable="false"><path d="M8.5 1.5L1.5 8.5M1.5 1.5L8.5 8.5" style="stroke:var(--ats-white)" stroke-width="1.5" stroke-linecap="round"/></svg>';
   /* logo ficticio del prototipo: tiendita sobre verde (Figma usa un ícono de tienda sobre green-100); no es una marca real */
   const LOGO_EJEMPLO = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72"><rect width="72" height="72" rx="14" fill="#D1FFD1"/><rect x="17" y="31" width="38" height="24" fill="#FF7053" stroke="#0D166B" stroke-width="2.4"/><rect x="22" y="37" width="14" height="11" rx="1" fill="#30D8FF" stroke="#0D166B" stroke-width="2.2"/><rect x="40" y="37" width="10" height="18" fill="#0D9488" stroke="#0D166B" stroke-width="2.2"/><path d="M14 21h44l-1 10H15z" fill="#FFC003" stroke="#0D166B" stroke-width="2.4" stroke-linejoin="round"/><path d="M25 21v10M36 21v10M47 21v10" stroke="#FF7053" stroke-width="5"/><path d="M14 21h44l-1 10H15z" fill="none" stroke="#0D166B" stroke-width="2.4" stroke-linejoin="round"/><rect x="13" y="54" width="46" height="4" rx="1.5" fill="#0D166B"/></svg>');
 
@@ -148,7 +148,9 @@
   }
   const TEXTO_DEF = Object.fromEntries(Object.entries(TEXTOS).map(([k, ls]) => [k, ls.map(md)]));
 
-  /* Paletas (SVG de Figma, valores exactos). Fondo: todas las secciones; Acento: secciones con tabla. */
+  /* Paletas (SVG de Figma, valores exactos). Fondo: todas las secciones; Acento: secciones con tabla.
+     Son DATOS del contrato que elige la empresa (se guardan como hex y con ellos se calcula el contraste de la tinta),
+     no estilos de la interfaz: por eso se quedan en hex y no en tokens del DS. Lo mismo el logo de ejemplo (data: URI). */
   const COLORES = [['#FFFAEB', 'Crema'], ['#FFC003', 'Amarillo'], ['#D0F6FF', 'Azul claro'], ['#30D8FF', 'Azul'], ['#D1FFD1', 'Verde claro'],
     ['#309C60', 'Verde'], ['#FEBEB8', 'Rosa'], ['#FF6357', 'Rojo'], ['#F1E0FF', 'Lila claro'], ['#D5A4FF', 'Lila']];
   const FONDOS = [['#FFFFFF', 'Blanco'], ['#F4F4F4', 'Gris claro']].concat(COLORES);
@@ -395,25 +397,26 @@
         <button type="button" class="ctd-ib" data-ctd="fmt" data-cmd="italic" aria-pressed="false" aria-label="Cursiva" title="Cursiva" data-foco="fmt-italic">${ic('italic', 20)}</button>
       </div></div>`;
   }
+  /* Logo (React: LogoField): sin logo, el Dropzone del DS con "Logo en PNG o JPG"; con logo, la banda y "Cambiar logo".
+     No hay forma de borrar el logo (no hay endpoint). Con error, vuelve el Dropzone con el mensaje (el texto de ayuda se esconde). */
   function grupoLogo() {
-    if (D.logo) {
+    if (D.logo && !U.logoErr) {
       return `<div class="ctd-grupo"><div class="ctd-logo-cab"><span class="ctd-lbl">Logo</span>
-          <button type="button" class="ctd-ib ctd-ib--28" data-ctd="quitar-logo" aria-label="Eliminar logo" title="Eliminar logo" data-foco="quitar-logo">${ic('trash', 20)}</button></div>
+          <button type="button" class="ctd-ib ctd-ib--28" data-ctd="cambiar-logo" aria-label="Cambiar logo" title="Cambiar logo" data-foco="cambiar-logo">${ic('upload', 20)}</button></div>
         <div class="ctd-logo-banda"><img src="${esc(D.logo.url)}" alt="Logo de ${esc(E.nombre || CUENTA)}" width="72" height="72"></div></div>`;
     }
     return `<div class="ctd-grupo"><span class="ctd-lbl" id="ctd-l-logo">Logo</span>
       <div class="ctd-dz${U.logoErr ? ' is-err' : ''}" data-ctd="dz">
         <span class="ctd-dz__up" aria-hidden="true">${ic('upload', 24)}</span>
         <span class="ctd-dz__t">Arrastra elementos aquí o</span>
-        <button type="button" class="ctd-dz__link" data-ctd="buscar-logo" data-foco="buscar-logo" aria-describedby="ctd-dz-ayuda${U.logoErr ? ' ctd-dz-err' : ''}">${ic('search', 20)}Busca archivos</button>
-        <span class="ctd-sr" id="ctd-dz-ayuda">Logo en PNG, JPG o SVG</span>
-      </div>${U.logoErr ? `<p class="ctd-err" id="ctd-dz-err" role="alert">${ic('close', 16)}<span>${esc(U.logoErr)}</span></p>` : ''}</div>`;
+        <button type="button" class="ctd-dz__link" data-ctd="buscar-logo" data-foco="buscar-logo" aria-describedby="${U.logoErr ? 'ctd-dz-err' : 'ctd-dz-ayuda'}">${ic('search', 20)}Busca archivos</button>
+      </div>${U.logoErr ? `<p class="ctd-err" id="ctd-dz-err" role="alert">${ic('close', 16)}<span>${esc(U.logoErr)}</span></p>` : '<p class="ctd-dz-info" id="ctd-dz-ayuda">Logo en PNG o JPG</p>'}</div>`;
   }
   function grupoRedes() {
     return `<div class="ctd-grupo"><span class="ctd-lbl" id="ctd-l-redes">Enlace a tus redes</span>
       <div class="ctd-chips" role="group" aria-labelledby="ctd-l-redes">${REDES.map(r => {
         const on = !!D.redes[r.id];
-        return `<button type="button" class="ctd-chip${on ? ' is-on' : ''}" aria-pressed="${on}" data-ctd="red" data-v="${r.id}" data-foco="red-${r.id}">${ic(r.id, 20, 'ctd-chip__red')}<span>${r.l}</span>${on ? ic('check', 20) : ''}</button>`;
+        return `<button type="button" class="ds-chip ds-chip--choice ctd-chip${on ? ' ds-chip--on' : ''}" aria-pressed="${on}" data-ctd="red" data-v="${r.id}" data-foco="red-${r.id}">${ic(r.id, 20, 'ctd-chip__red')}<span>${r.l}</span>${on ? ic('check', 20) : ''}</button>`;
       }).join('')}</div></div>
       <div class="ctd-grupo"><label class="ctd-lbl" for="ctd-ident">Identificador de redes sociales</label>
         <input class="ctd-inp" id="ctd-ident" type="text" data-ctd="ident" data-foco="ident" value="${esc(D.identificador)}" placeholder="@prestaya" maxlength="40" autocomplete="off" spellcheck="false"></div>`;
@@ -445,9 +448,9 @@
           <button type="button" class="ctd-sel__btn" data-ctd="sel" data-k="${k}" data-foco="sel-${k}" aria-haspopup="listbox" aria-expanded="${ab}"${ab ? ` aria-controls="ctd-lb-${k}"` : ''} aria-labelledby="ctd-l-formato-${k} ctd-sv-${k}"><span id="ctd-sv-${k}">${esc(f.l)}</span>${ic('down', 24)}</button>
           ${ab ? `<ul class="ctd-sel__lista" role="listbox" id="ctd-lb-${k}" aria-labelledby="ctd-l-formato-${k}">${FORMATOS.map(o => `<li role="option" tabindex="-1" aria-selected="${o.v === D.formato}" data-ctd="opt" data-k="${k}" data-v="${o.v}"><span>${esc(o.l)}</span>${o.v === D.formato ? ic('check', 20) : ''}</li>`).join('')}</ul>` : ''}
         </div>
-        <button type="button" class="ctd-chip ctd-chip--40${D.dobleCara ? ' is-on' : ''}" aria-pressed="${D.dobleCara}" data-ctd="doble" data-foco="doble-${k}">Doble cara${D.dobleCara ? ic('check', 20) : ''}</button>
+        <button type="button" class="ds-chip ds-chip--choice ctd-chip ctd-chip--40${D.dobleCara ? ' ds-chip--on' : ''}" aria-pressed="${D.dobleCara}" data-ctd="doble" data-foco="doble-${k}">Doble cara${D.dobleCara ? ic('check', 20) : ''}</button>
       </div>
-      ${enVista ? '' : '<button type="button" class="ctd-btn ctd-btn--ter" data-ctd="vista" data-foco="vista" aria-haspopup="dialog">Vista previa</button>'}
+      ${enVista ? '' : '<button type="button" class="ds-btn ds-btn--md ds-btn--tertiary" data-ctd="vista" data-foco="vista" aria-haspopup="dialog">Vista previa</button>'}
     </div>`;
   }
   /* párrafos de las secciones de texto con sus reglas de color (SPEC §3.4) */
@@ -567,8 +570,8 @@
           <div class="ctd-panel" role="tabpanel" id="ctd-panel" aria-labelledby="ctd-tab-${U.pestana}">${est ? panelEstilos() : panelContenido()}</div>
         </section>
         <div class="ctd-pie">
-          <button type="button" class="ctd-btn ctd-btn--ter" data-ctd="cancelar" data-foco="cancelar"${U.guardando ? ' disabled' : ''}>Cancelar</button>
-          <button type="button" class="ctd-btn ctd-btn--pri${U.guardando ? ' is-cargando' : ''}" data-ctd="guardar" data-foco="guardar" aria-busy="${U.guardando}">${U.guardando ? '<span class="ctd-spin" aria-hidden="true"></span>' : ''}<span class="ctd-btn__t">Guardar cambios</span></button>
+          <button type="button" class="ds-btn ds-btn--md ds-btn--tertiary" data-ctd="cancelar" data-foco="cancelar"${U.guardando ? ' disabled' : ''}>Cancelar</button>
+          <button type="button" class="ds-btn ds-btn--md ds-btn--primary${U.guardando ? ' is-cargando' : ''}" data-ctd="guardar" data-foco="guardar" aria-busy="${U.guardando}">${U.guardando ? '<span class="ctd-spin" aria-hidden="true"></span>' : ''}<span class="ctd-btn__t">Guardar cambios</span></button>
         </div>
       </div>
       <section class="ctd-prev" aria-label="Vista del contrato">
@@ -672,7 +675,7 @@
   const etiquetaHoja = () => `Hoja 1 de 1 — ${formatoActual().c}${D.dobleCara ? ' · Doble cara' : ''}`;
   function vistaGuardado() {
     return `<div class="ctd-cq"><section class="ctd-gcard" aria-label="Diseño del contrato guardado" tabindex="-1" data-foco="gcard">
-      ${C.ctx.botonEditar === false ? '' : `<div class="ctd-gcard__acc"><button type="button" class="ctd-btn ctd-btn--ter ctd-btn--ic" data-ctd="editar" data-foco="editar">${ic('edit', 20)}Editar</button></div>`}
+      ${C.ctx.botonEditar === false ? '' : `<div class="ctd-gcard__acc"><button type="button" class="ds-btn ds-btn--md ds-btn--tertiary ctd-btn--ic" data-ctd="editar" data-foco="editar">${ic('edit', 20)}Editar</button></div>`}
       <div class="ctd-harea" data-max="1.4"><div class="ctd-hzoom">${hojaHTML()}</div></div>
       <p class="ctd-hpie">${etiquetaHoja()}</p>
     </section></div>`;
@@ -682,7 +685,7 @@
     return `<div class="ctd-vp" role="dialog" aria-modal="true" aria-labelledby="ctd-vp-t">
       <div class="ctd-vp__in">
         <div class="ctd-vp__top"><p class="ctd-vp__t" id="ctd-vp-t">Esta vista es una previsualización de cómo quedará tu contrato</p>
-          <button type="button" class="ctd-btn ctd-btn--ter ctd-btn--ic" data-ctd="salir-vista" data-foco="salir-vista">${ic('close', 20)}Salir vista previa</button></div>
+          <button type="button" class="ds-btn ds-btn--md ds-btn--tertiary ctd-btn--ic" data-ctd="salir-vista" data-foco="salir-vista">${ic('close', 20)}Salir vista previa</button></div>
         <p class="ctd-hpie">${etiquetaHoja()}</p>
         ${barraFormato('v', true)}
         <div class="ctd-harea" data-max="1.5"><div class="ctd-hzoom">${hojaHTML()}</div></div>
@@ -690,10 +693,10 @@
   }
   /* mismo texto y botones que el "¿Salir sin guardar?" del módulo (empresa.js) */
   function modalHTML() {
-    return `<div class="ctd-ov" data-ctd="ov"><div class="ctd-modal" role="alertdialog" aria-modal="true" aria-labelledby="ctd-m-t" aria-describedby="ctd-m-d">
-      <div class="ctd-modal__h"><h2 id="ctd-m-t">¿Salir sin guardar?</h2><button type="button" class="ctd-mx" data-ctd="m-cerrar" aria-label="Cerrar" data-foco="m-x">${ic('close', 24)}</button></div>
-      <p class="ctd-modal__b" id="ctd-m-d">Los cambios que no guardaste en el diseño del contrato se van a perder.</p>
-      <div class="ctd-modal__f"><button type="button" class="ctd-btn ctd-btn--ter" data-ctd="m-cerrar" data-foco="m-seguir">Cancelar</button><button type="button" class="ctd-btn ctd-btn--des" data-ctd="m-descartar" data-foco="m-descartar">Salir sin guardar</button></div>
+    return `<div class="ctd-ov" data-ctd="ov"><div class="ds-modal ctd-modal" role="alertdialog" aria-modal="true" aria-labelledby="ctd-m-t" aria-describedby="ctd-m-d">
+      <div class="ds-modal__header"><h2 id="ctd-m-t">¿Salir sin guardar?</h2><button type="button" class="ds-btn ds-btn--tertiary ds-btn--icon-md ctd-mx" data-ctd="m-cerrar" aria-label="Cerrar" data-foco="m-x">${ic('close', 24)}</button></div>
+      <p class="ds-modal__body" id="ctd-m-d">Los cambios que no guardaste en el diseño del contrato se van a perder.</p>
+      <div class="ds-modal__footer"><button type="button" class="ds-btn ds-btn--md ds-btn--tertiary" data-ctd="m-cerrar" data-foco="m-seguir">Cancelar</button><button type="button" class="ds-btn ds-btn--md ds-btn--destructive" data-ctd="m-descartar" data-foco="m-descartar">Salir sin guardar</button></div>
     </div></div>`;
   }
 
@@ -876,7 +879,7 @@
     U.guardando = true; U.abierto = null; pintar('guardar');
     anunciar('Guardando el diseño del contrato.');
     emitir({tipo:'guardando'});
-    setTimeout(() => {
+    (() => {
       U.guardando = false; G = clonar(D); U.guardado = true; U.vista = false; U.sucio = false;
       pintar('gcard');
       /* 427: arriba, con el título y las pestañas a la vista. Así "Editar" (arriba a la derecha de la hoja) no queda debajo
@@ -885,7 +888,7 @@
       if (typeof C.ctx.toast === 'function') { try { C.ctx.toast('success', 'Cambios guardados'); } catch (e) { /* sin toast */ } }
       else anunciar('Cambios guardados. Así se verá tu contrato.');
       emitir({tipo:'guardado', dirty:false});
-    }, 800);
+    })();
   }
   function cancelar() {
     if (U.guardando) return;
@@ -914,12 +917,14 @@
     pintar('tab-' + U.pestana);
     emitir({tipo:'editar'});
   }
-  const TIPOS_LOGO = ['image/png', 'image/jpeg', 'image/svg+xml'];
+  /* mismas reglas que useContractLogoUpload de el equipo: JPG o PNG, hasta 50 MB */
+  const TIPOS_LOGO = ['image/png', 'image/jpeg', 'image/jpg'], LOGO_MAX = 50 * 1024 * 1024;
   function cargarLogo(file) {
     if (!file) return;
-    if (!TIPOS_LOGO.includes(file.type)) { U.logoErr = 'Formato no permitido. Solo PNG, JPG o SVG.'; pintar('buscar-logo'); return; }
+    if (!TIPOS_LOGO.includes(file.type)) { U.logoErr = 'Formato no soportado. Usa JPG o PNG.'; pintar('buscar-logo'); return; }
+    if (file.size > LOGO_MAX) { U.logoErr = 'El archivo excede el tamaño máximo de 50MB.'; pintar('buscar-logo'); return; }
     const r = new FileReader();
-    r.onload = () => { D.logo = {url:r.result, nombre:file.name}; U.logoErr = ''; cambio(); pintar('quitar-logo'); anunciar('Logo cargado.'); };
+    r.onload = () => { D.logo = {url:r.result, nombre:file.name}; U.logoErr = ''; cambio(); pintar('cambiar-logo'); anunciar('Logo cargado.'); };
     r.readAsDataURL(file);
   }
   function aplicarFormato(cmd) {
@@ -1053,7 +1058,7 @@
       case 'color': cambiarColor(t.dataset.tipo, t.dataset.c); break;
       case 'red': D.redes[t.dataset.v] = !D.redes[t.dataset.v]; cambio(); pintar(); break;
       case 'dz': case 'buscar-logo': C.raiz.querySelector('.ctd-file').click(); break;
-      case 'quitar-logo': D.logo = null; U.logoErr = ''; cambio(); pintar('buscar-logo'); anunciar('Logo eliminado.'); break;
+      case 'cambiar-logo': C.raiz.querySelector('.ctd-file').click(); break;
       case 'sel': if (U.abierto === t.dataset.k) cerrarSelect(true); else abrirSelect(t.dataset.k); break;
       case 'opt': D.formato = t.dataset.v; U.abierto = null; cambio(); pintar(`sel-${t.dataset.k}`); break;
       case 'doble': D.dobleCara = !D.dobleCara; cambio(); pintar(); break;
@@ -1140,7 +1145,7 @@
     if (C.cont !== contenedor || !C.raiz || !contenedor.contains(C.raiz)) {
       if (C.ro && C.raiz) C.ro.disconnect();
       contenedor.innerHTML = `<div class="ctd" lang="es"><div class="ctd-cuerpo"></div><p class="ctd-live ctd-sr" aria-live="polite"></p>
-        <input type="file" class="ctd-file" accept=".png,.jpg,.jpeg,.svg,image/png,image/jpeg,image/svg+xml" tabindex="-1" aria-hidden="true"></div>`;
+        <input type="file" class="ctd-file" accept=".png,.jpg,.jpeg,image/png,image/jpeg" tabindex="-1" aria-hidden="true"></div>`;
       C.cont = contenedor; C.raiz = contenedor.firstElementChild; C.cuerpo = C.raiz.firstElementChild;
       enlazar(C.raiz);
       if (C.ro) C.ro.observe(C.raiz);

@@ -9,7 +9,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="registro-invitacion.css?v=5" />
+<!-- tokens y componentes del DS (sin ../ds/base.css ni ../pos.css: es una pantalla de acceso con layout propio) -->
+<link rel="stylesheet" href="../ds/primitives.css" />
+<link rel="stylesheet" href="../ds/semantic.css" />
+<link rel="stylesheet" href="../ds/elevation.css" />
+<link rel="stylesheet" href="../ds/components.css" />
+<link rel="stylesheet" href="registro-invitacion.css?v=7" />
 </head>
 <!-- Registro por invitación. Reconstrucción estática del código del equipo (rama del equipo de AtaskateFrontend):
      src/components/InviteSignUp/** y la vista previa src/app/design-system/preview/registro-invitacion (0bce0a2b7),
@@ -32,10 +37,10 @@
     <article class="ri-mail__card">
       <!-- banda morada con el cerebro patinando; los destellos van dentro de la imagen en el correo real -->
       <div class="ri-mail__hero">
-        <svg class="ri-mail__sparkle" style="left:22%;top:30%" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z" fill="#0D166B"/></svg>
-        <svg class="ri-mail__sparkle" style="left:74%;top:18%" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z" fill="#FFFFFF"/></svg>
-        <svg class="ri-mail__sparkle" style="left:70%;top:62%" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z" fill="#FF98EF"/></svg>
-        <svg class="ri-mail__sparkle" style="left:28%;top:68%" width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z" fill="#FFFFFF"/></svg>
+        <svg class="ri-mail__sparkle" style="left:22%;top:30%" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z" style="fill:var(--ats-primary-400)"/></svg>
+        <svg class="ri-mail__sparkle" style="left:74%;top:18%" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z" style="fill:var(--ats-white)"/></svg>
+        <svg class="ri-mail__sparkle" style="left:70%;top:62%" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z" style="fill:var(--ats-pink-300)"/></svg>
+        <svg class="ri-mail__sparkle" style="left:28%;top:68%" width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z" style="fill:var(--ats-white)"/></svg>
         <img class="ri-mail__hero-img" src="assets/correo/hero-cerebro-patinando.svg" width="200" height="184" alt="Cerebro de Ataskate patinando" />
       </div>
       <div class="ri-mail__sec ri-mail__sec--lg">
@@ -49,7 +54,7 @@
         <p class="ri-mail__caption ri-mail__caption--note">Sirve <strong>una sola vez</strong> y no vence.</p>
       </div>
       <div class="ri-mail__sec">
-        <button class="ri-btn ri-btn--primary" type="button" id="riMailCta"><span>Crear mi cuenta</span></button>
+        <button class="ds-btn ds-btn--md ds-btn--primary" type="button" id="riMailCta"><span>Crear mi cuenta</span></button>
       </div>
       <div class="ri-mail__sec ri-mail__sec--sm">
         <p class="ri-mail__caption">¿El botón no funciona? Entra a esta dirección y escribe el código:</p>
@@ -59,7 +64,7 @@
         <p class="ri-mail__warning" id="riMailWarning"></p>
       </div>
       <footer class="ri-mail__footer">
-        <p class="ri-mail__caption ri-mail__caption--body">¿Dudas? Escríbenos a <a class="ri-mail__link" href="#">[Correo de contacto]</a> o llama al <a class="ri-mail__link" href="#">[Teléfono]</a>.</p>
+        <p class="ri-mail__caption ri-mail__caption--body">¿Dudas? Escríbenos a <a class="ri-mail__link" href="mailto:dudas@prestalana.com">dudas@prestalana.com</a> o llama al <a class="ri-mail__link" href="tel:55 5663 1510">55 5663 1510</a>.</p>
         <div class="ri-mail__icons">
           <img src="assets/correo/facebook.svg" width="24" height="24" alt="Facebook" />
           <img src="assets/correo/whatsapp.svg" width="24" height="24" alt="WhatsApp" />
@@ -67,7 +72,7 @@
         </div>
         <div class="ri-mail__legal-wrap">
           <p class="ri-mail__legal ri-mail__legal--bold">Ataskate es un producto de [Razón social]</p>
-          <p class="ri-mail__legal">[Domicilio fiscal]</p>
+          <p class="ri-mail__legal">Blvd. Adolfo López Mateos 2349, Torre Altum, piso 3, Col. Atlamaya, CDMX, México, 01760</p>
         </div>
       </footer>
     </article>
@@ -82,29 +87,27 @@
       <div class="ri-inner ri-inner--center">
         <div class="ri-stack">
           <h1 class="ri-h1" id="riLoginTitle">Inicia sesión</h1>
-          <div class="ri-alert ri-alert--error" id="riLoginAlert" role="alert" hidden>
-            <div class="ri-alert__wrap">
-              <span class="ri-ico ri-alert__ico" data-icon="EstadosErrorIcon" data-size="24"></span>
-              <div class="ri-alert__content">
-                <p class="ri-alert__title">El correo o la contraseña no coinciden</p>
-                <p class="ri-alert__text">Revísalos e inténtalo de nuevo.</p>
-              </div>
+          <div class="ds-alert ds-alert--error ri-alert" id="riLoginAlert" role="alert" hidden>
+            <span class="ri-ico ds-alert__icon" data-icon="EstadosErrorIcon" data-size="24"></span>
+            <div class="ds-alert__body-wrap">
+                <p class="ds-alert__title">El correo o la contraseña no coinciden</p>
+                <p class="ds-alert__body">Revísalos e inténtalo de nuevo.</p>
             </div>
           </div>
           <form class="ri-form" id="riLoginForm" novalidate>
             <div class="ri-field">
               <div class="ri-field__label-row"><label class="ri-field__label" for="riLoginUser">Correo electrónico, nombre de usuario o teléfono</label></div>
-              <div class="ri-control"><input class="ri-input" id="riLoginUser" type="text" autocomplete="username" placeholder="Ej. empenos@cerrito.com" /></div>
+              <div class="ri-control"><input class="ds-input ds-input--standalone ri-input" id="riLoginUser" type="text" autocomplete="username" placeholder="Ej. empenos@cerrito.com" /></div>
             </div>
             <div class="ri-field">
               <div class="ri-field__label-row"><label class="ri-field__label" for="riLoginPass">Contraseña</label></div>
               <div class="ri-control ri-control--password">
-                <input class="ri-input" id="riLoginPass" type="password" autocomplete="current-password" />
+                <input class="ds-input ds-input--standalone ri-input" id="riLoginPass" type="password" autocomplete="current-password" />
                 <div class="ri-eye-group"><button class="ri-eye" type="button" tabindex="-1" data-eye="riLoginPass"><span class="ri-ico" data-icon="ViewOffIcon" data-size="20"></span></button></div>
               </div>
             </div>
             <button class="ri-link" type="button" id="riForgot">¿Olvidaste tu contraseña?</button>
-            <button class="ri-btn ri-btn--primary ri-btn--full" type="submit" id="riLoginBtn"><span>Iniciar sesión</span></button>
+            <button class="ds-btn ds-btn--md ds-btn--primary ri-btn--full" type="submit" id="riLoginBtn"><span>Iniciar sesión</span></button>
           </form>
         </div>
         <div class="ri-foot">
@@ -133,15 +136,13 @@
             <h1 class="ri-h1" id="riCodeTitle">Ingresa tu código de acceso</h1>
             <p class="ri-text" id="riCodeDesc">Lo encuentras en el correo de invitación que te envió Ataskate.</p>
           </div>
-          <div class="ri-alert ri-alert--error" id="riCodeAlert" role="alert" hidden>
-            <div class="ri-alert__wrap">
-              <span class="ri-ico ri-alert__ico" data-icon="EstadosErrorIcon" data-size="24"></span>
-              <div class="ri-alert__content">
-                <p class="ri-alert__title" id="riCodeAlertTitle"></p>
-                <p class="ri-alert__text" id="riCodeAlertText"></p>
-              </div>
+          <div class="ds-alert ds-alert--error ri-alert" id="riCodeAlert" role="alert" hidden>
+            <span class="ri-ico ds-alert__icon" data-icon="EstadosErrorIcon" data-size="24"></span>
+            <div class="ds-alert__body-wrap">
+                <p class="ds-alert__title" id="riCodeAlertTitle"></p>
+                <p class="ds-alert__body" id="riCodeAlertText"></p>
             </div>
-            <div class="ri-alert__action"><button class="ri-btn ri-btn--tertiary" type="button" id="riCodeAlertAct"></button></div>
+            <div class="ds-alert__actions"><button class="ds-btn ds-btn--md ds-btn--tertiary" type="button" id="riCodeAlertAct"></button></div>
           </div>
           <form class="ri-form" id="riCodeForm" novalidate>
             <!-- CodeField del DS: length 6, charset="alphanumeric", ariaLabel "Código de acceso" -->
@@ -157,18 +158,16 @@
               <div class="ri-codefield__helper" id="riCodeHelper" aria-live="polite" hidden><span class="ri-ico" id="riCodeHelperIco"></span><span class="ri-codefield__text" id="riCodeHelperText"></span></div>
             </div>
             <div class="ri-actions">
-              <button class="ri-btn ri-btn--primary ri-btn--icon-right" type="submit" id="riCodeBtn"><span>Validar código</span><span class="ri-ico" data-icon="ArrowForwardIcon" data-size="20"></span></button>
+              <button class="ds-btn ds-btn--md ds-btn--primary ri-btn--icon-right" type="submit" id="riCodeBtn"><span>Validar código</span><span class="ri-ico" data-icon="ArrowForwardIcon" data-size="20"></span></button>
             </div>
           </form>
-          <div class="ri-alert ri-alert--info">
-            <div class="ri-alert__wrap">
-              <span class="ri-ico ri-alert__ico" data-icon="EstadosInfoIcon" data-size="24"></span>
-              <div class="ri-alert__content">
-                <p class="ri-alert__title">¿No tienes código?</p>
-                <p class="ri-alert__text">El acceso a Ataskate es por invitación. Solicita un demo y te avisaremos por correo cuando tu acceso esté listo.</p>
-              </div>
+          <div class="ds-alert ds-alert--info ri-alert">
+            <span class="ri-ico ds-alert__icon" data-icon="EstadosInfoIcon" data-size="24"></span>
+            <div class="ds-alert__body-wrap">
+                <p class="ds-alert__title">¿No tienes código?</p>
+                <p class="ds-alert__body">El acceso a Ataskate es por invitación. Solicita un demo y te avisaremos por correo cuando tu acceso esté listo.</p>
             </div>
-            <div class="ri-alert__action"><button class="ri-btn ri-btn--tertiary" type="button" data-toast="demo"><span>Solicitar un demo</span></button></div>
+            <div class="ds-alert__actions"><button class="ds-btn ds-btn--md ds-btn--tertiary" type="button" data-toast="demo"><span>Solicitar un demo</span></button></div>
           </div>
         </div>
         <div class="ri-foot">
@@ -193,48 +192,44 @@
         </nav>
         <div class="ri-stack">
           <h1 class="ri-h1" id="riAccTitle">Crea tu cuenta</h1>
-          <div class="ri-alert ri-alert--success">
-            <div class="ri-alert__wrap">
-              <span class="ri-ico ri-alert__ico" data-icon="EstadosSuccessIcon" data-size="24"></span>
-              <div class="ri-alert__content">
-                <p class="ri-alert__title">Código válido</p>
-                <p class="ri-alert__text" id="riInviteText"></p>
-              </div>
+          <div class="ds-alert ds-alert--success ri-alert">
+            <span class="ri-ico ds-alert__icon" data-icon="EstadosSuccessIcon" data-size="24"></span>
+            <div class="ds-alert__body-wrap">
+                <p class="ds-alert__title">Código válido</p>
+                <p class="ds-alert__body" id="riInviteText"></p>
             </div>
           </div>
-          <div class="ri-alert ri-alert--error" id="riAccAlert" role="alert" hidden>
-            <div class="ri-alert__wrap">
-              <span class="ri-ico ri-alert__ico" data-icon="EstadosErrorIcon" data-size="24"></span>
-              <div class="ri-alert__content">
-                <p class="ri-alert__title" id="riAccAlertTitle"></p>
-                <p class="ri-alert__text" id="riAccAlertText"></p>
-              </div>
+          <div class="ds-alert ds-alert--error ri-alert" id="riAccAlert" role="alert" hidden>
+            <span class="ri-ico ds-alert__icon" data-icon="EstadosErrorIcon" data-size="24"></span>
+            <div class="ds-alert__body-wrap">
+                <p class="ds-alert__title" id="riAccAlertTitle"></p>
+                <p class="ds-alert__body" id="riAccAlertText"></p>
             </div>
-            <div class="ri-alert__action" id="riAccAlertAction" hidden><button class="ri-btn ri-btn--tertiary" type="button" id="riAccAlertAct"></button></div>
+            <div class="ri-alert__action" id="riAccAlertAction" hidden><button class="ds-btn ds-btn--md ds-btn--tertiary" type="button" id="riAccAlertAct"></button></div>
           </div>
           <form class="ri-form" id="riAccForm" novalidate>
             <div class="ri-two">
               <div class="ri-field">
                 <div class="ri-field__label-row"><label class="ri-field__label" for="riNames">Nombres</label></div>
-                <div class="ri-control"><input class="ri-input" id="riNames" type="text" autocomplete="given-name" placeholder="Ej. Ana María" aria-describedby="riNamesMsg" /></div>
+                <div class="ri-control"><input class="ds-input ds-input--standalone ri-input" id="riNames" type="text" autocomplete="given-name" placeholder="Ej. Ana María" aria-describedby="riNamesMsg" /></div>
                 <p class="ri-helper ri-helper--error" id="riNamesMsg" hidden></p>
               </div>
               <div class="ri-field">
                 <div class="ri-field__label-row"><label class="ri-field__label" for="riLastName">Apellidos</label></div>
-                <div class="ri-control"><input class="ri-input" id="riLastName" type="text" autocomplete="family-name" placeholder="Ej. López Pérez" aria-describedby="riLastNameMsg" /></div>
+                <div class="ri-control"><input class="ds-input ds-input--standalone ri-input" id="riLastName" type="text" autocomplete="family-name" placeholder="Ej. López Pérez" aria-describedby="riLastNameMsg" /></div>
                 <p class="ri-helper ri-helper--error" id="riLastNameMsg" hidden></p>
               </div>
             </div>
             <div class="ri-field">
               <div class="ri-field__label-row"><label class="ri-field__label" for="riEmail">Correo electrónico</label></div>
-              <div class="ri-control"><input class="ri-input" id="riEmail" type="text" readonly aria-describedby="riEmailHelp" /></div>
+              <div class="ri-control"><input class="ds-input ds-input--standalone ri-input" id="riEmail" type="text" readonly aria-describedby="riEmailHelp" /></div>
               <p class="ri-helper" id="riEmailHelp">Es el correo de tu invitación. Con él iniciarás sesión.</p>
             </div>
             <div class="ri-stack ri-stack--4">
               <div class="ri-field">
                 <div class="ri-field__label-row"><label class="ri-field__label" for="riPassword">Crea una contraseña</label></div>
                 <div class="ri-control ri-control--password">
-                  <input class="ri-input" id="riPassword" type="password" autocomplete="new-password" aria-describedby="riCriteria" />
+                  <input class="ds-input ds-input--standalone ri-input" id="riPassword" type="password" autocomplete="new-password" aria-describedby="riCriteria" />
                   <div class="ri-eye-group"><button class="ri-eye" type="button" tabindex="-1" data-eye="riPassword"><span class="ri-ico" data-icon="ViewOffIcon" data-size="20"></span></button></div>
                 </div>
               </div>
@@ -254,14 +249,14 @@
                 <span class="ri-check__label"><span class="ri-check__text">Acepto los Términos y condiciones y la Declaración de privacidad de Ataskate.</span></span>
               </label>
               <div class="ri-terms-links">
-                <button class="ri-btn ri-btn--tertiary" type="button" data-toast="legal"><span>Leer Términos y condiciones</span></button>
-                <button class="ri-btn ri-btn--tertiary" type="button" data-toast="legal"><span>Leer Declaración de privacidad</span></button>
+                <button class="ds-btn ds-btn--md ds-btn--tertiary" type="button" data-toast="legal"><span>Leer Términos y condiciones</span></button>
+                <button class="ds-btn ds-btn--md ds-btn--tertiary" type="button" data-toast="legal"><span>Leer Declaración de privacidad</span></button>
               </div>
               <p class="ri-helper ri-helper--error" id="riTermsMsg" role="alert" hidden><span class="ri-ico" data-icon="CloseIcon" data-size="16"></span>Acepta los términos para crear tu cuenta</p>
             </div>
             <div class="ri-actions ri-actions--between">
-              <button class="ri-btn ri-btn--tertiary ri-btn--icon-left" type="button" data-go="code"><span class="ri-ico" data-icon="ArrowBackIcon" data-size="20"></span><span>Cambiar código</span></button>
-              <button class="ri-btn ri-btn--primary" type="submit" id="riAccBtn"><span>Crear cuenta</span></button>
+              <button class="ds-btn ds-btn--md ds-btn--tertiary ri-btn--icon-left" type="button" data-go="code"><span class="ri-ico" data-icon="ArrowBackIcon" data-size="20"></span><span>Cambiar código</span></button>
+              <button class="ds-btn ds-btn--md ds-btn--primary" type="submit" id="riAccBtn"><span>Crear cuenta</span></button>
             </div>
           </form>
         </div>
@@ -293,8 +288,8 @@
   <ol class="ri-review__notes" id="riNotes"></ol>
 </div>
 
-<script src="registro-invitacion.js?v=2"></script>
-<script src="../demo.js?v=15"></script>
+<script src="registro-invitacion.js?v=3"></script>
+<script src="../demo.js?v=18"></script>
 <script src="../comentarios.js?v=6"></script>
 </body>
 </html>

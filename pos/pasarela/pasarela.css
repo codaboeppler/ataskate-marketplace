@@ -1,0 +1,333 @@
+/* ============================================================
+   Pasarela de pago (Operativo) — Figma "Carrito - Pasarela de pago", Section 1 (2934:14981)
+   Frames: Pasarela de pago 2724:111603 · Pago tarjeta 2730:113400…116584 · método de entrega 2730:116932
+   extras 2773:15182 / 2773:15587 / 2822:16097 · modales 2725:112556/577/598 · recibo 2810:42982.
+   Solo layout y medidas del Figma sobre piezas del DS (ds-btn, ds-chip--choice, ds-input, ds-radio, ds-modal,
+   ds-toast, ds-tag, ds-spinner) y los patrones de pos.css; no define componentes nuevos.
+   ============================================================ */
+
+.pas-main { display: flex; flex-direction: column; }
+.pas-main:focus { outline: none; }
+.pas-main > .ds-breadcrumb + .pas-head { margin-top: 8px; }
+
+/* ---------- cabecera: breadcrumb (pos.css) + título 28/34 a 500 + subtítulo ---------- */
+.pas-head { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.pas-head__row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; min-height: 36px; }
+.pas-title { margin: 0; font-size: 28px; line-height: 34px; font-weight: 500; color: var(--ats-neutral-700); }
+.pas-sub { margin: 0; font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--ats-neutral-700); }
+
+/* ---------- dos columnas: cobro (izquierda) y resumen (derecha, 401 de ancho en el Figma) ---------- */
+.pas-layout { display: grid; grid-template-columns: minmax(0, 1fr) 401px; gap: 32px; align-items: start; }
+.pas-col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.pas-aside { position: sticky; top: calc(var(--pos-header-h, 56px) + 16px); display: flex; flex-direction: column; gap: 8px; }
+
+/* tarjeta: sin borde, Card-shadow, radio 16, padding 16, gap 16 */
+.pas-card {
+  display: flex; flex-direction: column; gap: 16px; padding: 16px;
+  background: var(--surface-foreground); border-radius: 16px; box-shadow: var(--pos-shadow-card);
+}
+.pas-card__head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pas-card__titles { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.pas-card__title { margin: 0; font-size: 20px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
+.pas-card__sub { margin: 0; font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--ats-neutral-700); }
+.pas-card__actions { display: flex; gap: 16px; flex-wrap: wrap; }
+/* Button Secondary con icono a la izquierda: padding 8 / 16 / 8 / 8 */
+.pas-btn-ico { padding: 7px 15px 7px 7px; }
+.pas-btn-ico img { width: 20px; height: 20px; }
+.pas-btn-ico--der { padding: 7px 7px 7px 15px; }
+
+/* ---------- fila de método de pago / opción de entrega / artículo ("metodos de pago" del Figma) ---------- */
+.pas-metodo {
+  display: flex; flex-direction: column; gap: 16px; padding: 16px;
+  background: var(--ats-primary-10); border: 1px solid var(--ats-primary-10); border-radius: 16px;
+  transition: border-color .15s;
+}
+.pas-metodo.is-abierto, .pas-metodo.is-elegido { border-color: var(--ats-primary-300); }
+.pas-metodo__fila { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.pas-tile { flex: none; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 8px; background: var(--ats-primary-50); }
+.pas-tile img { width: 24px; height: 24px; }
+.pas-metodo__txt { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.pas-metodo__nombre { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--ats-neutral-700); }
+.pas-metodo__desc { margin: 0; font-size: 14px; line-height: 16px; color: var(--ats-neutral-700); overflow: hidden; text-overflow: ellipsis; }
+.pas-metodo__desc--nowrap { white-space: nowrap; }
+.pas-metodo__cobro { display: flex; align-items: center; gap: 8px; flex: none; }
+/* chip informativo (Chips informativas del Figma = ds-tag gris, 20 de alto) */
+.pas-info { padding: 4px 8px; font-size: 12px; line-height: 12px; font-weight: var(--font-weight-regular); border-radius: 8px; }
+
+/* IconButton tertiary del DS (.ds-btn--tertiary) de 40 (chevron, editar) y de 28 (más opciones) */
+.pos .ds-btn.pas-ibtn { flex: none; width: 40px; height: 40px; padding: 8px; }
+.pas-ibtn:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+.pas-ibtn img { width: 24px; height: 24px; }
+.pos .ds-btn.pas-ibtn--sm { width: 28px; height: 28px; padding: 4px; }
+.pas-ibtn--sm img { width: 20px; height: 20px; }
+
+/* Text input V2 · tipo Tabla: 32 de alto, pill, padding 12 */
+.pas-monto { width: 183px; }
+.pas-monto .ds-input--standalone, .pas-input-sm { height: 32px; padding: 4px 12px; font-size: 14px; line-height: 20px; border-radius: 32px; }
+.pas-monto--error .ds-input--standalone { border-color: var(--ats-error-red-200); }
+.pas-select { position: relative; flex: 1 1 0; min-width: 0; }
+.pas-select .ds-select--standalone { height: 32px; padding: 4px 36px 4px 12px; border-radius: 32px; font-size: 14px; line-height: 20px; cursor: pointer; appearance: none; -webkit-appearance: none; }
+.pas-select .ds-select--standalone:invalid, .pas-select .ds-select--standalone.is-vacio { color: var(--ats-neutral-400); }
+.pas-select img { position: absolute; right: 10px; top: 50%; width: 20px; height: 20px; transform: translateY(-50%); pointer-events: none; }
+.pas-cobro-tarjeta { display: flex; align-items: center; gap: 8px; }
+.pas-cobro-tarjeta .pas-select { flex: 1 1 0; }
+.pas-cobro-tarjeta .pas-monto { flex: 1 1 0; width: auto; }
+.pas-error { margin: -8px 0 0; font-size: 12px; line-height: 1.2; color: var(--ats-error-red-200); }
+
+/* montos rápidos: Choice Chips del DS con las medidas del Figma (radio 8, padding 8/12) */
+.pas-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.pas-chips .ds-chip--choice { padding: 7px 11px; border-radius: 8px; font-weight: var(--font-weight-regular); line-height: 1.2; cursor: pointer; transition: border-color .15s, background .15s; }
+.pas-chips .ds-chip--choice:hover { border-color: var(--ats-primary-300); }
+.pas-chips .ds-chip--choice:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+
+/* renglón de pago aplicado / saldo / cambio: fondo #F0F0FF (o blanco), radio 16, padding 16 */
+.pas-renglon { display: flex; align-items: center; gap: 8px; min-height: 51px; padding: 12px 16px; border-radius: 16px; background: var(--ats-primary-50); }
+.pas-renglon--blanco { background: var(--surface-foreground); }
+.pas-renglon__lbl { flex: 1 1 0; min-width: 0; font-size: 14px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-600); }
+.pas-renglon__lbl small { display: block; margin-top: 2px; font-weight: var(--font-weight-regular); font-size: 12px; }
+.pas-renglon__monto { font-size: 16px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--ats-primary-400); white-space: nowrap; }
+.pas-renglon__monto--accion { color: var(--ats-primary-300); }
+.pas-pagos { display: flex; flex-direction: column; gap: 8px; }
+
+/* menú de un pago aplicado (⋮) */
+.pas-menu-wrap { position: relative; display: inline-flex; }
+.pas-menu {
+  position: absolute; right: 0; top: calc(100% + 4px); z-index: 20; min-width: 168px; padding: 8px 0;
+  background: var(--surface-foreground); border-radius: 16px; box-shadow: var(--pos-shadow-dropdown);
+}
+.pas-menu[hidden] { display: none; }
+.pas-menu button { display: block; width: 100%; padding: 8px 16px; border: 0; background: none; text-align: left; font: 400 14px/1.2 var(--font-family-sans); color: var(--ats-neutral-700); cursor: pointer; }
+.pas-menu button:hover, .pas-menu button:focus-visible { background: var(--ats-primary-50); outline: none; }
+.pas-menu button.is-peligro { color: var(--ats-error-red-200); }
+
+/* opción de entrega: radio del DS + tile + textos + editar */
+.pas-opcion { cursor: pointer; flex-direction: row; align-items: center; }
+.pas-opcion .ds-radio { flex: none; }
+.pas-opcion .pas-metodo__desc { white-space: nowrap; }
+
+/* artículo con su entrega (envío a varias direcciones) */
+.pas-art { flex-direction: row; align-items: center; }
+.pas-art__img { flex: none; width: 80px; height: 80px; border-radius: 16px; background: var(--pos-surface-media); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.pas-art__img img { width: 100%; height: 100%; object-fit: contain; }
+.pas-art__img span { font-size: 20px; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-500); }
+.pas-art .pas-chips { gap: 16px; }
+
+/* lista de artículos del carrito (acordeón "Artículos") */
+.pas-lista { display: flex; flex-direction: column; gap: 12px; padding: 0; margin: 0; list-style: none; }
+.pas-lista li { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; background: var(--surface-foreground); }
+.pas-lista .pas-art__img { width: 48px; height: 48px; border-radius: 8px; }
+.pas-lista__txt { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.pas-lista__txt b { font-size: 14px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pas-lista__txt small { font-size: 12px; line-height: 1.2; color: var(--ats-neutral-600); }
+.pas-lista__monto { font-size: 14px; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); white-space: nowrap; }
+
+/* ---------- columna derecha ---------- */
+.pas-cliente { display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 4px 0; }
+.pas-cliente .ds-avatar { width: 40px; height: 40px; background: var(--ats-info-blue-50); font-size: 14px; color: var(--ats-info-blue-300); }
+.pas-cliente__txt { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.pas-cliente__txt b { font-size: 14px; line-height: 1.2; font-weight: var(--font-weight-regular); color: var(--ats-neutral-700); }
+.pas-cliente__txt small { font-size: 12px; line-height: 12px; color: var(--ats-neutral-600); }
+.pas-sep { height: 0; margin: 0; border: 0; border-top: 1px solid var(--ats-neutral-300); width: 100%; }
+
+/* "Monto a recibir de cliente": #FAFAFF con línea #E5E5FF (bloque interno de la tarjeta) */
+.pas-monto-card { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 8px; border: 1px solid var(--ats-primary-100); border-radius: 16px; background: var(--ats-primary-10); text-align: center; }
+.pas-monto-card p { margin: 0; font-size: 16px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--ats-primary-400); }
+.pas-monto-card strong { font-size: 20px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
+
+/* bloques de desglose (Métodos de pago y componente costo): padding 16, gap 8, filas 16/1.2 */
+.pas-desglose { display: flex; flex-direction: column; gap: 8px; padding: 16px; border: 1px solid var(--ats-primary-100); border-radius: 16px; }
+.pas-desglose--costo { border-color: var(--ats-neutral-300); }
+.pas-desglose__title { margin: 0; font-size: 16px; line-height: 1.2; color: var(--ats-primary-400); }
+.pas-fila { display: flex; align-items: center; gap: 2px; padding: 2px 0; margin: 0; font-size: 16px; line-height: 1.2; letter-spacing: .3px; }
+.pas-fila dt, .pas-fila > span:first-child { flex: 1 1 0; min-width: 0; color: var(--ats-neutral-600); display: flex; align-items: center; gap: 2px; }
+.pas-fila dd, .pas-fila > span:last-child { margin: 0; color: var(--ats-neutral-700); white-space: nowrap; }
+.pas-fila--total dt, .pas-fila--total > span:first-child { color: var(--pos-text-title); }
+.pas-fila--falta dt, .pas-fila--falta dd { color: var(--ats-error-red-200); }
+.pas-fila--pagado dt, .pas-fila--pagado dd { color: var(--ats-success-green-200, var(--ats-success-green-200)); }
+.pas-fila--cuerpo dt, .pas-fila--cuerpo dd { color: var(--ats-neutral-700); }
+.pas-desglose dl { display: flex; flex-direction: column; gap: 8px; margin: 0; }
+.pas-toggle { display: inline-flex; align-items: center; gap: 2px; padding: 0; border: 0; background: none; font: inherit; color: inherit; letter-spacing: inherit; cursor: pointer; border-radius: 4px; }
+.pas-toggle:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
+.pas-toggle img { width: 16px; height: 16px; }
+
+.pas-procesar { width: 100%; }
+.pas-cancelar { width: 100%; color: var(--ats-error-red-200); }
+.pas-cancelar:hover:not(:disabled) { color: var(--ats-error-red-300); }
+.pas-seguro { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px; }
+.pas-seguro span { display: inline-flex; align-items: center; gap: 2px; padding: 2px 0; font-size: 14px; line-height: 1.2; font-weight: var(--font-weight-medium); letter-spacing: .3px; color: var(--ats-neutral-400); }
+.pas-seguro img { width: 24px; height: 24px; }
+.pas-seguro i { width: 1px; height: 28px; background: var(--ats-neutral-300); }
+
+/* aviso de carrito de muestra */
+.pas-muestra { font-weight: var(--font-weight-semibold); }
+
+/* ---------- modales (DS Modal con el patrón .pos-plazos de pos.css) ---------- */
+.pos .ds-modal.pos-plazos.pas-modal { max-width: 606px; border-radius: 32px; gap: 24px; }
+.pas-modal--ancho { max-width: 606px; }
+.pas-modal__centro { display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--ats-neutral-700); }
+.pas-modal__centro p { margin: 0; }
+.pas-modal__centro .ds-spinner { width: 50px; height: 50px; border-width: 8px; }
+.pas-modal__error { color: var(--ats-error-red-200); font-weight: var(--font-weight-semibold); }
+.pas-modal__det { font-size: 14px; color: var(--ats-neutral-600); }
+.pas-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.pas-form .ds-field { gap: 4px; }
+.pas-form .ds-label { padding: 0 8px; font-weight: var(--font-weight-medium); }
+.pas-form .ds-input--standalone, .pas-form .ds-select--standalone { height: 40px; padding: 8px 12px; }
+.pas-form--una { grid-template-columns: 1fr; }
+.pas-form .pas-select .ds-select--standalone { height: 40px; padding: 8px 40px 8px 12px; }
+
+/* ---------- registrando la operación ("Espera un momento...") ---------- */
+.pas-cargando { min-height: calc(100vh - var(--pos-header-h, 56px) - 120px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+.pas-cargando .ds-spinner { width: 160px; height: 160px; border-width: 32px; color: var(--ats-primary-300); border-color: var(--ats-primary-100); border-left-color: var(--ats-primary-300); }
+.pas-cargando p { margin: 0; font-size: 18px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); }
+
+/* ---------- recibo: "Transacción registrada" (frame 142 · 2810:42982) ---------- */
+.pas-recibo { max-width: 1040px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 24px; }
+.pas-recibo__head { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.pas-check { display: flex; align-items: center; justify-content: center; width: 68px; height: 68px; border-radius: 48px; background: var(--ats-success-green-50); }
+.pas-check img { width: 42px; height: 42px; }
+.pas-recibo__head h1 { margin: 0; font-size: 28px; line-height: 34px; font-weight: 500; color: var(--ats-neutral-700); }
+.pas-recibo__head p { margin: 0; font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--ats-neutral-700); }
+.pas-recibo__top { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.pas-recibo__cli { flex-direction: row; align-items: center; }
+.pas-recibo__cli .pas-cliente { flex: 1 1 0; min-width: 0; }
+.pas-recibo__cli .ds-avatar { width: 48px; height: 48px; background: var(--ats-success-green-50); color: var(--ats-success-green-300); }
+.pas-recibo__cli .pas-cliente__txt b { font-size: 16px; letter-spacing: .3px; }
+.pas-recibo__cli .pas-cliente__txt small { display: flex; align-items: center; gap: 4px; font-size: 14px; line-height: 1.2; }
+.pas-recibo__cli .ds-tag { padding: 2px 4px; border-radius: 4px; font-weight: var(--font-weight-regular); }
+.pos .ds-tag.pas-verif { gap: 4px; background: var(--ats-info-blue-50); }   /* Status Chip azul del DS */
+.pas-verif img { width: 16px; height: 16px; }
+.pas-recibo__top .pas-monto-card p { color: var(--ats-neutral-700); }
+.pas-tabla { width: 100%; border-collapse: collapse; }
+.pas-tabla th { padding: 0 0 8px; font-size: 16px; line-height: 1.2; letter-spacing: .3px; font-weight: var(--font-weight-regular); color: var(--pos-text-title); text-align: right; }
+.pas-tabla th:first-child { text-align: left; font-size: 20px; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); }
+.pas-tabla th:nth-child(2), .pas-tabla td:nth-child(2) { text-align: center; width: 120px; }
+.pas-tabla td { padding: 8px 0; vertical-align: middle; font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--pos-text-title); text-align: right; }
+.pas-tabla td:first-child { text-align: left; }
+.pas-tabla__art { display: flex; align-items: center; gap: 16px; }
+.pas-tabla__art .pas-art__img { width: 63px; height: 62px; border-radius: 8px; border: .5px solid var(--pos-border-soft); background: var(--surface-foreground); }
+.pas-tabla__art b { display: block; font-size: 16px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); }
+.pas-tabla__art small { display: block; margin-top: 4px; font-size: 14px; line-height: 1.2; letter-spacing: 0; color: var(--ats-neutral-600); }
+.pas-tabla td:last-child { font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); white-space: nowrap; }
+.pas-recibo__totales { padding: 16px 20px; border: 1px solid var(--ats-primary-100); border-radius: 16px; background: var(--ats-primary-10); }
+.pas-recibo__totales .pas-fila--total dt, .pas-recibo__totales .pas-fila--total dd { font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); }
+.pas-recibo__acciones { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; }
+.pas-recibo__acciones .ds-btn { min-width: 158px; }
+.pas-recibo__inicio { align-self: center; }
+
+/* ---------- panel "Estados de la maqueta" ---------- */
+.pas-proto { display: flex; flex-direction: column; gap: 12px; }
+.pas-proto__title { margin: 0; font-size: 12px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-600); }
+.pas-proto .ds-select--standalone { height: 40px; padding: 8px 12px; }
+
+/* ---------- responsivo ---------- */
+@media (max-width: 1100px) {
+  .pas-layout { grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; }
+}
+@media (max-width: 900px) {
+  .pas-layout { grid-template-columns: minmax(0, 1fr); }
+  .pas-aside { position: static; }
+  .pas-recibo__top { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .pas-title, .pas-recibo__head h1 { font-size: 24px; line-height: 30px; }
+  .pas-metodo { padding: 12px; gap: 12px; }
+  .pas-metodo__fila { flex-wrap: wrap; gap: 12px; }
+  .pas-metodo__cobro { order: 3; flex: 1 1 100%; }
+  .pas-metodo__cobro .pas-monto { flex: 1 1 0; width: auto; }
+  .pas-cobro-tarjeta { flex-wrap: wrap; }
+  .pas-cobro-tarjeta .pas-select, .pas-cobro-tarjeta .pas-monto { flex: 1 1 100%; }
+  .pas-cobro-tarjeta .ds-btn { flex: 1 1 100%; }
+  .pas-card__actions { width: 100%; gap: 8px; }
+  .pas-card__actions .ds-btn { flex: 1 1 auto; }
+  .pas-opcion .pas-metodo__desc { white-space: normal; }
+  .pas-opcion { flex-wrap: nowrap; }
+  .pas-art { align-items: flex-start; }
+  .pas-art__img { width: 56px; height: 56px; }
+  .pas-art .pas-chips { gap: 8px; }
+  .pas-form { grid-template-columns: 1fr; }
+  .pas-recibo__cli { flex-wrap: wrap; }
+  .pas-recibo__cli .pas-cliente__txt small { flex-wrap: wrap; }
+  .pas-tabla th:nth-child(2), .pas-tabla td:nth-child(2) { width: 48px; }
+  .pas-tabla th:first-child { font-size: 18px; }
+  .pas-tabla__art { gap: 8px; }
+  .pas-tabla__art .pas-art__img { width: 44px; height: 44px; }
+  .pas-tabla td, .pas-tabla__art b { font-size: 14px; }
+  .pas-tabla__art small { font-size: 12px; }
+  .pas-recibo__acciones .ds-btn { flex: 1 1 100%; }
+}
+@media print {
+  .pos-header, .pos-navpanel, .ds-breadcrumb, .pas-recibo__acciones, .pas-recibo__inicio, .ds-toast-region { display: none !important; }
+  .pas-card { box-shadow: none; border: 1px solid var(--ats-neutral-300); }
+}
+@media (prefers-reduced-motion: reduce) { .pas-metodo, .pas-ibtn { transition: none; } }
+.pas-fila[hidden] { display: none; }
+.pas-lista[hidden] { display: none; }
+.pas-card__head .pas-card__titles { flex: 1 1 260px; }
+.pas-recibo__totales dl { margin: 0; }
+.pas-form .ds-helper[hidden] { display: none; }
+
+/* ---------- espaciado más compacto de los métodos (pago, entrega y artículos) ---------- */
+.pas-metodo { gap: 12px; padding: 12px 16px; }
+.pas-metodo__fila { gap: 12px; }
+.pas-tile { width: 36px; height: 36px; }
+.pas-tile img { width: 20px; height: 20px; }
+.pas-metodo__txt { gap: 2px; }
+.pas-metodo .pas-ibtn:not(.pas-ibtn--sm) { width: 32px; height: 32px; padding: 6px; }
+.pas-metodo .pas-ibtn:not(.pas-ibtn--sm) img { width: 20px; height: 20px; }
+.pas-card:has(.pas-metodo) { gap: 12px; }
+.pas-card .pas-metodo + .pas-metodo { margin-top: -4px; }
+.pas-renglon { min-height: 44px; padding: 10px 16px; border-radius: 12px; }
+.pas-cliente { padding-bottom: 8px; }
+
+/* ---------- lista de artículos compacta: un solo bloque blanco con divisores, como los renglones de los métodos ---------- */
+.pas-lista { gap: 0; border-radius: 12px; background: var(--surface-foreground); overflow: hidden; }
+.pas-lista li { gap: 12px; padding: 8px 12px; border-radius: 0; background: none; }
+.pas-lista li + li { box-shadow: inset 0 1px 0 var(--ats-neutral-200, var(--pos-border-soft)); }
+.pas-lista .pas-art__img { width: 36px; height: 36px; border-radius: 8px; }
+.pas-lista .pas-art__img span { font-size: 13px; }
+.pas-lista__txt { gap: 2px; }
+
+/* ---------- desglose de costos: más jerarquía y menos ruido ----------
+   sin borde, fondo gris muy claro; renglones de 14 con números alineados; el detalle por tipo va sangrado
+   bajo el subtotal; separadores suaves; y el total destacado con "MXN" chico. */
+.pas-desglose--costo { gap: 0; padding: 14px 16px; border: 0; background: var(--ats-primary-10); }
+.pas-desglose--costo dl { gap: 6px; }
+.pas-desglose--costo .pas-fila { padding: 0; font-size: 14px; line-height: 20px; letter-spacing: 0; }
+.pas-desglose--costo .pas-fila dd { font-variant-numeric: tabular-nums; }
+.pas-desglose--costo .pas-toggle { font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); }
+.pas-desglose--costo .pas-fila--sub { padding-left: 12px; margin-left: 2px; box-shadow: inset 2px 0 0 var(--ats-primary-100); font-size: 13px; line-height: 18px; }
+.pas-desglose--costo .pas-fila--sub dt { color: var(--ats-neutral-500); }
+.pas-desglose--costo .pas-sep { margin: 4px 0; border-top-color: var(--pos-border-soft); }
+.pas-desglose--costo .pas-fila--total { align-items: baseline; margin-top: 2px; }
+.pas-desglose--costo .pas-fila--total dt { font-size: 16px; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
+.pas-desglose--costo .pas-fila--total dd { font-size: 20px; line-height: 24px; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
+.pas-desglose--costo .pas-fila--total small { font-size: 12px; font-weight: var(--font-weight-regular); color: var(--ats-neutral-600); }
+/* bloque "Métodos de pago" del resumen con la misma escala que el desglose */
+.pas-desglose:not(.pas-desglose--costo) { gap: 6px; padding: 14px 16px; }
+.pas-desglose:not(.pas-desglose--costo) .pas-desglose__title { font-size: 14px; line-height: 20px; font-weight: var(--font-weight-semibold); }
+.pas-desglose:not(.pas-desglose--costo) .pas-fila { font-size: 14px; line-height: 20px; letter-spacing: 0; padding: 0; }
+.pas-desglose:not(.pas-desglose--costo) .pas-fila dd { font-variant-numeric: tabular-nums; }
+.pas-desglose:not(.pas-desglose--costo) .pas-fila--falta, .pas-desglose:not(.pas-desglose--costo) .pas-fila--pagado { font-weight: var(--font-weight-semibold); }
+.pas-desglose:not(.pas-desglose--costo) .pas-sep { margin: 2px 0; border-top-color: var(--pos-border-soft); }
+
+/* ---------- misma tipografía que el carrito ----------
+   título de tarjeta 20/24 · 600 (como "Carrito"); nombres (cliente, método, artículo) 16/19.2 · 400 con 0.3 de tracking,
+   el cliente en navy como en el carrito; textos secundarios 12 · 400 #54575C. */
+.pas-card__titles { gap: 0; }
+.pas-cliente__txt b { font-size: 16px; line-height: 19.2px; font-weight: 400; letter-spacing: .3px; color: var(--ats-primary-400); }
+.pas-cliente__txt small { font-size: 12px; line-height: 1.2; color: var(--ats-neutral-600); }
+.pas-metodo__nombre { font-size: 16px; line-height: 19.2px; font-weight: 400; letter-spacing: .3px; color: var(--ats-neutral-700); }
+.pas-metodo__desc { font-size: 12px; line-height: 1.2; color: var(--ats-neutral-600); }
+.pas-metodo__txt { gap: 4px; }
+.pas-lista__txt b { font-size: 16px; line-height: 19.2px; font-weight: 400; letter-spacing: .3px; color: var(--ats-neutral-700); }
+.pas-lista__txt small { font-size: 12px; line-height: 1.2; color: var(--ats-neutral-600); }
+.pas-lista__monto { font-size: 16px; line-height: 19.2px; font-weight: 400; letter-spacing: .3px; color: var(--pos-text-title); font-variant-numeric: tabular-nums; }
+
+/* cliente del resumen en su propia tarjeta, del mismo ancho, radio y padding que "Monto a recibir" y el desglose */
+.pas-aside .pas-cliente, .pas-card > .pas-cliente { padding: 12px 16px; border-radius: 16px; background: var(--ats-primary-10); min-height: 64px; }
+
+/* bloque desplegado (Artículos y el método de pago abierto): sin contorno morado; se levanta con la Card-shadow del DS
+   sobre fondo blanco. El contorno morado queda solo para lo seleccionado (opción de entrega elegida). */
+.pas-metodo.is-abierto { border-color: transparent; background: var(--surface-foreground, var(--color-base-white)); box-shadow: var(--pos-shadow-card); }
+.pas-metodo.is-abierto .pas-lista { box-shadow: inset 0 0 0 1px var(--ats-neutral-100); }

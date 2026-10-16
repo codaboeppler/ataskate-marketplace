@@ -14,8 +14,9 @@
 <link rel="stylesheet" href="../ds/elevation.css" />
 <link rel="stylesheet" href="../ds/base.css" />
 <link rel="stylesheet" href="../ds/components.css" />
-<link rel="stylesheet" href="../pos.css?v=ux68" />
-<link rel="stylesheet" href="home-admin.css?v=2" />
+<link rel="stylesheet" href="../pos.css?v=ux68-ds1" />
+<link rel="stylesheet" href="../carrito.css?v=2-ds1" />
+<link rel="stylesheet" href="home-admin.css?v=2-ds1" />
 </head>
 <!-- data-plataforma-fija: "admin" para módulos del Administrativo, "op" para el Operativo -->
 <body class="pos home-admin pos-menu-fijo" data-plataforma-fija="admin">
@@ -96,7 +97,7 @@
 </div>
 
 <!-- avisos (Toast del DS) -->
-<div class="ha-toasts" id="haToasts" role="region" aria-label="Avisos" aria-live="polite"></div>
+<div class="ds-toast-region ha-toasts" id="haToasts" role="region" aria-label="Avisos" aria-live="polite"></div>
 
 <!-- Panel de revisión (no es UI del producto): ../demo.js lo vuelve la pestaña "Revisión" del riel de flujos -->
 <div class="ha-review" id="haReview" data-proto-panel="Revisión" hidden>
@@ -107,10 +108,11 @@
   <p class="ha-review__note">"Cuenta nueva" es como entra quien acaba de crear su cuenta en el <a href="../registro-invitacion/">registro por invitación</a>. "Error de carga" falla Facturación y Archivos; "Reintentar" las carga. El rol solo filtra las tarjetas: el menú lateral es el del prototipo.</p>
 </div>
 
-<script src="home-admin.js?v=2"></script>
+<script src="home-admin.js?v=2-ds1"></script>
+<script src="../carrito.js?v=2-ds1"></script>
 <script src="../navbar.js?v=3"></script>
-<script src="../menu-op.js?v=13"></script>
-<script src="../demo.js?v=15"></script>
+<script src="../menu-op.js?v=14-ds1"></script>
+<script src="../demo.js?v=18-ds1"></script>
 <script src="../comentarios.js?v=6"></script>
 </body>
 </html>

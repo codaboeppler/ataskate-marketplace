@@ -21,7 +21,7 @@
     ChevronDown: ['0 0 24 24', '<path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'],
     WarningFilled: ['0 0 24 24', '<path d="M1 21L12 2L23 21H1ZM12 18C12.2833 18 12.5208 17.9042 12.7125 17.7125C12.9042 17.5208 13 17.2833 13 17C13 16.7167 12.9042 16.4792 12.7125 16.2875C12.5208 16.0958 12.2833 16 12 16C11.7167 16 11.4792 16.0958 11.2875 16.2875C11.0958 16.4792 11 16.7167 11 17C11 17.2833 11.0958 17.5208 11.2875 17.7125C11.4792 17.9042 11.7167 18 12 18ZM11 15H13V10H11V15Z" fill="currentColor"/>'],
     EstadosInfo: ['144 156 24 24', '<path d="M154.774 172.838H156.774V166.838H154.774V172.838ZM155.774 164.838C156.058 164.838 156.295 164.742 156.487 164.55C156.679 164.359 156.774 164.121 156.774 163.838C156.774 163.555 156.679 163.317 156.487 163.125C156.295 162.934 156.058 162.838 155.774 162.838C155.491 162.838 155.254 162.934 155.062 163.125C154.87 163.317 154.774 163.555 154.774 163.838C154.774 164.121 154.87 164.359 155.062 164.55C155.254 164.742 155.491 164.838 155.774 164.838ZM155.774 177.838C154.391 177.838 153.091 177.575 151.874 177.05C150.658 176.525 149.599 175.813 148.699 174.913C147.799 174.013 147.087 172.955 146.562 171.738C146.037 170.521 145.774 169.221 145.774 167.838C145.774 166.455 146.037 165.155 146.562 163.938C147.087 162.721 147.799 161.663 148.699 160.763C149.599 159.863 150.658 159.15 151.874 158.625C153.091 158.1 154.391 157.838 155.774 157.838C157.158 157.838 158.458 158.1 159.674 158.625C160.891 159.15 161.949 159.863 162.849 160.763C163.749 161.663 164.462 162.721 164.987 163.938C165.512 165.155 165.774 166.455 165.774 167.838C165.774 169.221 165.512 170.521 164.987 171.738C164.462 172.955 163.749 174.013 162.849 174.913C161.949 175.813 160.891 176.525 159.674 177.05C158.458 177.575 157.158 177.838 155.774 177.838Z" fill="currentColor"/>'],
-    Options: ['0 0 24 25', '<path d="M12 20.5C11.45 20.5 10.9793 20.3043 10.588 19.913C10.196 19.521 10 19.05 10 18.5C10 17.95 10.196 17.479 10.588 17.087C10.9793 16.6957 11.45 16.5 12 16.5C12.55 16.5 13.021 16.6957 13.413 17.087C13.8043 17.479 14 17.95 14 18.5C14 19.05 13.8043 19.521 13.413 19.913C13.021 20.3043 12.55 20.5 12 20.5ZM12 14.5C11.45 14.5 10.9793 14.304 10.588 13.912C10.196 13.5207 10 13.05 10 12.5C10 11.95 10.196 11.479 10.588 11.087C10.9793 10.6957 11.45 10.5 12 10.5C12.55 10.5 13.021 10.6957 13.413 11.087C13.8043 11.479 14 11.95 14 12.5C14 13.05 13.8043 13.5207 13.413 13.912C13.021 14.304 12.55 14.5 12 14.5ZM12 8.5C11.45 8.5 10.9793 8.304 10.588 7.912C10.196 7.52067 10 7.05 10 6.5C10 5.95 10.196 5.47933 10.588 5.088C10.9793 4.696 11.45 4.5 12 4.5C12.55 4.5 13.021 4.696 13.413 5.088C13.8043 5.47933 14 5.95 14 6.5C14 7.05 13.8043 7.52067 13.413 7.912C13.021 8.304 12.55 8.5 12 8.5Z" fill="#5A5AFF"/>'],
+    Options: ['0 0 24 25', '<path d="M12 20.5C11.45 20.5 10.9793 20.3043 10.588 19.913C10.196 19.521 10 19.05 10 18.5C10 17.95 10.196 17.479 10.588 17.087C10.9793 16.6957 11.45 16.5 12 16.5C12.55 16.5 13.021 16.6957 13.413 17.087C13.8043 17.479 14 17.95 14 18.5C14 19.05 13.8043 19.521 13.413 19.913C13.021 20.3043 12.55 20.5 12 20.5ZM12 14.5C11.45 14.5 10.9793 14.304 10.588 13.912C10.196 13.5207 10 13.05 10 12.5C10 11.95 10.196 11.479 10.588 11.087C10.9793 10.6957 11.45 10.5 12 10.5C12.55 10.5 13.021 10.6957 13.413 11.087C13.8043 11.479 14 11.95 14 12.5C14 13.05 13.8043 13.5207 13.413 13.912C13.021 14.304 12.55 14.5 12 14.5ZM12 8.5C11.45 8.5 10.9793 8.304 10.588 7.912C10.196 7.52067 10 7.05 10 6.5C10 5.95 10.196 5.47933 10.588 5.088C10.9793 4.696 11.45 4.5 12 4.5C12.55 4.5 13.021 4.696 13.413 5.088C13.8043 5.47933 14 5.95 14 6.5C14 7.05 13.8043 7.52067 13.413 7.912C13.021 8.304 12.55 8.5 12 8.5Z" style="fill:var(--ats-primary-300)"/>'],
   };
   const ico = (n, w = 24, h = w) => '<svg class="cd-ico" width="' + w + '" height="' + h + '" viewBox="' + ICO[n][0] + '" fill="none" aria-hidden="true" focusable="false">' + ICO[n][1] + '</svg>';
 
@@ -65,16 +65,18 @@
 
   /* ======================= servicios simulados ======================= */
   const escenario = new URLSearchParams(location.search).get('escenario');
-  const espera = () => (escenario === 'carga-lenta' ? 2500 + Math.round(Math.random() * 500) : 350 + Math.round(Math.random() * 250));
-  const getTabulatorLocationTree = () => new Promise((r) => setTimeout(() => r(D.ARBOL), espera()));
+  /* sin latencia simulada: responden al momento. "carga-lenta" deja el estado de carga fijo (la promesa no se resuelve) */
+  const lenta = escenario === 'carga-lenta';
+  const servicio = (fn) => (lenta ? new Promise(() => {}) : Promise.resolve().then(fn));
+  const getTabulatorLocationTree = () => servicio(() => D.ARBOL);
   /* GetTabulatorsByLocation: los del estatus pedido que aplican en la ubicación (o en algo debajo de ella). En la raíz (la empresa)
      salen todos; en Activo no cuentan las sucursales donde un tabulador más nuevo ya lo reemplazó; en Archivado cuentan todas */
-  const getTabulatorsByLocation = ({ estatusTabulador, idLevel }) => new Promise((r) => setTimeout(() => {
-    if (escenario === 'vacio') { r([]); return; }
+  const getTabulatorsByLocation = ({ estatusTabulador, idLevel }) => servicio(() => {
+    if (escenario === 'vacio') return [];
     const n = D.nodo(idLevel);
     const esRaiz = n && n.type === COMPANY_IDS.TYPE && n.groupFatherId === COMPANY_IDS.GROUP_FATHER;
     const sucs = new Set(D.sucursalesDe(idLevel));
-    r(D.TABULADORES
+    return (D.TABULADORES
       .filter((t) => D.estatus(t.tabulatorId) === estatusTabulador)
       .filter((t) => esRaiz || t.sucursales.some(([id, reemplazada]) => sucs.has(id) && (estatusTabulador === TABS_IDS.ARCHIVED || !reemplazada)))
       .map((t) => ({
@@ -82,16 +84,16 @@
         catMetalId: t.catMetalId, catMetalName: t.catMetalName, carats: t.carats, basePrice: t.basePrice,
         unitOfMeasureId: t.unitOfMeasureId, unitOfMeasure: t.unitOfMeasure,
       })));
-  }, espera()));
+  });
   /* GetSearchLocations: ubicaciones cuyo nombre contiene el texto (sin distinguir acentos); breadcrume = ruta de grupos */
   const sinAcentos = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-  const getSearchLocations = (txt) => new Promise((r) => setTimeout(() => {
+  const getSearchLocations = (txt) => servicio(() => {
     const q = sinAcentos(txt.trim());
-    r(D.PLANO.filter((e) => sinAcentos(e.nodo.name).includes(q)).map((e) => ({
+    return (D.PLANO.filter((e) => sinAcentos(e.nodo.name).includes(q)).map((e) => ({
       locationId: e.nodo.locationId, typeLocation: e.nodo.type, breadcrume: D.ruta(e.nodo.locationId),
       fatherId: e.padre ? e.padre.locationId : 0, locationName: e.nodo.name,
     })));
-  }, escenario === 'carga-lenta' ? 1500 : 300));
+  });
 
   /* ======================= estado (TabulatorPanelLayout + TabulatorLocationPanel) ======================= */
   const st = {
@@ -109,8 +111,8 @@
   /* ======================= TabulatorLocationPanel ======================= */
   const loc = $('tbLoc');
   const skeletonLoc = () => '<div class="tb-loc__body" role="status" aria-label="Cargando ubicaciones">'
-    + '<span class="tb-sk" style="width:100%;height:40px;border-radius:100px;flex-shrink:0"></span>'
-    + '<div class="tb-sk-col"><span class="tb-sk" style="width:70%;height:16px;border-radius:4px"></span><span class="tb-sk" style="width:50%;height:12px;border-radius:4px"></span></div></div>';
+    + '<span class="ds-skeleton tb-sk" style="width:100%;height:40px;border-radius:100px;flex-shrink:0"></span>'
+    + '<div class="tb-sk-col"><span class="ds-skeleton tb-sk" style="width:70%;height:16px;border-radius:4px"></span><span class="ds-skeleton tb-sk" style="width:50%;height:12px;border-radius:4px"></span></div></div>';
   const searchHTML = () => '<div class="cd-search" id="tbSearch">'
     + '<div class="cd-search__control"><input class="cd-search__input" id="tbQ" type="text" role="combobox" aria-autocomplete="list" aria-controls="tbQList" aria-expanded="false"'
     + ' autocomplete="off" placeholder="' + TXT.SEARCH_PLACEHOLDER + '" aria-label="' + TXT.SEARCH_PLACEHOLDER + '" value="' + esc(st.search) + '">'
@@ -194,7 +196,7 @@
     } else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); st.focusId = n.id; selectLocationById(n.id); paintTree(n.id); }
   });
 
-  /* ---- SearchFieldV2 con autocompletado (getSearchLocations con espera de 300 ms) ---- */
+  /* ---- SearchFieldV2 con autocompletado (debounce de 300 ms al escribir, como el componente; el servicio responde al momento) ---- */
   let reloj = null, busqueda = 0;
   const isSearchValid = () => st.search.trim().length > MIN_SEARCH_LENGTH;
   function buscar(txt) {
@@ -289,9 +291,9 @@
   }
   /* TabulatorTablePanelSkeleton: encabezado, fila de títulos y 4 filas */
   const skeletonTable = () => {
-    const celdas = HEADERS.map(() => '<span class="tb-sk"></span>').join('');
+    const celdas = HEADERS.map(() => '<span class="ds-skeleton tb-sk"></span>').join('');
     return '<div role="status" aria-label="Cargando tabuladores">'
-      + '<div class="tb-tp__head"><span class="tb-sk" style="width:100px;height:20px;border-radius:4px"></span><span class="tb-sk" style="width:160px;height:36px;border-radius:100px"></span></div>'
+      + '<div class="tb-tp__head"><span class="ds-skeleton tb-sk" style="width:100px;height:20px;border-radius:4px"></span><span class="ds-skeleton tb-sk" style="width:160px;height:36px;border-radius:100px"></span></div>'
       + '<div class="tb-sk-row" style="height:40px">' + celdas + '</div>'
       + [0, 1, 2, 3].map(() => '<div class="tb-sk-row" style="height:48px">' + celdas + '</div>').join('') + '</div>';
   };
@@ -402,8 +404,8 @@
     if (!b) return;
     b.classList.toggle('is-loading', on); b.disabled = on;
     if (on) b.setAttribute('aria-busy', 'true'); else b.removeAttribute('aria-busy');
-    const sp = b.querySelector('.cd-spinner');
-    if (on && !sp) b.insertAdjacentHTML('afterbegin', '<span class="cd-spinner" aria-hidden="true"></span>');
+    const sp = b.querySelector('.ds-spinner');
+    if (on && !sp) b.insertAdjacentHTML('afterbegin', '<span class="ds-spinner ds-spinner--sm" aria-hidden="true"></span>');
     if (!on && sp) sp.remove();
   }
   const closeModal = (volverA) => {
@@ -420,12 +422,12 @@
     const title = archiving ? ARCHIVE_MODAL.ARCHIVE_TITLE : ARCHIVE_MODAL.ACTIVATE_TITLE;
     const description = archiving ? getArchiveDescription(t.nameTabulator) : getActivateDescription(t.nameTabulator);
     const el = document.createElement('div');
-    el.className = 'cd-overlay'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-labelledby', 'tbModalTitle'); el.setAttribute('aria-describedby', 'tbModalDesc');
-    el.innerHTML = '<div class="cd-modal"><div class="cd-modal__head"><h3 class="cd-modal__title" id="tbModalTitle">' + esc(title) + '</h3>'
-      + '<button type="button" class="cd-modal__x" aria-label="Cerrar" data-close>' + ico('Close', 24) + '</button></div>'
-      + '<div class="cd-modal__body"><p id="tbModalDesc">' + esc(description) + '</p></div>'
-      + '<div class="cd-modal__foot"><button type="button" class="cd-btn cd-btn--tertiary" data-close><span class="cd-btn__txt">' + ARCHIVE_MODAL.CANCEL + '</span></button>'
-      + '<button type="button" class="cd-btn cd-btn--primary" data-confirm><span class="cd-btn__txt">' + esc(archiving ? ARCHIVE_MODAL.ARCHIVE_BTN : ARCHIVE_MODAL.ACTIVATE_BTN) + '</span></button></div></div>';
+    el.className = 'cd-overlay ds-modal-overlay'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-labelledby', 'tbModalTitle'); el.setAttribute('aria-describedby', 'tbModalDesc');
+    el.innerHTML = '<div class="ds-modal cd-modal"><div class="ds-modal__header"><h3 class="ds-modal__title" id="tbModalTitle">' + esc(title) + '</h3>'
+      + '<button type="button" class="ds-btn ds-btn--tertiary ds-btn--icon-md cd-modal__x" aria-label="Cerrar" data-close>' + ico('Close', 24) + '</button></div>'
+      + '<div class="ds-modal__body"><p id="tbModalDesc">' + esc(description) + '</p></div>'
+      + '<div class="ds-modal__footer"><button type="button" class="ds-btn ds-btn--md ds-btn--tertiary" data-close><span class="cd-btn__txt">' + ARCHIVE_MODAL.CANCEL + '</span></button>'
+      + '<button type="button" class="ds-btn ds-btn--md ds-btn--primary" data-confirm><span class="cd-btn__txt">' + esc(archiving ? ARCHIVE_MODAL.ARCHIVE_BTN : ARCHIVE_MODAL.ACTIVATE_BTN) + '</span></button></div></div>';
     modalRoot.appendChild(el);
     const onKey = (e) => {
       if (e.key === 'Escape') { e.preventDefault(); cancel(); return; }
@@ -449,11 +451,11 @@
   function confirmToggle(t, archiving) {
     if (st.updateLoading) return;
     st.updateLoading = true; setBtnLoading(modal && modal.el.querySelector('[data-confirm]'), true);
-    setTimeout(() => {
+    (() => {
       D.guardarEstatus(t.tabulatorId, archiving ? TABS_IDS.ARCHIVED : TABS_IDS.ACTIVE);
       st.updateLoading = false; closeModal(false);
       enfocarPestana = true; fetchTabulators();
-    }, 600 + Math.round(Math.random() * 300));
+    })();
   }
 
   /* ======================= Botón "Tabulador" (CreateTabulatorButton, con HU-CP-376-F) ======================= */

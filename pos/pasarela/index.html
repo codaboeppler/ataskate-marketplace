@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ataskate POS — Pasarela de pago</title>
+<meta name="description" content="Ataskate POS (Operativo): pasarela de pago del carrito — tarjeta, transferencia, efectivo y eWallet, método de entrega y recibo de la transacción." />
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../ds/primitives.css" />
+<link rel="stylesheet" href="../ds/semantic.css" />
+<link rel="stylesheet" href="../ds/elevation.css" />
+<link rel="stylesheet" href="../ds/base.css" />
+<link rel="stylesheet" href="../ds/components.css" />
+<link rel="stylesheet" href="../pos.css?v=ux68-ds1" />
+<link rel="stylesheet" href="../carrito.css?v=2-ds1" />
+<link rel="stylesheet" href="pasarela.css?v=8-ds1" />
+</head>
+<!-- Pasarela de pago (Figma "Carrito - Pasarela de pago", Section 1 · 2934:14981). Lee el carrito compartido (localStorage "ats-carrito");
+     si está vacío carga un carrito de muestra. ./pasarela.js pinta la pantalla de cobro, los modales de la terminal y el recibo. -->
+<body class="pos pas" data-plataforma-fija="op">
+<header class="pos-header">
+  <div class="pos-header__menu">
+    <button class="pos-hbtn pos-hbtn--plain pos-menu" type="button" aria-label="Menú">
+      <img src="../assets/menu.svg" width="24" height="24" alt="" />
+    </button>
+    <a class="pos-brand" href="../home/" aria-label="Ataskate · Operativo">
+      <img class="pos-brand__logo" src="../assets/logo-ataskate.svg" alt="ataskate" />
+      <span class="pos-brand__role">Operativo</span>
+    </a>
+  </div>
+
+  <form class="pos-search" role="search" onsubmit="return false">
+    <input class="pos-search__input" type="search" placeholder="Buscar" aria-label="Buscar en el Operativo" />
+    <button class="pos-search__go" type="submit" aria-label="Buscar"><img src="../assets/search.svg" width="24" height="24" alt="" /></button>
+  </form>
+
+  <div class="pos-header__ctas">
+    <button class="pos-hbtn pos-hide-sm" type="button" aria-label="Notificaciones">
+      <img src="../assets/notification.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-hide-xs" type="button" id="posCaja" aria-label="Flujo de fondos · caja abierta" aria-haspopup="dialog" aria-expanded="false" aria-controls="posCajaPanel">
+      <img src="../assets/pos-terminal.svg" width="24" height="24" alt="" />
+      <span class="pos-hbtn__status" aria-hidden="true"></span>
+    </button>
+    <button class="pos-hbtn pos-hide-sm" type="button" id="posAjustes" aria-label="Configuración" aria-haspopup="menu" aria-expanded="false" aria-controls="posAjustesMenu">
+      <img src="../assets/settings.svg" width="24" height="24" alt="" />
+    </button>
+    <button class="pos-hbtn pos-cart" type="button" id="posCart" aria-label="Carrito, 0 artículos">
+      <img src="../assets/cart.svg" width="24" height="24" alt="" />
+      <span id="posCartN">0</span>
+    </button>
+    <button class="pos-hbtn pos-profile" type="button" aria-label="RP · Cambiar de usuario">
+      <span class="ds-avatar">RP</span>
+      <img src="../assets/sync.svg" width="24" height="24" alt="" />
+    </button>
+  </div>
+</header>
+
+<!-- paneles del Header (HU-CE-595-F / 573-F): se anclan bajo la barra; los abre y cierra ../navbar.js -->
+<div class="pos-navpanel pos-caja" id="posCajaPanel" role="dialog" aria-labelledby="posCajaTitulo" hidden>
+  <div class="pos-caja__head">
+    <h2 id="posCajaTitulo">Flujo de fondos</h2>
+    <button class="ds-btn ds-btn--primary pos-caja__btn" type="button">Cerrar flujo</button>
+    <button class="pos-caja__x" type="button" aria-label="Cerrar"><img src="../assets/navbar/close.svg" alt="" /></button>
+  </div>
+  <dl class="pos-caja__tiles">
+    <div class="pos-caja__tile"><dt>Saldo total</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Ingresos</dt><dd>$23,218</dd></div>
+    <div class="pos-caja__tile"><dt>Salidas</dt><dd>$8,038</dd></div>
+  </dl>
+</div>
+<div class="pos-navpanel pos-ajustes" id="posAjustesMenu" role="menu" aria-label="Configuración · sesión de Omar, omar@ejemplo.com" hidden>
+  <div class="pos-ajustes__user" role="presentation">
+    <span class="ds-avatar ds-avatar--md pos-ajustes__av" aria-hidden="true">OM</span>
+    <span><b>Omar</b><small>omar@ejemplo.com</small></span>
+  </div>
+  <button class="pos-ajustes__item pos-ajustes__item--plat" type="button" role="menuitem"><img src="../assets/navbar/menu-admin.png" alt="" />Ir a Administrativo</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/sync.svg" alt="" />Sucursal Polanco</button>
+  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/navbar/logout.svg" alt="" />Cerrar sesión</button>
+</div>
+
+
+<main class="pos-main pas-main" id="main" tabindex="-1"></main>
+
+<!-- capa de overlays: toasts, modales y menú de acciones de un pago -->
+<div class="ds-toast-region" id="pasToasts" aria-live="polite"></div>
+<div id="pasModal"></div>
+
+<!-- Herramientas de la maqueta: ../demo.js las cuelga como otra pestaña del riel izquierdo ("Estados de la maqueta") -->
+<div class="pas-proto" id="pasProto" data-proto-panel="Estados de la maqueta" hidden>
+  <p class="pas-proto__title">Solo para revisar la maqueta</p>
+  <label class="ds-field"><span class="ds-label">Ir a un estado</span>
+    <select class="ds-select--standalone" id="protoEstado">
+      <option value="">Elige un estado…</option>
+      <option value="inicio">Sin pagos aplicados</option>
+      <option value="parcial">Pago parcial (tarjeta)</option>
+      <option value="dividido">Pago dividido (tarjeta + eWallet)</option>
+      <option value="efectivo">Efectivo abierto con cambio</option>
+      <option value="completo">Pagado completo</option>
+      <option value="por-articulo">Envío por artículo</option>
+      <option value="terminal">Terminal procesando</option>
+      <option value="rechazada">Tarjeta rechazada</option>
+      <option value="error-terminal">Error de terminal</option>
+      <option value="cargando">Registrando la operación</option>
+      <option value="recibo">Transacción registrada (recibo)</option>
+    </select>
+  </label>
+  <label class="ds-field"><span class="ds-label">Respuesta de la terminal</span>
+    <select class="ds-select--standalone" id="protoTerminal">
+      <option value="ok">Aprobada</option>
+      <option value="rechazada">Tarjeta rechazada</option>
+      <option value="error">Error de terminal</option>
+    </select>
+  </label>
+  <label class="ds-field"><span class="ds-label">Registro de la operación</span>
+    <select class="ds-select--standalone" id="protoRegistro">
+      <option value="ok">Responde bien</option>
+      <option value="error">Falla</option>
+    </select>
+  </label>
+  <label class="ds-field"><span class="ds-label">Saldo en eWallet</span>
+    <select class="ds-select--standalone" id="protoWallet">
+      <option value="1100">$1,100.00</option>
+      <option value="0">$0.00</option>
+      <option value="25000">$25,000.00</option>
+    </select>
+  </label>
+  <button class="ds-btn ds-btn--secondary ds-btn--md" type="button" id="protoMuestra">Cargar carrito de muestra</button>
+</div>
+
+<script src="../navbar.js?v=3"></script>
+<script src="../menu-op.js?v=14-ds1"></script>
+<script src="../demo.js?v=18-ds1"></script>
+<script src="../comentarios.js?v=6"></script>
+<script src="../carrito.js?v=2-ds1"></script>
+<script src="pasarela.js?v=6-ds1"></script>
+</body>
+</html>

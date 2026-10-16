@@ -1,0 +1,214 @@
+/* ============================================================
+   Carrito del Operativo (Figma "Carrito - Pasarela de pago": carrito 2723:110668, 2755:13739, 2757:15524;
+   buscador de cliente del panel 2709:100555). Solo acomoda piezas del DS (ds-modal, ds-check, ds-btn, ds-field-wrap,
+   ds-avatar, ds-toast) a las medidas del Figma; no define componentes nuevos.
+   Modal 1112: artículos a la izquierda y resumen ("Container" 401) a la derecha.
+   ============================================================ */
+.crt-overlay { z-index: var(--z-modal); }
+.crt-overlay[hidden] { display: none; }
+.crt.ds-modal {
+  position: relative; display: flex; flex-direction: column;
+  width: min(1112px, 100%); max-width: none; height: min(694px, calc(100vh - 32px)); max-height: none;
+  border: 0; border-radius: 24px; box-shadow: var(--pos-shadow-popup); overflow: hidden;
+  font-family: var(--font-family-sans); color: var(--ats-neutral-700);
+}
+/* encabezado: título 20/1.2 600 y los botones de icono (20 en caja de 28) */
+.crt__head { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-4); padding: 24px 24px 8px; }
+.crt__head .ds-modal__title { margin: 0; font-size: 20px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
+.crt__tools { display: flex; align-items: center; gap: var(--spacing-4); }
+/* IconButton tertiary del DS (.ds-btn--tertiary) de 28 */
+.pos .ds-btn.crt-ib { flex: none; width: 28px; height: 28px; padding: 4px; }
+.pos .ds-btn.crt-ib:disabled { opacity: .4; }
+.crt-ib img { width: 20px; height: 20px; }
+.crt :focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
+.crt .ds-field-wrap input:focus-visible { outline: 0; }   /* el borde del campo ya marca el foco */
+
+/* cuerpo: lista (656) + resumen (401) con 24 de margen */
+.crt__body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 401px; gap: 31px; padding: 4px 24px 24px; }
+.crt__items { min-height: 0; overflow-y: auto; padding-right: 16px; display: flex; flex-direction: column; }
+.crt__all { display: flex; align-items: center; gap: var(--spacing-4); min-height: 24px; padding-bottom: var(--spacing-4); border-bottom: 1px solid var(--ats-neutral-300); }
+.crt__all b { font-size: 16px; line-height: 1.5; letter-spacing: .3px; font-weight: var(--font-weight-bold); color: var(--pos-text-title); }
+
+/* un grupo: operación principal (refrendo, apartado, desempeño, compra) y debajo sus abonos / extensión */
+.crt-grp { display: flex; align-items: flex-start; gap: var(--spacing-4); padding: var(--spacing-4) 0; border-bottom: 1px solid var(--ats-neutral-300); }
+.crt-grp:last-child { border-bottom: 0; }
+.crt-grp > .ds-check { align-self: center; }
+.crt-grp__img { flex: none; width: 120px; height: 120px; border-radius: 16px; background: var(--pos-surface-media); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.crt-grp__img img { width: 96px; height: 96px; object-fit: contain; border-radius: 8px; }
+.crt-grp__img .crt-ini { font-size: 28px; font-weight: var(--font-weight-semibold); color: var(--ats-primary-200); }
+.crt-grp__mid { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--spacing-2); }
+.crt-grp__top { display: flex; align-items: center; gap: var(--spacing-2); font-size: 16px; }
+.crt-grp__top h3 { flex: 1; min-width: 0; margin: 0; font-size: 16px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--ats-primary-400); }
+.crt-grp__top .crt-amt { line-height: 1.5; letter-spacing: .3px; color: var(--pos-text-title); white-space: nowrap; }
+.crt-grp__det { margin: 0; font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--ats-neutral-600); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.crt-grp__det--b { color: var(--ats-neutral-700); }
+
+/* abono / extensión dentro del grupo (Component 209): lila, borde lila, 52 de alto */
+.crt-sub { display: flex; align-items: center; gap: var(--spacing-2); min-height: 52px; padding: var(--spacing-2); border: 1px solid var(--ats-primary-100); border-radius: var(--radius-sm); background: var(--ats-primary-10); }
+.crt-sub__ico { flex: none; align-self: stretch; aspect-ratio: 1; min-width: 36px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); background: var(--ats-primary-50); }
+.crt-sub__ico img { width: 20px; height: 20px; }
+.crt-sub__txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.crt-sub__row { display: flex; justify-content: space-between; gap: var(--spacing-2); font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--pos-text-title); }
+.crt-sub__cap { padding: 2px 0; font-size: 12px; line-height: 1; color: var(--ats-neutral-600); }
+
+/* acciones del grupo: "+ Extender | + Abonar" (botones link del DS) */
+.crt-acts { display: flex; align-items: center; flex-wrap: wrap; }
+.crt-acts .ds-btn--link { gap: var(--spacing-2); padding: 8px; font-size: 14px; }
+.crt-acts .ds-btn--link svg { width: 20px; height: 20px; }
+.crt-acts .ds-btn--link + .ds-btn--link { border-left: 1px solid var(--ats-neutral-300); border-radius: 0; padding-left: var(--spacing-4); margin-left: var(--spacing-2); }
+
+/* formulario corto: "Abono a capital" o "Días de extensión · Total del costo", con Cancelar y Aplicar (Figma 2709:102134, 2720:103321) */
+.crt-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--spacing-2) var(--spacing-4); align-items: end; }
+.crt-form--uno { grid-template-columns: minmax(0, 1fr); }
+.crt-form .ds-label { padding-left: var(--spacing-2); font-weight: var(--font-weight-regular); font-size: 14px; color: var(--ats-neutral-700); }
+.crt-form__btns .ds-btn--secondary { min-width: 78px; justify-content: center; }
+.crt-form .ds-field-wrap { height: 40px; padding: 8px 16px; }
+.crt-form .ds-field-wrap input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; font-size: 16px; color: var(--ats-neutral-700); }
+.crt-form__cost { display: flex; flex-direction: column; gap: 4px; }
+.crt-form__cost b { font-size: 16px; line-height: 40px; font-weight: var(--font-weight-regular); color: var(--pos-text-title); }
+.crt-form__btns { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--spacing-4); justify-content: flex-end; }
+.crt-form .ds-helper { grid-column: 1 / -1; margin: 0; }
+
+/* menú ⋮ (#drop-down list del Figma 2720:103189: 200 de ancho, blanco, radio 8, sombra Dropdowns; "Eliminar" en rojo) */
+.crt-more { position: relative; flex: none; }
+.crt-menu {
+  position: fixed; top: 0; left: 0; z-index: 4; width: 200px; display: flex; flex-direction: column; overflow: hidden; padding: 8px 0;
+  border: 0; border-radius: var(--radius-md); background: var(--color-base-white); box-shadow: var(--pos-shadow-dropdown);
+}
+.crt-menu button { min-height: 40px; padding: 8px 16px; border: 0; background: var(--color-base-white); text-align: left; cursor: pointer; font: inherit; font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--ats-neutral-700); white-space: nowrap; }
+.crt-menu button:hover, .crt-menu button:focus-visible { background: var(--ats-primary-50); outline: 0; }
+.crt-menu .crt-menu__del { color: var(--ats-error-red-200); }
+
+/* ---------- resumen ("Container" 401, Card-shadow, radio 16) ---------- */
+.crt__sum { min-height: 0; display: flex; flex-direction: column; gap: var(--spacing-4); padding: var(--spacing-4); border-radius: 16px; background: var(--color-base-white); box-shadow: var(--pos-shadow-card); }
+.crt-cli { display: flex; align-items: center; gap: var(--spacing-4); min-height: 56px; }
+.crt-cli__chip { flex: 1; min-width: 0; display: flex; align-items: center; gap: var(--spacing-2); }
+.crt-cli__chip img, .crt-cli__chip .ds-avatar { flex: none; width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+.crt-cli__chip .ds-avatar { background: var(--ats-primary-50); color: var(--ats-primary-400); font-size: 14px; font-weight: var(--font-weight-semibold); }
+.crt-cli__name { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.crt-cli__name b { font-size: 16px; line-height: 1.2; letter-spacing: .3px; font-weight: var(--font-weight-regular); color: var(--ats-primary-300); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.crt-cli__name small { font-size: 12px; line-height: 1; color: var(--ats-neutral-600); }
+
+/* buscador "Vincula un cliente" (Search field V2) y su lista */
+.crt-find { position: relative; flex: 1; min-width: 0; }
+.crt-find .ds-field-wrap { height: 40px; padding: 0 0 0 16px; gap: 0; background: var(--ats-neutral-50); border-color: transparent; }
+.crt-find .ds-field-wrap:focus-within { background: var(--color-base-white); border-color: var(--ats-primary-400); }
+.crt-find input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: none; font: inherit; font-size: 16px; letter-spacing: .3px; color: var(--ats-neutral-700); }
+.crt-find input::placeholder { color: var(--ats-neutral-400); }
+.crt-find__ico { flex: none; display: flex; align-items: center; justify-content: center; width: 56px; height: 40px; }
+.crt-find__ico img { width: 24px; height: 24px; }
+.crt-list {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 3; max-height: 260px; overflow-y: auto; margin: 0; padding: 8px 0; list-style: none;
+  border: 0; border-radius: var(--radius-md); background: var(--color-base-white); box-shadow: var(--pos-shadow-dropdown);
+}
+.crt-list li { display: flex; align-items: center; gap: var(--spacing-2); padding: var(--spacing-2); cursor: pointer; }
+.crt-list li[aria-selected='true'], .crt-list li:hover { background: var(--ats-primary-50); }
+.crt-list li img { width: 20px; height: 20px; flex: none; }
+.crt-list__t { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.crt-list__t b { font-size: 16px; line-height: 1.2; letter-spacing: .3px; font-weight: var(--font-weight-regular); color: var(--ats-neutral-700); }
+.crt-list__t small { font-size: 12px; line-height: 1; color: var(--ats-neutral-500); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.crt-list__add b { color: var(--ats-primary-300); }
+.crt-list__none { cursor: default !important; background: none !important; font-size: 14px; color: var(--ats-neutral-500); }
+
+.crt-sep { height: 1px; border: 0; margin: 0; background: var(--ats-neutral-300); flex: none; }
+.crt-tab { flex: 1; min-height: 0; overflow-y: auto; }
+.crt-tab__box { display: flex; flex-direction: column; gap: var(--spacing-2); padding: var(--spacing-2) var(--spacing-4); border-radius: 10px; background: var(--ats-neutral-50); }
+.crt-tab__grp { display: flex; flex-direction: column; }
+.crt-tr { display: flex; align-items: center; gap: 2px; padding: 2px 0; font-size: 14px; line-height: 1.2; }
+.crt-tr > :first-child { flex: none; width: 153px; display: flex; align-items: center; gap: 2px; color: var(--pos-text-title); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.crt-tr > :not(:first-child) { flex: 1; min-width: 0; text-align: right; color: var(--ats-neutral-700); white-space: nowrap; }
+.crt-tr--h { font-weight: var(--font-weight-semibold); }
+.crt-tr__t { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.crt-tr__sub { width: 12px; height: 12px; transform: rotate(180deg); }
+.crt-tr--sum > :first-child { flex: 1; width: auto; }
+.crt-tr--sum > :last-child { flex: none; }
+.crt-tr--tot { font-size: 16px; font-weight: var(--font-weight-semibold); }
+.crt-tab__box .crt-sep { margin: 2px 0; }
+.crt-note { margin: 0; font-size: 12px; line-height: 1.2; color: var(--ats-neutral-600); }
+.crt__sum > .ds-btn { width: 100%; justify-content: center; }
+
+/* vacío (estado vacío del DS: ilustración + título + texto) */
+.crt-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-2); padding: var(--spacing-8) var(--spacing-4); text-align: center; }
+.crt-empty img { width: 150px; height: 150px; }
+.crt-empty b { font-size: 16px; line-height: 1.5; font-weight: var(--font-weight-bold); color: var(--pos-text-title); }
+.crt-empty p { margin: 0; max-width: 360px; font-size: 14px; line-height: 1.4; color: var(--ats-neutral-600); }
+
+/* ---------- carrito chico (Component 163…185): 399 de ancho bajo el header, radio 16, sombra suave ---------- */
+.crt-chico {
+  position: fixed; z-index: 1350; top: calc(var(--pos-header-h, 56px) + 8px); right: var(--spacing-5);
+  width: min(399px, calc(100vw - 16px)); max-height: calc(100vh - var(--pos-header-h, 56px) - 16px);
+  display: flex; flex-direction: column; border-radius: 16px; overflow: hidden; background: var(--color-base-white);
+  box-shadow: var(--pos-shadow-dropdown); font-family: var(--font-family-sans); color: var(--ats-neutral-700);
+  animation: ds-fade-in var(--duration-normal) var(--easing-standard);
+}
+.crt-chico[hidden] { display: none; }
+.crt-chico:focus { outline: 0; }
+.crt-chico :focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
+.crt-chico .ds-field-wrap input:focus-visible { outline: 0; }
+.crt-c__head { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid var(--ats-neutral-300); }
+.crt-c__head h2 { margin: 0; font-size: 20px; line-height: 1.2; font-weight: var(--font-weight-semibold); color: var(--pos-text-title); }
+.crt-c__cli { padding: 8px 16px; min-height: 56px; display: flex; align-items: center; }
+.crt-c__cli .crt-cli { flex: 1; min-height: 40px; }
+.crt-c__cli .crt-cli__name b { color: var(--ats-primary-400); }
+.crt-c__cli .crt-cli__name small { display: none; }
+/* zona de operaciones: fondo de página, 214 de alto con scroll, una tarjeta blanca con divisores */
+.crt-c__list { height: 214px; flex: none; overflow-y: auto; padding: 16px; background: var(--pos-surface-page); border: 1px solid var(--pos-border-soft); border-left: 0; border-right: 0; }
+.crt-c__card { display: flex; flex-direction: column; gap: 16px; padding: 12px; border-radius: 16px; background: var(--color-base-white); }
+.crt-c__card > .crt-sep { margin: 0 8px; }
+.crt-c__op { display: flex; flex-direction: column; gap: var(--spacing-2); }
+.crt-c__tx { display: flex; align-items: center; gap: var(--spacing-2); }
+.crt-c__img { flex: none; width: 52px; height: 52px; border: .5px solid var(--pos-border-soft); border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--color-base-white); }
+.crt-c__img img { width: 100%; height: 100%; object-fit: contain; }
+.crt-c__img .crt-ini { font-size: 16px; font-weight: var(--font-weight-semibold); color: var(--ats-primary-200); }
+.crt-c__txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.crt-c__row { display: flex; justify-content: space-between; gap: var(--spacing-2); font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--ats-neutral-700); }
+.crt-c__row span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.crt-c__row span:last-child { color: var(--pos-text-title); white-space: nowrap; }
+.crt-c__txt small { font-size: 12px; line-height: 1; color: var(--ats-neutral-600); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.crt-c__op .crt-sub__row { font-size: 16px; }
+/* resumen: Subtotal neto, IVA, Total con "n artículo(s)" y el botón primario de 40 */
+.crt-c__foot { display: flex; flex-direction: column; gap: 8px; padding: 16px; }
+.crt-c__fr { display: flex; justify-content: space-between; font-size: 14px; line-height: 1.2; color: var(--ats-neutral-700); }
+.crt-c__tot { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; }
+.crt-c__tot span { display: flex; flex-direction: column; }
+.crt-c__tot b { font-size: 16px; line-height: 1.2; letter-spacing: .3px; font-weight: var(--font-weight-regular); color: var(--pos-text-title); }
+.crt-c__tot small { font-size: 14px; line-height: 1.2; color: var(--ats-neutral-600); }
+.crt-c__foot > .ds-btn { width: 100%; height: 40px; justify-content: center; font-size: 16px; line-height: 1.5; }
+.crt-empty--c { padding: var(--spacing-2); gap: 4px; height: 100%; }
+.crt-empty--c img { width: 96px; height: 96px; }
+.pos .ds-btn.crt-ib[aria-pressed='true'] { background: var(--ats-primary-100); }
+/* con el chico abierto, los avisos de la página salen a su izquierda para no tapar sus botones */
+html.crt-chico-open .pos .ds-toast-region, html.crt-chico-open .toast { right: calc(var(--spacing-5) + 399px + var(--spacing-4)); }
+@media (max-width: 960px) {
+  html.crt-chico-open .pos .ds-toast-region, html.crt-chico-open .toast { right: var(--spacing-4); z-index: 1300; }
+}
+@media (max-width: 600px) {
+  .crt-chico { right: 8px; top: calc(var(--pos-header-h, 56px) + 4px); }
+}
+
+/* el cuerpo de la página no se mueve con el carrito abierto */
+html.crt-open { overflow: hidden; }
+
+/* ---------- pantallas angostas: una columna, el modal entero se desplaza ---------- */
+@media (max-width: 900px) {
+  .crt.ds-modal { height: calc(100vh - 32px); }
+  .crt__body { display: flex; flex-direction: column; gap: var(--spacing-4); overflow-y: auto; }
+  .crt__items { overflow: visible; padding-right: 0; flex: none; }
+  .crt__sum { flex: none; }
+  .crt-tab { overflow: visible; flex: none; }
+}
+@media (max-width: 600px) {
+  .crt-overlay.ds-modal-overlay { padding: 0; }
+  .crt.ds-modal { height: 100%; border-radius: 0; }
+  .crt__head { padding: 16px 16px 8px; }
+  .crt__body { padding: 4px 16px 16px; }
+  .crt-grp { gap: var(--spacing-2); }
+  .crt-grp__img { width: 72px; height: 72px; border-radius: 12px; }
+  .crt-grp__img img { width: 56px; height: 56px; }
+  .crt-grp__det { font-size: 14px; }
+  .crt-tr > :first-child { width: 120px; white-space: normal; align-items: flex-start; }
+  .crt-tr__t { overflow-wrap: anywhere; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .crt-overlay, .crt.ds-modal, .crt-chico { animation: none; }
+}

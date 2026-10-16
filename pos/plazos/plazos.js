@@ -54,8 +54,10 @@ const EMPTY_PLAZO_FORM = {
 };
 /* chips de estado (getInstallmentStateChipVariant; colores "por confirmar con Product Design") */
 const ESTADOS = { Vigente: { chip: 'blue' }, Programado: { chip: 'purple' }, Inactivo: { chip: 'white' }, Borrador: { chip: 'gray' } };
+/* tono → modificador del DS Tag (status) y del DS Chip (informativo) */
+const TAG_TONE = { blue: 'azul', purple: 'morado', white: 'blanco', gray: 'gris' };
+const CHIP_TONE = { blue: 'ds-chip--info', purple: 'ds-chip--brand', gray: '' };
 
-const PLAZOS_LATENCY = 450, PLAZOS_SLOW_LATENCY = 2500;
 const PLAZOS_SIMULATION_DEFAULT_AMOUNT = 4000, PLAZOS_IVA = 0.16, PLAZOS_DEFAULT_PERIODS = 4, MAX_PERIODS = 12;
 
 /* ==========================================================================
@@ -275,13 +277,12 @@ const aFormulario = p => Object.fromEntries(Object.keys(EMPTY_PLAZO_FORM).map(k 
 /* ==========================================================================
    Servicio simulado (plazosPreview.service.ts + usePlazosPreview.ts)
    db = el "servidor" en memoria; store = lo que la página ya cargó. Una sola carga al abrir:
-   plazos, árboles y sugerencias juntos. Todas las llamadas usan la misma latencia.
+   plazos, árboles y sugerencias juntos. Sin latencia simulada: responden al momento.
    ========================================================================== */
 const db = { plazos: [], sugerencias: [] };
 const store = { plazos: [], sugerencias: [], carga: 'cargando' }; /* carga: 'cargando' | 'listo' | 'error' */
 const demo = { escenario: 'data', action: 'ok', failNextLoad: false, failNextGet: false };
 let sequence = 0;
-const latencia = () => (demo.escenario === 'slow' ? PLAZOS_SLOW_LATENCY : PLAZOS_LATENCY);
 /* escenario nuevo o "Restablecer datos": vuelve a sembrar el servidor (en Vacío no hay plazos, pero sí sugerencias) */
 function sembrar() {
   db.plazos = demo.escenario === 'empty' ? [] : buildMockPlazos();
@@ -295,11 +296,13 @@ function cargarTodo() {
   clearTimeout(cargaT);
   store.carga = 'cargando'; store.plazos = []; store.sugerencias = [];
   vista.alCargar?.();
-  cargaT = setTimeout(() => {
+  /* sin latencia simulada; el escenario "Carga lenta" deja el estado de carga fijo */
+  if (demo.escenario === 'slow') return;
+  cargaT = (() => {
     if (demo.failNextLoad) { demo.failNextLoad = false; store.carga = 'error'; }
     else { store.plazos = clone(db.plazos); store.sugerencias = clone(db.sugerencias); store.carga = 'listo'; }
     vista.alCargar?.();
-  }, latencia());
+  })();
 }
 const getPlazo = id => store.plazos.find(p => p.id === id);
 /* upsert del servicio y replace del hook: si existe se reemplaza en su lugar; si no, entra primero */
@@ -337,7 +340,7 @@ const SWITCH_KNOB = '<span class="ds-switch__knob"><svg class="on" viewBox="0 0 
 const ui = {
   /* Button del DS. El ícono a la derecha va en su caja de 20 × 20 (.button-icon de Button.tsx) */
   btn: (label, { variant = 'primary', iconLeft, iconRight, iconRightCls = '', attrs = '', full, type = 'button' } = {}) =>
-    `<button type="${type}" class="ds-btn ds-btn--${variant}${iconLeft ? ' ds-btn--icon-left' : ''}${iconRight ? ' ds-btn--icon-right' : ''}${full ? ' ds-btn--full' : ''}" ${attrs}>${iconLeft ? icon(iconLeft) : ''}<span>${label}</span>${iconRight ? `<span class="ds-btn__icon">${icon(iconRight, iconRightCls)}</span>` : ''}</button>`,
+    `<button type="${type}" class="ds-btn ds-btn--md ds-btn--${variant}${iconLeft ? ' ds-btn--icon-left' : ''}${iconRight ? ' ds-btn--icon-right' : ''}${full ? ' ds-btn--full' : ''}" ${attrs}>${iconLeft ? icon(iconLeft) : ''}<span>${label}</span>${iconRight ? `<span class="ds-btn__icon">${icon(iconRight, iconRightCls)}</span>` : ''}</button>`,
   /* ButtonSelect del DS: no es un botón nuevo, es el Button (variante y tamaño propios) con ChevronDownIcon
      de 20 a la derecha dentro de un contenedor inline-flex; el menú lo abre montarButtonSelect() */
   btnSelect: (label, { variant = 'secondary', attrs = '' } = {}) =>
@@ -350,12 +353,12 @@ const ui = {
     ? `<li><a href="${it.href}" class="ds-breadcrumb__link" ${it.attrs || ''}>${esc(it.label)}</a><span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt=""></span></li>`
     : `<li><span class="ds-breadcrumb__current" aria-current="page">${esc(it.label)}</span></li>`).join('')}</ol></nav>`; },
   /* Chip status del DS: es de solo lectura y lleva role="status" (Chip.tsx) */
-  chip: status => `<span class="chip-status chip-status--${ESTADOS[status].chip}" role="status">${status}</span>`,
+  chip: status => `<span class="ds-tag ds-tag--${TAG_TONE[ESTADOS[status].chip]}" role="status">${status}</span>`,
   /* Chip informativa grande del DS (35 de alto): blue, gray o purple */
-  chipInfo: (label, color) => `<span class="chip-inf chip-inf--${color}">${esc(label)}</span>`,
+  chipInfo: (label, color) => `<span class="ds-chip ${CHIP_TONE[color] || ''}">${esc(label)}</span>`,
   alert: (variant, { title, text, action } = {}) => {
     const ic = { info: 'EstadosInfo', error: 'EstadosError', warning: 'WarningFilled', success: 'EstadosSuccess' }[variant];
-    return `<div class="ds-alert ds-alert--${variant}" role="${variant === 'error' ? 'alert' : 'status'}">${icon(ic)}<div class="ds-alert__body">${title ? `<p class="ds-alert__title">${title}</p>` : ''}${text ? `<p class="ds-alert__text">${text}</p>` : ''}</div>${action || ''}</div>`;
+    return `<div class="ds-alert ds-alert--${variant}" role="${variant === 'error' ? 'alert' : 'status'}"><span class="ds-alert__icon">${icon(ic)}</span><div class="ds-alert__body-wrap">${title ? `<p class="ds-alert__title">${title}</p>` : ''}${text ? `<p class="ds-alert__body">${text}</p>` : ''}</div>${action ? `<div class="ds-alert__actions">${action}</div>` : ''}</div>`;
   },
   note: text => `<p class="design-note">${text}</p>`,
   /* TextInput / NumberInput del DS; sin label, el input lleva su aria-label */
@@ -395,7 +398,7 @@ function showToast({ type = 'success', title, message }) {
   const el = document.createElement('div');
   el.className = `ds-toast ds-toast--${type}`;
   el.setAttribute('role', type === 'error' ? 'alert' : 'status');
-  el.innerHTML = `${icon(type === 'error' ? 'EstadosError' : 'EstadosSuccess')}<div class="ds-toast__body"><p class="ds-toast__title">${esc(title)}</p>${message ? `<p class="ds-toast__text">${esc(message)}</p>` : ''}</div><button type="button" class="ds-toast__close" aria-label="Cerrar">${icon('Close')}</button><span class="ds-toast__timer"></span>`;
+  el.innerHTML = `<span class="ds-toast__icon">${icon(type === 'error' ? 'EstadosError' : 'EstadosSuccess')}</span><div class="ds-toast__body-wrap"><p class="ds-toast__title">${esc(title)}</p>${message ? `<p class="ds-toast__body">${esc(message)}</p>` : ''}</div><button type="button" class="ds-toast__close" aria-label="Cerrar">${icon('Close')}</button><span class="ds-toast__timer"></span>`;
   region.prepend(el);
   const remove = () => el.remove();
   el.querySelector('.ds-toast__close').addEventListener('click', remove);
@@ -461,16 +464,9 @@ function confirmModal({ title, text, body, confirmLabel, variant = 'primary', on
   ov.querySelector('[data-confirm]').addEventListener('click', e => onConfirm(e.currentTarget));
 }
 
-/* Simula una llamada al servicio con la latencia del escenario; respeta "Acciones" del panel de la maqueta */
-function fakeRequest(btn, { ok, fail, ms = latencia() }) {
-  if (btn) {
-    btn.setAttribute('aria-busy', 'true'); btn.disabled = true;
-    btn.insertAdjacentHTML('afterbegin', `<span class="ds-spinner ds-spinner--sm${btn.classList.contains('ds-btn--primary') || btn.classList.contains('ds-btn--destructive') ? ' ds-spinner--white' : ''}"></span>`);
-  }
-  setTimeout(() => {
-    if (btn && document.contains(btn)) { btn.removeAttribute('aria-busy'); btn.disabled = false; btn.querySelector('.ds-spinner')?.remove(); }
-    demo.action === 'error' ? fail() : ok();
-  }, ms);
+/* sin latencia simulada: la acción responde al momento (en "Acciones con error" falla) */
+function fakeRequest(btn, { ok, fail }) {
+  demo.action === 'error' ? fail() : ok();
 }
 
 /* ==========================================================================
@@ -650,7 +646,7 @@ function montarButtonSelect(trigger, { opciones, onSelect }) {
 }
 
 /* SelectionInput (DS): botón + listbox. El <select> oculto guarda el valor y emite "change". */
-const SELECT_CHEVRON = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="#71767D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const SELECT_CHEVRON = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" style="stroke:var(--ats-neutral-500)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 function enhanceSelect(sel) {
   if (sel.dataset.enhanced) return;
   sel.dataset.enhanced = '1';
@@ -924,17 +920,17 @@ function confirmEstado(p, activar, after) {
     }),
   });
 }
-/* Duplicar (service.duplicate): sin confirmación ni indicador; tras la latencia, "{nombre} (copia)" como Borrador,
+/* Duplicar (service.duplicate): sin confirmación ni indicador; al momento, "{nombre} (copia)" como Borrador,
    con el siguiente id y al inicio de la lista. La vista no cambia. */
 function duplicar(p, alTerminar) {
-  setTimeout(() => {
+  (() => {
     if (demo.action === 'error') { showToast({ type: 'error', title: 'Error', message: 'No se pudo duplicar el plazo. Intenta de nuevo.' }); return; }
     const base = db.plazos.find(x => x.id === p.id) || p;
     sequence += 1;
     upsert({ ...clone(base), id: sequence, name: `${base.name} (copia)`, status: 'Borrador' });
     showToast({ title: 'Cambio exitoso al estado del plazo', message: 'Plazo duplicado' });
     alTerminar?.();
-  }, latencia());
+  })();
 }
 /* Menú ⋮ de cada fila (InstallmentTableRow): el borrador solo se edita; Vigente → Desactivar, cualquier otro estado → Activar */
 const accionesPorEstado = p => {
@@ -1394,7 +1390,7 @@ function renderSugeridos(box) {
 
 /* ==========================================================================
    DETALLE (PreviewInstallmentDetail · patrón CompanyDetail de AccessCodes, sin pestañas):
-   encabezado con título, chip y acciones; cards en 2 columnas. Cada vez que se abre hace un get con la latencia.
+   encabezado con título, chip y acciones; cards en 2 columnas. Cada vez que se abre hace un get (sin latencia simulada).
    ========================================================================== */
 /* Card del detalle (PreviewDetailCard): región con su h2, un hr y el contenido o la caja de carga */
 const tarjetaDetalle = (id, titulo, contenido, cargando) => `<section class="card dcard" aria-labelledby="${id}-title" aria-busy="${cargando}">
@@ -1535,12 +1531,12 @@ function renderDetail(main, id) {
   /* get del servicio: en el escenario Error falla el primero */
   function fetchPlazo() {
     st.loading = true; st.error = false; pintar();
-    const t = setTimeout(() => {
+    if (demo.escenario === 'slow') return; // "Carga lenta": estado de carga fijo
+    const t = (() => {
       if (demo.failNextGet) { demo.failNextGet = false; st.error = true; }
       else { const s = db.plazos.find(x => x.id === id); st.fetched = s ? clone(s) : null; }
       st.loading = false; pintar();
-    }, latencia());
-    cleanup.push(() => clearTimeout(t));
+    })();
   }
 
   page.addEventListener('click', e => {
@@ -1757,7 +1753,7 @@ function buildForm(main, root, f, { isEdit, original, sug, title }) {
       default: return null;
     }
   }
-  /* en los árboles y en la tabla de rangos el error va en un div role="alert" con caption #501111, sin ícono */
+  /* en los árboles y en la tabla de rangos el error va en un div role="alert" con caption var(--ats-error-red-300), sin ícono */
   function pintarError(k) {
     if (k === 'categoryIds' || k === 'branchIds' || k === 'ranges') {
       root.querySelectorAll(`[data-error-for="${k}"]`).forEach(b => { b.innerHTML = errors[k] ? `<div role="alert"><p class="t-caption field-alert">${esc(errors[k])}</p></div>` : ''; });
@@ -2218,9 +2214,7 @@ function buildForm(main, root, f, { isEdit, original, sug, title }) {
   function guardar() {
     saving = true;
     const btn = q('[data-submit]');
-    btn.setAttribute('aria-busy', 'true');
-    btn.insertAdjacentHTML('afterbegin', '<span class="ds-spinner ds-spinner--sm ds-spinner--white"></span>');
-    const t = setTimeout(() => {
+    const t = (() => {
       saving = false; btn.removeAttribute('aria-busy'); btn.querySelector('.ds-spinner')?.remove();
       if (demo.action === 'error') { showToast({ type: 'error', title: 'Error', message: 'No se pudo completar la acción. Intenta de nuevo.' }); return; }
       /* se descartan las filas de rangos sin "hasta" y sin interés */
@@ -2237,8 +2231,7 @@ function buildForm(main, root, f, { isEdit, original, sug, title }) {
       dirty = false;
       showToast(isEdit ? { title: 'Plazo guardado exitosamente', message: 'Los cambios del plazo se guardaron' } : { title: 'Plazo creado exitosamente', message: 'Se agregó un nuevo plazo a tu lista de plazos' });
       go(`#/plazos/${plazo.id}`);
-    }, latencia());
-    cleanup.push(() => clearTimeout(t));
+    })();
   }
 
   /* ---- Salir con cambios sin guardar (F-38, regla de la maqueta) ------------- */

@@ -10,8 +10,6 @@
   'use strict';
 
   /* ======================= Constantes ======================= */
-  const LATENCY_MS = 900;            // INVITE_MOCK_LATENCY_MS
-  const SUCCESS_PAUSE_MS = 600;      // INVITE_SUCCESS_PAUSE_MS
   const TOAST_MS = 3000;             // duración por omisión de showToast (ToastProvider)
   const CODE_LENGTH = 6;             // ACCESS_CODE_LENGTH
   const CODE_CHARSET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';   // ACCESS_CODE_CHARSET: sin I, O, 0 ni 1
@@ -131,7 +129,7 @@
     account: [
       'Alert success confirma la invitación: empresa y sucursales vienen de la solicitud que aprobó Marketing.',
       'Correo prellenado en solo lectura. Como el código llegó a ese correo, ya no hace falta "Verifica tu correo".',
-      'Gap del DS: TextInput readOnly usa el estilo de deshabilitado (texto #A1A5AA), que no pasa contraste. Se reporta y no se corrige en pantalla.',
+      'Gap del DS: TextInput readOnly usa el estilo de deshabilitado (texto var(--ats-neutral-400)), que no pasa contraste. Se reporta y no se corrige en pantalla.',
       'Requisitos de contraseña: filas de helperText (_criterios de Figma). El ícono de éxito (SuccessFilledIcon) hay que validarlo contra la variante "Éxito" de Figma.',
       '[Pendiente Backend] La solicitud guarda el contacto en un solo texto; hay que separar nombres y apellidos para prellenarlos.',
       'Sin aceptar términos no se crea la cuenta: el Checkbox se marca en error. Los textos legales se abren con "Leer Términos y condiciones" y "Leer Declaración de privacidad" (Button tertiary).',
@@ -162,15 +160,14 @@
   /* ======================= Utilidades ======================= */
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   /* Button con loading: Spinner small y el mismo texto; el ícono se oculta y el botón queda deshabilitado */
   const setLoading = (btn, on) => {
-    const spinner = $('.ri-spinner', btn);
+    const spinner = $('.ds-spinner', btn);
     btn.disabled = on;
     if (on) btn.setAttribute('aria-busy', 'true'); else btn.removeAttribute('aria-busy');
-    if (on && !spinner) btn.insertAdjacentHTML('afterbegin', '<span class="ri-spinner" role="status" aria-label="Cargando"></span>');
+    if (on && !spinner) btn.insertAdjacentHTML('afterbegin', '<span class="ds-spinner ds-spinner--sm" role="status" aria-label="Cargando"></span>');
     if (!on && spinner) spinner.remove();
   };
 
@@ -179,9 +176,8 @@
     if (code.length < CODE_LENGTH) return CODE_TEXTS.incomplete;
     return code.split('').some((char) => !CODE_CHARSET.includes(char)) ? CODE_TEXTS.invalidChars : '';
   };
-  /* Simula Suscriptionbtb: valida el código según el escenario */
+  /* Simula Suscriptionbtb: valida el código según el escenario (sin latencia simulada) */
   const validateInviteCode = async (code, scenario) => {
-    await wait(LATENCY_MS);
     if (scenario === 'network') return { ok: false, reason: 'network' };
     const invite = findInvite(code);
     if (!invite) return { ok: false, reason: 'notFound' };
@@ -190,7 +186,6 @@
   };
   /* En el escenario "used" el código se usó mientras se llenaba el formulario */
   const createInviteAccount = async (scenario) => {
-    await wait(LATENCY_MS);
     if (scenario === 'network') return { ok: false, reason: 'network' };
     if (scenario === 'used') return { ok: false, reason: 'used' };
     return { ok: true };
@@ -218,14 +213,14 @@
     /* ToastProvider: si ya hay uno igual, se quita antes de mostrar el nuevo */
     [...toastRoot.children].forEach((t) => { if (t.dataset.type === type && t.dataset.msg === message) t.remove(); });
     const el = document.createElement('div');
-    el.className = `ri-toast ri-toast--${type}`;
+    el.className = `ds-toast ds-toast--${type} ri-toast`;
     el.dataset.type = type;
     el.dataset.msg = message;
     el.setAttribute('role', 'status');
-    el.innerHTML = `<div class="ri-toast__row"><span class="ri-ico ri-toast__ico">${icon(type === 'success' ? 'EstadosSuccessIcon' : 'EstadosInfoIcon', 20)}</span><p class="ri-toast__msg">${esc(message)}</p></div>`
-      + `<button type="button" class="ri-toast__x" aria-label="Cerrar aviso">${icon('CloseIcon', 24)}</button>`
+    el.innerHTML = `<span class="ri-ico ds-toast__icon">${icon(type === 'success' ? 'EstadosSuccessIcon' : 'EstadosInfoIcon', 24)}</span><div class="ds-toast__body-wrap"><p class="ds-toast__body">${esc(message)}</p></div>`
+      + `<button type="button" class="ds-toast__close" aria-label="Cerrar aviso">${icon('CloseIcon', 20)}</button>`
       + `<span class="ri-toast__timer" aria-hidden="true" style="animation-duration:${TOAST_MS}ms"></span>`;
-    $('.ri-toast__x', el).addEventListener('click', () => el.remove());
+    $('.ds-toast__close', el).addEventListener('click', () => el.remove());
     toastRoot.appendChild(el);
     setTimeout(() => el.remove(), TOAST_MS);
   }
@@ -328,7 +323,6 @@
     const visit = state.visit;
     login.alert.hidden = true;
     setLoading(login.btn, true);
-    await wait(LATENCY_MS);
     if (visit !== state.visit) return;
     setLoading(login.btn, false);
     if (!login.user.value.trim() || login.pass.value.length < MIN_MOCK_PASSWORD_LENGTH) { login.alert.hidden = false; return; }
@@ -436,8 +430,6 @@
     setLoading(cf.btn, false);
     if (result.ok) {
       setFeedback('success', CODE_TEXTS.valid);
-      await wait(SUCCESS_PAUSE_MS);
-      if (visit !== state.visit) return;
       state.invite = result.invite;
       go('account');
       return;

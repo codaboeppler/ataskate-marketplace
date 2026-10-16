@@ -26,7 +26,7 @@
     {k:'testimonioNum', l:'Número de testimonio (poder)', t:'num', g:'poder'},
     {k:'testimonioFecha', l:'Fecha de testimonio (poder)', t:'fecha', ph:'01/01/2019', g:'poder'},
     {k:'notarioPoderNum', l:'Número de notario (poder)', t:'num', g:'poder'},
-    {k:'poderFecha', l:'Fecha del poder', t:'fecha', ph:'01/01/2019', g:'poder'},
+    {k:'notarioPoderNombre', l:'Nombre de notario público (poder)', t:'texto', g:'poder'},
     {k:'calle', l:'Calle', t:'texto', g:'direccion'},
     {k:'numExt', l:'Número ext.', t:'texto', g:'direccion'},
     {k:'numInt', l:'Número int.', t:'texto', g:'direccion', opcional:true},
@@ -45,13 +45,16 @@
   ];
   /* claves que recibe el diseño del contrato (ctx.empresa): las del formulario + Estado, que sale del código postal */
   const CLAVES = CAMPOS.map(c => c.k).concat('estado');
-  const vacio = () => CLAVES.reduce((o, k) => { o[k] = ''; return o; }, {});
+  /* Contrato nuevo: Nombre comercial y RFC salen de los datos que la empresa dio al crear su cuenta (useSignupPrefill de el equipo);
+     solo llenan campos vacíos y son el valor inicial, no cuentan como cambios sin guardar. Ficticios: el archivo se publica. */
+  const CUENTA = {nombreComercial:'PrestaYa', rfc:'PYS010101ABC'};
+  const vacio = () => CLAVES.reduce((o, k) => { o[k] = CUENTA[k] || ''; return o; }, {});
 
   /* Datos de ejemplo del Figma (§1.6 del SPEC). Ficticios: el archivo se publica. */
   const EJEMPLO = {
     nombreComercial:'PrestaYa', escrituraNum:'123', escrituraFecha:'01/01/2000', notarioNum:'123', folioMercantil:'123',
     folioFecha:'01/01/2019', rfc:'PYS010101ABC', representante:'Maria Gomez', testimonioNum:'123', testimonioFecha:'01/01/2019',
-    notarioPoderNum:'345', poderFecha:'01/01/2019', calle:'Londres', numExt:'247', numInt:'', cp:'04100',
+    notarioPoderNum:'345', notarioPoderNombre:'Luis Ramírez', calle:'Londres', numExt:'247', numInt:'', cp:'04100',
     municipio:'Coyoacán', colonia:'Del Carmen', estado:'Ciudad de México', telefono:'55 1234 5678', correo:'correo@email.com',
     rpcaNum:'12345', rpcaFecha:'01/01/2024'
   };
@@ -200,7 +203,7 @@
       const S = st(), ks = camposTarjeta(t).filter(c => S.errors[c.k]);
       if (!ks.length) return '';
       const faltan = ks.some(c => S.errors[c.k] === OBLIG);
-      return `<div class="alert error ctr-alerta" role="alert">${ic('error', 24, 'class="ic"')}<div class="txt"><span class="at">${faltan ? 'Completa los campos marcados para continuar' : 'Revisa los campos marcados para continuar'}</span></div></div>`;
+      return `<div class="ds-alert ds-alert--error ctr-alerta" role="alert"><span class="ds-alert__icon">${ic('error', 24)}</span><div class="ds-alert__body-wrap"><span class="ds-alert__title">${faltan ? 'Completa los campos marcados para continuar' : 'Revisa los campos marcados para continuar'}</span></div></div>`;
     }
     function tarjetaForm(t) {
       const cuerpo = t.id === 'legales'
@@ -213,7 +216,7 @@
     /* ---------- Solo lectura (frame 426 "Cambios Guardados") ----------
        Mismas etiquetas y orden del formulario (el 426 trae otros nombres: pregunta abierta) + Estado después de Colonia. */
     function dato(l, v, opcional) {
-      return `<div class="ctr-dato"><dt>${esc(l)}${opcional ? ' <span class="opt">(opcional)</span>' : ''}</dt><dd>${String(v || '').trim() ? esc(v) : '-'}</dd></div>`;
+      return `<div class="ctr-dato"><dt>${esc(l)}${opcional ? ' <span class="opt">(opcional)</span>' : ''}</dt><dd>${String(v || '').trim() ? esc(v) : '—'}</dd></div>`;
     }
     function rejillaLectura(g) {
       const f = st().f;
@@ -249,7 +252,7 @@
       }
       return TARJETAS.map(tarjetaForm).join('') +
         `<div class="ctr-pie">${btn('Cancelar', 'tertiary', 'data-action="ctr-cancelar"')}${btn('Guardar cambios', 'primary', 'data-action="ctr-guardar"', {loading:S.saving})}</div>` +
-        note('Reemplaza la hoja "Datos de empresa" de el equipo. Figma "Suscripción" › V1- Datos de mi empresa (4621:11178). Todo es obligatorio menos Número int.; el formulario empieza vacío, como en el Figma (420 → 425).') +
+        note('Reemplaza la hoja "Datos de empresa" de el equipo. Figma "Suscripción" › V1- Datos de mi empresa (4621:11178). Todo es obligatorio menos Número int.; el formulario empieza vacío (420 → 425), salvo Nombre comercial y RFC, que salen de los datos de la cuenta (como en el React de el equipo).') +
         note('Se valida al guardar. Después, cada campo se vuelve a revisar al salir de él. Primero "Campo obligatorio" y, si ya tiene algo, el formato. El aviso de cada tarjeta dice "Completa…" si falta algo y "Revisa…" si solo hay errores de formato.') +
         note('Código postal → Alcaldía o municipio y Colonia (servicio de QA; sin red, la tabla local). El Estado no se captura: también sale del código postal y aparece en la vista guardada y en el contrato.') +
         note('¿"Número de escritura pública" lleva solo números? El Figma no muestra su error de formato; el prototipo lo valida como los demás números.', true) +
@@ -362,13 +365,9 @@
       c.tab = tab === 'diseno' ? 'diseno' : 'empresa';
       c.cargaFija = false; c.disenoSync = true; c.disenoProto = '';
       if (!c.cargado) {
-        c.modo = 'carga';
-        clearTimeout(cargaT);
-        cargaT = setTimeout(() => {
-          const S = st();
-          S.ctr.cargado = true;
-          if (S.route === 'datos' && S.ctr.modo === 'carga' && !S.ctr.cargaFija) { S.ctr.modo = S.ctr.guardados ? 'guardado' : 'edicion'; api.render(); }
-        }, 600);
+        /* sin latencia simulada: los datos están al momento (el estado de carga se ve desde el riel, cargaFija) */
+        c.cargado = true;
+        c.modo = c.guardados ? 'guardado' : 'edicion';
       } else c.modo = c.guardados && !c.editando ? 'guardado' : 'edicion';
     }
     function cambiarTab(tab, foco) {
@@ -419,9 +418,9 @@
           if (Object.keys(S.errors).length) { api.render(); irAlError(); break; }
           /* se guarda lo que se validó, aunque mientras carga se salga de la pantalla (go() descarta S.f) o se escriba */
           const datos = Object.assign({}, S.f);
-          S.saving = true; api.render();
+          S.saving = true;
           clearTimeout(guardarT);
-          guardarT = setTimeout(() => {
+          guardarT = (() => {
             const S2 = st(), aqui = S2.route === 'datos';
             S2.saving = false;
             Object.assign(S2.f, datos);
@@ -434,7 +433,7 @@
             /* un solo aviso en la esquina: si quedara otro arriba, la columna de toasts taparía "Editar" y "Continuar a …" */
             document.getElementById('toasts')?.replaceChildren();
             api.toast('success', 'Cambios guardados');
-          }, 800);
+          })();
           break;
         }
       }
@@ -448,7 +447,7 @@
       const html = alerta(t), actual = card.querySelector('.ctr-alerta');
       if (actual) {
         if (!html) actual.remove();
-        else { const nuevo = /<span class="at">([^<]*)</.exec(html)[1], at = actual.querySelector('.at'); if (at && at.textContent !== nuevo) actual.outerHTML = html; }
+        else { const nuevo = /<span class="ds-alert__title">([^<]*)</.exec(html)[1], at = actual.querySelector('.at'); if (at && at.textContent !== nuevo) actual.outerHTML = html; }
       } else if (html) card.querySelector('.ctr-card__t').insertAdjacentHTML('afterend', html);
     }
     /* pone o quita el error de un campo sobre el mismo nodo (clase .err, aria-invalid, aria-describedby y el .errmsg), como
@@ -548,7 +547,7 @@
         case 'formato': {
           const fut = futuraDeEjemplo();
           Object.assign(S2.f, EJEMPLO, {escrituraFecha:fut, notarioNum:'12A', folioMercantil:'F-123', folioFecha:fut, rfc:'PYS0101',
-            testimonioNum:'12O', notarioPoderNum:'3-45', poderFecha:fut, cp:'041', municipio:'', colonia:'', estado:'',
+            testimonioNum:'12O', notarioPoderNum:'3-45', notarioPoderNombre:'', cp:'041', municipio:'', colonia:'', estado:'',
             telefono:'55 1234', correo:'correo@email', rpcaFecha:fut});
           c.editando = !!c.guardados; tab1('edicion'); S2.triedSave = true; S2.errors = validar(); S2.dirty = true; break;
         }
@@ -583,7 +582,8 @@
       if (c.modo === 'guardado') return 'guardado';
       const errs = Object.values(S.errors);
       if (errs.length) return errs.indexOf(OBLIG) > -1 ? 'vacios' : 'formato';
-      return CAMPOS.some(x => String(S.f[x.k] || '').trim()) ? 'lleno' : 'vacio';
+      const base = vacio();
+      return CAMPOS.some(x => String(S.f[x.k] || '').trim() !== base[x.k]) ? 'lleno' : 'vacio';
     }
     const selProto = document.getElementById('proto-ctr');
     if (selProto) selProto.addEventListener('change', () => proto(selProto.value));

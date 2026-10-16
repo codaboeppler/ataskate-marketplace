@@ -8,24 +8,39 @@
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const S = { address: null, files: {}, photo: null, co: [], prints: { izq: new Set(), der: new Set() }, hand: 'der', finger: 'Pulgar', touched: new Set(), dirty: false, saving: false };
+const S = { coSeq: 0, address: null, files: {}, photo: null, co: [], prints: { izq: new Set(), der: new Set() }, hand: 'der', finger: 'Pulgar', touched: new Set(), dirty: false, saving: false };
 const FINGERS = ['Pulgar', 'Índice', 'Medio', 'Anular', 'Meñique'];
 const HN = { izq: 'izquierdo', der: 'derecho' };
 
 /* ---------- DS CircularProgressIndicator (20px small) ---------- */
-function cpi(v) { const r = 8.5, c = 2 * Math.PI * r; return `<svg width="20" height="20" viewBox="0 0 20 20" role="progressbar" aria-valuenow="${v}" aria-valuemin="0" aria-valuemax="100"><circle cx="10" cy="10" r="${r}" fill="none" stroke="#D4D6D8" stroke-width="3"/><circle cx="10" cy="10" r="${r}" fill="none" stroke="#0D166B" stroke-width="3" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - v / 100)}" transform="rotate(-90 10 10)"/></svg>`; }
-const tag = (el, color, txt) => { if (el) { el.className = 'tag ' + color; el.textContent = txt; } };
+function cpi(v) { const r = 8.5, c = 2 * Math.PI * r; return `<svg width="20" height="20" viewBox="0 0 20 20" role="progressbar" aria-valuenow="${v}" aria-valuemin="0" aria-valuemax="100"><circle cx="10" cy="10" r="${r}" fill="none" style="stroke:var(--ats-neutral-300)" stroke-width="3"/><circle cx="10" cy="10" r="${r}" fill="none" style="stroke:var(--ats-primary-400)" stroke-width="3" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - v / 100)}" transform="rotate(-90 10 10)"/></svg>`; }
+/* DS Tag (status chip): tono → modificador del DS */
+const TAG_TONE = { green: 'verde', gray: 'gris', purple: 'morado', red: 'rojo', yellow: 'amarillo', blue: 'azul' };
+const tag = (el, color, txt) => { if (el) { el.className = 'ds-tag ds-tag--' + (TAG_TONE[color] || 'gris'); el.textContent = txt; } };
+/* DS Chip informativo para el origen del cliente */
+const SRC_CHIP = { mk: 'ds-chip--brand', red: 'ds-chip--info', new: '' };
 
 /* ---------- Validación con el patrón de error de producción ---------- */
 const val = el => (el.value || '').trim();
+/* 9964739ad · reglas de su React (newClient.helpers.ts → getFieldError): mayoría de edad, CURP y R.F.C con su formato oficial,
+   vigencia de la identificación y teléfono de 10 dígitos */
+const CURP_RE = /^[A-Z][AEIOUX][A-Z]{2}\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])[HMX][A-Z]{2}[B-DF-HJ-NP-TV-Z]{3}[A-Z\d]\d$/;
+const RFC_RE = /^[A-ZÑ&]{4}\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])[A-Z\d]{3}$/;
+const ageFrom = b => { const t = new Date(); const had = t.getMonth() > b.getMonth() || (t.getMonth() === b.getMonth() && t.getDate() >= b.getDate()); return t.getFullYear() - b.getFullYear() - (had ? 0 : 1); };
 function problem(el) {
   const v = val(el), k = el.dataset.kind;
   if (!v) return el.tagName === 'SELECT' ? 'Debes seleccionar una opción' : 'Campo obligatorio';
   if (k === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return 'Formato de correo inválido.';
   if (k === 'phone' && v.replace(/\D/g, '').length < 10) return 'El número telefónico es demasiado corto.';
-  if (k === 'date') { const d = parseDMY(v); if (!d) return 'Escribe la fecha como DD/MM/AAAA.'; if (d > new Date()) return 'La fecha no puede ser futura.'; }
-  if (k === 'curp' && v.length !== 18) return 'La CURP debe tener 18 caracteres.';
-  if (k === 'rfc' && (v.length < 12 || v.length > 13)) return 'El R.F.C debe tener 13 caracteres.';
+  if (k === 'date' || k === 'dob' || k === 'validity') {
+    const d = parseDMY(v); if (!d) return 'Escribe la fecha como DD/MM/AAAA.';
+    if (k === 'validity') { const t = new Date(); t.setHours(0, 0, 0, 0); return d < t ? 'La identificación está vencida.' : ''; }
+    if (d > new Date()) return 'La fecha no puede ser futura.';
+    if (k === 'dob' && ageFrom(d) < 18) return 'El cliente debe ser mayor de 18 años.';
+  }
+  const u = v.toUpperCase();
+  if (k === 'curp' && (u.length !== 18 || !CURP_RE.test(u))) return 'Revisa la CURP: deben ser 18 caracteres con el formato oficial.';
+  if (k === 'rfc' && (u.length !== 13 || !RFC_RE.test(u))) return 'Revisa el R.F.C: deben ser 13 caracteres con homoclave.';
   return '';
 }
 function showErr(fld, msg, boxEl) {
@@ -43,6 +58,8 @@ const modeSecs = () => S.mode === 'venta' ? VENTA_SECS : SECS;
 const reqs = () => $$('[data-req]').filter(el => !el.closest('section[hidden]'));
 
 $$('#fs input, #fs select').forEach(el => {
+  if (el.id === 'phone' || el.id === 'a-cp') el.addEventListener('input', () => { const d = el.value.replace(/\D/g, '').slice(0, el.id === 'phone' ? 10 : 5); if (d !== el.value) el.value = d; }, true); // su React: teléfono de 10 dígitos y C.P. de 5, solo dígitos
+  if (el.id === 'curp' || el.id === 'rfc') el.addEventListener('input', () => { const u = el.value.toUpperCase(), a = el.selectionStart; if (u !== el.value) { el.value = u; try { el.setSelectionRange(a, a); } catch (e) {} } }, true); // su React: CURP y R.F.C siempre en mayúsculas
   el.addEventListener('input', () => {
     S.dirty = true;
     if (el.type === 'date') el.classList.toggle('empty', !el.value);
@@ -53,11 +70,7 @@ $$('#fs input, #fs select').forEach(el => {
   el.addEventListener('change', () => { if (el.type === 'date') el.classList.toggle('empty', !el.value); if (el.dataset.req !== undefined) { S.touched.add(el.id); paint(el); } update(); });
   el.addEventListener('blur', e => { if (e.relatedTarget && e.relatedTarget.classList.contains('cal-btn')) return; if (el.dataset.req !== undefined && (val(el) || el.tagName === 'INPUT')) { S.touched.add(el.id); paint(el); update(); } });
 });
-$('#idVig').addEventListener('change', e => {
-  const dv = parseDMY(e.target.value); const past = dv && dv < new Date();
-  const er = $('#idVigErr'); er.hidden = !past; er.innerHTML = past ? '<svg width="16" height="16"><use href="#i-err"/></svg>La identificación está vencida.' : '';
-  $('[data-box="idVig"]').classList.toggle('err', !!past);
-});
+/* la vigencia de la identificación se valida con problem() (kind validity): "La identificación está vencida." */
 
 
 /* ---------- Calendar modal ---------- */
@@ -91,7 +104,7 @@ function drawCal() {
       <div class="pick"><button type="button" class="pill" data-open="y" aria-expanded="${CAL.open === 'y'}">${y}<svg width="20" height="20"><use href="#i-down"/></svg></button>${CAL.open === 'y' ? `<div class="list" role="listbox">${years.map(n => `<button type="button" data-y="${n}" aria-selected="${n === y}">${n}</button>`).join('')}</div>` : ''}</div>
     </div>
     <div class="grid7">${['L','M','M','J','V','S','D'].map(w => `<span class="wd">${w}</span>`).join('')}${cells}</div>
-    <div class="foot"><button type="button" class="lnk" data-act="cancel">Cancelar</button><button type="button" class="btn pri sm" data-act="apply"${sel ? '' : ' disabled style="opacity:.5"'}>Aplicar</button></div>`;
+    <div class="foot"><button type="button" class="lnk" data-act="cancel">Cancelar</button><button type="button" class="ds-btn ds-btn--primary ds-btn--md" data-act="apply"${sel ? '' : ' disabled style="opacity:.5"'}>Aplicar</button></div>`;
   const yl = el.querySelector('[data-y][aria-selected="true"]'); if (yl) yl.scrollIntoView({ block: 'center' });
   el.querySelectorAll('[data-open]').forEach(b => b.onclick = () => { CAL.open = CAL.open === b.dataset.open ? null : b.dataset.open; drawCal(); });
   el.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { CAL.m = +b.dataset.m; CAL.open = null; drawCal(); });
@@ -125,11 +138,11 @@ function openList(sel) {
   const cur = list.querySelector('[aria-selected="true"]'); if (cur) list.scrollTop = cur.offsetTop - 35;
   list.addEventListener('click', e => { e.stopPropagation(); const b = e.target.closest('button'); if (b) choose(b.dataset.v); });
 }
-function choose(v) { const { sel, trig } = openSel; sel.value = v; closeSel(); syncSel(sel); if (!sel.closest('.modal')) S.dirty = true; sel.dispatchEvent(new Event('change')); trig.focus(); }
+function choose(v) { const { sel, trig } = openSel; sel.value = v; closeSel(); syncSel(sel); if (!sel.closest('.cn-modal')) S.dirty = true; sel.dispatchEvent(new Event('change')); trig.focus(); }
 function enhanceSel(sel) {
   if (sel._trig) return;
   sel.classList.add('sel-native'); sel.tabIndex = -1;
-  const t = document.createElement('button'); t.type = 'button'; t.className = 'in sel-trig'; t.setAttribute('aria-haspopup', 'listbox'); t.setAttribute('aria-expanded', 'false');
+  const t = document.createElement('button'); t.type = 'button'; t.className = 'in ds-input ds-input--standalone sel-trig'; t.setAttribute('aria-haspopup', 'listbox'); t.setAttribute('aria-expanded', 'false');
   t.innerHTML = '<span></span>' + CHEV; sel.insertAdjacentElement('afterend', t); sel._trig = t;
   const lb = sel.closest('.fld').querySelector('label'); if (lb) { lb.removeAttribute('for'); lb.onclick = () => t.focus(); t.setAttribute('aria-label', lb.textContent.trim()); }
   t.onclick = e => { e.stopPropagation(); openSel && openSel.sel === sel ? closeSel() : openList(sel); };
@@ -149,26 +162,26 @@ document.addEventListener('click', closeSel);
 
 /* ---------- Progreso por sección ---------- */
 const SECS = ['contacto', 'personal', 'direccion', 'ident', 'cotitular', 'bio'];
+const REQ_DOCS = ['idFront', 'idBack'];
 const fcount = keys => keys.filter(k => S.files[k]).length;
 const pcount = h => h ? S.prints[h].size : S.prints.izq.size + S.prints.der.size;
 function secState(sec) {
   if (sec === 'direccion') { const d = S.address ? 1 : 0; return { done: d, total: 1, err: S.touched.has('addr') && !d }; }
   const f = reqs().filter(e => e.dataset.sec === sec);
-  return { done: f.filter(e => !problem(e)).length, total: f.length, err: f.some(e => S.touched.has(e.id) && problem(e)) };
+  /* 9964739ad: Identificación cuenta sus 4 datos y el frente y el reverso de la identificación (NEW_CLIENT_REQUIRED_DOCUMENTS) */
+  const docs = sec === 'ident' ? REQ_DOCS : [];
+  return { done: f.filter(e => !problem(e)).length + docs.filter(k => S.files[k]).length, total: f.length + docs.length, err: f.some(e => S.touched.has(e.id) && problem(e)) };
 }
 function update() {
   let done = 0, total = 0;
   SECS.forEach(sec => {
     let pct = 0, color = 'gray', txt = 'Pendiente', sum = '';
-    if (['contacto', 'personal', 'direccion'].includes(sec)) {
+    if (['contacto', 'personal', 'direccion', 'ident'].includes(sec)) {
       const r = secState(sec); if (modeSecs().includes(sec)) { done += r.done; total += r.total; } pct = Math.round(r.done / r.total * 100);
       if (r.done === r.total) { color = 'green'; txt = 'Completo'; }
       else if (r.err) { color = 'red'; txt = 'Revisar'; }
       else if (r.done) { color = 'purple'; txt = `${r.done} de ${r.total}`; }
       sum = sec === 'direccion' ? txt : (r.done === r.total ? 'Completo' : r.err ? 'Revisar' : `${r.done} de ${r.total}`);
-    } else if (sec === 'ident') {
-      const n = fcount(['idFront', 'idBack', 'domFile', 'ingFile']); pct = n * 25;
-      color = n === 4 ? 'green' : n ? 'purple' : 'gray'; txt = n === 4 ? 'Completo' : n ? `${n} de 4 archivos` : 'Pendiente'; sum = `${n} archivo${n === 1 ? '' : 's'}`;
     } else if (sec === 'cotitular') {
       const n = S.co.length; pct = n ? 100 : 0; color = n ? 'green' : 'gray'; txt = n ? `${n} agregado${n > 1 ? 's' : ''}` : 'Sin agregar'; sum = txt;
     } else {
@@ -183,11 +196,11 @@ function update() {
   const pct = Math.round(done / total * 100);
   { const ring = $('#qRing'); if (ring) { const C = 72.257; ring.querySelector('.cpi-v').setAttribute('stroke-dashoffset', (C - pct / 100 * C).toFixed(2)); ring.setAttribute('aria-valuenow', pct); ring.classList.toggle('full', pct === 100); }
     const qc = $('#qCount'); if (qc) qc.textContent = `Datos completados: ${done} de ${total}`;
-    const qn = $('#qName'); if (qn) { const nm = [val($('#name')), val($('#lastName')), val($('#secondLastName'))].filter(Boolean).join(' '); qn.textContent = nm || 'Cliente nuevo'; } }
+    const qn = $('#qName'); if (qn) { const nm = [val($('#name')), val($('#lastName')), val($('#secondLastName'))].filter(Boolean).join(' '); qn.textContent = S.edit ? fullName(S.edit.client) : (nm || 'Cliente nuevo'); } }
   if ($('#piTxt')) { $('#piTxt').textContent = `${pct}% completado`; $('#piFill').style.width = pct + '%'; }
   const left = total - done;
   syncAnchor();
-  if ($('#hint')) $('#hint').innerHTML = left ? `Faltan <b>${left}</b> dato${left > 1 ? 's' : ''} obligatorio${left > 1 ? 's' : ''}.` : '<b>Todo listo para guardar.</b>';
+  if ($('#hint')) $('#hint').innerHTML = left ? `${left > 1 ? 'Faltan' : 'Falta'} <b>${left}</b> dato${left > 1 ? 's' : ''} obligatorio${left > 1 ? 's' : ''}.` : '<b>Todo listo para guardar.</b>';
   summary(); syncAll();
 }
 function summary() {
@@ -233,7 +246,7 @@ function richSummary() {
   $('#sTip').innerHTML = `<span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 22q-.825 0-1.412-.587Q10 20.825 10 20h4q0 .825-.587 1.413Q12.825 22 12 22Zm-4-3v-2h8v2Zm.25-3q-1.725-1.025-2.737-2.75Q4.5 11.525 4.5 9.5q0-3.125 2.188-5.312Q8.875 2 12 2q3.125 0 5.312 2.188Q19.5 6.375 19.5 9.5q0 2.025-1.012 3.75Q17.475 14.975 15.75 16Zm.6-2h6.3q1.125-.8 1.738-1.975Q17.5 10.85 17.5 9.5q0-2.3-1.6-3.9T12 4Q9.7 4 8.1 5.6T6.5 9.5q0 1.35.613 2.525Q7.725 13.2 8.85 14ZM12 14Z" fill="currentColor"/></svg></span><p><b>${tip[0]}</b>${tip[1]}</p>`;
   const o = S.origin; let oe = $('#sOrig');
   if (!oe) { oe = document.createElement('span'); oe.id = 'sOrig'; oe.className = 'sorig'; $('#sName').after(oe); }
-  oe.innerHTML = o ? `<span class="src ${o.k}">${o.label}</span>` : '';
+  oe.innerHTML = o ? `<span class="ds-chip ${SRC_CHIP[o.k] || ''}">${o.label}</span>` : '';
 }
 
 
@@ -262,17 +275,13 @@ function dzFilled(name, key, idx) {
   const pv = key && S.files[key] && S.files[key].url;
   return `<div class="dz-f"><div class="fmt"><svg><use href="#${fmt(name)}"/></svg></div>${pv ? `<button type="button" class="nm-b" data-view="${key}" title="Ver archivo">${esc(name)}</button><button type="button" class="see" data-view="${key}" aria-label="Ver archivo" title="Ver archivo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 16q1.875 0 3.188-1.312Q16.5 13.375 16.5 11.5q0-1.875-1.312-3.188Q13.875 7 12 7q-1.875 0-3.188 1.312Q7.5 9.625 7.5 11.5q0 1.875 1.312 3.188Q10.125 16 12 16Zm0-1.8q-1.125 0-1.912-.788Q9.3 12.625 9.3 11.5t.788-1.913Q10.875 8.8 12 8.8t1.913.787q.787.788.787 1.913t-.787 1.912q-.788.788-1.913.788Zm0 4.8q-3.65 0-6.65-2.038Q2.35 14.925 1 11.5q1.35-3.425 4.35-5.463Q8.35 4 12 4q3.65 0 6.65 2.037q3 2.038 4.35 5.463q-1.35 3.425-4.35 5.462Q15.65 19 12 19Zm0-7.5Zm0 5.5q2.825 0 5.188-1.488Q19.55 14.025 20.8 11.5q-1.25-2.525-3.612-4.013Q14.825 6 12 6Q9.175 6 6.812 7.487Q4.45 8.975 3.2 11.5q1.25 2.525 3.612 4.012Q9.175 17 12 17Z" fill="currentColor"/></svg></button>` : `<span class="nm">${esc(name)}</span>`}<button type="button" class="kebab" aria-label="Más opciones" data-k="${key}" data-i="${idx ?? ''}"><svg width="24" height="24"><use href="#i-kebab"/></svg></button></div>`;
 }
-function dzUploading() { return `<div class="dz-up"><span>Subiendo archivo...</span><div class="bar"><i></i></div></div>`; }
 function wireDrop(zone, input) {
   zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('over'); });
   zone.addEventListener('dragleave', () => zone.classList.remove('over'));
   zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('over'); input.files = e.dataTransfer.files; input.dispatchEvent(new Event('change')); });
 }
-function upload(host, after) {
-  host.innerHTML = dzUploading();
-  requestAnimationFrame(() => requestAnimationFrame(() => { const i = host.querySelector('.bar i'); if (i) i.style.width = '100%'; }));
-  setTimeout(after, 950);
-}
+// sin carga simulada: el archivo queda listo al momento (el estado "cargando" de la maqueta ya no se finge con un temporizador)
+function upload(host, after) { after(); }
 function renderFile(key) {
   const host = $(`[data-file="${key}"]`), f = S.files[key];
   if (f) { host.innerHTML = dzFilled(f.name, key); wireKebab(host); $$('[data-view]', host).forEach(b => b.onclick = () => docView(key)); return; }
@@ -289,30 +298,33 @@ function renderPhoto(state, pct) {
   const inner = {
     upload: `<span class="c"><span class="ph-cta"><span class="circ">${CAM}</span><span class="ph-t">Tomar foto</span></span></span>`,
     uploading: `<span class="c"><span class="ring" style="--p:${pct || 0}%"></span></span>`,
-    error: `<span class="c"><span class="x"><svg width="26" height="26" style="color:#fff"><use href="#i-close"/></svg></span></span>`,
+    error: `<span class="c"><span class="x"><svg width="26" height="26" style="color:var(--ats-white)"><use href="#i-close"/></svg></span></span>`,
     filed: ph ? `<img src="${ph.url}" alt="Foto del cliente"><span class="hov"><span class="ph-cta"><span class="circ">${CAM}</span><span class="ph-t">Tomar otra</span></span></span><span class="ph-badge" aria-hidden="true">${CAM}</span>` : ''
   }[state];
   const label = { upload: 'Tomar foto del cliente con la cámara', uploading: 'Cargando foto', error: 'Error al cargar, tomar otra foto', filed: 'Tomar otra foto del cliente' }[state];
   // el círculo abre la cámara (y acepta soltar una imagen); "Subir imagen" busca el archivo
   host.innerHTML = `<button type="button" class="phu ${state}" aria-label="${label}" ${state === 'uploading' ? 'disabled' : ''}>${inner}</button>
-    <label class="ph-up" for="photo">${ph ? 'Cambiar por una imagen' : 'o sube una imagen'}<input type="file" id="photo" accept="image/jpeg,image/png"></label>`;
+    <label class="ph-up" for="photo">${ph ? 'Cambiar por una imagen' : 'o sube una imagen'}<input type="file" id="photo" accept="image/jpeg,image/png"></label>${ph ? '<button type="button" class="ph-up ph-rm" id="phRemove">Quitar foto</button>' : ''}`;
   host.querySelector('.phu').onclick = () => $('#camBtn').click();
   const box = host.querySelector('.phu'), inp = $('#photo');
   box.addEventListener('dragover', e => { e.preventDefault(); box.classList.add('over'); });
   box.addEventListener('dragleave', () => box.classList.remove('over'));
   box.addEventListener('drop', e => { e.preventDefault(); box.classList.remove('over'); take(e.dataTransfer.files[0]); });
-  inp.addEventListener('change', () => take(inp.files[0]));
+  inp.addEventListener('change', () => { const f = inp.files[0]; inp.value = ''; take(f); });
   S.takePhoto = take;
-  function take(f) {
+  /* 9964739ad · foto: solo JPG o PNG de máximo 10 MB (PHOTO_ERROR), se puede quitar (PHOTO_REMOVE) y no hay carga simulada */
+  function take(f, fromCam) {
     if (!f) return; S.dirty = true;
     const er = $('#photoErr');
-    if (!/^image\/(jpeg|png)$/.test(f.type)) {
-      renderPhoto('error'); er.hidden = false; er.innerHTML = '<svg width="16" height="16"><use href="#i-err"/></svg>Formato no permitido. Solo JPG o PNG.'; $('#photoHelp').hidden = true; return;
+    if (!/^image\/(jpeg|png)$/.test(f.type) || f.size > 10 * 1048576) {
+      renderPhoto('error'); er.hidden = false; er.innerHTML = '<svg width="16" height="16"><use href="#i-err"/></svg>Usa una imagen JPG o PNG de máximo 10 MB.'; $('#photoHelp').hidden = true; return;
     }
     er.hidden = true; $('#photoHelp').hidden = false;
-    let p = 0; renderPhoto('uploading', 0);
-    const iv = setInterval(() => { p += 20; const r = $('#photoHost .ring'); if (r) r.style.setProperty('--p', p + '%'); if (p >= 100) { clearInterval(iv); S.photo = { name: f.name, url: URL.createObjectURL(f) }; renderPhoto(); summary(); toast(ph ? 'Foto actualizada' : 'Foto cargada', f.name); } }, 180);
+    if (S.photo) URL.revokeObjectURL(S.photo.url);
+    S.photo = { name: f.name, url: URL.createObjectURL(f) }; renderPhoto(); summary();
+    if (fromCam) toast('Archivo cargado', f.name);
   }
+  const rm = $('#phRemove'); if (rm) rm.onclick = () => { URL.revokeObjectURL(S.photo.url); S.photo = null; S.dirty = true; $('#photoErr').hidden = true; $('#photoHelp').hidden = false; renderPhoto(); summary(); $('#photoHost .phu').focus(); };
 }
 function wireKebab(host) {
   $$('.kebab', host).forEach(b => b.onclick = e => {
@@ -338,7 +350,7 @@ const CAM_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><p
 
 /* ---------- Cámara de la computadora: foto del cliente, INE y comprobantes ---------- */
 let camStream = null, camShot = null, camCfg = null;
-const CAM_PHOTO = { title: 'Foto del cliente', hint: 'Centra el rostro del cliente dentro del círculo, de frente y sin lentes oscuros.', mirror: true, w: 720, h: 720, guide: 'circle', name: 'foto-cliente', onUse: f => S.takePhoto && S.takePhoto(f), retFocus: '#camBtn' };
+const CAM_PHOTO = { title: 'Foto del cliente', hint: 'Centra el rostro del cliente dentro del marco, de frente y sin lentes oscuros.', mirror: true, w: 720, h: 720, guide: 'circle', name: 'foto-cliente', onUse: f => S.takePhoto && S.takePhoto(f, true), retFocus: '#camBtn' };
 const CAM_DOCS = {
   idFront: { title: 'Frente de la identificación', hint: 'Coloca el frente de la identificación dentro del marco, sin reflejos y con los datos legibles.', w: 1280, h: 808, guide: 'card', name: 'identificacion-frente' },
   idBack: { title: 'Reverso de la identificación', hint: 'Coloca el reverso de la identificación dentro del marco, sin reflejos y con los datos legibles.', w: 1280, h: 808, guide: 'card', name: 'identificacion-reverso' },
@@ -349,13 +361,13 @@ const camStop = () => { if (camStream) { camStream.getTracks().forEach(t => t.st
 const camClose = () => { camStop(); camShot = null; const rf = camCfg && camCfg.retFocus; $('#modalRoot').innerHTML = ''; if (camCfg && camCfg.onClose) return camCfg.onClose(); rf && $(rf) && $(rf).focus(); };
 const camView = (inner, cls) => `<div class="cam-view ${cls || ''} g-${camCfg.guide}" style="aspect-ratio:${camCfg.w} / ${camCfg.h};--ar:${camCfg.w / camCfg.h}">${inner}</div>`;
 function camModal(view, hint, foot) {
-  modal(`<div class="mh"><h3>${camCfg.title}</h3><button type="button" class="mx" id="camX" aria-label="Cerrar"><svg width="24" height="24"><use href="#i-close"/></svg></button></div>${view}${hint ? `<p class="cam-hint">${hint}</p>` : ''}<div class="mf">${foot}</div>`, 'cam' + (camCfg.h > camCfg.w ? ' cam-tall' : ''));
+  modal(`<div class="ds-modal__header"><h3>${camCfg.title}</h3><button type="button" class="ds-btn ds-btn--tertiary ds-btn--icon-md cn-modal__x" id="camX" aria-label="Cerrar"><svg width="24" height="24"><use href="#i-close"/></svg></button></div>${view}${hint ? `<p class="cam-hint">${hint}</p>` : ''}<div class="ds-modal__footer">${foot}</div>`, 'cam' + (camCfg.h > camCfg.w ? ' cam-tall' : ''));
   $('#camX').onclick = camClose;
   $('#modalRoot .scrim').addEventListener('keydown', e => { if (e.key === 'Escape') camClose(); });
 }
 async function camOpen(cfg) {
   if (cfg) camCfg = cfg; camShot = null;
-  camModal(camView('<div class="msg"><span class="spin"></span>Activando la cámara…</div>'), 'Si el navegador lo pide, permite el acceso a la cámara.', '<button type="button" class="btn ter" id="camCancel">Cancelar</button>');
+  camModal(camView('<div class="msg"><span class="spin"></span>Activando la cámara…</div>'), 'Si el navegador lo pide, permite el acceso a la cámara.', '<button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" id="camCancel">Cancelar</button>');
   $('#camCancel').onclick = camClose;
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return camError('NoSupport');
   try {
@@ -366,14 +378,14 @@ async function camOpen(cfg) {
 }
 function camLive() {
   camModal(camView(`<video id="camVideo" class="${camCfg.mirror ? 'mirror' : ''}" autoplay playsinline muted></video><span class="guide" aria-hidden="true"></span>`), camCfg.hint,
-    `<button type="button" class="btn ter" id="camCancel">Cancelar</button><button type="button" class="btn pri" id="camShoot">${CAM_ICON}Capturar</button>`);
+    `<button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" id="camCancel">Cancelar</button><button type="button" class="ds-btn ds-btn--primary ds-btn--md" id="camShoot">${CAM_ICON}Capturar</button>`);
   const v = $('#camVideo'); v.srcObject = camStream; v.play().catch(() => {});
   $('#camCancel').onclick = camClose;
   $('#camShoot').onclick = () => {
     if (!v.videoWidth) return;
     const r = camCfg.w / camCfg.h; let sw = v.videoWidth, sh = sw / r; if (sh > v.videoHeight) { sh = v.videoHeight; sw = sh * r; }
     const c = document.createElement('canvas'); c.width = camCfg.w; c.height = camCfg.h; const ctx = c.getContext('2d');
-    if (camCfg.mirror) { ctx.translate(camCfg.w, 0); ctx.scale(-1, 1); }
+    /* 9964739ad: la foto guardada no va en espejo (solo la vista en vivo) */
     ctx.drawImage(v, (v.videoWidth - sw) / 2, (v.videoHeight - sh) / 2, sw, sh, 0, 0, camCfg.w, camCfg.h);
     c.toBlob(b => { camShot = b; camPreview(); }, 'image/jpeg', 0.9);
   };
@@ -382,7 +394,7 @@ function camLive() {
 function camPreview() {
   const url = URL.createObjectURL(camShot);
   camModal(camView(`<img src="${url}" alt="Vista previa: ${esc(camCfg.title)}">`), camCfg.mirror ? 'Revisa que el rostro se vea claro y completo.' : 'Revisa que el documento se vea completo, enfocado y sin reflejos.',
-    `<button type="button" class="btn ter" id="camAgain">Tomar otra</button><button type="button" class="btn pri" id="camUse">Usar foto</button>`);
+    `<button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" id="camAgain">Tomar otra</button><button type="button" class="ds-btn ds-btn--primary ds-btn--md" id="camUse">Usar foto</button>`);
   $('#camAgain').onclick = () => { camShot = null; camLive(); };
   $('#camUse').onclick = () => {
     const f = new File([camShot], `${camCfg.name}-${Date.now()}.jpg`, { type: 'image/jpeg' });
@@ -390,13 +402,23 @@ function camPreview() {
   };
   $('#camUse').focus();
 }
+/* 9964739ad · errores específicos de la cámara (NEW_CLIENT_CAMERA_ERRORS de su React). Sin "Subir archivo": el texto ya dice que se sube
+   el archivo desde la pantalla; "Reintentar" solo si tiene sentido (no con permiso denegado ni con navegador sin cámara) */
+const CAM_ERRORS = {
+  denied: 'El navegador bloqueó la cámara. Permite el acceso desde el candado de la barra de direcciones y vuelve a abrir esta ventana, o sube el archivo.',
+  'not-found': 'No encontramos una cámara conectada. Conecta una o sube el archivo.',
+  busy: 'Otra aplicación está usando la cámara. Ciérrala y vuelve a intentarlo.',
+  unsupported: 'Este navegador no permite usar la cámara. Sube el archivo.',
+  unknown: 'Algo falló al activar la cámara. Vuelve a intentarlo o sube el archivo.',
+};
+const camErrorKind = name => name === 'NotAllowedError' || name === 'SecurityError' ? 'denied' : name === 'NotFoundError' || name === 'OverconstrainedError' ? 'not-found' : name === 'NotReadableError' || name === 'AbortError' ? 'busy' : name === 'NoSupport' ? 'unsupported' : 'unknown';
 function camError(name) {
   camStop();
-  const m = { NotAllowedError: ['No tenemos permiso para usar la cámara', 'Permite el acceso a la cámara en la barra de direcciones del navegador y vuelve a intentarlo.'], SecurityError: ['No tenemos permiso para usar la cámara', 'Permite el acceso a la cámara en la barra de direcciones del navegador y vuelve a intentarlo.'], NotFoundError: ['No encontramos una cámara', 'Conecta una cámara a la computadora o sube el archivo desde la computadora.'], NotReadableError: ['La cámara está en uso', 'Cierra las otras aplicaciones que la estén usando y vuelve a intentarlo.'], NoSupport: ['Este navegador no permite usar la cámara', 'Sube el archivo desde la computadora.'] }[name] || ['No pudimos activar la cámara', 'Vuelve a intentarlo o sube el archivo desde la computadora.'];
-  camModal(camView(`<div class="msg"><span class="ic"><svg width="26" height="26"><use href="#i-close"/></svg></span><b>${m[0]}</b>${m[1]}</div>`, 'err'), '',
-    `<button type="button" class="btn ter" id="camFile">Subir archivo</button><button type="button" class="btn pri" id="camRetry">Reintentar</button>`);
-  $('#camFile').onclick = () => { const inp = camCfg.fileInput; camClose(); inp && $(inp) && $(inp).click(); };
-  $('#camRetry').onclick = () => camOpen();
+  const kind = camErrorKind(name), canRetry = kind !== 'denied' && kind !== 'unsupported';
+  camModal(camView(`<div class="msg"><b>No pudimos activar la cámara</b>${CAM_ERRORS[kind]}</div>`, 'err'), '',
+    `<button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" id="camCancel">Cancelar</button>${canRetry ? '<button type="button" class="ds-btn ds-btn--primary ds-btn--md" id="camRetry">Reintentar</button>' : ''}`);
+  $('#camCancel').onclick = camClose;
+  if (canRetry) $('#camRetry').onclick = () => camOpen();
 }
 function camDoc(key) {
   camOpen({ ...CAM_DOCS[key], fileInput: '#f-' + key, retFocus: `[data-cam="${key}"]`, onUse: f => setDocFile(key, f) });
@@ -416,10 +438,10 @@ function docView(key) {
   const stage = isImg ? `<div class="dv-stage" id="dvStage"><img src="${f.url}" alt="${esc(DOC_TITLE[key] || f.name)}" id="dvImg"><div class="dv-tools"><button type="button" id="dvZoom" aria-label="Acercar" title="Acercar">+</button><button type="button" id="dvRot" aria-label="Girar" title="Girar">↻</button></div></div>`
     : isPdf ? `<div class="dv-stage"><iframe src="${f.url}#toolbar=1&view=FitH" title="${esc(DOC_TITLE[key] || f.name)}"></iframe></div>`
     : `<div class="dv-stage"><div class="dv-none"><b>Vista previa no disponible</b>Este archivo no se puede mostrar en el navegador.</div></div>`;
-  modal(`<div class="mh"><h3>${esc(DOC_TITLE[key] || 'Documento')}</h3><button type="button" class="mx" id="dvX" aria-label="Cerrar"><svg width="24" height="24"><use href="#i-close"/></svg></button></div>
-    <div class="dv-meta"><span class="src new">${isPdf ? 'PDF' : isImg ? (/png/.test(f.type) ? 'PNG' : 'JPG') : 'Archivo'}</span>${esc(f.name)}${f.size ? ` · ${f.size < 1048576 ? Math.max(1, Math.round(f.size / 1024)) + ' KB' : (f.size / 1048576).toFixed(1) + ' MB'}` : ''}</div>
+  modal(`<div class="ds-modal__header"><h3>${esc(DOC_TITLE[key] || 'Documento')}</h3><button type="button" class="ds-btn ds-btn--tertiary ds-btn--icon-md cn-modal__x" id="dvX" aria-label="Cerrar"><svg width="24" height="24"><use href="#i-close"/></svg></button></div>
+    <div class="dv-meta"><span class="ds-chip">${isPdf ? 'PDF' : isImg ? (/png/.test(f.type) ? 'PNG' : 'JPG') : 'Archivo'}</span>${esc(f.name)}${f.size ? ` · ${f.size < 1048576 ? Math.max(1, Math.round(f.size / 1024)) + ' KB' : (f.size / 1048576).toFixed(1) + ' MB'}` : ''}</div>
     ${stage}
-    <div class="mf"><button type="button" class="btn ter" id="dvRep">Reemplazar</button><button type="button" class="btn pri" id="dvOk">Listo</button></div>`, 'dv');
+    <div class="ds-modal__footer"><button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" id="dvRep">Reemplazar</button><button type="button" class="ds-btn ds-btn--primary ds-btn--md" id="dvOk">Listo</button></div>`, 'dv');
   const close = () => { $('#modalRoot').innerHTML = ''; const b = $(`[data-file="${key}"] .see`); b && b.focus(); };
   $('#dvX').onclick = close; $('#dvOk').onclick = close;
   $('#modalRoot .scrim').addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
@@ -448,17 +470,17 @@ let t;
 $('#addrSearch').addEventListener('input', e => {
   const q = e.target.value.trim(), dd = $('#addrDD'); clearTimeout(t);
   if (q.length < 3) { dd.hidden = true; return; }
-  dd.hidden = false; dd.innerHTML = '<div class="load"><span class="spin p"></span>Buscando…</div>';
-  t = setTimeout(() => {
+  dd.hidden = false;
+  {
     dd.innerHTML = '<span class="cap">Direcciones</span>' + ADDR.map((a, i) => `<button type="button" data-i="${i}"><b>${esc(line(a))}</b><small>${esc(line2(a))}</small></button>`).join('');
     $$('button', dd).forEach(b => b.onclick = () => saveAddr(ADDR[b.dataset.i]));
-  }, 600);
+  }
 });
 function saveAddr(a) {
   S.address = a; S.dirty = true; $('#addrDD').hidden = true; $('#addrSearch').value = ''; $('#addrErr').hidden = true; $('[data-box="addr"]').classList.remove('err');
   $('#addrEntry').hidden = true;
   const s = $('#addrSaved'); s.hidden = false;
-  s.innerHTML = `<div class="item" id="addrItem" title="Editar dirección"><span class="av">${esc(a.nombre.slice(0, 2).toUpperCase())}</span><span class="tx"><b>${esc(line(a))}</b><small>${esc(a.nombre)} | ${esc(line2(a))}</small></span><button type="button" class="del" aria-label="Quitar dirección"><svg width="20" height="20"><use href="#i-del"/></svg></button></div>`;
+  s.innerHTML = `<div class="item" id="addrItem" title="Editar dirección"><span class="ds-avatar ds-avatar--md cn-av">${esc(a.nombre.slice(0, 2).toUpperCase())}</span><span class="tx"><b>${esc(line(a))}</b><small>${esc(a.nombre)} | ${esc(line2(a))}</small></span><button type="button" class="del" aria-label="Quitar dirección"><svg width="20" height="20"><use href="#i-del"/></svg></button></div>`;
   $('#addrItem').onclick = () => { s.hidden = true; $('#addrEntry').hidden = false; openManual(true); fillManual(a); };
   $('#addrItem .del').onclick = e => { e.stopPropagation(); S.address = null; s.hidden = true; $('#addrEntry').hidden = false; update(); };
   update();
@@ -470,6 +492,7 @@ $('#addrCancel').onclick = () => { openManual(false); if (S.address) saveAddr(S.
 $('#addrSave').onclick = () => {
   let first = null;
   $$('[data-areq]').forEach(el => { const m = val(el) ? '' : (el.tagName === 'SELECT' ? 'Debes seleccionar una opción' : 'Campo obligatorio'); showErr(el.closest('.fld'), m, el); if (m && !first) first = el; });
+  { const cp = $('#a-cp'); if (val(cp) && !/^\d{5}$/.test(val(cp))) { showErr(cp.closest('.fld'), 'El C.P. debe tener 5 dígitos.', cp); if (!first) first = cp; } }
   if (first) { first.focus(); return; }
   openManual(false);
   saveAddr({ nombre: $('#a-nombre').value, cp: val($('#a-cp')), calle: val($('#a-calle')), ext: val($('#a-ext')), int: val($('#a-int')), col: $('#a-col').value, mun: $('#a-mun').value, edo: $('#a-edo').value });
@@ -485,12 +508,13 @@ $('#coSave').onclick = () => {
   $$('[data-creq]').forEach(el => { const m = val(el) ? '' : (el.tagName === 'SELECT' ? 'Debes seleccionar una opción' : 'Campo obligatorio'); showErr(el.closest('.fld'), m, el); if (m && !first) first = el; });
   if (first) { first.focus(); return; }
   const c = Object.fromEntries(coIds.map(id => [id, val($('#' + id)) || $('#' + id).value]));
-  if (coEdit >= 0) S.co[coEdit] = c; else S.co.push(c);
+  /* 9964739ad: cada cotitular lleva un id estable (cotitular-N) */
+  if (coEdit >= 0) { c.id = S.co[coEdit].id; S.co[coEdit] = c; } else { c.id = 'cotitular-' + (++S.coSeq); S.co.push(c); }
   S.dirty = true; $('#coForm').hidden = true; $('#coAdd').hidden = false; renderCo(); update();
   toast('Cotitular agregado', [c['c-name'], c['c-ln']].join(' '));
 };
 function renderCo() {
-  $('#coList').innerHTML = S.co.map((c, i) => `<div class="item" data-e="${i}" title="Editar"><span class="av">${esc(((c['c-name'][0] || '') + (c['c-ln'][0] || '')).toUpperCase())}</span><span class="tx"><b>${esc([c['c-name'], c['c-ln'], c['c-ln2']].filter(Boolean).join(' '))}</b><small>${esc(c['c-rel'])}${c['c-phone'] ? ' | +52 ' + esc(c['c-phone']) : ''}</small></span><button type="button" class="del" aria-label="Quitar cotitular" data-d="${i}"><svg width="20" height="20"><use href="#i-del"/></svg></button></div>`).join('');
+  $('#coList').innerHTML = S.co.map((c, i) => `<div class="item" data-e="${i}" title="Editar"><span class="ds-avatar ds-avatar--md cn-av">${esc(((c['c-name'][0] || '') + (c['c-ln'][0] || '')).toUpperCase())}</span><span class="tx"><b>${esc([c['c-name'], c['c-ln'], c['c-ln2']].filter(Boolean).join(' '))}</b><small>${esc(c['c-rel'])}${c['c-phone'] ? ' | +52 ' + esc(c['c-phone']) : ''}</small></span><button type="button" class="del" aria-label="Quitar cotitular" data-d="${i}"><svg width="20" height="20"><use href="#i-del"/></svg></button></div>`).join('');
   $$('[data-e]', $('#coList')).forEach(b => b.onclick = () => { coEdit = +b.dataset.e; const c = S.co[coEdit]; coIds.forEach(id => $('#' + id).value = c[id] || ''); syncAll(); $('#coForm').hidden = false; $('#coAdd').hidden = true; });
   $$('[data-d]', $('#coList')).forEach(b => b.onclick = e => { e.stopPropagation(); S.co.splice(+b.dataset.d, 1); renderCo(); update(); });
 }
@@ -501,11 +525,11 @@ const SHORT = { izq: 'izq.', der: 'der.' };
 S.printImg = {}; S.fpState = 'idle';
 function bigHand(h) {
   h = h || S.hand; const flip = h === 'der', done = S.prints[h];
-  const tips = S.hand !== h ? '' : FINGERS.map(f => { const [x, y, r] = TIPS[f]; const sel = S.hand === h && S.finger === f, ok = done.has(f), col = sel ? '#5A5AFF' : ok ? '#309C60' : '#A1A5AA'; return `<g class="tip-f ${sel ? 'sel' : ''} ${ok ? 'ok' : ''}" data-h="${h}" data-f="${f}" role="button" tabindex="0" aria-pressed="${sel}" aria-label="${f} ${HN[h]}${ok ? ', registrada' : ''}" transform="translate(${x} ${y}) rotate(${r}) translate(-12 -12)" style="color:${col}"><title>${f} ${HN[h]}</title><circle class="tip-bg" cx="12" cy="12" r="15"/><use href="#i-fp" width="24" height="24"/></g>`; }).join('');
+  const tips = S.hand !== h ? '' : FINGERS.map(f => { const [x, y, r] = TIPS[f]; const sel = S.hand === h && S.finger === f, ok = done.has(f), col = sel ? 'var(--ats-primary-300)' : ok ? 'var(--ats-success-green-200)' : 'var(--ats-neutral-400)'; return `<g class="tip-f ${sel ? 'sel' : ''} ${ok ? 'ok' : ''}" data-h="${h}" data-f="${f}" role="button" tabindex="0" aria-pressed="${sel}" aria-label="${f} ${HN[h]}${ok ? ', registrada' : ''}" transform="translate(${x} ${y}) rotate(${r}) translate(-12 -12)" style="color:${col}"><title>${f} ${HN[h]}</title><circle class="tip-bg" cx="12" cy="12" r="15"/><use href="#i-fp" width="24" height="24"/></g>`; }).join('');
   return `<svg viewBox="0 0 226 349" aria-label="Mano ${HN[h] === 'izquierdo' ? 'izquierda' : 'derecha'}: toca un dedo"><g${flip ? ' transform="translate(226 0) scale(-1 1)"' : ''}><use href="#i-bighand" width="226" height="349"/>${tips}</g></svg>`;
 }
 const nextFinger = () => FINGERS.find(f => !S.prints[S.hand].has(f));
-function pickFinger(f) { S.finger = f; S.fpState = S.prints[S.hand].has(f) ? 'done' : 'idle'; renderFp(); }
+function pickFinger(f) { S.fpErr = ''; S.finger = f; S.fpState = S.prints[S.hand].has(f) ? 'done' : 'idle'; renderFp(); }
 function renderFp() {
   $$('.hand').forEach(h => h.setAttribute('aria-pressed', h.dataset.hand === S.hand));
   ['izq', 'der'].forEach(h => { const n = S.prints[h].size, el = $(`[data-hc="${h}"]`); if (!el) return; el.textContent = n ? `${n} huella${n > 1 ? 's' : ''}` : 'Sin huellas'; el.classList.toggle('ok', !!n); });
@@ -520,38 +544,38 @@ function renderFp() {
   if (!S.hand) { p.className = 'fpanel empty'; p.innerHTML = 'Elige una mano para ver sus dedos.'; return; }
   p.className = 'fpanel';
   const done = S.prints[S.hand], f = S.finger, key = f && S.hand + ':' + f;
-  const chips = FINGERS.map(x => `<button type="button" class="fchip" data-f="${x}" aria-pressed="${x === f}"><svg width="20" height="20" style="color:${done.has(x) ? '#309C60' : '#5A5AFF'}"><use href="#${done.has(x) ? 'i-check' : 'i-fp'}"/></svg>${x}</button>`).join('');
+  const chips = FINGERS.map(x => `<button type="button" class="fchip" data-f="${x}" aria-pressed="${x === f}"><svg width="20" height="20" style="color:${done.has(x) ? 'var(--ats-success-green-200)' : 'var(--ats-primary-300)'}"><use href="#${done.has(x) ? 'i-check' : 'i-fp'}"/></svg>${x}</button>`).join('');
   let cap = '';
   if (!f) cap = `<div class="cap-box"><p class="cap-msg">Toca un dedo en la lista o en la mano.</p></div>`;
   else {
+    /* 9964739ad · sin captura simulada: el lector aún no está conectado, así que se carga la imagen escaneada de la huella
+       (JPG o PNG, máx. 10 MB, validada); la imagen se guarda en el formulario */
     const st = S.fpState, img = S.printImg[key];
-    const box = st === 'busy' ? '<span class="spin p"></span>' : img ? `<img src="${img}" alt="Huella ${f} ${HN[S.hand]}">` : `<svg width="40" height="44" style="color:${st === 'done' ? '#5A5AFF' : st === 'err' ? '#A82424' : '#E8E9EA'}"><use href="#i-fp"/></svg>`;
+    const box = img ? `<img src="${img}" alt="Huella ${f} ${HN[S.hand]}">` : `<svg width="48" height="48" style="color:${st === 'done' ? 'var(--ats-success-green-200)' : 'var(--ats-primary-300)'}"><use href="#i-fp"/></svg>`;
     const nx = nextFinger();
-    const msg = { idle: 'Pide al cliente que coloque el dedo en el lector.', busy: 'Leyendo huella… pide al cliente que no retire el dedo.', done: nx ? `Listo. Sigue con ${nx.toLowerCase()} ${HN[S.hand]}.` : `Ya registraste los 5 dedos de la mano ${HN[S.hand]}.`, err: '' }[st];
-    const err = st === 'err' ? `<span class="ferr" style="margin-left:0"><svg width="16" height="16"><use href="#i-err"/></svg>No detectamos el lector. Revisa la conexión o carga una imagen.</span>` : '';
-    const upl = `<label class="lnk" style="cursor:pointer"><svg width="20" height="20"><use href="#i-upload"/></svg>Cargar imagen<input type="file" id="fpFile" accept="image/jpeg,image/png"></label>`;
-    const acts = st === 'busy' ? '' : st === 'done'
-      ? `${nx ? `<button type="button" class="btn pri sm" id="fpNext">Siguiente: ${nx}</button>` : (S.prints[S.hand === 'izq' ? 'der' : 'izq'].size < 5 ? `<button type="button" class="btn pri sm" id="fpOtherHand">Ir a mano ${S.hand === 'izq' ? 'derecha' : 'izquierda'}</button>` : '')}<button type="button" class="lnk" id="fpRetake">Repetir</button>`
-      : `<button type="button" class="btn pri sm" id="fpTake">${st === 'err' ? 'Reintentar' : 'Tomar huella'}</button>${upl}`;
-    cap = `<div class="cap-box"><div class="slot ${st === 'busy' ? 'busy' : st === 'done' ? 'done' : st === 'err' ? 'err' : ''}" id="slot"><div class="box" role="button" tabindex="0" aria-label="Tomar huella">${box}</div></div>
-      <div class="cap-info"><div class="slot-lbl"><span>${f} ${HN[S.hand]}</span>${st === 'done' ? '<span class="tag green">Capturada</span>' : ''}</div>${msg ? `<p class="cap-msg" aria-live="polite">${msg}</p>` : ''}${err}<div class="cap-act">${acts}</div></div></div>`;
+    const msg = st === 'done' ? (nx ? `Listo. Sigue con ${nx.toLowerCase()} ${HN[S.hand]}.` : `Ya registraste los 5 dedos de la mano ${HN[S.hand] === 'izquierdo' ? 'izquierda' : 'derecha'}.`) : 'El lector de huellas aún no está conectado. Carga la imagen escaneada de la huella (JPG o PNG, máx. 10 MB).';
+    const err = S.fpErr ? `<p class="cap-msg" style="color:var(--ats-error-red-200)" role="alert">${esc(S.fpErr)}</p>` : '';
+    const acts = st === 'done'
+      ? `${nx ? `<button type="button" class="ds-btn ds-btn--primary ds-btn--md" id="fpNext">Siguiente: ${nx}</button>` : (S.prints[S.hand === 'izq' ? 'der' : 'izq'].size < 5 ? `<button type="button" class="ds-btn ds-btn--primary ds-btn--md" id="fpOtherHand">Ir a mano ${S.hand === 'izq' ? 'derecha' : 'izquierda'}</button>` : '')}<button type="button" class="lnk" id="fpRetake">Repetir</button>`
+      : `<button type="button" class="ds-btn ds-btn--primary ds-btn--md" id="fpPick"><svg width="20" height="20" aria-hidden="true" style="color:var(--ats-white)"><use href="#i-upload"/></svg>Cargar imagen</button><button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" disabled>Lector no conectado</button>`;
+    cap = `<div class="cap-box"><div class="slot ${st === 'done' ? 'done' : ''}" id="slot"><div class="box" role="button" tabindex="0" aria-label="Cargar imagen">${box}</div></div>
+      <div class="cap-info"><div class="slot-lbl"><span>${f} ${HN[S.hand]}</span>${st === 'done' ? '<span class="ds-tag ds-tag--verde">Capturada</span>' : ''}</div><p class="cap-msg" aria-live="polite">${msg}</p>${err}<div class="cap-act">${acts}</div></div></div>
+      <input type="file" id="fpFile" accept="image/jpeg,image/png" hidden>`;
   }
   p.innerHTML = `<div class="fright"><div><p class="fp-step"><span class="dot">2</span>Elige el dedo</p><div class="fchips">${chips}</div></div><div><p class="fp-step"><span class="dot">3</span>Toma la huella</p>${cap}</div></div>`;
   $$('.fchip', p).forEach(b => b.onclick = () => pickFinger(b.dataset.f));
-  const take = () => {
-    if (S.fpState === 'busy' || S.fpState === 'done') return;
-    S.fpState = 'busy'; renderFp();
-    setTimeout(() => {
-      if ($('#demoReader') && $('#demoReader').checked) { S.fpState = 'err'; renderFp(); return; }
-      S.prints[S.hand].add(S.finger); S.dirty = true; S.fpState = 'done'; renderFp(); update();
-    }, 1100);
+  const pick = () => { const fi = $('#fpFile'); if (fi) fi.click(); };
+  if ($('#fpPick')) $('#fpPick').onclick = pick;
+  if ($('#slot .box')) { $('#slot .box').onclick = pick; $('#slot .box').onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } }; }
+  if ($('#fpFile')) $('#fpFile').onchange = e => {
+    const file = e.target.files[0]; e.target.value = ''; if (!file) return;
+    if (!/^image\/(jpeg|png)$/.test(file.type) || file.size > 10 * 1048576) { S.fpErr = 'Usa una imagen JPG o PNG de máximo 10 MB.'; renderFp(); return; }
+    S.fpErr = ''; const k = S.hand + ':' + S.finger; if (S.printImg[k]) URL.revokeObjectURL(S.printImg[k]);
+    S.printImg[k] = URL.createObjectURL(file); S.prints[S.hand].add(S.finger); S.dirty = true; S.fpState = 'done'; renderFp(); update();
   };
-  if ($('#fpTake')) $('#fpTake').onclick = take;
-  if ($('#slot .box') && S.fpState !== 'done') $('#slot .box').onclick = take;
-  if ($('#fpFile')) $('#fpFile').onchange = e => { const file = e.target.files[0]; if (!file) return; S.printImg[S.hand + ':' + S.finger] = URL.createObjectURL(file); S.prints[S.hand].add(S.finger); S.dirty = true; S.fpState = 'done'; renderFp(); update(); };
   if ($('#fpNext')) $('#fpNext').onclick = () => pickFinger(nextFinger());
-  if ($('#fpOtherHand')) $('#fpOtherHand').onclick = () => { S.hand = S.hand === 'izq' ? 'der' : 'izq'; S.finger = null; S.fpState = 'idle'; renderFp(); };
-  if ($('#fpRetake')) $('#fpRetake').onclick = () => { S.prints[S.hand].delete(S.finger); delete S.printImg[S.hand + ':' + S.finger]; S.fpState = 'idle'; renderFp(); update(); };
+  if ($('#fpOtherHand')) $('#fpOtherHand').onclick = () => { S.hand = S.hand === 'izq' ? 'der' : 'izq'; S.finger = null; S.fpState = 'idle'; S.fpErr = ''; renderFp(); };
+  if ($('#fpRetake')) $('#fpRetake').onclick = () => { S.prints[S.hand].delete(S.finger); delete S.printImg[S.hand + ':' + S.finger]; S.fpState = 'idle'; S.fpErr = ''; renderFp(); update(); };
 }
 function renderReg() {
   const items = ['izq', 'der'].flatMap(h => FINGERS.filter(f => S.prints[h].has(f)).map(f => [h, f]));
@@ -567,28 +591,31 @@ $('#moreToggle').onclick = () => { const m = $('#more'); m.hidden = !m.hidden; $
 /* ---------- DS Alert / Toast / Modal ---------- */
 function alertNeg(title, msg, action, onAction) {
   const fa = $('#formAlert'); fa.hidden = false;
-  fa.innerHTML = `<div class="alert neg" role="alert"><div class="main"><span class="ico"><svg width="24" height="24"><use href="#i-neg"/></svg></span><div class="txt"><p class="ttl">${esc(title)}</p><p class="msg">${esc(msg)}</p></div></div>${action ? `<button type="button" class="act">${esc(action)}</button>` : ''}<button type="button" class="x" aria-label="Cerrar"><svg width="20" height="20"><use href="#i-close"/></svg></button></div>`;
-  if (action) fa.querySelector('.act').onclick = onAction;
-  fa.querySelector('.x').onclick = () => { fa.hidden = true; };
+  fa.innerHTML = `<div class="ds-alert ds-alert--error" role="alert"><span class="ds-alert__icon" aria-hidden="true">!</span><div class="ds-alert__body-wrap"><p class="ds-alert__title">${esc(title)}</p><p class="ds-alert__body">${esc(msg)}</p></div><div class="ds-alert__actions">${action ? `<button type="button" class="ds-alert__action">${esc(action)}</button>` : ''}<button type="button" class="ds-alert__close" aria-label="Cerrar">×</button></div></div>`;
+  if (action) fa.querySelector('.ds-alert__action').onclick = onAction;
+  fa.querySelector('.ds-alert__close').onclick = () => { fa.hidden = true; };
   fa.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 function toast(title, msg) {
   const r = $('#toastRoot');
-  r.innerHTML = `<div class="toast" role="status"><span class="ico" style="display:flex;color:#309C60"><svg width="24" height="24"><use href="#i-pos"/></svg></span><div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:0"><p style="font-weight:700;color:#174A2E;line-height:24px;letter-spacing:.3px">${esc(title)}</p><p style="color:#2A2C2F;letter-spacing:.3px;overflow-wrap:anywhere">${esc(msg)}</p></div><button type="button" class="x" aria-label="Cerrar" style="display:flex;width:36px;height:36px;padding:8px;border:0;border-radius:50%;background:#fff;color:#5A5AFF"><svg width="20" height="20"><use href="#i-close"/></svg></button><span class="bar"></span></div>`;
-  r.querySelector('.x').onclick = () => r.innerHTML = '';
-  clearTimeout(toast.t); toast.t = setTimeout(() => r.innerHTML = '', 3000);
+  r.innerHTML = `<div class="ds-toast-region"><div class="ds-toast ds-toast--success" role="status"><span class="ds-toast__icon"><svg width="24" height="24"><use href="#i-pos"/></svg></span><div class="ds-toast__body-wrap"><p class="ds-toast__title">${esc(title)}</p><p class="ds-toast__body">${esc(msg)}</p></div><button type="button" class="ds-toast__close" aria-label="Cerrar"><svg width="20" height="20"><use href="#i-close"/></svg></button><span class="ds-toast__timer"></span></div></div>`;
+  r.querySelector('.ds-toast__close').onclick = () => r.innerHTML = '';
+  clearTimeout(toast.t); toast.t = setTimeout(() => r.innerHTML = '', 5000); // se va solo, al terminar la barra de tiempo del DS Toast
 }
 function modal(html, cls) {
-  const r = $('#modalRoot'); r.innerHTML = `<div class="scrim"><div class="modal ${cls || ''}" role="dialog" aria-modal="true">${html}</div></div>`;
+  const r = $('#modalRoot'); r.innerHTML = `<div class="scrim ds-modal-overlay"><div class="ds-modal cn-modal ${cls || ''}" role="dialog" aria-modal="true">${html}</div></div>`;
   $$('[data-close]', r).forEach(b => b.onclick = () => r.innerHTML = '');
-  const p = r.querySelector('.btn.pri'); p && p.focus();
+  const p = r.querySelector('.ds-btn--primary'); p && p.focus();
 }
 
 /* ---------- Guardar ---------- */
 function save(e) {
   e && e.preventDefault(); if (S.saving) return;
+  if (S.edit) return saveEdit();
   const errs = [];
   reqs().forEach(el => { S.touched.add(el.id); if (paint(el)) errs.push(el); });
+  /* 9964739ad: en Empeño el frente y el reverso de la identificación son obligatorios */
+  if (S.mode === 'empeno') REQ_DOCS.filter(k => !S.files[k]).forEach(k => { const h = $(`[data-file="${k}"]`); h.dataset.label = DOC_TITLE[k]; errs.push(h); });
   S.touched.add('addr');
   if (!S.address) { errs.push($('#addrSearch')); const ae = $('#addrErr'); ae.hidden = false; ae.innerHTML = '<svg width="16" height="16"><use href="#i-err"/></svg>Agrega la dirección del cliente.'; $('[data-box="addr"]').classList.add('err'); }
   update();
@@ -600,19 +627,19 @@ function save(e) {
   }
   $('#formAlert').hidden = true;
   S.saving = true; $('#fs').disabled = true;
-  $$('[data-save]').forEach(b => { b.disabled = true; b.innerHTML = '<span class="spin"></span><span>Guardar cliente</span>'; });
-  $$('[data-cancel]').forEach(b => b.disabled = true);
-  setTimeout(() => {
+  // sin latencia simulada: se guarda al momento
+  {
     S.saving = false; $('#fs').disabled = false;
     $$('[data-save]').forEach(b => { b.disabled = false; b.textContent = 'Guardar cliente'; });
     $$('[data-cancel]').forEach(b => b.disabled = false);
     if ($('#demoFail').checked) { alertNeg('No pudimos guardar el cliente', 'Hubo un problema de conexión. Tus datos siguen aquí.', 'Reintentar', save); return; }
     if ($('#demoDup').checked) { alertNeg('Este cliente ya está registrado', `Ya existe un cliente con la CURP ${val($('#curp')) || 'capturada'}. Revisa su registro antes de crear uno nuevo; tus datos siguen aquí.`, 'Ver cliente registrado', () => { location.href = './#clientes'; }); goto($('#curp')); return; }
     const name = [val($('#name')), val($('#lastName')), val($('#secondLastName'))].filter(Boolean).join(' ') || 'El cliente';
-    modal(`<div class="mh"><h3>Cliente creado</h3><button type="button" class="mx" aria-label="Cerrar" data-close><svg width="24" height="24"><use href="#i-close"/></svg></button></div><div class="mb"><p><b>${esc(name)}</b> ya aparece en tu Lista de clientes.</p></div><div class="mf"><button type="button" class="btn ter sm" data-go>Volver a la lista</button><button type="button" class="btn pri sm" data-go>Ver cliente</button></div>`);
-    try { localStorage.setItem('ataskate.newClient', JSON.stringify({ name: val($('#name')), last: [val($('#lastName')), val($('#secondLastName'))].filter(Boolean).join(' '), email: val($('#email')), phone: val($('#phone')), nat: $('#nat').value })); } catch (e) {}
+    modal(`<div class="ds-modal__header"><h3>Cliente creado</h3><button type="button" class="ds-btn ds-btn--tertiary ds-btn--icon-md cn-modal__x" aria-label="Cerrar" data-go><svg width="24" height="24"><use href="#i-close"/></svg></button></div><div class="ds-modal__body"><p><b>${esc(name)}</b> ya aparece en tu Lista de clientes.</p></div><div class="ds-modal__footer"><button type="button" class="ds-btn ds-btn--primary ds-btn--md" data-go>Volver a la lista</button></div>`);
+    /* f92a4a5e2: el cliente se guarda en la sesión (createdClients.ts) y la lista lo muestra primero, resaltado y con el aviso "Cliente creado" */
+    saveCreatedClient(buildCreatedClient({ name: val($('#name')), lastName: val($('#lastName')), secondLastName: val($('#secondLastName')), email: val($('#email')), phone: val($('#phone')), nat: $('#nat').value }, S.mode));
     $$('[data-go]').forEach(b => b.onclick = () => { location.href = './#clientes'; });
-  }, 1600);
+  }
 }
 function goto(el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => (el._trig || el).focus({ preventScroll: true }), 400); }
 $('#form').addEventListener('submit', save);
@@ -621,38 +648,51 @@ $$('aside [data-save]').forEach(b => b.onclick = save);
 /* ---------- Cancelar: modal existente (producción), solo si hay datos ---------- */
 $$('[data-cancel]').forEach(b => b.onclick = () => {
   if (!S.dirty) { location.href = './#clientes'; return; }
-  modal(`<h3>¿Deseas cancelar la operación?</h3><div class="mb"><p>¿Deseas cancelar la creación del cliente?, Se perderán los datos capturados.</p></div><div class="mf"><button type="button" class="btn ter" id="yes">Sí, cancelar</button><button type="button" class="btn pri" data-close>Continuar editando</button></div>`, 'cancel');
+  modal(`<h3>¿Deseas cancelar la operación?</h3><div class="ds-modal__body"><p>¿Deseas cancelar la creación del cliente?, Se perderán los datos capturados.</p></div><div class="ds-modal__footer"><button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" id="yes">Sí, cancelar</button><button type="button" class="ds-btn ds-btn--primary ds-btn--md" data-close>Continuar editando</button></div>`, 'cancel');
   $('#yes').onclick = () => { location.href = './#clientes'; };
 });
 
 /* ---------- Demo ---------- */
-$('#demoFill').onclick = () => {
-  const v = { name: 'Mariana', lastName: 'Gómez', secondLastName: 'Ruiz', email: 'mariana.gomez@ejemplo.com', phone: '5512345678', civil: 'Casado(a)', gender: 'Femenino', nat: 'Mexicana', dob: '12/04/1990', curp: 'GORM900412MDFMZR08', rfc: 'GORM900412AB1', activity: 'Comercio' };
+/* el canvas no entiende var(): lee el valor del token del DS */
+const dsColor = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+/* Archivo de ejemplo (sampleImage de su newClient.mocks.ts): una imagen gris con el nombre del documento, no un archivo real */
+function sampleDoc(name, w = 1280, h = 808) {
+  return new Promise(res => {
+    const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d');
+    x.fillStyle = dsColor('--ats-neutral-100'); x.fillRect(0, 0, w, h); x.fillStyle = dsColor('--ats-neutral-600'); x.font = '600 36px Nunito, sans-serif'; x.textAlign = 'center'; x.fillText('Documento de ejemplo', w / 2, h / 2 - 8); x.font = '400 24px Nunito, sans-serif'; x.fillText(name, w / 2, h / 2 + 32);
+    c.toBlob(b => res(new File([b], name, { type: 'image/png' })), 'image/png');
+  });
+}
+async function setSampleFile(key, name) { const f = await sampleDoc(name); S.files[key] = { name: f.name, url: URL.createObjectURL(f), type: f.type, size: f.size }; renderFile(key); accTags(); update(); }
+/* "Llenar con datos de ejemplo" (SAMPLE_CLIENT de su React): claramente ficticio, con la identificación y sus dos documentos, que ahora son obligatorios */
+$('#demoFill').onclick = async () => {
+  setMode('empeno');
+  const v = { name: 'Cliente', lastName: 'Demo', secondLastName: 'Ejemplo', email: 'cliente.demo@ejemplo.com', phone: '5500000999', civil: 'Soltero(a)', gender: 'Prefiero no decir', nat: 'Mexicana', dob: '01/01/1990', curp: 'XEXX010101HNEXXXA4', rfc: 'XAXX010101000', activity: 'Comercio', idType: 'INE', idNum: 'DEMO-0000000999', idExp: '01/01/2020', idVig: '01/01/2032' };
   Object.entries(v).forEach(([k, x]) => { const el = $('#' + k); el.value = x; el.dispatchEvent(new Event('input')); S.touched.add(k); if (el.dataset.req !== undefined) paint(el); });
-  saveAddr(ADDR[0]); $('#formAlert').hidden = true; update(); toast('Datos de ejemplo cargados', 'Son datos ficticios para revisar el prototipo.');
+  saveAddr({ nombre: 'Casa', calle: 'Calle Ejemplo', ext: '300', int: '', col: 'Roma Norte', mun: 'Cuauhtémoc', edo: 'Ciudad de México', cp: '00000' });
+  await setSampleFile('idFront', 'ine-frente.png'); await setSampleFile('idBack', 'ine-reverso.png');
+  S.dirty = true; $('#formAlert').hidden = true; update(); toast('Datos de ejemplo cargados', 'Son datos ficticios para revisar el prototipo.');
 };
 
 
 /* ---------- Buscar cliente existente: correo, teléfono o identificación (datos ficticios para simular) ---------- */
+/* Clientes existentes (EXISTING_CLIENTS de su newClient.mocks.ts). 9964739ad: datos simulados claramente falsos (teléfonos 55 0000 0xxx,
+   CURP y R.F.C genéricos, identificación DEMO-…) y un id opaco: la URL de Cliente nuevo usa ?cargar=<id>, no el correo */
+const MK_NOTE = 'Del Marketplace solo vienen sus datos de contacto y su dirección de envío. Completa los datos personales, la identificación y las huellas.';
+const RED_NOTE = 'Viene de otra casa de empeño de la Red ataskate con sus datos personales, dirección e identificación. Revisa que estén actualizados y registra sus huellas.';
 const LK_DB = [
-  { src: 'mk', srcLabel: 'Marketplace', origin: 'Se registró en el Marketplace ataskate el 12/03/2026', email: 'valeria.ortiz@ejemplo.com', phone: '5587654321', idType: 'INE', idNum: '3141592653589', curp: '',
-    data: { name: 'Valeria', lastName: 'Ortiz', secondLastName: 'Campos', email: 'valeria.ortiz@ejemplo.com', phone: '5587654321', nat: 'Mexicana' },
-    addr: { nombre: 'Casa', calle: 'Av. Insurgentes Sur', ext: '1602', int: '', col: 'Crédito Constructor', mun: 'Benito Juárez', edo: 'Ciudad de México', cp: '03940' },
-    note: 'Del Marketplace solo vienen sus datos de contacto y su dirección de envío. Completa los datos personales, la identificación y las huellas.' },
-  { src: 'red', srcLabel: 'Red ataskate', origin: 'Registrado en Monte Cristo · Red ataskate', email: 'raul.campos@ejemplo.com', phone: '8112345678', idType: 'INE', idNum: '4567891234567', curp: 'CAMR880921HNLMDL09',
-    data: { name: 'Raúl', lastName: 'Campos', secondLastName: 'Medina', email: 'raul.campos@ejemplo.com', phone: '8112345678', civil: 'Casado(a)', gender: 'Masculino', nat: 'Mexicana', dob: '21/09/1988', curp: 'CAMR880921HNLMDL09', rfc: 'CAMR880921K21', activity: 'Comercio', idType: 'INE', idNum: '4567891234567' },
-    addr: { nombre: 'Casa', calle: 'Calle Morelos', ext: '845', int: '', col: 'Centro', mun: 'Monterrey', edo: 'Nuevo León', cp: '64000' },
-    note: 'Viene de otra casa de empeño de la Red ataskate con sus datos personales, dirección e identificación. Revisa que estén actualizados y registra sus huellas.' },
-  /* 2d1b103b4: los mismos clientes que el buscador de Clientes encuentra en otras fuentes (EXT_CLI de clientes.js), para "Cargar cliente" (?cargar=).
-     Corrección al portarlo: en su archivo la actividad de Jorge es 'Servicios', que no es opción del select; no se cargaba y quedaba en error */
-  { src: 'mk', srcLabel: 'Marketplace', origin: 'Se registró en el Marketplace ataskate el 05/08/2026', email: 'fer.rios@ejemplo.com', phone: '5534127788', idType: 'INE', idNum: '', curp: '',
-    data: { name: 'Fernanda', lastName: 'Ríos', secondLastName: 'Luna', email: 'fer.rios@ejemplo.com', phone: '5534127788', nat: 'Mexicana' },
-    addr: { nombre: 'Casa', calle: 'Calle Durango', ext: '210', int: '3', col: 'Roma Norte', mun: 'Cuauhtémoc', edo: 'Ciudad de México', cp: '06700' },
-    note: 'Del Marketplace solo vienen sus datos de contacto y su dirección de envío. Completa los datos personales, la identificación y las huellas.' },
-  { src: 'red', srcLabel: 'Red ataskate', origin: 'Registrado en Prenda Fácil · Red ataskate', email: 'jorge.salinas@ejemplo.com', phone: '3319876543', idType: 'Pasaporte', idNum: 'G87654321', curp: 'SAPJ850610HJCLZR05',
-    data: { name: 'Jorge', lastName: 'Salinas', secondLastName: 'Paz', email: 'jorge.salinas@ejemplo.com', phone: '3319876543', civil: 'Soltero(a)', gender: 'Masculino', nat: 'Mexicana', dob: '10/06/1985', curp: 'SAPJ850610HJCLZR05', rfc: 'SAPJ850610AB3', activity: 'Servicios profesionales', idType: 'Pasaporte', idNum: 'G87654321' },
-    addr: { nombre: 'Casa', calle: 'Av. Chapultepec', ext: '480', int: '', col: 'Americana', mun: 'Guadalajara', edo: 'Jalisco', cp: '44160' },
-    note: 'Viene de otra casa de empeño de la Red ataskate con sus datos personales, dirección e identificación. Revisa que estén actualizados y registra sus huellas.' },
+  { id: 'mk-1', src: 'mk', srcLabel: 'Marketplace', origin: 'Se registró en el Marketplace ataskate el 12/03/2026', email: 'valeria.ortiz@ejemplo.com', phone: '5500000101', idType: '', idNum: '', curp: '',
+    data: { name: 'Valeria', lastName: 'Ortiz', secondLastName: 'Campos', email: 'valeria.ortiz@ejemplo.com', phone: '5500000101', nat: 'Mexicana' },
+    addr: { nombre: 'Casa', calle: 'Calle Ejemplo', ext: '100', int: '', col: 'Roma Norte', mun: 'Cuauhtémoc', edo: 'Ciudad de México', cp: '00000' }, note: MK_NOTE },
+  { id: 'red-1', src: 'red', srcLabel: 'Red ataskate', origin: 'Registrado en Monte Cristo · Red ataskate', email: 'raul.campos@ejemplo.com', phone: '5500000201', idType: 'INE', idNum: 'DEMO-0000000001', curp: 'XEXX010101HNEXXXA4',
+    data: { name: 'Raúl', lastName: 'Campos', secondLastName: 'Medina', email: 'raul.campos@ejemplo.com', phone: '5500000201', civil: 'Casado(a)', gender: 'Masculino', nat: 'Mexicana', dob: '01/01/1990', curp: 'XEXX010101HNEXXXA4', rfc: 'XAXX010101000', activity: 'Comercio', idType: 'INE', idNum: 'DEMO-0000000001' },
+    addr: { nombre: 'Casa', calle: 'Calle Ejemplo', ext: '100', int: '', col: 'Roma Norte', mun: 'Cuauhtémoc', edo: 'Ciudad de México', cp: '00000' }, note: RED_NOTE },
+  { id: 'mk-2', src: 'mk', srcLabel: 'Marketplace', origin: 'Se registró en el Marketplace ataskate el 05/08/2026', email: 'fer.rios@ejemplo.com', phone: '5500000102', idType: '', idNum: '', curp: '',
+    data: { name: 'Fernanda', lastName: 'Ríos', secondLastName: 'Luna', email: 'fer.rios@ejemplo.com', phone: '5500000102', nat: 'Mexicana' },
+    addr: { nombre: 'Casa', calle: 'Calle Ejemplo', ext: '100', int: 'A', col: 'Roma Norte', mun: 'Cuauhtémoc', edo: 'Ciudad de México', cp: '00000' }, note: MK_NOTE },
+  { id: 'red-2', src: 'red', srcLabel: 'Red ataskate', origin: 'Registrado en Prenda Fácil · Red ataskate', email: 'jorge.salinas@ejemplo.com', phone: '5500000202', idType: 'Pasaporte', idNum: 'DEMO-0000000002', curp: 'XEXX010101HNEXXXA4',
+    data: { name: 'Jorge', lastName: 'Salinas', secondLastName: 'Paz', email: 'jorge.salinas@ejemplo.com', phone: '5500000202', civil: 'Soltero(a)', gender: 'Masculino', nat: 'Mexicana', dob: '01/01/1990', curp: 'XEXX010101HNEXXXA4', rfc: 'XAXX010101000', activity: 'Servicios profesionales', idType: 'Pasaporte', idNum: 'DEMO-0000000002' },
+    addr: { nombre: 'Casa', calle: 'Calle Ejemplo', ext: '100', int: '', col: 'Roma Norte', mun: 'Cuauhtémoc', edo: 'Ciudad de México', cp: '00000' }, note: RED_NOTE },
 ];
 const LK_EX = [
   { k: 'mk', label: 'Cliente del Marketplace', email: 'valeria.ortiz@ejemplo.com', phone: '', idType: 'INE', idNum: '' },
@@ -678,17 +718,17 @@ function lkForm(er) {
   er = er || {};
   const fe = k => er[k] ? `<span class="lk-err">${lkIco}${esc(er[k])}</span>` : '';
   const ids = ['INE', 'CURP', 'Pasaporte', 'R.F.C', 'Cédula profesional'];
-  modal(`<div class="mh"><h3>Nuevo cliente</h3><a class="mx" href="./#clientes" aria-label="Cerrar"><svg width="24" height="24"><use href="#i-close"/></svg></a></div>
+  modal(`<div class="ds-modal__header"><h3>Nuevo cliente</h3><a class="ds-btn ds-btn--tertiary ds-btn--icon-md cn-modal__x" href="./#clientes" aria-label="Cerrar"><svg width="24" height="24"><use href="#i-close"/></svg></a></div>
     <p class="lk-sub">Antes de capturarlo, revisa si el cliente ya existe en tu casa, en otra casa de empeño de la Red ataskate o en el Marketplace. Escribe al menos uno de estos datos.</p>
     <div class="lk-grid">
-      <div class="fld"><label class="lbl" for="lkEmail">Correo electrónico</label><input class="in ${er.email || er.any ? 'err' : ''}" id="lkEmail" type="email" placeholder="nombre@correo.com" value="${esc(LK.email)}" aria-invalid="${!!(er.email || er.any)}">${fe('email')}${fe('any')}</div>
+      <div class="fld"><label class="lbl" for="lkEmail">Correo electrónico</label><input class="in ds-input ds-input--standalone ${er.email || er.any ? 'err' : ''}" id="lkEmail" type="email" placeholder="nombre@correo.com" value="${esc(LK.email)}" aria-invalid="${!!(er.email || er.any)}">${fe('email')}${fe('any')}</div>
       <div class="fld"><label class="lbl dob" for="lkPhone">Teléfono</label><div class="doble ${er.phone || er.any ? 'err' : ''}"><button type="button" class="pre" tabindex="-1" aria-label="Lada +52"><svg class="flag"><use href="#flag-mx"/></svg>+52</button><input id="lkPhone" inputmode="tel" maxlength="12" placeholder="55 0000 0000" value="${esc(LK.phone)}" aria-invalid="${!!(er.phone || er.any)}"></div>${fe('phone')}</div>
       <div class="lk-or s2">o identificación</div>
-      <div class="fld"><label class="lbl" for="lkIdType">Tipo de identificación</label><select class="in" id="lkIdType">${ids.map(x => `<option ${x === LK.idType ? 'selected' : ''}>${x}</option>`).join('')}</select></div>
-      <div class="fld"><label class="lbl" for="lkIdNum">Número o clave</label><input class="in ${er.idNum || er.any ? 'err' : ''}" id="lkIdNum" placeholder="Escribe el número o la clave" value="${esc(LK.idNum)}" aria-invalid="${!!(er.idNum || er.any)}">${fe('idNum')}</div>
+      <div class="fld"><label class="lbl" for="lkIdType">Tipo de identificación</label><select class="in ds-input ds-input--standalone" id="lkIdType">${ids.map(x => `<option ${x === LK.idType ? 'selected' : ''}>${x}</option>`).join('')}</select></div>
+      <div class="fld"><label class="lbl" for="lkIdNum">Número o clave</label><input class="in ds-input ds-input--standalone ${er.idNum || er.any ? 'err' : ''}" id="lkIdNum" placeholder="Escribe el número o la clave" value="${esc(LK.idNum)}" aria-invalid="${!!(er.idNum || er.any)}">${fe('idNum')}</div>
     </div>
-    <div class="lk-ex"><p>Ejemplos para simular la búsqueda (datos ficticios):</p><div class="row">${LK_EX.map(x => `<button type="button" class="lk-chip" data-ex="${x.k}"><span class="src ${x.k}">${x.k === 'mk' ? 'Marketplace' : x.k === 'red' ? 'Red ataskate' : 'Sin registro'}</span>${x.label}</button>`).join('')}</div></div>
-    <div class="mf"><a class="btn ter" href="./#clientes">Cancelar</a><button type="button" class="btn pri" id="lkGo">Buscar</button></div>`, 'lk');
+    <div class="lk-ex"><p>Ejemplos para simular la búsqueda (datos ficticios):</p><div class="row">${LK_EX.map(x => `<button type="button" class="lk-chip" data-ex="${x.k}"><span class="ds-chip ${SRC_CHIP[x.k] || ''}">${x.k === 'mk' ? 'Marketplace' : x.k === 'red' ? 'Red ataskate' : 'Sin registro'}</span>${x.label}</button>`).join('')}</div></div>
+    <div class="ds-modal__footer"><a class="ds-btn ds-btn--tertiary ds-btn--md" href="./#clientes">Cancelar</a><button type="button" class="ds-btn ds-btn--primary ds-btn--md" id="lkGo">Buscar</button></div>`, 'lk');
   const r = $('#modalRoot');
   const sync = () => { LK.email = $('#lkEmail').value; LK.phone = $('#lkPhone').value; LK.idType = $('#lkIdType').value; LK.idNum = $('#lkIdNum').value; };
   enhanceSel($('#lkIdType'));
@@ -703,30 +743,29 @@ function lkForm(er) {
     if (digits(LK.phone) && digits(LK.phone).length !== 10) er.phone = 'El número ingresado no es válido';
     if (LK.idType === 'CURP' && LK.idNum.trim() && LK.idNum.trim().length !== 18) er.idNum = 'La CURP debe tener 18 caracteres';
     if (Object.keys(er).length) { lkForm(er); return; }
-    const b = $('#lkGo'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Buscando…';
-    setTimeout(() => lkResult(lkFind(LK)), 900);
+    lkResult(lkFind(LK)); // sin latencia simulada
   };
   setTimeout(() => ($('#lkEmail') || {}).focus && $('#lkEmail').focus(), 30);
 }
 function lkResult(res) {
   if (!res) {
-    modal(`<div class="mh"><h3>Nuevo cliente</h3><a class="mx" href="./#clientes" aria-label="Cerrar"><svg width="24" height="24"><use href="#i-close"/></svg></a></div>
-      <div class="lk-empty"><span class="src new">Sin registro</span><p class="t">No encontramos a este cliente</p><p class="c">No existe en tu casa, en la Red ataskate ni en el Marketplace. Crea un cliente nuevo; usaremos los datos que escribiste.</p></div>
-      <div class="mf"><button type="button" class="btn ter" id="lkBack">Buscar otro</button><button type="button" class="btn pri" id="lkNew">Crear cliente nuevo</button></div>`, 'lk');
+    modal(`<div class="ds-modal__header"><h3>Nuevo cliente</h3><a class="ds-btn ds-btn--tertiary ds-btn--icon-md cn-modal__x" href="./#clientes" aria-label="Cerrar"><svg width="24" height="24"><use href="#i-close"/></svg></a></div>
+      <div class="lk-empty"><span class="ds-chip">Sin registro</span><p class="t">No encontramos a este cliente</p><p class="c">No existe en tu casa, en la Red ataskate ni en el Marketplace. Crea un cliente nuevo; usaremos los datos que escribiste.</p></div>
+      <div class="ds-modal__footer"><button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" id="lkBack">Buscar otro</button><button type="button" class="ds-btn ds-btn--primary ds-btn--md" id="lkNew">Crear cliente nuevo</button></div>`, 'lk');
     $('#lkBack').onclick = () => lkForm();
     $('#lkNew').onclick = () => { $('#modalRoot').innerHTML = ''; lkApply(null); };
     return;
   }
   const { c, m } = res; const d = c.data;
   const kv = [['Correo electrónico', d.email], ['Teléfono', lkPhone(d.phone)], ['Fecha de nacimiento', d.dob], ['CURP', d.curp], ['Identificación', d.idType ? `${d.idType} ${d.idNum}` : ''], ['Dirección', `${c.addr.calle} ${c.addr.ext}, ${c.addr.col}, ${c.addr.mun}`]];
-  modal(`<div class="mh"><h3>Encontramos a este cliente</h3><a class="mx" href="./#clientes" aria-label="Cerrar"><svg width="24" height="24"><use href="#i-close"/></svg></a></div>
+  modal(`<div class="ds-modal__header"><h3>Encontramos a este cliente</h3><a class="ds-btn ds-btn--tertiary ds-btn--icon-md cn-modal__x" href="./#clientes" aria-label="Cerrar"><svg width="24" height="24"><use href="#i-close"/></svg></a></div>
     <div class="lk-card">
-      <div class="lk-who"><span class="avatar">${esc((d.name[0] + d.lastName[0]).toUpperCase())}</span><div style="min-width:0"><b>${esc(`${d.name} ${d.lastName} ${d.secondLastName || ''}`.trim())}</b><small>${esc(c.origin)}</small></div></div>
-      <div class="lk-match"><span class="src ${c.src}">${c.srcLabel}</span>Coincide por: ${m.join(', ')}</div>
+      <div class="lk-who"><span class="ds-avatar ds-avatar--md cn-av">${esc((d.name[0] + d.lastName[0]).toUpperCase())}</span><div style="min-width:0"><b>${esc(`${d.name} ${d.lastName} ${d.secondLastName || ''}`.trim())}</b><small>${esc(c.origin)}</small></div></div>
+      <div class="lk-match"><span class="ds-chip ${SRC_CHIP[c.src] || ''}">${c.srcLabel}</span>Coincide por: ${m.join(', ')}</div>
       <dl class="lk-kv">${kv.map(([k, v]) => `<div><dt>${k}</dt><dd class="${v ? '' : 'na'}">${v ? esc(v) : 'Sin registrar'}</dd></div>`).join('')}</dl>
     </div>
     <p class="lk-sub">${esc(c.note)}</p>
-    <div class="mf"><button type="button" class="btn ter" id="lkBack">Buscar otro</button><button type="button" class="btn pri" id="lkLoad">Cargar datos</button></div>`, 'lk');
+    <div class="ds-modal__footer"><button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" id="lkBack">Buscar otro</button><button type="button" class="ds-btn ds-btn--primary ds-btn--md" id="lkLoad">Cargar datos</button></div>`, 'lk');
   $('#lkBack').onclick = () => lkForm();
   $('#lkLoad').onclick = () => { $('#modalRoot').innerHTML = ''; lkApply(c); };
 }
@@ -744,7 +783,7 @@ function lkApply(c) {
   S.origin = c ? { k: c.src, label: c.src === 'mk' ? 'Marketplace' : 'Red ataskate · Monte Cristo' } : { k: 'new', label: 'Sin registro previo' };
   if (c) {
     v = { ...c.data }; saveAddr(c.addr);
-    title = 'Datos precargados de'; msg = c.note; cls = 'info';
+    title = 'Datos precargados de'; msg = `${c.origin}. ${c.note}`; cls = 'info';
   } else {
     v = { email: LK.email.trim(), phone: digits(LK.phone) };
     if (LK.idType === 'CURP') v.curp = LK.idNum.trim().toUpperCase(); else if (LK.idType === 'R.F.C') v.rfc = LK.idNum.trim().toUpperCase();
@@ -756,93 +795,86 @@ function lkApply(c) {
   /* 0859357ca · Cliente de otra casa de empeño (Red ataskate): ya es cliente de empeño → registro completo, sin selector Venta / Empeño */
   { const red = !!(c && c.src === 'red'), ms = $('.mode-sec'); if (ms) ms.hidden = red; if (red) setMode('empeno'); }
   let a = $('#srcAlert'); if (!a) { a = document.createElement('div'); a.id = 'srcAlert'; $('#form').prepend(a); }
-  const src = c ? `<span class="src ${c.src}">${c.srcLabel}</span>` : '<span class="src new">Sin registro</span>';
-  a.innerHTML = `<div class="alert ${cls}" role="status"><div class="main"><span class="ico">${c ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M11 17h2v-6h-2Zm1-8q.425 0 .713-.288Q13 8.425 13 8t-.287-.713Q12.425 7 12 7t-.712.287Q11 7.575 11 8t.288.712Q11.575 9 12 9Zm0 13q-2.075 0-3.9-.788q-1.825-.787-3.175-2.137q-1.35-1.35-2.137-3.175Q2 14.075 2 12t.788-3.9q.787-1.825 2.137-3.175q1.35-1.35 3.175-2.138Q9.925 2 12 2t3.9.787q1.825.788 3.175 2.138q1.35 1.35 2.137 3.175Q22 9.925 22 12t-.788 3.9q-.787 1.825-2.137 3.175q-1.35 1.35-3.175 2.137Q14.075 22 12 22Z" fill="currentColor"/></svg>' : '<svg width="24" height="24"><use href="#i-pos"/></svg>'}</span><div class="txt"><p class="ttl">${esc(title)} ${src}</p><p class="msg">${esc(msg)}</p></div></div></div>`;
+  const src = c ? `<span class="ds-chip ${SRC_CHIP[c.src] || ''}">${c.srcLabel}</span>` : '<span class="ds-chip">Sin registro</span>';
+  a.innerHTML = `<div class="ds-alert ds-alert--${cls === 'pos' ? 'success' : 'info'}" role="status"><span class="ds-alert__icon" aria-hidden="true">${cls === 'pos' ? '✓' : 'i'}</span><div class="ds-alert__body-wrap"><p class="ds-alert__title">${esc(title)} ${src}</p><p class="ds-alert__body">${esc(msg)}</p></div></div>`;
   update(); window.scrollTo({ top: 0, behavior: 'smooth' });
   toast(c ? 'Datos cargados' : 'Cliente nuevo', c ? `${v.name} ${v.lastName} · ${c.srcLabel}` : 'Captura sus datos para registrarlo.');
 }
 
 
 
-/* ---------- Detección de cliente existente mientras se captura (sin modal previo) ---------- */
+/* ---------- Detección de cliente existente mientras se captura (sin modal previo) ----------
+   Su React (findExistingClient / verifyExisting, 9964739ad): solo coincide por correo o por teléfono (10 dígitos); la verificación
+   pide el otro dato y, si coincide, carga directo (ya no hay vista previa "Datos del cliente"); el modal no muestra el nombre del
+   cliente antes de verificar */
 function dupFind() {
-  const e = val($('#email')).toLowerCase(), p = digits(val($('#phone'))), n = val($('#idNum')).toUpperCase(), cu = val($('#curp')).toUpperCase();
+  const e = val($('#email')).toLowerCase(), p = digits(val($('#phone')));
   for (const c of LK_DB) {
-    const m = [];
-    if (e && c.email === e) m.push('correo electrónico');
-    if (p.length === 10 && c.phone === p) m.push('teléfono');
-    if (n && c.idNum === n) m.push(`número de ${($('#idType').value || 'identificación').replace('Cédula profesional', 'cédula')}`);
-    if (cu && c.curp && c.curp === cu) m.push('CURP');
-    if (m.length) return { c, m };
+    if (e && c.email === e) return { c, by: 'email' };
+    if (p.length === 10 && c.phone === p) return { c, by: 'phone' };
   }
   return null;
 }
-/* 2d1b103b4 · Verificación (DS Modal + TextInput): se pide un dato distinto al que coincidió antes de mostrar o cargar los datos */
-function dupVerify(c, where, m) {
-  const hasE = m.includes('correo electrónico'), hasP = m.includes('teléfono');
-  if (hasE && hasP) return dupPreview(c, where);
-  const ask = hasE ? 'phone' : hasP ? 'email' : 'any';
-  const lbl = { phone: 'Teléfono', email: 'Correo electrónico', any: 'Teléfono o correo electrónico' }[ask];
-  const what = { phone: 'su número de teléfono', email: 'su correo electrónico', any: 'su número de teléfono o su correo electrónico' }[ask];
-  const ph = { phone: '55 1234 5678', email: 'nombre@correo.com', any: 'Ej. 55 1234 5678 o nombre@correo.com' }[ask];
+/* Verificación (DS Modal + TextInput): se pide un dato distinto al que coincidió antes de cargar los datos */
+function dupVerify(c, where, by) {
+  const ask = by === 'email' ? 'phone' : 'email';
+  const lbl = ask === 'phone' ? 'Teléfono' : 'Correo electrónico';
+  const what = ask === 'phone' ? 'su número de teléfono' : 'su correo electrónico';
   const draw = (val, err) => {
-    modal(`<div class="mh"><h3>Verifica al cliente</h3><button type="button" class="mx" aria-label="Cerrar" data-close><svg width="24" height="24"><use href="#i-close"/></svg></button></div>
-      <div class="mb"><p class="dp-sub">${esc(c.data.name + ' ' + c.data.lastName)} ya tiene un registro en <b>${where}</b>. Para ver y cargar sus datos, pide al cliente ${what}.</p>
-        <div class="fld"><label class="lbl" for="vfyIn">${lbl}</label><input class="in ${err ? 'err' : ''}" id="vfyIn" ${ask === 'phone' ? 'inputmode="tel"' : ''} placeholder="${ph}" value="${esc(val)}" autocomplete="off" aria-invalid="${!!err}">${err ? `<span class="lk-err">${lkIco}${esc(err)}</span>` : ''}</div></div>
-      <div class="mf"><button type="button" class="btn ter sm" data-close>Cancelar</button><button type="button" class="btn pri sm" id="vfyGo" ${val.trim() ? '' : 'disabled'}>Verificar</button></div>`, 'dp-modal');
+    modal(`<div class="ds-modal__header"><h3>Verifica al cliente</h3><button type="button" class="ds-btn ds-btn--tertiary ds-btn--icon-md cn-modal__x" aria-label="Cerrar" data-close><svg width="24" height="24"><use href="#i-close"/></svg></button></div>
+      <div class="ds-modal__body"><p class="dp-sub">${esc(where)}. Para ver y cargar sus datos, pide al cliente ${what}.</p>
+        <div class="fld"><label class="lbl" for="vfyIn">${lbl}</label><input class="in ds-input ds-input--standalone ${err ? 'err' : ''}" id="vfyIn" ${ask === 'phone' ? 'inputmode="tel"' : ''} value="${esc(val)}" autocomplete="off" aria-invalid="${!!err}">${err ? `<span class="lk-err">${lkIco}${esc(err)}</span>` : ''}</div></div>
+      <div class="ds-modal__footer"><button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" data-close>Cancelar</button><button type="button" class="ds-btn ds-btn--primary ds-btn--md" id="vfyGo" ${val.trim() ? '' : 'disabled'}>Verificar y cargar</button></div>`, 'dp-modal');
     const i = $('#vfyIn'), go = $('#vfyGo'); i.focus(); i.setSelectionRange(i.value.length, i.value.length);
     i.addEventListener('input', () => { go.disabled = !i.value.trim(); if (err) { err = ''; i.classList.remove('err'); const e = i.parentElement.querySelector('.lk-err'); if (e) e.remove(); } });
-    /* Corrección al portarlo: sin preventDefault, el Enter llegaba a "Cargar datos" (el modal enfoca el botón primario al abrir la vista
-       previa) y cargaba los datos sin mostrarlos (pasa igual en su archivo) */
+    /* Corrección al portarlo: sin preventDefault el Enter llegaba al botón primario que el modal enfoca al abrir */
     i.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); if (!go.disabled) go.click(); } });
     go.onclick = () => {
-      const v = i.value.trim(), d = digits(v);
-      const okE = v.includes('@') && v.toLowerCase() === c.email, okP = d.length >= 10 && d.slice(-10) === c.phone;
-      const ok = ask === 'phone' ? okP : ask === 'email' ? okE : (okE || okP);
+      const v = i.value.trim();
+      const ok = by === 'email' ? digits(v).slice(-10) === c.phone : v.toLowerCase() === c.email;
       if (!ok) return draw(v, 'El dato no coincide con el registro. Confírmalo con el cliente e intenta de nuevo.');
-      dupPreview(c, where);
+      $('#modalRoot').innerHTML = ''; S.dupLoaded = c.email; $('#dupNote').hidden = true; lkApply(c);
     };
   };
   draw('', '');
 }
-/* Modal (DS Modal) con la vista previa de los datos que se van a precargar */
-const DUP_LBL = [['name', 'Nombre'], ['lastName', 'Apellido paterno'], ['secondLastName', 'Apellido materno'], ['email', 'Correo electrónico'], ['phone', 'Teléfono'], ['civil', 'Estado civil'], ['gender', 'Género'], ['nat', 'Nacionalidad'], ['dob', 'Fecha de nacimiento'], ['curp', 'CURP'], ['rfc', 'R.F.C'], ['activity', 'Actividad económica'], ['idType', 'Tipo de identificación'], ['idNum', 'Número de documento']];
-function dupPreview(c, where) {
-  const d = c.data, rows = DUP_LBL.filter(([k]) => d[k]).map(([k, l]) => `<div class="dp-r"><dt>${l}</dt><dd>${esc(k === 'phone' ? lkPhone(d[k]) : d[k])}</dd></div>`).join('');
-  const a = c.addr; const addr = a ? `${a.calle} ${a.ext}${a.int ? ' Int. ' + a.int : ''}, ${a.col}, ${a.mun}, ${a.edo}, C.P. ${a.cp}` : '';
-  modal(`<div class="mh"><h3>Datos del cliente</h3><button type="button" class="mx" aria-label="Cerrar" data-close><svg width="24" height="24"><use href="#i-close"/></svg></button></div>
-    <div class="mb"><p class="dp-sub">Estos datos están registrados en <b>${where}</b> y se cargarán en el formulario.</p>
-      <dl class="dp">${rows}${addr ? `<div class="dp-r wide"><dt>Dirección</dt><dd>${esc(addr)}</dd></div>` : ''}</dl></div>
-    <div class="mf"><button type="button" class="btn ter sm" data-close>Cancelar</button><button type="button" class="btn pri sm" id="dpLoad">Cargar datos</button></div>`, 'dp-modal');
-  $('#dpLoad').onclick = () => { $('#modalRoot').innerHTML = ''; S.dupLoaded = c.email; $('#dupNote').hidden = true; lkApply(c); };
-}
 function dupCheck() {
-  const box = $('#dupNote'); if (!box) return;
+  const box = $('#dupNote'); if (!box || S.edit) return;
   const r = dupFind();
   if (!r || S.dupLoaded === r.c.email || S.dupClosed === r.c.email) { box.hidden = true; box.innerHTML = ''; box.dataset.k = ''; return; }
   const where = r.c.src === 'mk' ? 'Marketplace' : 'Red ataskate';
-  const list = r.m.length > 1 ? r.m.slice(0, -1).join(', ') + ' y ' + r.m[r.m.length - 1] : r.m[0];
+  const list = r.by === 'email' ? 'correo electrónico' : 'teléfono';
   /* Corrección al portarlo: si ya se ve el mismo aviso no se vuelve a pintar. El "change" que sale al dejar el campo lo re-pintaba
      entre el mousedown y el click, y el primer clic en "Ver datos" o en la X se perdía (pasa igual en su archivo). */
   const key = r.c.email + '|' + list;
   if (!box.hidden && box.dataset.k === key) return;
   box.dataset.k = key;
   box.hidden = false;
-  box.innerHTML = `<div class="ds-alert info" role="status"><div class="ds-alert-ic-c"><span class="ds-alert-ic"><svg width="24" height="24" viewBox="144 156 24 24" fill="none" aria-hidden="true"><path d="M154.774 172.838H156.774V166.838H154.774V172.838ZM155.774 164.838C156.058 164.838 156.295 164.742 156.487 164.55C156.679 164.359 156.774 164.121 156.774 163.838C156.774 163.555 156.679 163.317 156.487 163.125C156.295 162.934 156.058 162.838 155.774 162.838C155.491 162.838 155.254 162.934 155.062 163.125C154.87 163.317 154.774 163.555 154.774 163.838C154.774 164.121 154.87 164.359 155.062 164.55C155.254 164.742 155.491 164.838 155.774 164.838ZM155.774 177.838C154.391 177.838 153.091 177.575 151.874 177.05C150.658 176.525 149.599 175.813 148.699 174.913C147.799 174.013 147.087 172.955 146.562 171.738C146.037 170.521 145.774 169.221 145.774 167.838C145.774 166.455 146.037 165.155 146.562 163.938C147.087 162.721 147.799 161.663 148.699 160.763C149.599 159.863 150.658 159.15 151.874 158.625C153.091 158.1 154.391 157.838 155.774 157.838C157.158 157.838 158.458 158.1 159.674 158.625C160.891 159.15 161.949 159.863 162.849 160.763C163.749 161.663 164.462 162.721 164.987 163.938C165.512 165.155 165.774 166.455 165.774 167.838C165.774 169.221 165.512 170.521 164.987 171.738C164.462 172.955 163.749 174.013 162.849 174.913C161.949 175.813 160.891 176.525 159.674 177.05C158.458 177.575 157.158 177.838 155.774 177.838Z" fill="currentColor"/></svg></span><div class="ds-alert-c"><p class="ds-alert-t">Este cliente ya se encuentra registrado en ${where}</p><p class="ds-alert-x">Coincide su ${list}. ¿Deseas cargar los datos del cliente?</p></div></div><div class="ds-alert-a"><button type="button" class="ds-btn-ter" id="dupLoad">Ver datos</button></div><button type="button" class="ds-alert-close" id="dupX" aria-label="Cerrar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="currentColor"/></svg></button></div>`;
-  $('#dupLoad').onclick = () => dupVerify(r.c, where, r.m);
+  box.innerHTML = `<div class="ds-alert ds-alert--info" role="status"><span class="ds-alert__icon" aria-hidden="true">i</span><div class="ds-alert__body-wrap"><p class="ds-alert__title">Este cliente ya está registrado en ${where}</p><p class="ds-alert__body">Coincide por ${list}.</p></div><div class="ds-alert__actions"><button type="button" class="ds-alert__action" id="dupLoad">Ver datos</button><button type="button" class="ds-alert__close" id="dupX" aria-label="Cerrar">×</button></div></div>`;
+  $('#dupLoad').onclick = () => dupVerify(r.c, where, r.by);
   $('#dupX').onclick = () => { S.dupClosed = r.c.email; box.hidden = true; };
 }
-['email', 'phone', 'idNum', 'curp', 'idType'].forEach(id => { const el = $('#' + id); if (el) { el.addEventListener('input', dupCheck); el.addEventListener('change', dupCheck); } });
+['email', 'phone'].forEach(id => { const el = $('#' + id); if (el) { el.addEventListener('input', dupCheck); el.addEventListener('change', dupCheck); } });
 /* Simulaciones del prototipo: se escribe un dato que coincide, como lo haría el valuador */
 const simType = (id, v) => { const el = $('#' + id); el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); };
 $('#demoMk').onclick = () => { S.dupClosed = S.dupLoaded = null; simType('email', 'valeria.ortiz@ejemplo.com'); $('#email').scrollIntoView({ block: 'center', behavior: 'smooth' }); };
-$('#demoRed').onclick = () => { S.dupClosed = S.dupLoaded = null; const acc = $('#idType').closest('[data-acc]'); if (acc && !acc.classList.contains('open')) acc.querySelector(':scope > button').click(); simType('idType', 'INE'); simType('idNum', '4567891234567'); $('#idNum').scrollIntoView({ block: 'center', behavior: 'smooth' }); };
+$('#demoRed').onclick = () => { S.dupClosed = S.dupLoaded = null; simType('email', 'raul.campos@ejemplo.com'); $('#email').scrollIntoView({ block: 'center', behavior: 'smooth' }); };
 
 /* ---------- 2d1b103b4 · Tipo de registro: Venta / Empeño ----------
    Mismo formulario: con Venta solo se ven Contacto y Dirección (en el formulario y en la lista de la card del cliente, renumerada),
    y el avance, "Datos completados" y "Faltan N datos" cuentan solo esos obligatorios */
 const MODE_HELP = { venta: 'Para una venta solo se necesitan la información de contacto y la dirección domiciliaria.', empeno: 'Registro completo: datos personales, dirección, identificación, cotitular y huellas.' };
+/* 9964739ad · al cambiar a Venta se limpian los datos que solo existen en Empeño (HIDDEN_IN_SALE), la foto, los documentos, los cotitulares y las huellas */
+const HIDDEN_IN_SALE = ['civil', 'gender', 'nat', 'dob', 'curp', 'rfc', 'activity', 'idType', 'idNum', 'idExp', 'idVig', 'domType', 'domVig'];
+function clearPawnData() {
+  HIDDEN_IN_SALE.forEach(id => { const el = $('#' + id); if (!el || !el.value) return; S.touched.delete(id); el.value = ''; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); const f = el.closest('.fld'); if (f) showErr(f, '', boxOf(el)); el.setAttribute('aria-invalid', 'false'); });
+  S.photo = null; renderPhoto();
+  S.files = {}; ['idFront', 'idBack', 'domFile', 'ingFile'].forEach(renderFile); accTags();
+  S.co = []; renderCo();
+  S.prints.izq.clear(); S.prints.der.clear(); S.printImg = {}; S.fpState = 'idle'; renderFp();
+}
 function setMode(m) {
+  if (m === 'venta' && S.mode !== 'venta') clearPawnData();
   S.mode = m;
   $$('.mode-chip').forEach(b => { const on = b.dataset.mode === m; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
   const mh = $('#modeHelp'); if (mh) mh.textContent = MODE_HELP[m];
@@ -855,11 +887,11 @@ $$('.mode-chip').forEach(b => { b.onclick = () => setMode(b.dataset.mode); });
 { const md = new URLSearchParams(location.search).get('modo'); if (md === 'venta' || md === 'empeno') setMode(md); }
 
 /* ---------- 2d1b103b4 · Llegada desde el buscador de Clientes ----------
-   ?cargar=correo → ya se verificó en Clientes ("Verificar y cargar"): se cargan sus datos directo.
+   ?cargar=<id> → ya se verificó en Clientes ("Verificar y cargar"): se cargan sus datos directo.
    ?buscar=correo → cliente encontrado en otra fuente: se escribe el correo y aparece el aviso "Ver datos".
    ?nuevo=texto  → no se encontró: se precarga lo que se buscó (correo, teléfono o nombre). */
 { const qp = new URLSearchParams(location.search), b = qp.get('buscar'), n = (qp.get('nuevo') || '').trim();
-  const cg = qp.get('cargar'), cc = cg && LK_DB.find(x => x.email === cg.toLowerCase());
+  const cg = qp.get('cargar'), cc = cg && LK_DB.find(x => x.id === cg); // id opaco (mk-1, red-1…): la URL ya no lleva el correo
   if (cc) { S.dupLoaded = cc.email; lkApply(cc); }
   else if (b) simType('email', b);
   else if (n) {
@@ -874,6 +906,122 @@ $$('[data-proto-panel] button').forEach(b => b.addEventListener('click', () => {
   const pn = b.closest('[data-proto-panel]'), tb = $('#demoProtoTab');
   if (pn && !pn.hidden) { pn.hidden = true; if (tb) tb.setAttribute('aria-expanded', 'false'); }
 }));
+
+
+/* ---------- Editar cliente (EditClientRedesign / useEditClient, 20f588788) ----------
+   cliente-nuevo.html?editar=<id>[&seccion=<sección>]: su /Directory/<id>/editar reutiliza Cliente nuevo con los datos del perfil.
+   Solo lo que aplica al tipo de cliente (empeño: todo; venta: contacto y dirección; marketplace no se edita). Se valida con las mismas
+   reglas del alta; al guardar (1.2 s simulados) se guarda el perfil completo en sessionStorage, avisa "Cambios guardados" y regresa al perfil */
+const ED = {
+  PAGE_TITLE: 'Editar cliente', SUBTITLE: 'Revisa y actualiza los datos del cliente. Los cambios se guardan al final.', SAVE: 'Guardar cambios', SAVED: 'Cambios guardados',
+  REVIEW_TITLE: 'Revisa los datos antes de guardar', REVIEW_TEXT: items => `Falta o no es válido: ${items.join(', ')}.`,
+  EXIT_TITLE: '¿Salir sin guardar?', EXIT_TEXT: 'Si hiciste cambios y no los guardaste, se pierden.', EXIT_STAY: 'Seguir editando', EXIT_LEAVE: 'Salir sin guardar',
+  NOT_FOUND_TITLE: 'No se puede editar este cliente', NOT_FOUND_TEXT: 'El cliente no existe o es del Marketplace, que no se edita desde aquí.', BACK_TO_LIST: 'Ir a Clientes',
+};
+const ED_SECTIONS = { empeno: ['contacto', 'personal', 'direccion', 'ident', 'cotitular', 'bio'], venta: ['contacto', 'direccion'] };
+const ED_FORM_SECTION = { personal: 'personal', direccion: 'direccion', ident: 'ident', cotitulares: 'cotitular', cotitular: 'cotitular', huellas: 'bio', bio: 'bio', contacto: 'contacto' };
+const joinWords = (...p) => p.map(x => (x || '').trim()).filter(Boolean).join(' ');
+const orUndef = v => (v || '').trim() || undefined;
+const splitLast = l => { const [a = '', ...r] = (l || '').trim().split(/\s+/); return [a, r.join(' ')]; };
+function setQuiet(id, v) {
+  const el = $('#' + id); if (!el || v == null || v === '') return;
+  if (el.tagName === 'SELECT' && ![...el.options].some(o => o.value === v || o.textContent === v)) el.add(new Option(v, v));
+  el.value = v;
+  if (el.type === 'text' && el.dataset.date !== undefined) el.classList.toggle('empty', !el.value);
+  const cnt = $(`[data-count="${id}"]`); if (cnt) cnt.textContent = `${el.value.length} de ${id === 'curp' ? 18 : 13} caracteres`;
+  if (el.tagName === 'SELECT') syncSel(el);
+}
+const isPast = v => { const d = parseDMY(v); if (!d) return false; const t = new Date(); t.setHours(0, 0, 0, 0); return d < t; };
+function printImg(label) {
+  const c = document.createElement('canvas'); c.width = 160; c.height = 200; const x = c.getContext('2d');
+  x.fillStyle = dsColor('--ats-neutral-100'); x.fillRect(0, 0, 160, 200); x.strokeStyle = dsColor('--ats-neutral-400'); x.lineWidth = 3;
+  for (let r = 10; r < 70; r += 8) { x.beginPath(); x.ellipse(80, 110, r, r * 1.35, 0, 0, Math.PI * 2); x.stroke(); }
+  return c.toDataURL('image/png');
+}
+function initEdit(id, section) {
+  const client = getClientProfile(id), editable = client && client.type !== 'marketplace' ? client : null;
+  document.title = 'Ataskate POS — Editar cliente';
+  if (!editable) {
+    $('#cnMain').innerHTML = `<div class="nf" role="status"><img src="assets/ilust-01-empty.svg" alt="" width="150" height="150"><h2>${ED.NOT_FOUND_TITLE}</h2><p>${ED.NOT_FOUND_TEXT}</p><a class="ds-btn ds-btn--primary ds-btn--md" href="./">${ED.BACK_TO_LIST}</a></div>`;
+    return;
+  }
+  S.edit = { id, client: editable, type: editable.type };
+  const name = fullName(editable);
+  /* encabezado: Inicio > Clientes > <nombre> > Editar cliente, título y subtítulo */
+  const sep = '<span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt="" /></span>';
+  $('.pos-crumbs').innerHTML = `<li><a href="../home/" class="ds-breadcrumb__link">Inicio</a>${sep}</li><li><a href="./" class="ds-breadcrumb__link">Clientes</a>${sep}</li><li><a href="./#perfil/${encodeURIComponent(id)}" class="ds-breadcrumb__link">${esc(name)}</a>${sep}</li><li><span class="ds-breadcrumb__current" aria-current="page">${ED.PAGE_TITLE}</span></li>`;
+  $('.cn-title').textContent = ED.PAGE_TITLE;
+  $('.headrow').insertAdjacentHTML('beforeend', `<p class="cn-sub">${ED.SUBTITLE}</p>`);
+  { const ms = $('.mode-sec'); if (ms) ms.hidden = true; const dn = $('#dupNote'); if (dn) dn.hidden = true; }
+  const saveBtn = $('[data-save]'); if (saveBtn) saveBtn.textContent = ED.SAVE;
+  if (editable.type === 'venta') setMode('venta');
+  /* carga del perfil en el formulario (profileForm.ts → loadProfileIntoForm): solo los campos con dato, para no marcar error en los que el cliente no tiene */
+  const [ln, ln2] = splitLast(editable.lastName), P = editable.personal || {}, L = editable.labor || {}, I = editable.identification, AP = editable.addressProof;
+  const vals = { name: editable.name, lastName: ln, secondLastName: ln2, email: editable.email, phone: onlyDigits(editable.phone), civil: P.civil, gender: P.gender, nat: P.nationality, dob: P.birthDate, curp: P.curp, rfc: P.rfc, activity: P.activity,
+    idType: I && I.type, idNum: I && I.number, idExp: I && I.issuedAt, idVig: I && I.validUntil, domType: AP && AP.type, domVig: AP && AP.validUntil,
+    'l-sit': L.status, 'l-ant': L.seniority, 'l-ing': L.monthlyIncome ? String(L.monthlyIncome) : '', 'l-emp': L.company, 'l-tel': L.companyPhone ? onlyDigits(L.companyPhone) : '', 'l-puesto': L.position };
+  Object.entries(vals).forEach(([k, v]) => setQuiet(k, v));
+  if (editable.address) { const a = editable.address; saveAddr({ nombre: a.name || 'Casa', calle: a.street, ext: a.exterior, int: a.interior || '', col: a.colony, mun: a.municipality, edo: a.state, cp: a.postalCode }); }
+  S.co = (editable.cotitulares || []).map(c => { const [a, b] = splitLast(c.lastName); return { id: c.id, _role: c.role, 'c-name': c.name, 'c-ln': a, 'c-ln2': b, 'c-email': c.email || '', 'c-phone': c.phone || '', 'c-idtype': c.idType || '', 'c-idnum': c.idNum || '', 'c-rel': c.relationship }; });
+  renderCo();
+  (editable.fingerprints || []).forEach(fp => { const hand = fp.endsWith(' derecho') ? 'der' : 'izq', finger = fp.replace(/ (derecho|izquierdo)$/, ''); S.prints[hand].add(finger); S.printImg[hand + ':' + finger] = printImg(); });
+  S.fpState = 'idle'; renderFp();
+  if (editable.photo) { S.photo = { name: 'foto-cliente', url: editable.photo }; renderPhoto(); }
+  const docs = [['idFront', I && I.hasFront, 'identificacion-frente.png'], ['idBack', I && I.hasBack, 'identificacion-reverso.png'], ['ingFile', !!editable.incomeProof, 'comprobante-ingresos.png']];
+  Promise.all(docs.filter(d => d[1]).map(d => setSampleFile(d[0], d[2]))).then(() => { S.dirty = false; update(); });
+  if (AP && (AP.type || AP.validUntil)) { const acc = $('#domType').closest('[data-acc]'); if (acc && !acc.classList.contains('open')) acc.querySelector(':scope > button').click(); }
+  if (L.status || L.company || L.position) { const mt = $('#moreToggle'); if (mt && $('#more').hidden) mt.click(); }
+  S.dirty = false; update();
+  /* Cancelar siempre pregunta (EditClientExitModal) */
+  $$('[data-cancel]').forEach(b => b.onclick = () => {
+    modal(`<h3>${ED.EXIT_TITLE}</h3><div class="ds-modal__body"><p>${ED.EXIT_TEXT}</p></div><div class="ds-modal__footer"><button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" data-close>${ED.EXIT_STAY}</button><button type="button" class="ds-btn ds-btn--destructive ds-btn--md" id="edLeave">${ED.EXIT_LEAVE}</button></div>`, 'cancel');
+    $('#edLeave').onclick = () => { location.href = `./#perfil/${encodeURIComponent(id)}`; };
+  });
+  if (section && ED_FORM_SECTION[section]) setTimeout(() => { const t = $('#s-' + ED_FORM_SECTION[section]); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 300);
+}
+/* Guardar cambios (useEditClient.save): valida solo las secciones que aplican al tipo y, si todo está bien, aplica cada sección al perfil */
+function saveEdit() {
+  if (S.saving || !S.edit) return;
+  const { client, type } = S.edit, secs = ED_SECTIONS[type === 'venta' ? 'venta' : 'empeno'];
+  const labels = [];
+  reqs().forEach(el => { S.touched.add(el.id); if (paint(el)) labels.push(el.dataset.label); });
+  S.touched.add('addr');
+  if (secs.includes('direccion') && !S.address) { labels.push('Dirección'); const ae = $('#addrErr'); ae.hidden = false; ae.innerHTML = '<svg width="16" height="16"><use href="#i-err"/></svg>Agrega la dirección del cliente.'; $('[data-box="addr"]').classList.add('err'); }
+  if (secs.includes('ident')) REQ_DOCS.filter(k => !S.files[k]).forEach(k => labels.push(DOC_TITLE[k]));
+  update();
+  const fa = $('#formAlert');
+  if (labels.length) {
+    fa.hidden = false;
+    fa.innerHTML = `<div class="ds-alert ds-alert--error" role="alert"><span class="ds-alert__icon" aria-hidden="true">!</span><div class="ds-alert__body-wrap"><p class="ds-alert__title">${ED.REVIEW_TITLE}</p><p class="ds-alert__body">${esc(ED.REVIEW_TEXT(labels))}</p></div><div class="ds-alert__actions"><button type="button" class="ds-alert__close" aria-label="Cerrar">×</button></div></div>`;
+    fa.querySelector('.ds-alert__close').onclick = () => { fa.hidden = true; };
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+  fa.hidden = true;
+  S.saving = true; $('#fs').disabled = true;
+  const photoP = secs.includes('personal') && S.photo ? (S.photo.url === client.photo ? Promise.resolve(client.photo) : fetch(S.photo.url).then(r => r.blob()).then(b => new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(b); })).catch(() => client.photo)) : Promise.resolve(undefined);
+  photoP.then(photo => {
+    const v = id => val($('#' + id));
+    let next = { ...client };
+    next = { ...next, name: v('name'), lastName: joinWords(v('lastName'), v('secondLastName')), email: v('email').toLowerCase(), phone: v('phone') };
+    if (secs.includes('personal')) {
+      const income = Number(v('l-ing').replace(/[^\d.]/g, '')), labor = { status: orUndef(v('l-sit')), company: orUndef(v('l-emp')), position: orUndef(v('l-puesto')), seniority: orUndef(v('l-ant')), monthlyIncome: income || undefined, companyPhone: orUndef(onlyDigits(v('l-tel'))) };
+      next = { ...next, personal: { civil: orUndef(v('civil')), gender: orUndef($('#gender').value), nationality: orUndef($('#nat').value), birthDate: orUndef(v('dob')), curp: orUndef(v('curp')), rfc: orUndef(v('rfc')), activity: orUndef($('#activity').value) }, labor: Object.values(labor).some(Boolean) ? labor : undefined, photo };
+    }
+    if (secs.includes('direccion')) { const a = S.address; next = { ...next, address: a ? { name: a.nombre, street: a.calle.trim(), exterior: a.ext.trim(), interior: orUndef(a.int), colony: a.col, municipality: a.mun, state: a.edo, postalCode: a.cp } : undefined }; }
+    if (secs.includes('ident')) {
+      next = { ...next, identification: { type: $('#idType').value, number: v('idNum'), issuedAt: orUndef(v('idExp')), validUntil: orUndef(v('idVig')), expired: isPast(v('idVig')), hasFront: !!S.files.idFront, hasBack: !!S.files.idBack },
+        addressProof: $('#domType').value || v('domVig') ? { type: orUndef($('#domType').value), validUntil: orUndef(v('domVig')) } : undefined,
+        incomeProof: S.files.ingFile ? { type: (client.incomeProof && client.incomeProof.type) || 'Con archivo' } : undefined };
+    }
+    if (secs.includes('cotitular')) next = { ...next, cotitulares: S.co.map(c => ({ id: c.id, name: c['c-name'].trim(), lastName: joinWords(c['c-ln'], c['c-ln2']), relationship: c['c-rel'], phone: orUndef(onlyDigits(c['c-phone'])), email: orUndef(c['c-email']), idType: orUndef(c['c-idtype']), idNum: orUndef(c['c-idnum']), role: ((client.cotitulares || []).find(p => p.id === c.id) || {}).role || 'Cotitular' })) };
+    if (secs.includes('bio')) next = { ...next, fingerprints: ['der', 'izq'].flatMap(h => FINGERS.filter(f => S.prints[h].has(f)).map(f => `${f} ${HN[h]}`)) };
+    saveEditedProfile(JSON.parse(JSON.stringify(next)));
+    setPendingToast(ED.SAVED, fullName(next));
+    location.href = `./#perfil/${encodeURIComponent(S.edit.id)}`;
+  });
+}
+{ const qp = new URLSearchParams(location.search), eid = qp.get('editar'); if (eid) initEdit(eid, qp.get('seccion')); }
 
 update();
 })();

@@ -14,7 +14,7 @@
   const ICO = {"Add":["0 0 24 24","<path d=\"M11 19V13H5V11H11V5H13V11H19V13H13V19H11Z\" fill=\"currentColor\"></path>"],"ContentCopy":["0 0 24 24","<path d=\"M5 22C4.45 22 3.979 21.8043 3.587 21.413C3.19567 21.021 3 20.55 3 20V6H5V20H16V22H5ZM9 18C8.45 18 7.97933 17.8043 7.588 17.413C7.196 17.021 7 16.55 7 16V4C7 3.45 7.196 2.979 7.588 2.587C7.97933 2.19567 8.45 2 9 2H18C18.55 2 19.021 2.19567 19.413 2.587C19.8043 2.979 20 3.45 20 4V16C20 16.55 19.8043 17.021 19.413 17.413C19.021 17.8043 18.55 18 18 18H9ZM9 16H18V4H9V16Z\" fill=\"currentColor\"></path>"],"Check":["0 0 24 24","<path d=\"M9.54998 18.0001L3.84998 12.3001L5.27498 10.8751L9.54998 15.1501L18.725 5.9751L20.15 7.4001L9.54998 18.0001Z\" fill=\"currentColor\"></path>"],"CheckCircle":["0 0 24 24","<path d=\"M10.6 16.6L17.65 9.55L16.25 8.15L10.6 13.8L7.75 10.95L6.35 12.35L10.6 16.6ZM12 22C10.6167 22 9.31667 21.7375 8.1 21.2125C6.88333 20.6875 5.825 19.975 4.925 19.075C4.025 18.175 3.3125 17.1167 2.7875 15.9C2.2625 14.6833 2 13.3833 2 12C2 10.6167 2.2625 9.31667 2.7875 8.1C3.3125 6.88333 4.025 5.825 4.925 4.925C5.825 4.025 6.88333 3.3125 8.1 2.7875C9.31667 2.2625 10.6167 2 12 2C13.3833 2 14.6833 2.2625 15.9 2.7875C17.1167 3.3125 18.175 4.025 19.075 4.925C19.975 5.825 20.6875 6.88333 21.2125 8.1C21.7375 9.31667 22 10.6167 22 12C22 13.3833 21.7375 14.6833 21.2125 15.9C20.6875 17.1167 19.975 18.175 19.075 19.075C18.175 19.975 17.1167 20.6875 15.9 21.2125C14.6833 21.7375 13.3833 22 12 22ZM12 20C14.2333 20 16.125 19.225 17.675 17.675C19.225 16.125 20 14.2333 20 12C20 9.76667 19.225 7.875 17.675 6.325C16.125 4.775 14.2333 4 12 4C9.76667 4 7.875 4.775 6.325 6.325C4.775 7.875 4 9.76667 4 12C4 14.2333 4.775 16.125 6.325 17.675C7.875 19.225 9.76667 20 12 20Z\" fill=\"currentColor\"></path>"],"Error":["0 0 24 24","<path d=\"M12 22C10.6167 22 9.31667 21.7373 8.1 21.212C6.88333 20.6873 5.825 19.975 4.925 19.075C4.025 18.175 3.31267 17.1167 2.788 15.9C2.26267 14.6833 2 13.3833 2 12C2 10.6167 2.26267 9.31667 2.788 8.1C3.31267 6.88333 4.025 5.825 4.925 4.925C5.825 4.025 6.88333 3.31233 8.1 2.787C9.31667 2.26233 10.6167 2 12 2C13.3833 2 14.6833 2.26233 15.9 2.787C17.1167 3.31233 18.175 4.025 19.075 4.925C19.975 5.825 20.6873 6.88333 21.212 8.1C21.7373 9.31667 22 10.6167 22 12C22 13.3833 21.7373 14.6833 21.212 15.9C20.6873 17.1167 19.975 18.175 19.075 19.075C18.175 19.975 17.1167 20.6873 15.9 21.212C14.6833 21.7373 13.3833 22 12 22ZM8.4 17L12 13.4L15.6 17L17 15.6L13.4 12L17 8.4L15.6 7L12 10.6L8.4 7L7 8.4L10.6 12L7 15.6L8.4 17Z\" fill=\"currentColor\"></path>"],"EstadosError":["48 156 24 24","<path d=\"M60 178C58.6167 178 57.3167 177.737 56.1 177.212C54.8833 176.687 53.825 175.975 52.925 175.075C52.025 174.175 51.3127 173.117 50.788 171.9C50.2627 170.683 50 169.383 50 168C50 166.617 50.2627 165.317 50.788 164.1C51.3127 162.883 52.025 161.825 52.925 160.925C53.825 160.025 54.8833 159.312 56.1 158.787C57.3167 158.262 58.6167 158 60 158C61.3833 158 62.6833 158.262 63.9 158.787C65.1167 159.312 66.175 160.025 67.075 160.925C67.975 161.825 68.6873 162.883 69.212 164.1C69.7373 165.317 70 166.617 70 168C70 169.383 69.7373 170.683 69.212 171.9C68.6873 173.117 67.975 174.175 67.075 175.075C66.175 175.975 65.1167 176.687 63.9 177.212C62.6833 177.737 61.3833 178 60 178ZM56.4 173L60 169.4L63.6 173L65 171.6L61.4 168L65 164.4L63.6 163L60 166.6L56.4 163L55 164.4L58.6 168L55 171.6L56.4 173Z\" fill=\"currentColor\"></path>"],"EstadosSuccess":["96 156 24 24","<path d=\"M108 178C106.617 178 105.317 177.737 104.1 177.212C102.883 176.687 101.825 175.975 100.925 175.075C100.025 174.175 99.3127 173.117 98.788 171.9C98.2627 170.683 98 169.383 98 168C98 166.617 98.2627 165.317 98.788 164.1C99.3127 162.883 100.025 161.825 100.925 160.925C101.825 160.025 102.883 159.312 104.1 158.787C105.317 158.262 106.617 158 108 158C109.383 158 110.683 158.262 111.9 158.787C113.117 159.312 114.175 160.025 115.075 160.925C115.975 161.825 116.687 162.883 117.212 164.1C117.737 165.317 118 166.617 118 168C118 169.383 117.737 170.683 117.212 171.9C116.687 173.117 115.975 174.175 115.075 175.075C114.175 175.975 113.117 176.687 111.9 177.212C110.683 177.737 109.383 178 108 178ZM106.6 172.6L113.65 165.55L112.25 164.15L106.6 169.8L103.75 166.95L102.35 168.35L106.6 172.6Z\" fill=\"currentColor\"></path>"],"EstadosInfo":["144 156 24 24","<path d=\"M154.774 172.838H156.774V166.838H154.774V172.838ZM155.774 164.838C156.058 164.838 156.295 164.742 156.487 164.55C156.679 164.359 156.774 164.121 156.774 163.838C156.774 163.555 156.679 163.317 156.487 163.125C156.295 162.934 156.058 162.838 155.774 162.838C155.491 162.838 155.254 162.934 155.062 163.125C154.87 163.317 154.774 163.555 154.774 163.838C154.774 164.121 154.87 164.359 155.062 164.55C155.254 164.742 155.491 164.838 155.774 164.838ZM155.774 177.838C154.391 177.838 153.091 177.575 151.874 177.05C150.658 176.525 149.599 175.813 148.699 174.913C147.799 174.013 147.087 172.955 146.562 171.738C146.037 170.521 145.774 169.221 145.774 167.838C145.774 166.455 146.037 165.155 146.562 163.938C147.087 162.721 147.799 161.663 148.699 160.763C149.599 159.863 150.658 159.15 151.874 158.625C153.091 158.1 154.391 157.838 155.774 157.838C157.158 157.838 158.458 158.1 159.674 158.625C160.891 159.15 161.949 159.863 162.849 160.763C163.749 161.663 164.462 162.721 164.987 163.938C165.512 165.155 165.774 166.455 165.774 167.838C165.774 169.221 165.512 170.521 164.987 171.738C164.462 172.955 163.749 174.013 162.849 174.913C161.949 175.813 160.891 176.525 159.674 177.05C158.458 177.575 157.158 177.838 155.774 177.838Z\" fill=\"currentColor\"></path>"],"WarningFilled":["0 0 24 24","<path d=\"M1 21L12 2L23 21H1ZM12 18C12.2833 18 12.5208 17.9042 12.7125 17.7125C12.9042 17.5208 13 17.2833 13 17C13 16.7167 12.9042 16.4792 12.7125 16.2875C12.5208 16.0958 12.2833 16 12 16C11.7167 16 11.4792 16.0958 11.2875 16.2875C11.0958 16.4792 11 16.7167 11 17C11 17.2833 11.0958 17.5208 11.2875 17.7125C11.4792 17.9042 11.7167 18 12 18ZM11 15H13V10H11V15Z\" fill=\"currentColor\"></path>"],"Edit":["0 0 24 24","<path d=\"M5 19H6.4L15.025 10.375L13.625 8.975L5 17.6V19ZM19.3 8.925L15.05 4.725L16.45 3.325C16.8333 2.94167 17.3043 2.75 17.863 2.75C18.421 2.75 18.8917 2.94167 19.275 3.325L20.675 4.725C21.0583 5.10833 21.2583 5.571 21.275 6.113C21.2917 6.65433 21.1083 7.11667 20.725 7.5L19.3 8.925ZM17.85 10.4L7.25 21H3V16.75L13.6 6.15L17.85 10.4Z\" fill=\"currentColor\"></path>"],"FilterAlt":["0 0 24 24","<path d=\"M11 20C10.7167 20 10.4794 19.904 10.288 19.712C10.096 19.5207 10 19.2833 10 19V13L4.20003 5.6C3.95003 5.26667 3.9127 4.91667 4.08803 4.55C4.2627 4.18333 4.5667 4 5.00003 4H19C19.4334 4 19.7377 4.18333 19.913 4.55C20.0877 4.91667 20.05 5.26667 19.8 5.6L14 13V19C14 19.2833 13.9044 19.5207 13.713 19.712C13.521 19.904 13.2834 20 13 20H11ZM12 12.3L16.95 6H7.05003L12 12.3Z\" fill=\"currentColor\"></path>"],"ArrowDropDown":["0 0 24 24","<path d=\"M12 15L7 10H17L12 15Z\" fill=\"currentColor\"></path>"],"Close":["0 0 24 24","<path d=\"M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z\" fill=\"currentColor\"></path>"],"Search":["0 0 24 24","<path d=\"M19.6 21L13.3 14.7C12.8 15.1 12.225 15.4167 11.575 15.65C10.925 15.8833 10.2333 16 9.5 16C7.68333 16 6.146 15.371 4.888 14.113C3.62933 12.8543 3 11.3167 3 9.5C3 7.68333 3.62933 6.14567 4.888 4.887C6.146 3.629 7.68333 3 9.5 3C11.3167 3 12.8543 3.629 14.113 4.887C15.371 6.14567 16 7.68333 16 9.5C16 10.2333 15.8833 10.925 15.65 11.575C15.4167 12.225 15.1 12.8 14.7 13.3L21 19.6L19.6 21ZM9.5 14C10.75 14 11.8127 13.5627 12.688 12.688C13.5627 11.8127 14 10.75 14 9.5C14 8.25 13.5627 7.18733 12.688 6.312C11.8127 5.43733 10.75 5 9.5 5C8.25 5 7.18733 5.43733 6.312 6.312C5.43733 7.18733 5 8.25 5 9.5C5 10.75 5.43733 11.8127 6.312 12.688C7.18733 13.5627 8.25 14 9.5 14Z\" fill=\"currentColor\"></path>"],"FirstPage":["0 0 24 24","<path d=\"M6 18V6H8V18H6ZM17 18L11 12L17 6L18.4 7.4L13.8 12L18.4 16.6L17 18Z\" fill=\"currentColor\"></path>"],"LastPage":["0 0 24 24","<path d=\"M6.99998 18L5.59998 16.6L10.2 12L5.59998 7.4L6.99998 6L13 12L6.99998 18ZM16 18V6H18V18H16Z\" fill=\"currentColor\"></path>"],"ArrowBackIos":["0 0 24 24","<path d=\"M14.6 6L16 7.4L11.4 12L16 16.6L14.6 18L8.59998 12L14.6 6Z\" fill=\"currentColor\"></path>"],"ArrowForwardIos":["0 0 24 24","<path d=\"M9.4 18L8 16.6L12.6 12L8 7.4L9.4 6L15.4 12L9.4 18Z\" fill=\"currentColor\"></path>"],"ChevronDown":["0 0 24 24","<path d=\"M7 10L12 15L17 10\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>"]};
   const ico = (n, s = 24) => '<svg class="cd-ico" width="' + s + '" height="' + s + '" viewBox="' + ICO[n][0] + '" fill="none" aria-hidden="true" focusable="false">' + ICO[n][1] + '</svg>';
   /* Flags · MexicoFlag (DS) */
-  const MEXICO_FLAG = '<svg class="cd-num__flag" width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24Z" fill="#F4F5F5"/><path d="M23.9999 11.9997C23.9999 7.24218 21.2312 3.13143 17.2173 1.19043V22.8089C21.2312 20.868 23.9999 16.7572 23.9999 11.9997Z" fill="#A82424"/><path d="M0 11.9997C0 16.7572 2.76867 20.868 6.78262 22.809V1.19043C2.76867 3.13143 0 7.24218 0 11.9997Z" fill="#309C60"/><path d="M8.86963 11.999C8.86963 13.7279 10.2712 15.1295 12.0001 15.1295C13.729 15.1295 15.1305 13.7279 15.1305 11.999V10.9556H8.86963V11.999Z" fill="#309C60"/><path d="M16.1736 9.9136H13.0431C13.0431 9.33732 12.5759 8.87012 11.9996 8.87012C11.4233 8.87012 10.9561 9.33732 10.9561 9.9136H7.82568C7.82568 10.4899 8.32767 10.9571 8.9039 10.9571H8.86917C8.86917 11.5334 9.33633 12.0006 9.91265 12.0006C9.91265 12.5769 10.3798 13.044 10.9561 13.044H13.0431C13.6194 13.044 14.0866 12.5769 14.0866 12.0006C14.6629 12.0006 15.1301 11.5334 15.1301 10.9571H15.0953C15.6716 10.9571 16.1736 10.4899 16.1736 9.9136Z" fill="#FFBD00"/></svg>';
+  const MEXICO_FLAG = '<svg class="cd-num__flag" width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24Z" style="fill:var(--ats-neutral-100)"/><path d="M23.9999 11.9997C23.9999 7.24218 21.2312 3.13143 17.2173 1.19043V22.8089C21.2312 20.868 23.9999 16.7572 23.9999 11.9997Z" style="fill:var(--ats-error-red-200)"/><path d="M0 11.9997C0 16.7572 2.76867 20.868 6.78262 22.809V1.19043C2.76867 3.13143 0 7.24218 0 11.9997Z" style="fill:var(--ats-success-green-200)"/><path d="M8.86963 11.999C8.86963 13.7279 10.2712 15.1295 12.0001 15.1295C13.729 15.1295 15.1305 13.7279 15.1305 11.999V10.9556H8.86963V11.999Z" style="fill:var(--ats-success-green-200)"/><path d="M16.1736 9.9136H13.0431C13.0431 9.33732 12.5759 8.87012 11.9996 8.87012C11.4233 8.87012 10.9561 9.33732 10.9561 9.9136H7.82568C7.82568 10.4899 8.32767 10.9571 8.9039 10.9571H8.86917C8.86917 11.5334 9.33633 12.0006 9.91265 12.0006C9.91265 12.5769 10.3798 13.044 10.9561 13.044H13.0431C13.6194 13.044 14.0866 12.5769 14.0866 12.0006C14.6629 12.0006 15.1301 11.5334 15.1301 10.9571H15.0953C15.6716 10.9571 16.1736 10.4899 16.1736 9.9136Z" style="fill:var(--propuesta-yellow-brand)"/></svg>';
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const wait = (ms) => new Promise((r) => setTimeout(r, Math.max(0, ms)));
 
@@ -25,8 +25,6 @@
   const DAY_MS = 24 * 60 * 60 * 1000;
   const HOUR_MS = 60 * 60 * 1000;
   const PAGE_SIZE = 8;
-  const LATENCY = [600, 900];
-  const SLOW_LATENCY = [2500, 3000];
   const SKELETON_ROWS = 8;
   const ATTENTION_SKELETON_ROWS = 3;
   const TRUNCATE_AT = 26;
@@ -401,12 +399,13 @@
   });
 
   /* ======================= Servicio simulado (accessCodes.service.ts) ======================= */
-  const createService = ({ initialRecords, latency = LATENCY, now = Date.now, random = Math.random, currentAdmin = CURRENT_ADMIN }) => {
+  const createService = ({ initialRecords, slow = false, now = Date.now, random = Math.random, currentAdmin = CURRENT_ADMIN }) => {
     let records = initialRecords.map((r) => ({ ...r }));
     let sequence = records.length;
     const ok = (data) => ({ ok: true, data });
     const fail = (error) => ({ ok: false, error });
-    const delay = () => wait(latency[0] + Math.round(random() * (latency[1] - latency[0])));
+    /* sin latencia simulada: responde al momento. En "carga-lenta" el listado se queda cargando (estado fijo) */
+    const delay = () => Promise.resolve();
     const save = (rec) => { const exists = records.some((i) => i.id === rec.id); records = exists ? records.map((i) => (i.id === rec.id ? rec : i)) : [rec, ...records]; return { ...rec }; };
     const findDuplicate = (company, excludeId) => { const d = findCompanyWithCode(records, company, excludeId); if (!d) return null; return d.field === 'companyName' ? { code: 'duplicateCompany', field: 'companyName' } : { code: 'duplicateRfc', field: 'rfc' }; };
     const issueCode = (base) => {
@@ -437,7 +436,7 @@
     };
     const generateStored = (id) => { const r = records.find((i) => i.id === id); return r ? generateNow(toCompany(r), id) : fail({ code: 'notFound' }); };
     return {
-      list: async () => { await delay(); return records.map((r) => ({ ...r })); },
+      list: async () => { if (slow) await new Promise(() => {}); return records.map((r) => ({ ...r })); },
       generate: async (company, requestId) => { await delay(); return generateNow(company, requestId); },
       resend: async (id) => { await delay(); return resendNow(id); },
       updateContact: async (id, changes) => { await delay(); const r = records.find((i) => i.id === id); if (!r) return fail({ code: 'notFound' }); return ok(save({ ...r, ...changes })); },
@@ -449,7 +448,7 @@
   const params = new URLSearchParams(location.search);
   const escenarioParam = params.get('escenario');
   const scenario = escenarioParam === 'vacio' ? 'empty' : escenarioParam === 'carga-lenta' ? 'slow' : 'data';
-  const service = createService({ initialRecords: scenario === 'empty' ? [] : buildMockAccessCodes(), latency: scenario === 'slow' ? SLOW_LATENCY : LATENCY });
+  const service = createService({ initialRecords: scenario === 'empty' ? [] : buildMockAccessCodes(), slow: scenario === 'slow' });
 
   const S = {
     records: [], isLoading: true, hasLoaded: false, search: '', statuses: [], page: 1,
@@ -542,8 +541,8 @@
   /* ======================= DS: piezas de marcado ======================= */
   const btn = (variant, label, attrs = '', opts = {}) => {
     const iconHtml = opts.icon && !opts.loading ? '<span class="cd-btn__ico">' + opts.icon + '</span>' : '';
-    const spinner = opts.loading ? '<span class="cd-spinner" aria-hidden="true"></span>' : '';
-    return '<button type="' + (opts.type || 'button') + '" class="cd-btn cd-btn--' + variant + (iconHtml ? ' cd-btn--icon' : '') + (opts.loading ? ' is-loading' : '') + '"'
+    const spinner = opts.loading ? '<span class="ds-spinner ds-spinner--sm" aria-hidden="true"></span>' : '';
+    return '<button type="' + (opts.type || 'button') + '" class="ds-btn ds-btn--md ds-btn--' + variant + (iconHtml ? ' cd-btn--icon' : '') + (opts.loading ? ' is-loading' : '') + '"'
       + (opts.loading ? ' disabled aria-busy="true"' : '') + ' ' + attrs + '>' + spinner + iconHtml + '<span class="cd-btn__txt">' + esc(label) + '</span></button>';
   };
   /* loading del Button sin volver a pintarlo: spinner, bloqueado (como en el DS, que lo deshabilita) */
@@ -551,20 +550,22 @@
     if (!b) return;
     b.classList.toggle('is-loading', on); b.disabled = on;
     if (on) b.setAttribute('aria-busy', 'true'); else b.removeAttribute('aria-busy');
-    const sp = b.querySelector('.cd-spinner');
-    if (on && !sp) b.insertAdjacentHTML('afterbegin', '<span class="cd-spinner" aria-hidden="true"></span>');
+    const sp = b.querySelector('.ds-spinner');
+    if (on && !sp) b.insertAdjacentHTML('afterbegin', '<span class="ds-spinner ds-spinner--sm" aria-hidden="true"></span>');
     if (!on && sp) sp.remove();
   };
-  const chip = (status) => { const m = STATUS_META[status]; return '<span class="cd-chip cd-chip--' + m.variant + '">' + esc(m.label) + '</span>'; };
+  /* DS Tag (status chip) */
+  const TAG_TONE = { 'status-green': 'verde', 'status-yellow': 'amarillo', 'status-red': 'rojo', 'status-blue': 'azul', 'status-gray': 'gris' };
+  const chip = (status) => { const m = STATUS_META[status]; return '<span class="ds-tag ds-tag--' + (TAG_TONE[m.variant] || 'gris') + '">' + esc(m.label) + '</span>'; };
   const checkbox = (checked, ariaLabel, attrs = '') => '<span class="ac-selbox" data-stop><label class="cd-check"><input type="checkbox"' + (checked ? ' checked' : '') + ' aria-label="' + esc(ariaLabel) + '" ' + attrs + ' />'
     + '<span class="cd-check__box"><svg class="cd-check__tick" width="12" height="10" viewBox="0 0 12 10" fill="none" aria-hidden="true"><path d="M1 5L4.5 8.5L11 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
     + '<svg class="cd-check__dash" width="12" height="2" viewBox="0 0 12 2" fill="none" aria-hidden="true"><path d="M1 1H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span></label></span>';
   const codeGroups = (code, compact) => '<span class="ac-code' + (compact ? ' ac-code--compact' : '') + '" role="img" aria-label="' + esc(DISPLAY_T.codeAriaLabel + ' ' + normalizeAccessCode(code)) + '">'
     + splitAccessCode(code).map((g) => '<span aria-hidden="true">' + esc(g) + '</span>').join('') + '</span>';
-  const alertBox = (variant, title, text, action = '') => '<div class="cd-alert cd-alert--' + variant + '"><div class="cd-alert__wrap"><span class="cd-alert__ico">'
-    + ico(variant === 'warning' ? 'WarningFilled' : 'EstadosError', 24) + '</span><div class="cd-alert__content">'
-    + (title ? '<p class="cd-alert__title">' + esc(title) + '</p>' : '') + (text ? '<p class="cd-alert__text">' + esc(text) + '</p>' : '') + '</div></div>'
-    + (action ? '<div class="cd-alert__action">' + action + '</div>' : '') + '</div>';
+  /* DS Alert */
+  const alertBox = (variant, title, text, action = '') => '<div class="ds-alert ds-alert--' + (variant === 'warning' ? 'warning' : 'error') + '"><span class="ds-alert__icon" aria-hidden="true">!</span><div class="ds-alert__body-wrap">'
+    + (title ? '<p class="ds-alert__title">' + esc(title) + '</p>' : '') + (text ? '<p class="ds-alert__body">' + esc(text) + '</p>' : '') + '</div>'
+    + (action ? '<div class="ds-alert__actions">' + action + '</div>' : '') + '</div>';
   const crumbSep = '<span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt="" /></span>';
 
   /* copiar (useCopyAccessCode): "Copiado" durante 2 s */
@@ -579,7 +580,7 @@
   const copyIconButton = (r) => {
     const key = 'copy-' + r.id; const done = copied.has(key);
     return '<span class="ac-inline" data-stop><button type="button" class="cd-ibtn" aria-label="' + esc(T.copyAriaLabel) + '" data-copy="' + esc(r.code) + '" data-k="' + key + '">'
-      + (done ? '<span style="color:#309c60;display:inline-flex">' + ico('Check', 20) + '</span>' : ico('ContentCopy', 20)) + '</button>'
+      + (done ? '<span style="color:var(--ats-success-green-200);display:inline-flex">' + ico('Check', 20) + '</span>' : ico('ContentCopy', 20)) + '</button>'
       + '<span aria-live="polite">' + (done ? '<span class="ac-copied">' + esc(T.copied) + '</span>' : '') + '</span></span>';
   };
 
@@ -965,10 +966,10 @@
     closeModal(true);
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const wrap = document.createElement('div');
-    wrap.className = 'cd-overlay'; wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-modal', 'true'); wrap.setAttribute('aria-labelledby', 'acModalTitle');
-    wrap.innerHTML = '<div class="cd-modal"><div class="cd-modal__head"><h3 class="cd-modal__title" id="acModalTitle">' + esc(title) + '</h3>'
-      + '<button type="button" class="cd-modal__x" aria-label="Cerrar" data-mclose>' + ico('Close', 24) + '</button></div>'
-      + '<div class="cd-modal__body">' + bodyHtml + '</div><div class="cd-modal__foot">' + footHtml + '</div></div>';
+    wrap.className = 'cd-overlay ds-modal-overlay'; wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-modal', 'true'); wrap.setAttribute('aria-labelledby', 'acModalTitle');
+    wrap.innerHTML = '<div class="ds-modal cd-modal"><div class="ds-modal__header"><h3 class="ds-modal__title" id="acModalTitle">' + esc(title) + '</h3>'
+      + '<button type="button" class="ds-btn ds-btn--tertiary ds-btn--icon-md cd-modal__x" aria-label="Cerrar" data-mclose>' + ico('Close', 24) + '</button></div>'
+      + '<div class="ds-modal__body">' + bodyHtml + '</div><div class="ds-modal__footer">' + footHtml + '</div></div>';
     modalRoot.appendChild(wrap);
     const prevOverflow = document.body.style.overflow; document.body.style.overflow = 'hidden';
     const keyHandler = (e) => {
@@ -1073,7 +1074,7 @@
   tip.className = 'cd-tip'; tip.setAttribute('role', 'tooltip'); tip.id = 'acTip'; tip.hidden = true;
   document.body.appendChild(tip);
   const showTip = (anchor) => {
-    tip.innerHTML = esc(anchor.dataset.tip) + '<svg class="cd-tip__arrow" viewBox="0 0 16 8" width="16" height="8" fill="none" aria-hidden="true"><path d="M0 0 L16 0 L8 8 Z" fill="#0D166B"/></svg>';
+    tip.innerHTML = esc(anchor.dataset.tip) + '<svg class="cd-tip__arrow" viewBox="0 0 16 8" width="16" height="8" fill="none" aria-hidden="true"><path d="M0 0 L16 0 L8 8 Z" style="fill:var(--ats-primary-400)"/></svg>';
     tip.hidden = false;
     const a = anchor.getBoundingClientRect(); const w = tip.offsetWidth; const h = tip.offsetHeight;
     let left = a.left + a.width / 2 - w / 2; left = Math.max(8, Math.min(left, innerWidth - w - 8));
@@ -1093,12 +1094,12 @@
     /* ToastProvider: si ya hay uno igual, se quita antes de mostrar el nuevo */
     [...toastRoot.children].forEach((t) => { if (t.dataset.type === type && t.dataset.msg === message) t.remove(); });
     const el = document.createElement('div');
-    el.className = 'cd-toast cd-toast--' + type; el.dataset.type = type; el.dataset.msg = message;
+    el.className = 'ds-toast ds-toast--' + type; el.dataset.type = type; el.dataset.msg = message;
     el.setAttribute('role', type === 'error' ? 'alert' : 'status');
-    el.innerHTML = '<div class="cd-toast__row"><span class="cd-toast__ico">' + ico(TOAST_ICON[type], 20) + '</span><p class="cd-toast__msg">' + esc(message) + '</p></div>'
-      + '<button type="button" class="cd-toast__x" aria-label="Cerrar aviso">' + ico('Close', 24) + '</button>'
-      + '<span class="cd-toast__timer" aria-hidden="true" style="animation-duration:' + duration + 'ms"></span>';
-    el.querySelector('.cd-toast__x').addEventListener('click', () => el.remove());
+    el.innerHTML = '<span class="ds-toast__icon">' + ico(TOAST_ICON[type], 24) + '</span><div class="ds-toast__body-wrap"><p class="ds-toast__body">' + esc(message) + '</p></div>'
+      + '<button type="button" class="ds-toast__close" aria-label="Cerrar aviso">' + ico('Close', 20) + '</button>'
+      + '<span class="ds-toast__timer" aria-hidden="true" style="animation-duration:' + duration + 'ms"></span>';
+    el.querySelector('.ds-toast__close').addEventListener('click', () => el.remove());
     toastRoot.appendChild(el);
     setTimeout(() => el.remove(), duration);
   }
