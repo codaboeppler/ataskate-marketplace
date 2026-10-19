@@ -142,7 +142,7 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
   display: flex; gap: var(--sp-4); padding: 0 var(--sp-8);
   font-size: 14px; line-height: 16.8px; font-weight: 500; color: var(--text-title); /* TextInput del DS: 14 a 500 */
 }
-.plz .ds-field__optional { color: var(--ats-neutral-500); }
+.plz .ds-field__optional { color: var(--ats-neutral-500); line-height: 1.2; } /* optionalTagStyles: line-height 1.2 desde af3a1b226 */
 .plz .ds-input, .plz .ds-select {
   width: 100%; height: 40px; padding: var(--sp-8) var(--sp-12);
   border: 1px solid var(--border-default); border-radius: var(--r-pill);
@@ -240,6 +240,8 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
    ========================================================================== */
 .plz .ds-switch { position: relative; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; line-height: 16.8px; letter-spacing: .3px; color: var(--text-title); }
 .plz .ds-switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+/* etiqueta a la derecha del Switch (switchLabelStyles): 14 a 500 */
+.plz .ds-switch > span:not(.ds-switch__track) { font-weight: 500; }
 .plz .ds-switch__track {
   position: relative; width: 48px; height: 24px; border-radius: var(--r-pill); flex-shrink: 0;
   background: var(--ats-neutral-50); box-shadow: inset 0 0 4px color-mix(in srgb, var(--ats-black) 10%, transparent); transition: background-color .2s ease-in-out;
@@ -764,6 +766,8 @@ body:not(.show-notes) .plz .design-notes { display: none; }
 .plz .view-field__value { font-size: 16px; line-height: 19.2px; font-weight: 400; letter-spacing: .3px; color: var(--text-title); }
 /* FieldsGrid: 3 columnas, 24 entre filas y 16 entre columnas */
 .plz .fields-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-24) var(--sp-16); }
+/* WideField (50bac0a4d): Vigencia ocupa dos columnas para que no se parta */
+.plz .wide-field { grid-column: span 2; min-width: 0; }
 .plz .chip-row { display: flex; flex-wrap: wrap; gap: var(--sp-8); }
 .plz .seg-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-24); }
 .plz .seg-group { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-8); min-width: 0; }
@@ -792,31 +796,41 @@ body:not(.show-notes) .plz .design-notes { display: none; }
 .plz .row2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: var(--sp-16); }
 .plz .inline-row { display: flex; align-items: center; flex-wrap: wrap; gap: var(--sp-8); }
 .plz .narrow { width: 256px; max-width: 100%; }
-/* DetailsRow: Nombre (2fr) · Inicio (1fr) · [Fin (1fr)] · acción de fin de vigencia */
-.plz .details-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto; align-items: start; gap: var(--sp-16); }
-.plz .details-row--fin { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) auto; }
-/* "Fin de vigencia" alineado con el input (24) y la X de 28 centrada con el input (28) */
-.plz .end-add { display: flex; align-items: flex-start; padding-top: 24px; }
-.plz .end-row__x { display: flex; padding-top: 28px; }
-/* AlignToInput: control sin etiqueta (radios, checkbox, switch) a la altura del input de 40 de su fila */
-.plz .align-input { display: flex; align-items: center; flex-wrap: wrap; gap: var(--sp-8); min-height: 40px; margin-top: 20px; min-width: 0; }
-.plz .align-input > .ds-switch { flex-shrink: 0; }
-.plz .align-input:has(> .ds-switch) { flex-wrap: nowrap; }
+/* DetailsRow (50bac0a4d): Nombre (2fr) · Inicio (1fr) · Fin opcional (1fr), siempre visible.
+   Con el menú fijo la columna principal mide 652 a 1440 y cada fecha quedaba en 155: "Fin de vigencia (opcional)" se partía
+   y bajaba su input. Las fechas toman 190 como mínimo (en React miden 210 sin menú); de 1225 a 1399 px de ventana
+   (principal de 437 a 611) el nombre va arriba y las dos fechas debajo. */
+.plz .details-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(190px, 1fr) minmax(190px, 1fr); align-items: start; gap: var(--sp-16); }
+/* Condiciones (50bac0a4d): Groups con 32 entre grupos y 16 dentro; GroupsRow sobre la rejilla de 3 con 32 entre filas */
+.plz .groups { display: flex; flex-direction: column; gap: var(--sp-32); width: 100%; }
+.plz .group { display: flex; flex-direction: column; gap: var(--sp-16); width: 100%; min-width: 0; }
+.plz .groups-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: var(--sp-32) var(--sp-16); }
+/* SpanTwo: Interés base en las columnas 1–2; con tasa dinámica, las 3 */
+.plz .span-two { grid-column: span 2; min-width: 0; }
+.plz .span-two--full { grid-column: 1 / -1; }
+.plz .refrendos-campo:empty { display: none; }
+/* MovingGroup: "Refrendos" entra con un desliz corto (.2s ease-in-out, la duración de la guía; el DS no tiene token de movimiento) */
+@keyframes plz-move-in { from { opacity: 0; transform: translateY(var(--sp-8)); } to { opacity: 1; transform: none; } }
+.plz .moving-group.is-moving { animation: plz-move-in .2s ease-in-out; }
+@media (prefers-reduced-motion: reduce) { .plz .moving-group.is-moving { animation: none; } }
+/* RadioButtonLista horizontal: fila con 16 entre opciones */
+.plz .radio-row { display: flex; flex-wrap: wrap; gap: var(--sp-16); }
 /* con un switch como acción, el título se parte antes que bajar el switch a otra línea */
 .plz .fcard__head:has(> .ds-switch) { flex-wrap: nowrap; }
 .plz .info-trigger { display: inline-flex; align-items: center; color: var(--text-placeholder); cursor: help; border-radius: 50%; }
 .plz .info-trigger svg { width: 16px; height: 16px; }
 .plz .info-trigger:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
+/* ayuda de "Interés base" (50bac0a4d): HelpIcon de 20 en primary200 */
+.plz .info-trigger--help { color: var(--ats-primary-200); }
+.plz .info-trigger--help svg { width: 20px; height: 20px; }
 /* Cliente objetivo y Refinanciación lado a lado mientras ambos están apagados (PairRow) */
 .plz .form-pair { display: flex; flex-direction: column; gap: var(--sp-16); min-width: 0; }
 .plz .form-pair.is-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
 /* DobleField: se sube 4 px para alinear su campo con los TextInput de la misma fila */
 .plz .doble-field { margin-top: -4px; min-width: 0; }
 .plz .switch-row { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-16); }
-.plz .switch-label { cursor: pointer; font-size: 16px; line-height: 19.2px; letter-spacing: .3px; color: var(--text-body); }
 .plz .age-row { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: start; gap: var(--sp-8); }
 .plz .age-row__sep { padding-top: var(--sp-8); }
-.plz .t-caption.field-alert { color: var(--ats-error-red-300); } /* PreviewFieldError: caption en colors.errorTitle */
 .plz .ds-table--rangos td { padding-top: var(--sp-8); padding-bottom: var(--sp-8); }
 .plz .ds-table--rangos { min-width: 420px; }
 .plz .ds-table--amort { min-width: 640px; } /* AMORTIZATION_MIN_WIDTH: hace scroll dentro del modal */
@@ -840,18 +854,12 @@ body:not(.show-notes) .plz .design-notes { display: none; }
 /* Simulación del plazo (SimulationTable real) */
 .plz .sim { display: flex; flex-direction: column; gap: var(--sp-16); padding: var(--sp-24); box-sizing: border-box; }
 .plz .sim__title { display: flex; flex-direction: column; gap: var(--sp-4); }
-.plz .minmax { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-12); padding: var(--sp-12) var(--sp-16); border-radius: var(--r-sm); background: var(--ats-neutral-50); }
-.plz .minmax__item { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
-.plz .minmax__value { font-size: 16px; line-height: 19.2px; font-weight: 600; letter-spacing: .3px; color: var(--text-title); overflow-wrap: anywhere; }
+/* Mínimo/Máximo y el resumen son Table neutral del DS (50bac0a4d); el total va en su propia tabla con la fila seleccionada */
+.plz .ds-table td.cell-right { text-align: right; }
+.plz .ds-table tbody tr.is-selected { background: var(--ats-primary-50); } /* selectedRowStyles: colors.purple50 */
 .plz .sim__simulate { display: flex; flex-direction: column; gap: var(--sp-8); }
 .plz .rate-line { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-8); padding: 0 var(--sp-8); }
-.plz .sim__summary { display: flex; flex-direction: column; }
-.plz .sim__line { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-8); padding: var(--sp-12) var(--sp-8); border-bottom: 1px solid var(--border-default); }
-.plz .sim__line > span:last-child { font-size: 16px; line-height: 19.2px; letter-spacing: .3px; color: var(--text-title); text-align: right; }
-.plz .sim__total {
-  display: flex; align-items: center; justify-content: space-between; gap: var(--sp-8); margin-top: var(--sp-8); padding: var(--sp-12) var(--sp-16);
-  border-radius: var(--r-sm); background: var(--ats-primary-50); font-size: 16px; line-height: 19.2px; font-weight: 600; letter-spacing: .3px; color: var(--text-title);
-}
+.plz .sim__summary { display: flex; flex-direction: column; gap: var(--sp-4); }
 
 /* ==========================================================================
    Herramientas de la maqueta (no son producto)
@@ -893,14 +901,17 @@ body:not(.show-notes) .plz .design-note { display: none; }
 @media (max-width: 1424px) {
   .plz .pair-row { grid-template-columns: minmax(0, 1fr); }
 }
+@media (min-width: 1225px) and (max-width: 1399px) {
+  .plz .details-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .plz .details-row > :first-child { grid-column: 1 / -1; }
+}
 @media (max-width: 1224px) {
   /* formulario: su corte de 900 px de ventana (≤852 útiles) → FormPage, filas del formulario, PairRow e intereses en 1 columna */
   .plz .form-page { grid-template-columns: minmax(0, 1fr); }
   .plz .form-sim { position: static; margin-top: 0; }
-  .plz .form-main .row2, .plz .form-main .row3, .plz .details-row, .plz .details-row--fin,
+  .plz .form-main .row2, .plz .form-main .row3, .plz .details-row, .plz .form-main .groups-row,
   .plz .form-main .condition__body, .plz .interest-list, .plz .form-pair.is-pair { grid-template-columns: minmax(0, 1fr); }
-  .plz .align-input { margin-top: 0; }
-  .plz .details-row .end-add, .plz .details-row .end-row__x { padding-top: 0; }
+  .plz .span-two { grid-column: auto; } /* SpanTwo en ≤ 900 de React: vuelve a una columna */
   .plz .detail-layout { grid-template-columns: minmax(0, 1fr); }
   .plz .fields-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -917,10 +928,11 @@ body:not(.show-notes) .plz .design-note { display: none; }
   .plz .tree-panel__rail { writing-mode: horizontal-tb; transform: none; justify-content: flex-start; }
 }
 @media (max-width: 700px), (min-width: 901px) and (max-width: 1024px) {
-  .plz .row2, .plz .row3, .plz .condition__body { grid-template-columns: minmax(0, 1fr); }
+  .plz .row2, .plz .row3, .plz .groups-row, .plz .condition__body { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 560px) {
   .plz .fields-grid, .plz .seg-columns { grid-template-columns: minmax(0, 1fr); }
+  .plz .wide-field { grid-column: auto; }
 }
 
 /* ===== Componentes del DS (limpieza 2026-10-16) ===== */
