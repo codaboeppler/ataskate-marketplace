@@ -91,7 +91,7 @@
   const reiniciar = (forzarMuestra) => {
     const c = forzarMuestra ? null : leerCarrito();
     Object.assign(st, {
-      carrito: c || JSON.parse(JSON.stringify(MUESTRA)),
+      carrito: c || ((m) => { const n = Number(qs.get('arts')); if (n > 0) m.items = m.items.slice(0, n); return m; })(JSON.parse(JSON.stringify(MUESTRA))),
       muestra: !c,
       pagos: [],
       abierto: null,
@@ -147,9 +147,8 @@
   };
 
   /* ---------- pantalla de cobro ---------- */
-  const crumbs = (actual) => `<nav aria-label="Breadcrumb" class="ds-breadcrumb"><ol class="pos-crumbs">
-      <li><a href="../home/" class="ds-breadcrumb__link">Inicio</a><span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt="" /></span></li>
-      <li><span class="ds-breadcrumb__current" aria-current="page">${actual}</span></li></ol></nav>`;
+  // sin breadcrumb en la pasarela (decisión de producto): es un paso del cobro, no una sección del menú
+  const crumbs = () => '';
 
   const imgArt = (it) => it.imagen ? `<img src="${esc(it.imagen)}" alt="" />` : `<span aria-hidden="true">${esc(iniciales(it.titulo))}</span>`;
 
@@ -223,7 +222,7 @@
     const botones = varias
       ? `<button class="ds-btn ds-btn--secondary ds-btn--md pas-btn-ico" type="button" data-accion="modo" data-modo="una"><img src="${A('tienda')}" alt="" />Enviar a una dirección</button>`
       : `<button class="ds-btn ds-btn--secondary ds-btn--md pas-btn-ico" type="button" data-accion="nueva-dir"><img src="${A('mas')}" alt="" />Dirección</button>
-         ${arts.length > 1 ? `<button class="ds-btn ds-btn--secondary ds-btn--md pas-btn-ico" type="button" data-accion="modo" data-modo="varias"><img src="${A('camion')}" alt="" />Enviar a varias direcciones</button>` : ''}`;
+         ${arts.length > 1 ? `<button class="ds-btn ds-btn--secondary ds-btn--md pas-btn-ico" type="button" data-accion="modo" data-modo="varias"><img src="${A('camion')}" alt="" />Varias direcciones</button>` : ''}`;
     let cuerpo;
     if (varias) {
       cuerpo = arts.map((it) => {
@@ -270,30 +269,45 @@
     const porMetodo = [];
     st.pagos.slice().reverse().forEach((p) => { const f = porMetodo.find((x) => x[0] === p.metodo); if (f) f[1] += p.monto; else porMetodo.push([p.metodo, p.monto]); });
     const negativo = c.total < 0;
+    const dato = (t, d, cls) => `<div class="rc-dato${cls ? ' ' + cls : ''}"><dt>${t}</dt><dd>${d}</dd></div>`;
     return `<aside class="pas-aside" aria-label="Resumen del cobro">
-      <div class="pas-card">
-        <div class="pas-cliente"><span class="ds-avatar" aria-hidden="true">${esc(iniciales(cli ? cli.nombre : 'Venta público'))}</span>
-          <span class="pas-cliente__txt"><b>${esc(cli ? cli.nombre : 'Venta al público')}</b><small>${cli ? 'Buen cliente' : 'Sin cliente asignado'}</small></span></div>
-        <div class="pas-monto-card" aria-live="polite"><p>${negativo ? 'Monto a entregar al cliente' : 'Monto a recibir de cliente'}</p><strong id="montoRecibir">${mxn(Math.max(0, c.falta))}</strong></div>
-        ${st.pagos.length ? `<div class="pas-desglose"><p class="pas-desglose__title">Métodos de pago</p><dl>
-            ${porMetodo.map(([m, v]) => `<div class="pas-fila pas-fila--cuerpo"><dt>${nombreMetodo(m)}</dt><dd>${mxn(r2(v))}</dd></div>`).join('')}
-            <hr class="pas-sep" />
-            ${c.falta > 0 ? `<div class="pas-fila pas-fila--falta"><dt>Asignación faltante:</dt><dd>${mxn(c.falta)}</dd></div>` : `<div class="pas-fila pas-fila--pagado"><dt>Total pagado:</dt><dd>${mxn(c.pagado)}MXN</dd></div>`}
-          </dl></div>` : ''}
-        ${c.cambio > 0 ? `<div class="pas-desglose"><p class="pas-desglose__title">Cambio a entregar</p><dl><div class="pas-fila pas-fila--cuerpo"><dt>Efectivo</dt><dd>${mxn(c.cambio)}</dd></div></dl></div>` : ''}
-        ${resumen(c)}
-        <button class="ds-btn ${c.falta <= 0 ? 'ds-btn--primary' : 'ds-btn--secondary'} ds-btn--md pas-procesar" type="button" data-accion="procesar" id="btnProcesar">Procesar</button>
-        ${st.pagos.length ? `<button class="ds-btn ds-btn--tertiary ds-btn--md pas-cancelar" type="button" data-accion="cancelar-cobro">Cancelar</button>` : ''}
-        <div class="pas-seguro"><span><img src="${A('admin-panel')}" alt="" />Operación protegida</span><i aria-hidden="true"></i><span><img src="${A('edificio')}" alt="" />Sucursal Centro · Caja 03</span></div>
-      </div>
+      <section class="rc-card rc-resumen">
+        <div class="rc-cli">
+          <span class="ds-avatar" aria-hidden="true">${esc(iniciales(cli ? cli.nombre : 'Venta público'))}</span>
+          <span class="rc-cli__txt"><b>${esc(cli ? cli.nombre : 'Venta al público')}</b><small>${cli ? 'Buen cliente' : 'Sin cliente asignado'}</small></span>
+        </div>
+        <div class="rc-bloque">
+          <div class="rc-porcobrar" aria-live="polite"><span>${negativo ? 'Monto a entregar al cliente' : 'Monto a recibir de cliente'}</span><strong id="montoRecibir">${mxn(Math.max(0, c.falta))}</strong></div>
+          ${st.pagos.length ? `<dl class="rc-datos">
+            ${porMetodo.map(([m, v]) => dato(nombreMetodo(m), mxn(r2(v)))).join('')}
+            ${c.falta > 0 ? dato('Asignación faltante', mxn(c.falta), 'rc-dato--falta') : dato('Total pagado', mxn(c.pagado), 'rc-dato--ok')}
+            ${c.cambio > 0 ? dato('Cambio a entregar', mxn(c.cambio), 'rc-dato--fuerte') : ''}
+          </dl>` : ''}
+        </div>
+        <div class="rc-bloque">
+          <h2 class="rc-bloque__t">Resumen del cobro</h2>
+          <dl class="rc-datos">
+            <div class="rc-dato"><dt><button class="pas-toggle rc-toggle" type="button" data-accion="desglose" aria-expanded="${st.desglose}">Subtotal (${c.n} ${c.n === 1 ? 'artículo' : 'artículos'})<img src="${A(st.desglose ? 'droplet-down' : 'droplet-up')}" alt="" /></button></dt><dd>${mxn(c.subtotal)}</dd></div>
+            ${c.porTipo.map(([e, v]) => `<div class="rc-dato rc-dato--sub" data-desglose ${st.desglose ? '' : 'hidden'}><dt>${esc(e)}</dt><dd>${mxn(v)}</dd></div>`).join('')}
+            ${dato('IVA 16%', mxn(c.iva))}
+            ${dato('IEPS', mxn(c.ieps))}
+            ${dato('Envío', mxn(c.envio))}
+          </dl>
+          <div class="rc-total"><span>Total</span><strong>${mxn(c.total)} <small>MXN</small></strong></div>
+        </div>
+        <div class="rc-bloque rc-bloque--acciones">
+          <button class="ds-btn ${c.falta <= 0 ? 'ds-btn--primary' : 'ds-btn--secondary'} ds-btn--md pas-procesar" type="button" data-accion="procesar" id="btnProcesar">Procesar</button>
+          ${st.pagos.length ? `<button class="ds-btn ds-btn--tertiary ds-btn--md pas-cancelar" type="button" data-accion="cancelar-cobro">Cancelar</button>` : ''}
+          <div class="pas-seguro"><span><img src="${A('admin-panel')}" alt="" />Operación protegida</span><i aria-hidden="true"></i><span><img src="${A('edificio')}" alt="" />Sucursal Centro · Caja 03</span></div>
+        </div>
+      </section>
     </aside>`;
   };
 
   const vistaCobro = () => {
     const c = cuentas();
     return `${crumbs('Pasarela de pago')}
-      <div class="pas-head"><div class="pas-head__row"><h1 class="pas-title">Pasarela de pago</h1>${st.muestra ? '<span class="ds-tag ds-tag--amarillo pas-muestra" title="El carrito estaba vacío: se cargó un ejemplo para revisar la pasarela">Carrito de muestra</span>' : ''}</div>
-        <p class="pas-sub">Confirma el monto y elige cómo se entrega al cliente.</p></div>
+      <div class="pas-head"><div class="pas-head__row"><h1 class="pas-title">Pasarela de pago</h1>${st.muestra ? '<span class="ds-tag ds-tag--amarillo pas-muestra" title="El carrito estaba vacío: se cargó un ejemplo para revisar la pasarela">Carrito de muestra</span>' : ''}</div></div>
       <div class="pas-layout">
         <div class="pas-col">
           <section class="pas-card" aria-labelledby="tCarrito">
@@ -321,45 +335,76 @@
     const r = st.recibo;
     const cli = r.cliente;
     const entregaDe = (it) => {
-      if (!SE_ENTREGA.includes(norm(it.tipo))) return it.contrato ? 'Contrato: ' + it.contrato : (it.detalle || etiqueta(it.tipo));
+      if (!SE_ENTREGA.includes(norm(it.tipo))) return it.contrato ? 'Contrato ' + it.contrato : (it.detalle || etiqueta(it.tipo));
       const o = r.entrega[it.id];
-      return 'Entregado: ' + (o === 'sucursal' || !o ? 'En sucursal' : 'A domicilio');
+      return 'Entrega ' + (o === 'sucursal' || !o ? 'en sucursal' : 'a domicilio');
     };
-    return `${crumbs('Transacción registrada')}
-      <div class="pas-recibo">
-        <div class="pas-recibo__head"><span class="pas-check"><img src="${A('check')}" alt="" /></span>
-          <h1 tabindex="-1" id="tRecibo">Transacción registrada</h1>
-          <p>Folio de la transacción: ${r.folio} · ${r.fecha}</p>
-          <p>Sucursal: ${esc(r.sucursal)} · Caja: Caja 03</p></div>
-        <div class="pas-recibo__top">
-          <div class="pas-card pas-recibo__cli">
-            <div class="pas-cliente"><span class="ds-avatar" aria-hidden="true">${esc(iniciales(cli ? cli.nombre : 'Venta público'))}</span>
-              <span class="pas-cliente__txt"><b>${esc(cli ? cli.nombre : 'Venta al público')}</b>${cli ? `<small>Score cliente: <span class="ds-tag ds-tag--azul">Bueno</span><span class="ds-tag ds-tag--azul pas-verif"><img src="${A('verificado')}" alt="" />Cuenta Marketplace</span></small>` : '<small>Sin cliente asignado</small>'}</span></div>
-            ${cli ? `<a class="ds-btn ds-btn--secondary ds-btn--md pas-btn-ico pas-btn-ico--der" href="../clientes/">Ver perfil<img src="${A('flecha-der')}" alt="" /></a>` : ''}
-          </div>
-          <div class="pas-monto-card"><p>${r.total < 0 ? 'Monto entregado al cliente' : 'Monto recibido del cliente'}</p><strong>${mxn(Math.abs(r.total))}</strong></div>
+    const sale = r.total < 0;
+    const pagado = r2(r.pagos.reduce((s, p) => s + p.monto, 0));
+    const fila = (ico, t, d, m) => `<li class="rc-fila">${ico}<span class="rc-fila__txt"><b>${t}</b><small>${d}</small></span><span class="rc-fila__monto">${m}</span></li>`;
+    const arts = r.items.map((it) => fila(`<span class="pas-art__img rc-fila__img">${imgArt(it)}</span>`,
+      esc(etiqueta(it.tipo) === 'Compra' ? it.titulo : etiqueta(it.tipo) + ' · ' + it.titulo), esc(entregaDe(it)), mxn(it.monto))).join('');
+    const pagos = r.pagos.map((p) => fila(`<span class="rc-fila__ico"><img src="${A(p.metodo)}" alt="" /></span>`,
+      nombreMetodo(p.metodo), esc(p.detalle), mxn(p.monto))).join('');
+    const dato = (t, d) => `<div class="rc-dato"><dt>${t}</dt><dd>${d}</dd></div>`;
+    return `<div class="rc">
+      <header class="rc-hero">
+        <div class="rc-anim" aria-hidden="true">
+          <img class="rc-anim__jag" src="assets/jaguar-atrapa.webp?v=1" alt="" width="96" height="140" />
+          <span class="rc-anim__check"><svg viewBox="0 0 32 32" width="32" height="32"><circle cx="16" cy="16" r="15" /><path d="M9.5 16.5l4.2 4.2 8.8-9" /></svg></span>
         </div>
-        <section class="pas-card" aria-label="Resumen de transacción">
-          <table class="pas-tabla"><thead><tr><th scope="col">Resumen de transacción</th><th scope="col">Cantidad</th><th scope="col">Precio</th></tr></thead>
-            <tbody>${r.items.map((it) => `<tr><td><div class="pas-tabla__art"><span class="pas-art__img">${imgArt(it)}</span><span><b>${esc(etiqueta(it.tipo) === 'Compra' ? it.titulo : etiqueta(it.tipo) + ' · ' + it.titulo)}</b><small>${esc(entregaDe(it))}</small></span></div></td><td>1</td><td>${mxn(it.monto)}</td></tr>`).join('')}</tbody></table>
-          <div class="pas-recibo__totales"><dl class="pas-pagos">
-            <div class="pas-fila"><dt>Subtotal (${r.c.n} art.)</dt><dd>${mxn(r.c.subtotal)}</dd></div>
-            <div class="pas-fila"><dt>IVA 16%</dt><dd>${mxn(r.c.iva)}</dd></div>
-            <div class="pas-fila"><dt>Impuestos adicionales (IEPS)</dt><dd>${mxn(r.c.ieps)}</dd></div>
-            <div class="pas-fila"><dt>Envío</dt><dd>${mxn(r.c.envio)}</dd></div>
-            <hr class="pas-sep" />
-            ${r.pagos.map((p) => `<div class="pas-fila"><dt>${nombreMetodo(p.metodo)} · ${esc(p.detalle)}</dt><dd>${mxn(p.monto)}</dd></div>`).join('')}
-            ${r.c.cambio > 0 ? `<div class="pas-fila"><dt>Cambio entregado</dt><dd>${mxn(r.c.cambio)}</dd></div>` : ''}
-            <hr class="pas-sep" />
-            <div class="pas-fila pas-fila--total"><dt>Total</dt><dd>${mxn(r.c.total)} <small>MXN</small></dd></div>
-          </dl></div>
-          <div class="pas-recibo__acciones">
-            <button class="ds-btn ds-btn--secondary ds-btn--md pas-btn-ico" type="button" data-accion="compartir"><img src="${A('recibo')}" alt="" />Compartir recibo</button>
-            <button class="ds-btn ds-btn--primary ds-btn--md pas-btn-ico" type="button" data-accion="imprimir"><img src="${A('imprimir')}" alt="" />Imprimir</button>
-          </div>
-        </section>
-        <a class="ds-btn ds-btn--tertiary ds-btn--md pas-recibo__inicio" href="../home/">Volver al inicio</a>
-      </div>`;
+        <h1 tabindex="-1" id="tRecibo">Transacción registrada</h1>
+        <p>${sale ? 'Se entregaron' : 'Se cobraron'} <b>${mxn(Math.abs(r.total))} MXN</b>${cli ? (sale ? ' a ' : ' de ') + '<b>' + esc(cli.nombre) + '</b>' : ' en venta al público'}</p>
+        <div class="rc-hero__acciones">
+          <button class="ds-btn ds-btn--secondary ds-btn--md pas-btn-ico" type="button" data-accion="compartir"><img src="${A('recibo')}" alt="" />Compartir recibo</button>
+          <button class="ds-btn ds-btn--primary ds-btn--md pas-btn-ico" type="button" data-accion="imprimir"><img src="${A('imprimir')}" alt="" />Imprimir</button>
+        </div>
+      </header>
+      <div class="rc-grid">
+        <div class="rc-col">
+          <section class="rc-card" aria-labelledby="tArts">
+            <div class="rc-card__head"><h2 id="tArts">Artículos</h2><span class="ds-tag ds-tag--azul">${r.items.length} ${r.items.length === 1 ? 'artículo' : 'artículos'}</span></div>
+            <ul class="rc-lista">${arts}</ul>
+          </section>
+          <section class="rc-card" aria-labelledby="tPagos">
+            <div class="rc-card__head"><h2 id="tPagos">Pagos</h2><span class="ds-tag ds-tag--verde">Pagado completo</span></div>
+            <ul class="rc-lista">${pagos}</ul>
+            <dl class="rc-pie">
+              <div class="rc-dato rc-dato--fuerte"><dt>Total pagado</dt><dd>${mxn(pagado)}</dd></div>
+              ${r.c.cambio > 0 ? dato('Cambio entregado', mxn(r.c.cambio)) : ''}
+            </dl>
+          </section>
+        </div>
+        <aside class="rc-col" aria-label="Resumen del cobro">
+          <section class="rc-card rc-resumen">
+            <div class="rc-cli">
+              <span class="ds-avatar" aria-hidden="true">${esc(iniciales(cli ? cli.nombre : 'Venta público'))}</span>
+              <span class="rc-cli__txt"><b>${esc(cli ? cli.nombre : 'Venta al público')}</b><small>${cli ? 'Buen cliente · Cuenta Marketplace' : 'Sin cliente asignado'}</small></span>
+              ${cli ? `<a class="rc-cli__link" href="../clientes/">Ver perfil</a>` : ''}
+            </div>
+            <div class="rc-bloque" aria-labelledby="tCobro">
+              <h2 class="rc-bloque__t" id="tCobro">Resumen del cobro</h2>
+              <dl class="rc-datos">
+                ${dato('Subtotal (' + r.c.n + (r.c.n === 1 ? ' artículo)' : ' artículos)'), mxn(r.c.subtotal))}
+                ${dato('IVA 16%', mxn(r.c.iva))}
+                ${dato('IEPS', mxn(r.c.ieps))}
+                ${dato('Envío', mxn(r.c.envio))}
+              </dl>
+              <div class="rc-total"><span>${sale ? 'Total entregado' : 'Total cobrado'}</span><strong>${mxn(Math.abs(r.c.total))} <small>MXN</small></strong></div>
+            </div>
+            <div class="rc-bloque" aria-labelledby="tOper">
+              <h2 class="rc-bloque__t" id="tOper">Datos de la operación</h2>
+              <dl class="rc-datos">
+                ${dato('Folio', '<b>' + r.folio + '</b>')}
+                ${dato('Fecha y hora', r.fecha)}
+                ${dato('Sucursal', esc(r.sucursal))}
+                ${dato('Caja', 'Caja 03')}
+              </dl>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </div>`;
   };
 
   /* pinta la vista y devuelve el foco al mismo control (por id) */

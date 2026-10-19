@@ -7,6 +7,7 @@
   const DEMOS = [
     ['Home Operativo 3.0', 'POS · Inicio por widgets', 'home/'],
     ['Home Operativo vacío', 'POS · sucursal sin datos todavía', 'home/?vacio=1'],
+    ['Inicio operativo por rol', 'Operativo · tarjetas por rol, estados y reglas de caja', 'inicio-operativo/'],
     ['Inventario', 'POS · artículos a la venta (comercial)', 'inventario/'],
     ['Inventario prendario', 'POS · artículos empeñados', 'inventario/?tipo=prendario'],
     ['Inventario vacío', 'POS · sin artículos todavía', 'inventario/?vacio=1'],

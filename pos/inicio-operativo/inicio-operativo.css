@@ -1,0 +1,267 @@
+/* ============================================================
+   Inicio operativo (Home op) por rol · prototipo de Product Design (UX), rama del equipo
+   Reconstrucción estática de src/components/PosPreview/InicioOperativo (commits 4b51aba28 y 995acb9fd).
+   Medidas del código de Product Design y del DS (tokens.ts, Colors, Typography, Chip, Button/IconButton,
+   Alert, Table, PieChart y BarChart). Solo tokens --ats-* / --pos-*; lo que no tiene token va como --propuesta-*.
+   ============================================================ */
+
+:root {
+  /* Colores de gráficas del Figma Home op (inicio.chartColors.constants.ts) */
+  --propuesta-lila-200: #d5a4ff;     /* sin token en el DS: propuesta · color/illustrations/lila-200 (colors.illustrationLila200) */
+  --propuesta-lila-100: #e7cbff;     /* sin token en el DS: propuesta · color/illustrations/lila-100 (colors.illustrationLila100, silueta de vacíos) */
+  --propuesta-naranja-200: #ff7235;  /* sin token en el DS: propuesta · color/ilustrations/orange-200 (fijo en su código, gap del DS) */
+
+  --io-azul: var(--ats-info-blue-200);        /* colors.infoIcon */
+  --io-lila: var(--propuesta-lila-200);
+  --io-verde: var(--ats-success-green-200);   /* colors.successIcon */
+  --io-naranja: var(--propuesta-naranja-200);
+  --io-lima: var(--ats-lemon-300);            /* colors.illustrationYellow200 */
+  --io-cian: var(--ats-cyan-300);             /* colors.illustrationBlue200 */
+  --io-violeta: var(--ats-tag);               /* colors.illustrationViolet100 */
+  --io-rojo: var(--ats-error-red-200);        /* colors.errorIcon */
+  --io-ambar: var(--ats-alert-yellow-200);    /* colors.warningIcon */
+  --io-navy: var(--pos-text-title);           /* colors.textTitle */
+  --io-morado: var(--ats-primary-200);        /* colors.purple200 */
+  --io-rosa: var(--ats-pink-300);             /* colors.illustrationPink100 */
+}
+
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ---------- Barra de sucursal (HomeBranchFilter + InicioBranchBar): blanca a todo lo ancho, contenido alineado con .pos-main ---------- */
+.io-barra { background: var(--color-base-white); }
+.io-barra__in {
+  box-sizing: border-box; max-width: 1440px; margin: 0 auto; padding: 8px 64px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px; min-height: 52px;
+}
+@media (max-width: 900px) { .io-barra__in { padding-left: 24px; padding-right: 24px; } }
+.io-txt14 { margin: 0; font-size: 14px; line-height: 16.8px; font-weight: 400; color: var(--ats-neutral-600); }
+
+/* SelectionInput del DS: 248 × 40, radio 100, borde neutral300, texto 16 */
+.io-sel { position: relative; flex-shrink: 0; width: 248px; max-width: 100%; display: block; }
+.pos .io-sel .ds-select--standalone {
+  height: 40px; padding: 8px 40px 8px 12px; font-size: 16px; line-height: normal; color: var(--ats-neutral-700);
+  appearance: none; -webkit-appearance: none; cursor: pointer; font-family: inherit;
+}
+.io-sel svg { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--ats-neutral-600); }
+
+/* Chip informativa del DS: 35 de alto, radio 8, texto 16 */
+.pos .io-chip-info {
+  display: inline-flex; align-items: center; gap: 4px; box-sizing: border-box; height: 35px; padding: 0 8px;
+  border: 1px solid transparent; border-radius: 8px; font-size: 16px; line-height: 1.2; font-weight: 400;
+  color: var(--ats-neutral-700); background: var(--ats-info-blue-50); white-space: nowrap;
+}
+.pos .io-chip-info--gris { background: var(--ats-neutral-300); cursor: not-allowed; }
+.pos .io-chip-info--verde { background: var(--ats-lime-100); }
+.pos .io-chip-info--morado { background: var(--ats-primary-100); }
+.pos .io-chip-info--amarillo { background: var(--pos-warning-surface); }
+
+/* Acción primaria (InicioPrimaryAction): a la derecha, nota en ámbar oscuro */
+.io-accion { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-left: auto; }
+.io-accion__nota { margin: 0; font-size: 14px; line-height: 16.8px; color: var(--ats-alert-yellow-300); }
+
+/* Button del DS (size default): 36 de alto, padding 8/16, con ícono 8/16/8/8 */
+.pos .io-btn { box-sizing: border-box; height: 36px; padding: 8px 16px; gap: 8px; }
+.pos .io-btn--ico { padding-left: 8px; }
+.pos .io-btn svg { flex-shrink: 0; }
+
+/* ---------- Grilla: 3 columnas fijas (≤1180 px, una) ---------- */
+.io-main { padding-bottom: 48px; }
+.io-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: 16px; }
+.io-col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+@media (max-width: 1180px) { .io-cols { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- Tarjeta (HomeWidgetCard): sin borde, Card-shadow, radio 16, padding 12, separación 16 ---------- */
+.io-card {
+  position: relative; display: flex; flex-direction: column; gap: 16px; width: 100%; box-sizing: border-box;
+  padding: 12px; overflow: hidden; background: var(--color-base-white); border-radius: 16px; box-shadow: var(--pos-shadow-card);
+}
+.io-card:focus { outline: none; }
+.io-card:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
+.io-card__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
+.io-card__tit { display: flex; flex: 1; flex-direction: column; gap: 4px; min-width: 0; }
+.io-card__tit h3 { margin: 0; font-size: 16px; line-height: 19.2px; font-weight: 600; color: var(--ats-neutral-700); }
+.io-alcance { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; line-height: 12px; color: var(--ats-neutral-600); }
+.io-card__body { display: flex; flex-direction: column; gap: 16px; width: 100%; }
+
+/* IconButton small del DS: 28, padding 4, blanco, ícono 20 en primary300, hover primary50 */
+.io-ibtn {
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; box-sizing: border-box;
+  width: 28px; height: 28px; padding: 4px; border: 0; border-radius: 100px; background: var(--color-base-white);
+  color: var(--ats-primary-300); cursor: pointer; transition: background .15s;
+}
+.io-ibtn:hover, .io-ibtn:active { background: var(--ats-primary-50); }
+.io-ibtn:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
+
+.io-stack { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; }
+.io-fila { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; }
+.io-l12 { margin: 0; font-size: 12px; line-height: 12px; font-weight: 400; color: var(--ats-neutral-600); }
+.io-l12--body { color: var(--ats-neutral-700); }
+.io-t14 { margin: 0; font-size: 14px; line-height: 16.8px; font-weight: 400; color: var(--ats-neutral-700); }
+.io-t16b { margin: 0; font-size: 16px; line-height: 19.2px; font-weight: 600; color: var(--ats-neutral-700); }
+
+/* Lista con separadores del Home 3.0 (HomeWidgetListRow) */
+.io-lista { display: flex; flex-direction: column; width: 100%; margin: 0; padding: 0; list-style: none; }
+.io-lista__f {
+  display: flex; align-items: center; gap: 16px; width: 100%; box-sizing: border-box; padding: 4px 0;
+  border-bottom: 1px solid var(--ats-neutral-300); color: inherit; text-decoration: none;
+}
+.io-lista__f:last-child { border-bottom: 0; }
+.io-lista__lbl { display: flex; flex: 1; align-items: center; min-width: 0; min-height: 40px; gap: 8px; }
+.io-lista__lead { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 18px; height: 18px; color: var(--ats-neutral-700); }
+.io-lista__val { display: flex; align-items: center; justify-content: flex-end; flex-shrink: 0; min-width: 71px; min-height: 40px; }
+a.io-lista__f { cursor: pointer; }
+a.io-lista__f:hover { background: var(--ats-primary-10); }
+a.io-lista__f:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: -2px; }
+.io-dot { display: block; flex: none; width: 8px; height: 8px; border-radius: 100%; background: var(--c); }
+
+/* Barra apilada proporcional (gap del DS: StackedBar) */
+.io-barra-ap { display: flex; width: 100%; height: 8px; overflow: hidden; border-radius: 9999px; }
+.io-barra-ap span { background: var(--c); }
+
+/* Métricas con divisores (Flujo de caja) */
+.io-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+.io-stats > div { display: flex; flex-direction: column; gap: 4px; padding: 0 8px; border-right: 1px solid var(--ats-neutral-300); }
+.io-stats > div:first-child { padding-left: 0; }
+.io-stats > div:last-child { border-right: 0; }
+.io-neg { color: var(--ats-error-red-300); }
+
+/* PawnsStatsGrid del Home 3.0 */
+.io-pstats { display: flex; flex-direction: column; width: 100%; }
+.io-pstats__f { display: flex; align-items: flex-start; gap: 8px; width: 100%; }
+.io-pstats__f + .io-pstats__f { border-top: 1px solid var(--ats-neutral-300); }
+.io-pstats__c { display: flex; flex: 1; flex-direction: column; justify-content: center; gap: 8px; min-width: 0; box-sizing: border-box; padding: 8px 0; border-right: 1px solid var(--ats-neutral-300); }
+.io-pstats__c:last-child { border-right: 0; }
+.io-pstats__v { display: flex; align-items: center; gap: 8px; }
+/* Chip status-green del DS: 18, radio 4, 12/12 */
+.io-chip-st {
+  display: inline-flex; align-items: center; gap: 4px; box-sizing: border-box; height: 18px; padding: 4px;
+  border-radius: 4px; font-size: 12px; line-height: 12px; white-space: nowrap;
+  background: var(--ats-lime-100); color: var(--ats-success-green-300);
+}
+.io-chip-st--rojo { background: var(--ats-red-300); color: var(--ats-error-red-300); }
+.io-chip-st--gris { background: var(--ats-neutral-300); color: var(--ats-neutral-700); }
+
+/* Chip choice del DS: 36, radio 8, borde neutral300; elegido primary50 con borde primary300 y texto primary400 a 600 */
+.io-chips { display: flex; gap: 8px; }
+.io-choice {
+  display: inline-flex; align-items: center; gap: 8px; box-sizing: border-box; height: 36px; padding: 8px 12px;
+  border: 1px solid var(--ats-neutral-300); border-radius: 8px; background: var(--color-base-white);
+  font: 400 14px/normal 'Nunito', sans-serif; color: var(--ats-neutral-700); cursor: pointer;
+  transition: background .15s ease-in-out, border-color .15s ease-in-out, color .15s ease-in-out;
+}
+.io-choice[aria-pressed='true'] { background: var(--ats-primary-50); border-color: var(--ats-primary-300); color: var(--ats-primary-400); font-weight: 600; }
+.io-choice:hover { background: var(--ats-primary-50); border-color: var(--ats-primary-300); color: var(--ats-primary-300); font-weight: 600; filter: drop-shadow(4px 4px 2px color-mix(in srgb, var(--ats-primary-300) 16%, transparent)); }
+.io-choice:focus-visible { outline: 2px solid var(--ats-primary-300); outline-offset: 2px; }
+.io-mercado { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
+.io-monto { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+
+/* Table del DS (borderVariant neutral). El encabezado queda a la izquierda aunque la columna se alinee a la derecha:
+   en su React el texto del <th> va en un flex interno y el align no lo mueve. */
+.io-tabla { width: 100%; border-collapse: collapse; font-family: 'Nunito', sans-serif; }
+.io-tabla th, .io-tabla td {
+  padding: 12px 8px; border-bottom: 1px solid var(--ats-neutral-300); font-size: 14px; line-height: normal;
+  font-weight: 400; color: var(--ats-neutral-700); text-align: left; vertical-align: middle;
+}
+.io-tabla th { font-weight: 600; color: var(--pos-text-title); white-space: nowrap; }
+.io-tabla th:first-child, .io-tabla td:first-child { padding-left: 16px; }
+.io-tabla th:last-child, .io-tabla td:last-child { padding-right: 16px; }
+.io-tabla tbody tr:last-child td { border-bottom: 0; }
+.io-tabla .is-der { text-align: right; }
+.io-tabla-wrap { width: 100%; overflow-x: auto; }
+
+/* Alert warning del DS (color): fondo warning, radio 8, padding 16; la acción baja debajo del texto en anchos chicos */
+.io-alert { container-type: inline-size; width: 100%; box-sizing: border-box; border-radius: 8px; background: var(--pos-warning-surface); }
+.io-alert__in { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 16px; min-height: 56px; box-sizing: border-box; }
+.io-alert__msg { display: flex; align-items: flex-start; gap: 8px; flex: 1 1 100%; min-width: 0; }
+.io-alert__msg svg { flex-shrink: 0; color: var(--ats-alert-yellow-200); }
+.io-alert__msg p { margin: 0; font-size: 16px; line-height: 19.2px; color: var(--ats-neutral-700); }
+.io-alert__acc { padding-left: 32px; }
+@container (min-width: 481px) {
+  .io-alert__msg { flex: 1 1 0; align-items: center; }
+  .io-alert__acc { padding-left: 0; }
+}
+
+/* ---------- Estados de tarjeta ---------- */
+/* Vacío positivo: check verde + texto */
+.io-vpos { display: flex; align-items: center; gap: 8px; }
+.io-vpos svg { flex-shrink: 0; color: var(--ats-success-green-200); }
+.io-vpos p { margin: 0; font-size: 14px; line-height: 16.8px; color: var(--ats-neutral-600); }
+
+/* Vacío con panel gris (silueta de la gráfica + medalla con ícono) */
+.io-panel {
+  position: relative; align-self: stretch; height: 104px; margin-bottom: 12px; border-radius: 8px;
+  background: var(--ats-neutral-50); box-shadow: inset 0 0 0 1px var(--ats-neutral-100);
+}
+.io-panel svg.io-panel__sil { display: block; width: 100%; height: 100%; padding: 8px 4px; box-sizing: border-box; }
+.io-medalla {
+  position: absolute; top: 50%; left: 50%; display: grid; place-items: center; width: 48px; height: 48px;
+  border-radius: 100%; background: var(--color-base-white); box-shadow: var(--pos-shadow-dropdown);
+  color: var(--ats-neutral-700); transform: translate(-50%, -50%); animation: io-flota 3.2s ease-in-out infinite alternate;
+}
+@keyframes io-flota { from { transform: translate(-50%, -50%) translateY(2px); } to { transform: translate(-50%, -50%) translateY(-3px); } }
+
+/* Garabato de flechas (Figma de vacíos 19403:19694) en la esquina superior derecha */
+.io-garabato { position: absolute; top: 0; right: 0; width: 52px; height: 38px; pointer-events: none; }
+.io-garabato img { position: absolute; width: 13.8069px; height: 11.4381px; }
+
+/* Cargando: skeleton con la forma del contenido (gap del DS) */
+.io-sk { display: block; border-radius: 4px; background: linear-gradient(90deg, var(--ats-neutral-100) 25%, var(--ats-neutral-50) 50%, var(--ats-neutral-100) 75%); background-size: 200% 100%; animation: io-shimmer 1.2s linear infinite; }
+@keyframes io-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+/* Error con Reintentar */
+.io-err { display: flex; align-items: flex-start; gap: 8px; color: var(--ats-neutral-600); }
+.io-err > svg { flex: none; color: var(--ats-error-red-200); }
+.io-err p { margin: 0; }
+
+/* ---------- Gráficas hechas a mano (PieChart y BarChart del DS) ---------- */
+.io-pie { display: flex; align-items: center; gap: 24px; }
+.io-pie__g { position: relative; flex-shrink: 0; width: 120px; height: 120px; }
+.io-pie__g svg { display: block; }
+.io-pie__c { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; text-align: center; white-space: nowrap; color: var(--pos-text-title); }
+.io-pie__c b { font-size: 28px; font-weight: 600; line-height: 1.2; }
+.io-pie__c span { font-size: 14px; line-height: 1.2; }
+.io-pie__ley { display: flex; flex: 1; flex-direction: column; gap: 8px; min-width: 0; margin: 0; padding: 0; list-style: none; }
+.io-pie__ley li { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 14px; line-height: 1.2; color: var(--pos-text-title); }
+.io-pie__ley span { display: flex; align-items: center; gap: 8px; flex-shrink: 0; white-space: nowrap; }
+.io-pie__ley b { font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+
+.io-leyenda { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.io-leyenda > span { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+
+.io-bars { position: relative; width: 100%; height: 140px; }
+.io-bars svg { display: block; overflow: visible; font-family: 'Nunito', sans-serif; }
+.io-bars__tip {
+  position: absolute; z-index: 2; display: flex; flex-direction: column; gap: 4px; min-width: 120px; box-sizing: border-box;
+  padding: 8px 12px; background: var(--color-base-white); border-radius: 8px; box-shadow: var(--pos-shadow-dropdown); pointer-events: none;
+}
+.io-bars__tip[hidden] { display: none; }
+.io-bars__tip b { font-size: 12px; line-height: 12px; font-weight: 700; color: var(--ats-neutral-700); }
+.io-bars__tip span { display: flex; align-items: center; gap: 8px; font-size: 12px; line-height: 12px; }
+.io-bars__tip i { flex: 1; font-style: normal; color: var(--ats-neutral-500); }
+.io-bars__tip strong { font-weight: 700; color: var(--ats-neutral-700); }
+
+/* ---------- Vistas de revisión (?vista=estados | matriz) ---------- */
+.io-vista { display: flex; flex-direction: column; gap: 16px; padding-top: 24px; padding-bottom: 48px; }
+.io-vista h1 { margin: 0; font-size: 28px; line-height: 34px; font-weight: 500; color: var(--ats-neutral-700); }   /* título de página a 500 (regla del prototipo; su React usa 24/600) */
+.io-vista h2 { margin: 0; font-size: 20px; line-height: 24px; font-weight: 600; color: var(--pos-text-title); }
+.io-vista__intro { margin: 0; font-size: 16px; line-height: 19.2px; color: var(--ats-neutral-600); }
+.io-estados { display: grid; grid-template-columns: 160px repeat(4, minmax(260px, 1fr)); align-items: start; gap: 16px; overflow-x: auto; padding-bottom: 8px; }
+.io-estados__th { margin: 0; font-size: 14px; line-height: 16.8px; font-weight: 700; color: var(--ats-neutral-600); }
+
+/* ---------- Toast del prototipo (abajo al centro, como en su React) ---------- */
+.io-toast {
+  position: fixed; z-index: 60; bottom: 24px; left: 50%; transform: translateX(-50%); max-width: calc(100vw - 32px); box-sizing: border-box;
+  padding: 8px 16px; border-radius: 8px; background: var(--pos-text-title); color: var(--color-base-white); font-size: 14px; line-height: 16.8px;
+}
+.io-toast[hidden] { display: none; }
+
+/* ---------- Panel "Estados de la maqueta" (../demo.js lo cuelga del riel izquierdo) ---------- */
+.io-proto { display: flex; flex-direction: column; gap: 12px; }
+.io-proto__title { margin: 0; font-size: 12px; line-height: 1.2; font-weight: 600; color: var(--ats-neutral-600); }
+.io-proto .ds-select--standalone { height: 40px; padding: 8px 12px; }
+.io-proto__nota { margin: 0; font-size: 12px; line-height: 1.4; color: var(--ats-neutral-600); }
+
+@media (prefers-reduced-motion: reduce) {
+  .io-sk, .io-medalla { animation: none; }
+  .io-choice, .io-ibtn { transition: none; }
+}
