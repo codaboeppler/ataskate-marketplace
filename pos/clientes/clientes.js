@@ -99,6 +99,7 @@ function screen() {
   switch (st.screen) {
     case 'clients': return clientsScreen();
     case 'client': return clientProfileScreen();
+    case 'contract': return contractScreen();
   }
   return '';
 }
@@ -113,7 +114,7 @@ const PG = {
 const PER_PAGE = 8;
 const SCORE_TAG = { Excelente: 'green', Bueno: 'blue', Regular: 'purple', Nuevo: 'gray' };
 /* tono → modificador del DS Tag (ds-tag--verde, --azul…) */
-const TAG_TONE = { green: 'verde', blue: 'azul', purple: 'morado', gray: 'gris', yellow: 'amarillo', red: 'rojo' };
+const TAG_TONE = { green: 'verde', blue: 'azul', purple: 'morado', gray: 'gris', yellow: 'amarillo', red: 'rojo', pink: 'rosa', white: 'blanco' };
 const dsTag = (label, tone) => `<span class="ds-tag ds-tag--${TAG_TONE[tone] || 'gris'}">${esc(label)}</span>`;
 const SCORES = ['Excelente', 'Bueno', 'Regular', 'Nuevo'];
 const NATS = ['Mexicana', 'Canadiense', 'Estadounidense'];
@@ -244,35 +245,83 @@ function cliPanel() {
   </aside>`;
 }
 
-// ---------- PERFIL DE CLIENTE (src/components/ClientsRedesign/Profile/*, rama del equipo hasta 20f588788) ----------
-// Encabezado con foto, contacto, saldo por pagar y total pagado; información personal en un modal con tabs; solo lo que aplica a cada
-// tipo de cliente (empeño, venta, marketplace); menú de acciones (editar / dar de baja / reportar); acciones rápidas y operaciones.
-// "Editar" lleva a cliente-nuevo.html?editar=<id> (su /Directory/<id>/editar, que reutiliza Cliente nuevo). Los datos vienen de perfil-datos.js.
+// ---------- PERFIL DE CLIENTE (src/components/ClientsRedesign/Profile/*, rama del equipo hasta 3e2d19b99) ----------
+// Encabezado con foto, contacto y tres chips (Saldo por pagar, Saldo pagado, Información personal) que abren su modal; menú de acciones
+// (editar / dar de baja, también por registro duplicado / reportar); acciones rápidas; operaciones en tabs sobre la página (Transacciones,
+// Órdenes, Contratos de empeño) con buscador, "Filtrar por", calendario de vencimiento, detalle de transacción en modal y detalle del contrato.
+// "Editar" lleva a cliente-nuevo.html?editar=<id> (su /Directory/<id>/editar). Los datos vienen de perfil-datos.js.
 const PT = {
   BREADCRUMB_HOME: 'Inicio', BREADCRUMB_CLIENTS: 'Clientes', TITLE: 'Perfil de cliente', NUC: 'NUC', NEW_CLIENT_SCORE: 'Cliente nuevo',
   MARKETPLACE_ALERT_TITLE: 'Cliente del Marketplace ataskate', MARKETPLACE_ALERT_TEXT: 'Solo se muestran sus datos de contacto y sus órdenes del Marketplace.',
-  PAWNS: 'Empeños', LOANS: 'Préstamos', LAYAWAYS: 'Apartados',
-  QUICK_TITLE: 'Acciones rápidas', QUICK_DUE: d => `Vencimiento: ${d}`, QUICK_RENEWAL: 'Refrendo', QUICK_REDEMPTION: 'Desempeño', QUICK_ARTICLES: 'Prendas', QUICK_RENEW: 'Refrendar', QUICK_REDEEM: 'Desempeñar', QUICK_ADDED: 'Se agregó al carrito',
+  QUICK_TITLE: 'Acciones rápidas', QUICK_DUE: d => `Vencimiento: ${d}`, QUICK_RENEWAL: 'Refrendo', QUICK_REDEMPTION: 'Desempeño', QUICK_ARTICLES: 'Prendas', QUICK_RENEW: 'Refrendar', QUICK_REDEEM: 'Desempeñar',
+  QUICK_ADDED: 'Se agregó al carrito', QUICK_REACTIVATE: 'Reactivar', QUICK_REACTIVATION: 'Reactivación', QUICK_LATE_FEES: 'Se cobrarán cargos moratorios.',
   LABOR_TITLE: 'Información laboral', ID_TITLE: 'Identificación oficial', PROOFS_TITLE: 'Comprobantes', WITH_FILE: 'Con archivo', WITHOUT_FILE: 'Sin archivo', VALID: 'Vigente', EXPIRED: 'Vencida',
   FINGERPRINTS_COUNT: n => `${n} de 10 huellas registradas`, IDENTITY_TITLE: 'Identidad', SITUATION_TITLE: 'Situación personal', ADDRESS_TITLE: 'Domicilio', PEOPLE_TITLE: 'Personas registradas', FINGERPRINTS_TITLE: 'Huellas registradas',
-  OPERATIONS_TITLE: 'Operaciones', SEARCH_PLACEHOLDER: 'Buscar por folio, artículo o sucursal', CLEAR_SEARCH: 'Limpiar búsqueda', STATUS_FILTER: 'Estado',
-  OPERATIONS_EMPTY_TITLE: 'Sin resultados', OPERATIONS_EMPTY_TEXT: 'Revisa lo que escribiste o quita el filtro.', OPERATIONS_NONE_TITLE: 'Sin operaciones', OPERATIONS_NONE_TEXT: 'Cuando el cliente haga una operación, aparecerá aquí.',
-  NOT_FOUND_TITLE: 'No encontramos este cliente', NOT_FOUND_TEXT: 'Puede que el enlace sea incorrecto o que el cliente ya no exista.', BACK_TO_LIST: 'Ir a Clientes',
+  CLEAR_SEARCH: 'Limpiar búsqueda', NOT_FOUND_TITLE: 'No encontramos este cliente', NOT_FOUND_TEXT: 'Puede que el enlace sea incorrecto o que el cliente ya no exista.', BACK_TO_LIST: 'Ir a Clientes',
 };
 const PH = {
-  DEBT: 'Saldo por pagar', DEBT_HINT: 'Lo que el cliente debe hoy en empeños, préstamos y apartados activos.', INCOME: 'Total pagado', INCOME_HINT: 'Lo que el cliente ha pagado en esta casa de empeño.',
-  VIEW_DETAIL: l => `Ver detalle: ${l.toLowerCase()}`, COL_CONCEPT: 'Concepto', COL_THIS_HOUSE: 'En esta casa', COL_OTHER_HOUSES: 'En otras casas', COL_AMOUNT: 'Monto', TOTAL: 'Total', CLOSE: 'Cerrar',
-  EDIT_CLIENT: 'Editar cliente', LEAVE_TITLE: 'Vas a salir del perfil', LEAVE_TEXT: n => `Para editar los datos de ${n} te llevamos a la pantalla de edición. Al guardar, regresas a este perfil.`, LEAVE_CONFIRM: 'Ir a editar',
-  INFO: 'Información personal', ACTIONS: 'Acciones del cliente', CHANGE_PHOTO: 'Cambiar foto del cliente', ID_VALID: 'Vigente', ID_EXPIRED: 'Vencida',
+  DEBT: 'Saldo por pagar', INCOME: 'Saldo pagado', CLOSE: 'Cerrar', EDIT_CLIENT: 'Editar cliente',
+  LEAVE_TITLE: 'Vas a salir del perfil', LEAVE_TEXT: n => `Para editar los datos de ${n} te llevamos a la pantalla de edición. Al guardar, regresas a este perfil.`, LEAVE_CONFIRM: 'Ir a editar',
+  INFO: 'Información personal', ACTIONS: 'Acciones del cliente', ID_VALID: 'Vigente', ID_EXPIRED: 'Vencida',
   DEACTIVATED_TITLE: 'Cliente dado de baja', DEACTIVATED_TEXT: 'Este cliente ya no está activo en tu casa de empeño.', DEACTIVATE_TITLE: 'Dar de baja cliente',
   DEACTIVATE_TEXT: n => `Vas a dar de baja a ${n}. Revisa antes que no tenga contratos ni apartados vigentes.`, DEACTIVATE_REASON: 'Motivo de la baja', DEACTIVATE_CONFIRM: 'Dar de baja', DEACTIVATED_TOAST: 'Cliente dado de baja',
   REPORT_TITLE: 'Reportar cliente', REPORT_TEXT: n => `El reporte de ${n} se envía al área de prevención para su revisión.`, REPORT_REASON: 'Motivo del reporte', REPORT_DETAIL: 'Describe lo que pasó',
   REPORT_DETAIL_PLACEHOLDER: 'Ej. Presentó una identificación que no coincide con sus datos.', REPORT_CONFIRM: 'Enviar reporte', REPORT_TOAST: 'Reporte enviado', REQUIRED: 'Este dato es obligatorio.', SELECT: 'Selecciona', CANCEL: 'Cancelar',
 };
+/* Baja por registro duplicado (profileMerge.ts, 15c423c26) */
+const MERGE = {
+  INTRO: n => `Vas a dar de baja a ${n} por registro duplicado.`, TARGET_LABEL: 'Cliente que se queda', TARGET_PLACEHOLDER: 'Busca por nombre o NUC',
+  TARGET_HINT: n => `Elige el registro correcto. Le pasamos todo lo de ${n} y este registro se da de baja.`, TARGET_REQUIRED: 'Elige el cliente que se queda.', SUMMARY_TITLE: 'Se va a transferir',
+  NOTHING: 'Este registro no tiene movimientos; solo se dará de baja.', WARNING_TITLE: 'Esta acción no se puede deshacer',
+  WARNING_TEXT: (a, b) => `El historial de ${a} quedará en el perfil de ${b}. Los contratos conservan su número.`, CONFIRM: 'Confirmo que ambos registros son la misma persona',
+  CONFIRM_REQUIRED: 'Confirma que son la misma persona.', SUBMIT: 'Transferir y dar de baja', DONE_TOAST: b => `Movimientos transferidos a ${b}`,
+  DONE_TEXT: b => `Registro duplicado. Sus movimientos ahora están en el perfil de ${b}.`, VIEW_TARGET: b => `Ver perfil de ${b}`, EMPTY: 'Sin coincidencias',
+};
+/* Desglose de saldos (profileDebt.ts y profilePaid.ts, 7e426b821) */
+const DEBT_T = {
+  TOTAL_LABEL: 'Total para liquidar hoy en esta casa', TOTAL_HINT: 'Empeños al monto de desempeño y apartados por lo que falta abonar.', PAWNS: 'Empeños', LAYAWAYS: 'Apartados',
+  PAWN_SUB: n => `${n} ${n === 1 ? 'contrato activo' : 'contratos activos'} · monto de desempeño`, LAYAWAY_SUB: n => `${n} ${n === 1 ? 'apartado activo' : 'apartados activos'} · lo que falta abonar`,
+  OTHER_TITLE: 'También debe en otras casas de empeño', OTHER_TEXT: a => `${a} adicionales. No se incluyen en el total porque se pagan en esa casa.`, EMPTY: 'El cliente no tiene saldos pendientes en esta casa.',
+};
+const PAID_T = {
+  TOTAL_LABEL: 'Saldo pagado', TOTAL_HINT: p => `Pagos a empeños y apartados que siguen abiertos, más lo pagado en ${p}. Lo que se liquidó en meses anteriores ya no aparece.`,
+  EMPTY: 'El cliente no tiene pagos en operaciones abiertas ni en este mes.', PURCHASES: 'Compras',
+  PAWN_SUB: n => `${n} ${n === 1 ? 'pago' : 'pagos'} · refrendos, abonos y desempeños`, LAYAWAY_SUB: n => `${n} ${n === 1 ? 'pago' : 'pagos'} · apartados y abonos`, PURCHASE_SUB: n => `${n} ${n === 1 ? 'compra' : 'compras'} · pagadas este mes`,
+};
+/* Operaciones (profileOperations.ts y profileContracts.ts) */
+const OPS = {
+  SEARCH_TX: 'Buscar por número, operación o método de pago', SEARCH_ORD: 'Buscar por número de orden o artículo', FILTER: 'Filtrar por', DETAILS: 'Detalles', CASH: 'Efectivo', TRANSFER: 'Transferencia',
+  EMPTY_TITLE: 'Sin resultados', EMPTY_TEXT: 'Revisa lo que escribiste o quita el filtro.', NONE_TITLE: 'Sin operaciones', NONE_TEXT: 'Cuando el cliente haga una operación, aparecerá aquí.',
+  FILTER_STATUS: 'Estado del contrato', ROW_ACTIONS: f => `Opciones del contrato ${f}`, CT_EMPTY: 'No hay contratos disponibles.', CT_EMPTY_FILTER: 'No hay contratos con estos filtros.', ACTION_DONE: 'Acción registrada',
+  ARTICLE_COUNT: n => (n === 1 ? '1 artículo' : `${n} artículos`),
+};
+const CAL_T = { TRIGGER: 'Vencimiento', RANGE: 'Rango', APPLY: 'Aplicar', CLEAR: 'Limpiar selección', CANCEL: 'Cancelar', CONTINUE: 'Continuar', DAY_HINT: 'Elige un día de vencimiento.', MONTH: 'Mes', YEAR: 'Año' };
+/* Detalle de la transacción (transactionDetail.ts, 92f7ebdf5) */
+const TXD = {
+  TITLE: 'Detalle de transacción', NUMBER: 'No. transacción', DATE: 'Fecha de pago', AMOUNT: 'Monto del pago', ARTICLES: 'Artículos', COLS: ['Tipo', 'Estado', 'Empresa', 'Tipo de operación', 'Método de pago'],
+  DOWNLOAD: 'Descargar comprobante', DOWNLOAD_TOAST: 'Descargando comprobante', BREAKDOWN: 'Desglose del pago', RECORD: 'Registro del pago', BRANCH: 'Sucursal', CASHIER: 'Atendió', TIME: 'Hora',
+};
+const TX_ALERT = { Devolución: ['info', 'Pago devuelto', 'El monto se regresó al cliente con el mismo método de pago.'], Incidencia: ['warning', 'Pago con incidencia', 'Hay una incidencia abierta; revísala antes de volver a cobrar.'], Pendiente: ['warning', 'Pago pendiente', 'El pago aún no se confirma con el banco.'] };
+/* Detalle del contrato (ContractDetail/contractDetail.constants.ts, 496bbf842) */
+const CTD = {
+  BREADCRUMB_PROFILE: 'Perfil de cliente', BREADCRUMB_DETAIL: 'Detalle del contrato', TITLE: 'Detalle del contrato de empeño', FOLIO: 'No. contrato:', STATUS: 'Estado de contrato:', DUE: 'Fecha de vencimiento:', DISCHARGED: 'Fecha de desempeño:',
+  MORE: 'Más opciones del contrato', NOT_FOUND_TITLE: 'No encontramos este contrato', NOT_FOUND_TEXT: 'Puede que el número de contrato haya cambiado o ya no pertenezca al cliente.', BACK_TO_PROFILE: 'Volver al perfil',
+  CLIENT_TITLE: 'Datos del cliente', SCORE: 'Calificación:', EMAIL: 'Correo:', PHONE: 'Tel:', ADDRESS: 'Domicilio:', SUMMARY_TITLE: 'Resumen inicial del empeño',
+  ARTICLES_TITLE: 'Lista de artículos', ARTICLES: 'Artículos', DEADLINE: d => `Fecha límite: ${d}`, EXPIRED_SINCE: d => `Venció el ${d}`, LATE_FEES: 'Al reactivar se cobrarán cargos moratorios.',
+  SKU: 'SKU:', APPRAISAL: 'Avalúo:', LOAN: 'Préstamo:', NOTES: 'Notas', NOTES_TITLE: a => `Notas de ${a}`,
+};
+const CT_TABS = [['detalle', 'Detalle del empeño'], ['personas', 'Beneficiario y cotitular'], ['transacciones', 'Transacciones'], ['amortizacion', 'Tabla de amortización']];
+const CT_MENU = { extend: 'Extender', print: 'Imprimir contrato', email: 'Enviar contrato por correo' };
+const CT_ACTION_LABEL = { detail: 'Ver detalle', discharge: 'Desempeñar', renew: 'Refrendar', extend: 'Extender', payment: 'Abonar', reactivate: 'Reactivar', incident: 'Activar incidencia' };
+const CT_ROW_ACTIONS = { 'Próximo pago': ['detail', 'discharge', 'renew', 'extend', 'payment'], 'Por vencer': ['detail', 'discharge', 'renew', 'extend', 'payment'], Vencido: ['detail', 'reactivate', 'incident'], Desempeñado: ['detail'] };
+const CT_MAIN_ACTIONS = { 'Próximo pago': ['discharge', 'renew', 'payment'], 'Por vencer': ['discharge', 'renew', 'payment'], Vencido: ['reactivate', 'incident'], Desempeñado: [] };
+const CT_STATUSES = ['Por vencer', 'Próximo pago', 'Vencido', 'Desempeñado'];
+
 const PF_ACTION_LABEL = { edit: 'Editar cliente', deactivate: 'Dar de baja cliente', report: 'Reportar cliente' };
 /* El cliente de marketplace no es de la casa de empeño: no se edita ni se da de baja */
 const PF_ACTIONS = { empeno: ['edit', 'deactivate', 'report'], venta: ['edit', 'deactivate', 'report'], marketplace: ['report'] };
 const PF_DEACTIVATE_REASONS = ['Lo solicitó el cliente', 'Registro duplicado', 'Fallecimiento', 'Otro motivo'];
+const PF_DUPLICATE = 'Registro duplicado';
 const PF_REPORT_REASONS = ['Documentos falsos o alterados', 'Prenda con reporte de robo', 'Conducta sospechosa o agresiva', 'Otro motivo'];
 const PF_TYPE_LABEL = { empeno: 'Cliente de empeño', venta: 'Cliente de venta', marketplace: 'Marketplace' };
 const PF_TYPE_CHIP = { empeno: 'ds-chip--info', venta: 'ds-chip--info', marketplace: 'ds-chip--brand' }; // DS Chip informativo
@@ -282,20 +331,31 @@ const PF_INFO_TABS = { empeno: ['personal', 'direccion', 'ident', 'cotitulares',
 /* Lo que puede editar cada tipo de cliente: venta solo captura contacto y dirección; los datos del Marketplace los administra el cliente */
 const PF_EDITABLE = { empeno: ['contacto', 'personal', 'direccion', 'ident', 'cotitulares', 'huellas'], venta: ['contacto', 'direccion'], marketplace: [] };
 const pfCanEdit = (type, section) => PF_EDITABLE[type].includes(section);
-const PF_OP_TABS = { empeno: ['contratos', 'transacciones'], venta: ['ordenes', 'transacciones'], marketplace: ['ordenes'] };
+/* 22d8186fc: Transacciones primero; Órdenes en empeño solo si ha comprado */
+const PF_OP_TABS = { empeno: ['transacciones', 'ordenes', 'contratos'], venta: ['transacciones', 'ordenes'], marketplace: ['ordenes'] };
 const PF_OP_TAB_LABEL = { contratos: 'Contratos de empeño', transacciones: 'Transacciones', ordenes: 'Órdenes' };
-const PF_OP_COLS = {
-  contratos: [['folio', 'No. contrato'], ['articles', 'Prendas'], ['loan', 'Préstamo', 'r'], ['renewal', 'Refrendo', 'r'], ['redemption', 'Desempeño', 'r'], ['dueDate', 'Vencimiento'], ['branch', 'Sucursal']],
-  transacciones: [['folio', 'No. transacción'], ['date', 'Fecha'], ['operation', 'Tipo de operación'], ['amount', 'Monto', 'r'], ['method', 'Método de pago'], ['branch', 'Sucursal']],
-  ordenes: [['folio', 'No. orden'], ['date', 'Fecha'], ['articles', 'Artículos'], ['total', 'Total', 'r'], ['channel', 'Canal']],
-};
-/* Columnas que repetirían el mismo valor en todas las filas para ese tipo de cliente */
-const PF_OP_HIDDEN = { empeno: [], venta: [], marketplace: ['channel'] };
-const PF_STATUS_CHIP = { Vigente: 'green', 'Por vencer': 'yellow', Vencido: 'red', Desempeñado: 'gray', Pagado: 'green', Pendiente: 'yellow', Entregado: 'green', 'En camino': 'blue', Cancelado: 'gray', Devolución: 'purple' };
+const pfOpTabs = c => PF_OP_TABS[c.type].filter(t => t !== 'ordenes' || c.type !== 'empeno' || ((c.operations || {}).ordenes || []).length > 0);
+/* Chips de estado (status-* del DS → ds-tag) */
+const ST_CONTRACT = { 'Próximo pago': 'purple', 'Por vencer': 'yellow', Vencido: 'red', Desempeñado: 'gray' };
+const ST_TX = { Pagado: 'green', Pendiente: 'yellow', Devolución: 'purple', Incidencia: 'pink' };
+const ST_ORDER = { Entregado: 'green', 'En camino': 'blue', Pendiente: 'yellow', Cancelado: 'gray' };
+const ST_LAYAWAY = { 'Al corriente': 'green', 'Por vencer': 'yellow', Vencido: 'red' };
+const ST_AMORT = { Pagado: 'green', 'Por pagar': 'yellow', Vencido: 'red' };
 const PF_SCORE_CHIP = { Excelente: 'green', Bueno: 'blue', Regular: 'purple' };
 const PF_PAGE = 8;
 const pfChip = dsTag;
-function newProf(id) { return ({ id, detail: null, dlg: null, itab: null, otab: null, q: '', est: '', page: 1, deactivated: false, editSection: undefined, dReason: '', dTried: false, rReason: '', rDetail: '', rTried: false }); }
+/* Paleta de "Chart-bar" del DS (CHART_COLORS): verde, morado claro, azul */
+const CHART_COLORS = ['var(--ats-success-green-200)', 'var(--ats-primary-200)', 'var(--ats-info-blue-200)'];
+const CARD_BRAND = { amex: 'Amex', visa: 'Visa', mastercard: 'MasterCard' };
+
+function newOpState() { return { q: '', est: '', page: 1 }; }
+function newProf(id) {
+  return { id, detail: null, open: [], itab: null, otab: null, dlg: null, tx: newOpState(), ord: newOpState(), ctr: { est: '', due: null, page: 1 }, cal: null,
+    deactivated: false, merged: null, editSection: undefined, dReason: '', dTarget: '', dQuery: '', dSure: false, dTried: false, rReason: '', rDetail: '', rTried: false };
+}
+function newCt(id, folio) { return { id, folio, tab: 'detalle', notes: null, tx: newOpState() }; }
+st.ct = null; // detalle del contrato abierto (#perfil/<id>/contrato/<folio>)
+st.txRow = null; // transacción abierta en el modal "Detalle de transacción"
 
 const pfFields = a => a.filter(([, v]) => v && String(v).trim()).map(([label, value]) => ({ label, value }));
 const pfIdentity = c => pfFields([['Fecha de nacimiento', c.personal?.birthDate], ['Nacionalidad', c.personal?.nationality], ['CURP', c.personal?.curp], ['R.F.C', c.personal?.rfc]]);
@@ -309,15 +369,42 @@ const pfProofs = c => pfFields([['Comprobante de domicilio', c.addressProof?.typ
 const PF_TAB_HAS = { personal: c => pfPersonal(c).length > 0 || pfLabor(c).length > 0, direccion: c => pfAddress(c).length > 0, ident: c => pfIdent(c).length > 0 || pfProofs(c).length > 0, cotitulares: c => !!(c.cotitulares && c.cotitulares.length), huellas: c => !!(c.fingerprints && c.fingerprints.length) };
 /* Tabs de información que aplican al tipo de cliente y que tienen datos */
 const pfInfoTabs = c => PF_INFO_TABS[c.type].filter(t => PF_TAB_HAS[t](c));
-const pfOpRows = (c, tab) => (c.operations && c.operations[tab]) || [];
-const pfFilterOps = (rows, q, status) => { const nq = norm(q || ''); return rows.filter(r => { if (status && r.status !== status) return false; return !nq || norm(Object.values(r.cells).join(' ')).includes(nq); }); };
 /* "Pulgar derecho" → { 'Mano derecha': ['Pulgar'] }; mismo acomodo que en Cliente nuevo */
 const pfPrintGroups = prints => [['derecho', 'Mano derecha'], ['izquierdo', 'Mano izquierda']].map(([s, hand]) => ({ hand, fingers: prints.filter(p => p.endsWith(' ' + s)).map(p => p.slice(0, -(s.length + 1))) })).filter(g => g.fingers.length);
-
 const pfIc = (n, s = 20) => CI(n, s);
+const articleSummary = arts => { const [f, ...rest] = arts; return f ? (rest.length ? `${f.name} y ${rest.length} más` : f.name) : ''; };
+const methodText = m => m.kind === 'card' ? `${CARD_BRAND[m.brand]} ${m.last4}` : m.kind === 'cash' ? OPS.CASH : OPS.TRANSFER;
+const contractHref = (c, folio) => (c.pawnContracts || []).some(k => k.folio === folio) ? `#perfil/${encodeURIComponent(c.id)}/contrato/${encodeURIComponent(folio)}` : '';
 
-function pfFieldGrid(fields) { return `<dl class="pr-fields ${fields.length === 4 ? 'c4' : ''}">${fields.map(f => `<div class="pr-f"><dt>${esc(f.label)}</dt><dd>${esc(f.value)}</dd></div>`).join('')}</dl>`; }
+/* ---------- piezas compartidas ---------- */
+/* Número de contrato con estilo de hipervínculo (ContractFolio): con detalle es un enlace, si no, texto */
+const pfFolio = (c, folio, tag = 'span') => { const h = c && contractHref(c, folio); return h ? `<a class="pr-folio" href="${h}"><${tag} class="pr-folio__t">${esc(folio)}</${tag}></a>` : `<${tag} class="pr-folio__t">${esc(folio)}</${tag}>`; };
+/* DS TableCell type="articulo": foto, nombre y descripción */
+const pfArtCell = (photo, name, desc) => `<div class="pr-art">${photo ? `<img src="${esc(photo)}" alt="" width="40" height="40" loading="lazy">` : ''}<span class="tx"><span class="m">${esc(name)}</span>${desc ? `<span class="d">${esc(desc)}</span>` : ''}</span></div>`;
+/* Método de pago: logo de la tarjeta (DS CreditCard) + últimos 4 y marca; efectivo y transferencia solo con texto */
+const pfPay = m => m.kind !== 'card' ? esc(m.kind === 'cash' ? OPS.CASH : OPS.TRANSFER) : `<span class="pr-pay"><span class="pr-cc"><img src="assets/tarjetas/${m.brand}.svg" alt="" width="24" height="24"></span><span class="tx"><span>****${esc(m.last4)}</span><small>${CARD_BRAND[m.brand]}</small></span></span>`;
+const pfPager = (total, page, act, k) => {
+  if (total <= PF_PAGE) return '';
+  const pages = Math.ceil(total / PF_PAGE), from = (page - 1) * PF_PAGE, to = Math.min(total, from + PF_PAGE);
+  const b = (p, label, icon, dis) => `<button type="button" data-act="${act}" data-k="${k}" data-v="${p}" aria-label="${label}" ${dis ? 'disabled' : ''}>${icon}</button>`;
+  return `<nav class="dpager" aria-label="Paginación"><span class="g">${b(1, 'Primera página', PG.first, page === 1)}${b(page - 1, 'Página anterior', PG.prev, page === 1)}</span><span class="t">${from + 1}-${to} de ${total} resultados</span><span class="g">${b(page + 1, 'Página siguiente', PG.next, page >= pages)}${b(pages, 'Última página', PG.last, page >= pages)}</span></nav>`;
+};
+/* DS TableFilterChip: botón con ícono, etiqueta (o la opción elegida) y flecha; la lista sale abajo a la derecha */
+function pfFilterChip(id, label, opts, value, act, k) {
+  const open = st.menu === id;
+  return `<div class="pr-fchip"><button type="button" class="pr-fchip__btn ${value || open ? 'is-on' : ''}" data-act="menu" data-id="${id}" aria-haspopup="listbox" aria-expanded="${open}">${pfIc('FilterAlt')}<span>${esc(value || label)}</span><span class="pr-fchip__arrow">${pfIc('ArrowDropDown')}</span></button>${open ? `<div class="pr-fchip__menu" role="listbox" aria-label="${esc(label)}">${opts.map(o => `<button type="button" role="option" class="pr-fchip__opt" aria-selected="${o === value}" data-act="${act}" data-k="${k}" data-v="${o === value ? '' : esc(o)}">${esc(o)}</button>`).join('')}</div>` : ''}</div>`;
+}
+/* DS Search (Default): caja redonda con lupa; con texto, la lupa cambia por "Limpiar búsqueda" (d778f04ca) */
+const pfSearch = (k, value, placeholder) => `<div class="ds-field-wrap cli-search pr-search"><input class="ds-input" type="search" placeholder="${esc(placeholder)}" aria-label="${esc(placeholder)}" data-in="opq" data-k="${k}" data-fk="opq-${k}" value="${esc(value)}">${value ? `<button type="button" class="ds-field-addon ds-field-addon--right cli-search__btn" data-act="opq0" data-k="${k}" aria-label="${PT.CLEAR_SEARCH}">${X_ICON.replace(/width="\d+" height="\d+"/, 'width="20" height="20"')}</button>` : `<span class="ds-field-addon ds-field-addon--right" aria-hidden="true">${ic('search')}</span>`}</div>`;
+const pfEmpty = filtered => `<div class="cempty pr-empty"><img src="assets/ilust-01-empty.svg" alt="" width="150" height="150"><p class="t pr-b">${filtered ? OPS.EMPTY_TITLE : OPS.NONE_TITLE}</p><p class="cap">${filtered ? OPS.EMPTY_TEXT : OPS.NONE_TEXT}</p></div>`;
+const pfTable = (head, body, cls = '') => `<div class="pr-tablew"><table class="ds-table cli-table pr-table ${cls}"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+const pfBar = segs => { const sum = segs.reduce((a, s) => a + s.value, 0); return `<div class="pr-bar" role="img" aria-label="${esc(segs.map(s => s.label).join(', '))}">${segs.map(s => `<span style="width:${(s.value / sum * 100).toFixed(2)}%;background:${s.color}" title="${esc(s.label)}"></span>`).join('')}</div><ul class="pr-legend">${segs.map(s => `<li><span class="dot" style="background:${s.color}" aria-hidden="true"></span>${esc(s.label)}</li>`).join('')}</ul>`; };
+const opState = k => (k === 'ctx' ? st.ct.tx : st.prof[k]);
+
+/* ---------- Información personal (modal ancho) ---------- */
+function pfFieldGrid(fields) { return `<dl class="pr-fields">${fields.map(f => `<div class="pr-f"><dt>${esc(f.label)}</dt><dd>${esc(f.value)}</dd></div>`).join('')}</dl>`; }
 function pfSection(title, fields, aside) { return fields.length ? `<section class="pr-isec"><div class="pr-sh"><h3>${esc(title)}</h3>${aside || ''}</div>${pfFieldGrid(fields)}</section>` : ''; }
+const pfPeople = c => `<div class="pr-igroup"><div class="pr-sh"><h3>${PT.PEOPLE_TITLE}</h3></div>${(c.cotitulares || []).map(p => `<div class="pr-item"><span class="ds-avatar ds-avatar--md cli-av" aria-hidden="true">${esc(getInitials(p.name, p.lastName))}</span><span class="tx"><b>${esc(fullName(p))}</b><small>${esc([p.role, p.relationship, p.phone && formatPhone(p.phone)].filter(Boolean).join(' · '))}</small></span></div>`).join('')}</div>`;
 function pfInfoPanel(c, tab) {
   if (tab === 'personal') return `<div class="pr-ibody">${pfSection(PT.IDENTITY_TITLE, pfIdentity(c))}${pfSection(PT.SITUATION_TITLE, pfSituation(c))}${pfSection(PT.LABOR_TITLE, pfLabor(c))}</div>`;
   if (tab === 'direccion') return `<div class="pr-ibody">${pfSection((c.address && c.address.name) || PT.ADDRESS_TITLE, pfAddress(c))}</div>`;
@@ -325,9 +412,9 @@ function pfInfoPanel(c, tab) {
     const i = c.identification, vig = i && i.validUntil ? pfChip(`${i.expired ? PT.EXPIRED : PT.VALID} · ${i.validUntil}`, i.expired ? 'red' : 'green') : '';
     return `<div class="pr-ibody">${pfSection(PT.ID_TITLE, pfIdent(c), vig)}${pfSection(PT.PROOFS_TITLE, pfProofs(c))}</div>`;
   }
-  if (tab === 'cotitulares') return `<div class="pr-igroup"><div class="pr-sh"><h3>${PT.PEOPLE_TITLE}</h3></div>${(c.cotitulares || []).map(p => `<div class="pr-item"><span class="ds-avatar ds-avatar--md cli-av" aria-hidden="true">${esc(getInitials(p.name, p.lastName))}</span><span class="tx"><b>${esc(fullName(p))}</b><small>${esc([p.role, p.relationship, p.phone && formatPhone(p.phone)].filter(Boolean).join(' · '))}</small></span></div>`).join('')}</div>`;
+  if (tab === 'cotitulares') return pfPeople(c);
   const prints = c.fingerprints || [];
-  return `<div class="pr-ibody"><div class="pr-sh"><h3>${PT.FINGERPRINTS_TITLE}</h3><span class="ds-chip">${PT.FINGERPRINTS_COUNT(prints.length)}</span></div>${pfPrintGroups(prints).map(g => `<div class="pr-igroup"><h4>${g.hand}</h4><div class="pr-chips">${g.fingers.map(f => `<span class="ds-chip ds-chip--brand">${pfIc('Fingerprint', 16)}${esc(f)}</span>`).join('')}</div></div>`).join('')}</div>`;
+  return `<div class="pr-ibody"><div class="pr-sh"><h3>${PT.FINGERPRINTS_TITLE}</h3><span class="ds-chip">${PT.FINGERPRINTS_COUNT(prints.length)}</span></div>${pfPrintGroups(prints).map(g => `<div class="pr-igroup"><h4>${g.hand}</h4><div class="pr-chips">${g.fingers.map(f => `<span class="ds-chip ds-chip--choice ds-chip--on pr-fp">${pfIc('Fingerprint', 20)}${esc(f)}</span>`).join('')}</div></div>`).join('')}</div>`;
 }
 function pfInfo(c) {
   const tabs = pfInfoTabs(c), p = st.prof; if (!tabs.length) return '';
@@ -335,54 +422,122 @@ function pfInfo(c) {
   const bar = tabs.length > 1 ? `<div class="pr-stick"><div class="ds-tabs__list cli-tabs" role="tablist">${tabs.map(t => `<button type="button" role="tab" class="ds-tabs__tab" aria-selected="${t === cur}" data-act="pfitab" data-v="${t}">${PF_INFO_TAB_LABEL[t]}</button>`).join('')}</div></div>` : '';
   return `<div class="pr-ibody">${bar}<div ${tabs.length > 1 ? 'role="tabpanel"' : ''}>${pfInfoPanel(c, cur)}</div></div>`;
 }
-/* Desglose por concepto; cada columna es un origen del monto (esta casa, otras casas) */
-function pfAmounts(cols) {
-  const rows = [['pawn', PT.PAWNS], ['loan', PT.LOANS], ['layaway', PT.LAYAWAYS]];
-  return `<div class="pr-tablew"><table class="ds-table cli-table"><thead><tr><th>${PH.COL_CONCEPT}</th>${cols.map(c => `<th class="r">${esc(c.label)}</th>`).join('')}</tr></thead><tbody>${rows.map(([k, l]) => `<tr><td>${l}</td>${cols.map(c => `<td class="r">${formatMXN(c.amounts[k])}</td>`).join('')}</tr>`).join('')}<tr><td><b>${PH.TOTAL}</b></td>${cols.map(c => `<td class="r"><b>${formatMXN(sumAmounts(c.amounts))}</b></td>`).join('')}</tr></tbody></table></div>`;
+
+/* ---------- Saldo por pagar / Saldo pagado: total, barra por concepto y una GroupCard del DS por concepto ---------- */
+function pfGroup(id, title, amount, sub, body) {
+  const open = st.prof.open.includes(id);
+  return `<div class="pr-gc ${open ? 'is-open' : ''}"><div class="pr-gc__head" role="button" tabindex="0" aria-expanded="${open}" data-act="pfgroup" data-v="${id}"><span class="pr-gc__chev" aria-hidden="true">${pfIc('ChevronDown')}</span><span class="pr-gc__tx"><span class="pr-gc__title"><span>${esc(title)}</span><b>${formatMXN(amount)}</b></span><span class="pr-gc__sub">${esc(sub)}</span></span></div>${open ? `<div class="pr-gc__body">${body}</div>` : ''}</div>`;
+}
+const pfTotalBox = (label, total, hint, segs) => `<div class="pr-total"><span class="lbl">${esc(label)}</span><p class="amt">${formatMXN(total)}</p><p class="hint">${esc(hint)}</p>${segs.length > 1 ? pfBar(segs) : ''}</div>`;
+function pfDebt(c) {
+  const d = getDebtBreakdown(c);
+  const pawnRows = d.pawns.map(k => `<tr><td>${pfFolio(c, k.folio)}</td><td>${pfArtCell(k.articles[0] && k.articles[0].photo, articleSummary(k.articles), OPS.ARTICLE_COUNT(k.articles.length))}</td><td class="nw">${esc(k.dueDate)}</td><td class="pr-stc">${pfChip(k.status, ST_CONTRACT[k.status])}</td><td class="r"><b>${formatMXN(k.redemption)}</b></td></tr>`).join('');
+  const layRows = d.layaways.map(l => `<tr><td>${pfArtCell(l.article.photo, l.article.name, l.folio)}</td><td class="nw">${esc(l.dueDate)}</td><td class="pr-stc">${pfChip(l.status, ST_LAYAWAY[l.status])}</td><td class="r">${formatMXN(l.total)}</td><td class="r">${formatMXN(l.paid)}</td><td class="r"><b>${formatMXN(layawayPending(l))}</b></td></tr>`).join('');
+  const groups = [
+    { id: 'pawn', title: DEBT_T.PAWNS, sub: DEBT_T.PAWN_SUB(d.pawns.length), amount: d.amounts.pawn, table: pfTable(`<th>No. contrato</th><th>Artículos</th><th>Vencimiento</th><th class="pr-stc">Estado</th><th class="r am">Desempeño</th>`, pawnRows) },
+    { id: 'layaway', title: DEBT_T.LAYAWAYS, sub: DEBT_T.LAYAWAY_SUB(d.layaways.length), amount: d.amounts.layaway, table: pfTable(`<th>Artículo</th><th>Fecha límite</th><th class="pr-stc">Estado</th><th class="r am">Precio</th><th class="r am">Abonado</th><th class="r am">Falta</th>`, layRows) },
+  ].map((g, i) => ({ ...g, color: CHART_COLORS[i] })).filter(g => g.amount > 0);
+  const other = c.summary && c.summary.otherHousesDebt, otherTotal = other ? sumAmounts(other) : 0;
+  return `<div class="pr-debt">${pfTotalBox(DEBT_T.TOTAL_LABEL, d.total, groups.length ? DEBT_T.TOTAL_HINT : DEBT_T.EMPTY, groups.map(g => ({ value: g.amount, color: g.color, label: g.title })))}
+    <div class="pr-groups">${groups.map(g => pfGroup(g.id, g.title, g.amount, g.sub, g.table)).join('')}</div>
+    ${otherTotal > 0 ? pfAlert('info', DEBT_T.OTHER_TITLE, DEBT_T.OTHER_TEXT(formatMXN(otherTotal))) : ''}</div>`;
+}
+function pfPaid(c) {
+  const d = getPaidBreakdown(c);
+  const table = rows => pfTable(`<th>Fecha</th><th>No. transacción</th><th>Referencia</th><th>Concepto</th><th>Método de pago</th><th class="r am">Monto</th>`, rows.map(r => { const ref = getTransactionDetail(r).reference; return `<tr><td class="nw">${esc(r.date)}</td><td>${esc(r.number)}</td><td class="nw">${ref.startsWith('EMP-') ? pfFolio(c, ref) : esc(ref)}</td><td>${esc(r.operation)}</td><td>${pfPay(r.method)}</td><td class="r"><b>${formatMXN(r.amount)}</b></td></tr>`; }).join(''));
+  const groups = [['pawn', DEBT_T.PAWNS, PAID_T.PAWN_SUB], ['layaway', DEBT_T.LAYAWAYS, PAID_T.LAYAWAY_SUB], ['purchase', PAID_T.PURCHASES, PAID_T.PURCHASE_SUB]]
+    .map(([id, title, sub], i) => ({ id: 'p-' + id, title, sub: sub(d.groups[id].length), amount: d.amounts[id], rows: d.groups[id], color: CHART_COLORS[i] })).filter(g => g.amount > 0);
+  return `<div class="pr-debt">${pfTotalBox(PAID_T.TOTAL_LABEL, d.total, groups.length ? PAID_T.TOTAL_HINT(d.period) : PAID_T.EMPTY, groups.map(g => ({ value: g.amount, color: g.color, label: g.title })))}
+    <div class="pr-groups">${groups.map(g => pfGroup(g.id, g.title, g.amount, g.sub, table(g.rows))).join('')}</div></div>`;
 }
 const X_ICON = ICONS.close.replace('style="fill:var(--ats-primary-300)"', 'fill="currentColor"');
-const dsModalShell = (id, title, body, footer, cls) => `<div class="ds-modal-overlay cli-ov" data-act="mbg"><div class="ds-modal cli-modal ${cls || ''}" role="dialog" aria-modal="true" aria-labelledby="${id}T" data-stop="1">
+const dsModalShell = (id, title, body, footer, cls, extra = '') => `<div class="ds-modal-overlay cli-ov" data-act="mbg"><div class="ds-modal cli-modal ${cls || ''}" role="dialog" aria-modal="true" aria-labelledby="${id}T" data-stop="1" ${extra}>
     <div class="ds-modal__header"><h2 class="ds-modal__title" id="${id}T">${esc(title)}</h2><button type="button" class="ds-btn ds-btn--tertiary ds-btn--icon-md cli-modal__x" data-act="mclose" aria-label="Cerrar">${X_ICON}</button></div>
     <div class="ds-modal__body">${body}</div><div class="ds-modal__footer">${footer}</div></div></div>`;
 function pfDetailModal(c) {
   const p = st.prof, panel = p.detail; if (!panel) return '';
-  const s = c.summary, other = s && s.otherHousesDebt;
-  const hint = t => `<p class="pr-hint">${esc(t)}</p>`;
   let title, body;
-  if (panel === 'debt') { title = PH.DEBT; body = hint(PH.DEBT_HINT) + (s ? pfAmounts([{ label: PH.COL_THIS_HOUSE, amounts: s.debt }, ...(other && sumAmounts(other) > 0 ? [{ label: PH.COL_OTHER_HOUSES, amounts: other }] : [])]) : ''); }
-  else if (panel === 'income') { title = PH.INCOME; body = s ? hint(PH.INCOME_HINT) + pfAmounts([{ label: PH.COL_AMOUNT, amounts: s.income }]) : ''; }
+  if (panel === 'debt') { title = PH.DEBT; body = pfDebt(c); }
+  else if (panel === 'income') { title = PH.INCOME; body = pfPaid(c); }
   else { title = `${PH.INFO} · ${fullName(c)}`; body = pfInfo(c); }
   const canEdit = panel === 'info' && pfCanEdit(c.type, 'contacto');
   const foot = `<button type="button" class="ds-btn ${canEdit ? 'ds-btn--tertiary' : 'ds-btn--secondary'} ds-btn--md" data-act="mclose">${PH.CLOSE}</button>${canEdit ? `<button type="button" class="ds-btn ds-btn--primary ds-btn--md" data-act="pfeditinfo">${PH.EDIT_CLIENT}</button>` : ''}`;
-  return dsModalShell('pfd', title, body, foot, panel === 'info' ? 'pr-wide' : 'pr-mid');
+  return dsModalShell('pfd', title, body, foot, panel === 'info' ? 'pr-wide' : 'pr-debtm pr-endfoot');
 }
+/* DS SelectionInput: caja del TextInput con la lista abajo (tope de 240 px; al abrir, la opción elegida queda a la vista: 1382e1a56) */
 function pfSelect(id, label, opts, value, tried, key) {
   const open = st.menu === id, err = tried && !value;
-  return `<div class="ds-field"><span class="ds-label" id="${id}L">${label}</span><span class="cli-selw"><button type="button" class="ds-field-wrap psel ${open ? 'open' : ''} ${err ? 'ds-field-wrap--error' : ''}" data-act="menu" data-id="${id}" aria-haspopup="listbox" aria-expanded="${open}" aria-labelledby="${id}L" ${err ? 'aria-invalid="true"' : ''}><span class="${value ? '' : 'ph'}">${esc(value || PH.SELECT)}</span>${DS_CHEV}</button>${open ? `<div class="ddl-menu cli-selmenu" role="listbox">${opts.map(o => `<button type="button" role="option" aria-selected="${o === value}" class="${o === value ? 'on' : ''}" data-act="pfsel" data-k="${key}" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>` : ''}</span>${err ? `<span class="ds-helper ds-helper--error" role="alert">${PH.REQUIRED}</span>` : ''}</div>`;
+  return `<div class="ds-field"><span class="ds-label" id="${id}L">${label}</span><span class="cli-selw"><button type="button" class="ds-field-wrap psel ${open ? 'open' : ''} ${err ? 'ds-field-wrap--error' : ''}" data-act="menu" data-id="${id}" aria-haspopup="listbox" aria-expanded="${open}" aria-labelledby="${id}L" ${err ? 'aria-invalid="true"' : ''}><span class="${value ? '' : 'ph'}">${esc(value || PH.SELECT)}</span>${DS_CHEV}</button>${open ? `<div class="ddl-menu cli-selmenu" role="listbox" data-center>${opts.map(o => `<button type="button" role="option" aria-selected="${o === value}" class="${o === value ? 'on' : ''}" data-act="pfsel" data-k="${key}" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>` : ''}</span>${err ? `<span class="ds-helper ds-helper--error" role="alert">${PH.REQUIRED}</span>` : ''}</div>`;
+}
+/* Baja: con "Registro duplicado" se elige el cliente que se queda (DS AutoSelect) y se muestra lo que se le va a pasar (15c423c26) */
+function pfDeactivate(c) {
+  const p = st.prof, name = fullName(c), dup = p.dReason === PF_DUPLICATE, target = dup ? getMergeTarget(p.dTarget) : undefined;
+  let body = `<p class="vfy-p">${esc(dup ? MERGE.INTRO(name) : PH.DEACTIVATE_TEXT(name))}</p>${pfSelect('pfdr', PH.DEACTIVATE_REASON, PF_DEACTIVATE_REASONS, p.dReason, p.dTried, 'dReason')}`;
+  if (dup) {
+    const q = norm(p.dQuery.trim()), opts = mergeCandidates(c.id).filter(o => !q || norm(o.label).includes(q)), open = st.menu === 'pfauto';
+    const err = p.dTried && !target, summary = mergeSummary(c);
+    body += `<p class="vfy-p pr-capt">${esc(MERGE.TARGET_HINT(name))}</p>
+      <label class="ds-field"><span class="ds-label">${MERGE.TARGET_LABEL}</span><span class="cli-selw menu"><span class="ds-field-wrap ${open ? 'pr-auto-open' : ''} ${err ? 'ds-field-wrap--error' : ''}"><input class="ds-input" data-in="pfauto" data-fk="pfauto" role="combobox" aria-expanded="${open}" aria-autocomplete="list" autocomplete="off" placeholder="${esc(MERGE.TARGET_PLACEHOLDER)}" value="${esc(p.dQuery)}"><span class="ds-field-addon ds-field-addon--right pr-auto-chev" aria-hidden="true">${DS_CHEV}</span></span>
+      ${open ? `<div class="ddl-menu cli-selmenu pr-automenu" role="listbox">${opts.length ? opts.map(o => `<button type="button" role="option" aria-selected="${o.value === p.dTarget}" class="${o.value === p.dTarget ? 'on' : ''}" data-act="pfpick" data-v="${o.value}">${esc(o.label)}</button>`).join('') : `<p class="pr-autoempty">${MERGE.EMPTY}</p>`}</div>` : ''}</span></label>
+      ${err ? `<p class="pr-ferr" role="alert">${MERGE.TARGET_REQUIRED}</p>` : ''}`;
+    if (target) {
+      body += `<div class="vfy-who pr-target"><span class="ds-avatar ds-avatar--md cli-av" aria-hidden="true">${esc(target.initials)}</span><div><p class="m">${esc(target.name)}</p><p class="pr-capt">${esc(target.subtitle)}</p></div></div>
+        <h3 class="pr-h3">${MERGE.SUMMARY_TITLE}</h3>${summary.length ? `<div class="pr-chips">${summary.map(s => `<span class="ds-chip ds-chip--info">${esc(s)}</span>`).join('')}</div>` : `<p class="vfy-p">${MERGE.NOTHING}</p>`}
+        ${pfAlert('warning', MERGE.WARNING_TITLE, MERGE.WARNING_TEXT(name, target.name))}
+        <label class="ds-check ${p.dTried && !p.dSure ? 'ds-check--error' : ''}"><input type="checkbox" data-chk="pfsure" ${p.dSure ? 'checked' : ''}><span class="ds-check__wrap"><span class="ds-check__box"></span></span>${MERGE.CONFIRM}</label>
+        ${p.dTried && !p.dSure ? `<p class="pr-ferr" role="alert">${MERGE.CONFIRM_REQUIRED}</p>` : ''}`;
+    }
+  }
+  return dsModalShell('pfx', PH.DEACTIVATE_TITLE, body, `<button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" data-act="mclose">${PH.CANCEL}</button><button type="button" class="ds-btn ds-btn--destructive ds-btn--md" data-act="pfdeactivate">${dup ? MERGE.SUBMIT : PH.DEACTIVATE_CONFIRM}</button>`, `${dup ? 'pr-lg' : ''} pr-endfoot`);
 }
 function pfDialog(c) {
   const p = st.prof, name = fullName(c);
-  if (p.dlg === 'deactivate') return dsModalShell('pfx', PH.DEACTIVATE_TITLE, `<p class="vfy-p">${esc(PH.DEACTIVATE_TEXT(name))}</p>${pfSelect('pfdr', PH.DEACTIVATE_REASON, PF_DEACTIVATE_REASONS, p.dReason, p.dTried, 'dReason')}`,
-    `<button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" data-act="mclose">${PH.CANCEL}</button><button type="button" class="ds-btn ds-btn--destructive ds-btn--md" data-act="pfdeactivate">${PH.DEACTIVATE_CONFIRM}</button>`, 'pr-mid');
+  if (p.dlg === 'deactivate') return pfDeactivate(c);
   if (p.dlg === 'report') { const errD = p.rTried && !p.rDetail.trim(); return dsModalShell('pfx', PH.REPORT_TITLE, `<p class="vfy-p">${esc(PH.REPORT_TEXT(name))}</p>${pfSelect('pfrr', PH.REPORT_REASON, PF_REPORT_REASONS, p.rReason, p.rTried, 'rReason')}
       <label class="ds-field"><span class="ds-label">${PH.REPORT_DETAIL}</span><textarea class="ds-textarea ${errD ? 'ds-textarea--error' : ''}" data-in="pfrd" data-fk="pfrd" rows="4" placeholder="${esc(PH.REPORT_DETAIL_PLACEHOLDER)}" ${errD ? 'aria-invalid="true"' : ''}>${esc(p.rDetail)}</textarea>${errD ? `<span class="ds-helper ds-helper--error" role="alert">${PH.REQUIRED}</span>` : ''}</label>`,
-    `<button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" data-act="mclose">${PH.CANCEL}</button><button type="button" class="ds-btn ds-btn--primary ds-btn--md" data-act="pfreport">${PH.REPORT_CONFIRM}</button>`, 'pr-mid'); }
-  if (p.dlg === 'leave') return dsModalShell('pfx', PH.LEAVE_TITLE, `<p class="vfy-p">${esc(PH.LEAVE_TEXT(name))}</p>`,
-    `<button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" data-act="mclose">${PH.CANCEL}</button><button type="button" class="ds-btn ds-btn--primary ds-btn--md" data-act="pfleave">${PH.LEAVE_CONFIRM}</button>`, 'pr-sm');
+    `<button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" data-act="mclose">${PH.CANCEL}</button><button type="button" class="ds-btn ds-btn--primary ds-btn--md" data-act="pfreport">${PH.REPORT_CONFIRM}</button>`, 'pr-endfoot'); }
+  /* 1ec261752: el aviso de salida va en un DS Alert de advertencia */
+  if (p.dlg === 'leave') return dsModalShell('pfx', PH.LEAVE_TITLE, pfAlert('warning', '', PH.LEAVE_TEXT(name)),
+    `<button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" data-act="mclose">${PH.CANCEL}</button><button type="button" class="ds-btn ds-btn--primary ds-btn--md" data-act="pfleave">${PH.LEAVE_CONFIRM}</button>`, 'pr-sm pr-endfoot');
   return '';
 }
-function profileModals() { if (st.screen !== 'client') return ''; const c = getClientProfile(st.prof.id); return c ? pfDetailModal(c) + pfDialog(c) : ''; }
-const pfAlert = (kind, title, text) => `<div class="ds-alert ds-alert--${kind}" role="status"><span class="ds-alert__icon" aria-hidden="true">${kind === 'warning' ? '!' : 'i'}</span><div class="ds-alert__body-wrap"><p class="ds-alert__title">${esc(title)}</p><p class="ds-alert__body">${esc(text)}</p></div></div>`;
+/* Detalle de transacción (92f7ebdf5): datos clave, artículos, tipo/estado/empresa/método, desglose y registro del pago */
+function txModal() {
+  const r = st.txRow; if (!r) return '';
+  const d = getTransactionDetail(r), alert = TX_ALERT[r.status];
+  const facts = [[d.referenceLabel, d.referenceLabel === 'Contrato' ? `<span class="pr-folio__t">${esc(d.reference)}</span>` : esc(d.reference)], [TXD.NUMBER, esc(r.number)], [TXD.DATE, esc(r.date)], [TXD.AMOUNT, formatMXN(r.amount)]];
+  const lines = rows => `<dl class="pr-lines">${rows.map(l => `<div class="${l.total ? 'tot' : ''}"><dt>${esc(l.label)}</dt><dd>${l.money ? formatMXN(l.value) : esc(l.value)}</dd></div>`).join('')}</dl>`;
+  const body = `<div class="pr-txd">${alert ? pfAlert(alert[0], alert[1], alert[2]) : ''}
+    <div class="pr-gray"><dl class="pr-facts">${facts.map(([l, v]) => `<div><dt>${esc(l)}</dt><dd>${v}</dd></div>`).join('')}</dl></div>
+    <ul class="pr-txarts" aria-label="${TXD.ARTICLES}">${d.articles.map(a => `<li><img src="${esc(a.photo)}" alt="${esc(a.name)}" width="72" height="72"><span><b>${esc(a.name)}</b><small>${esc(r.operation)}</small></span></li>`).join('')}</ul>
+    <div class="pr-gray">${pfTable(TXD.COLS.map(h => `<th class="w160">${h}</th>`).join(''), `<tr><td>${esc(r.operation)}</td><td>${pfChip(r.status, ST_TX[r.status])}</td><td>${esc(d.company)}</td><td>${esc(d.kind)}</td><td>${pfPay(r.method)}</td></tr>`, 'pr-table--gray')}</div>
+    <div class="pr-txrow"><div class="pr-gray"><h3 class="pr-h3">${TXD.BREAKDOWN}</h3>${lines(d.breakdown.map(l => ({ label: l.label, value: l.amount, money: true, total: l.total })))}</div>
+      <div class="pr-gray"><h3 class="pr-h3">${TXD.RECORD}</h3>${lines([{ label: TXD.BRANCH, value: d.branch }, { label: TXD.CASHIER, value: d.cashier }, { label: TXD.TIME, value: d.time }])}</div></div></div>`;
+  return dsModalShell('txd', TXD.TITLE, body, `<button type="button" class="ds-btn ds-btn--secondary ds-btn--md" data-act="mclose">${PH.CLOSE}</button><button type="button" class="ds-btn ds-btn--primary ds-btn--md cli-btn-ic" data-act="txdl">${pfIc('Download')}${TXD.DOWNLOAD}</button>`, 'pr-txm');
+}
+/* Notas de la prenda (detalle del contrato) */
+function notesModal() {
+  const n = st.ct && st.ct.notes; if (!n) return '';
+  return dsModalShell('ctn', CTD.NOTES_TITLE(n.name), `<p class="vfy-p">${esc(n.notes)}</p>`, `<button type="button" class="ds-btn ds-btn--primary ds-btn--md" data-act="mclose">${PH.CLOSE}</button>`, 'pr-sm');
+}
+function profileModals() {
+  if (st.screen === 'contract') return txModal() + notesModal();
+  if (st.screen !== 'client') return '';
+  const c = getClientProfile(st.prof.id); return c ? pfDetailModal(c) + pfDialog(c) + txModal() : '';
+}
+const pfAlert = (kind, title, text, action) => `<div class="ds-alert ds-alert--${kind} pr-alert" role="status"><span class="ds-alert__icon" aria-hidden="true">${kind === 'warning' ? '!' : 'i'}</span><div class="ds-alert__body-wrap">${title ? `<p class="ds-alert__title">${esc(title)}</p>` : ''}<p class="ds-alert__body">${esc(text)}</p>${action || ''}</div></div>`;
+/* Menú ⋮ (IconButton + lista de ButtonSelect), alineado a la derecha del botón */
+const pfMoreMenu = (id, label, opts, act, size = 'md', extra = '') => { const open = st.menu === id; return `<div class="pr-acts"><button type="button" class="ds-btn ds-btn--tertiary ds-btn--icon-${size} pr-md" data-act="menu" data-id="${id}" aria-haspopup="menu" aria-expanded="${open}" aria-label="${esc(label)}">${pfIc('MoreVert')}</button>${open ? `<div class="ddl-menu pr-menu" role="menu" aria-label="${esc(label)}">${opts.map(([v, l]) => `<button type="button" role="menuitem" data-act="${act}" data-v="${v}" ${extra}>${esc(l)}</button>`).join('')}</div>` : ''}</div>`; };
 
+/* ---------- Encabezado (3c83b2d50: íconos como el legacy; f04300105: sin lápiz en la foto, se cambia en Editar cliente) ---------- */
 function pfHeader(c) {
   const p = st.prof, s = c.summary, name = fullName(c), ident = c.identification;
   const acts = PF_ACTIONS[c.type].filter(a => !(p.deactivated && a === 'deactivate'));
   const addr = pfAddress(c).map(f => f.value).join(', ');
-  const photo = esc(getInitials(c.name, c.lastName));
-  const pill = (id, icon, label, amount) => `<div class="pr-pill"><span class="pr-pic">${pfIc(icon)}</span><span class="pr-pl">${label}</span>${amount != null ? `<b class="pr-pa">${formatMXN(amount)}</b>` : ''}<button type="button" class="ds-btn ds-btn--tertiary ds-btn--icon-sm" data-act="pfdetail" data-v="${id}" aria-label="${esc(PH.VIEW_DETAIL(label))}">${pfIc('ViewOn')}</button></div>`;
-  const open = st.menu === 'pfacc';
+  /* Choice chip del DS con ícono: muestra el dato y abre su detalle; queda activo mientras está abierto */
+  const pill = (id, icon, label, amount) => `<button type="button" class="ds-chip ds-chip--choice pr-pill ${p.detail === id ? 'ds-chip--on' : ''}" aria-pressed="${p.detail === id}" data-act="pfdetail" data-v="${id}">${pfIc(icon)}<span>${esc(label)}${amount != null ? ` ${formatMXN(amount)}` : ''}</span></button>`;
   return `<section class="pr-card" aria-label="${esc(name)}"><div class="pr-top">
-      <div class="pr-photo"><span class="ds-avatar ds-avatar--xl cli-av pr-ph" role="img" aria-label="${esc(name)}">${photo}</span>${pfCanEdit(c.type, 'personal') ? `<span class="pr-phedit"><button type="button" class="ds-btn ds-btn--tertiary ds-btn--icon-sm" data-act="pfedit" data-v="personal" aria-label="${PH.CHANGE_PHOTO}">${pfIc('Edit')}</button></span>` : ''}</div>
+      <div class="pr-photo"><span class="ds-avatar ds-avatar--xl cli-av pr-ph" role="img" aria-label="${esc(name)}">${esc(getInitials(c.name, c.lastName))}</span></div>
       <div class="pr-main">
         <div class="pr-name"><h2>${esc(name)}</h2><span class="ds-chip ${PF_TYPE_CHIP[c.type]}">${PF_TYPE_LABEL[c.type]}</span>${c.score && c.score !== 'Nuevo' ? pfChip(c.score, PF_SCORE_CHIP[c.score]) : ''}${c.score === 'Nuevo' ? `<span class="cap pr-cap">${PT.NEW_CLIENT_SCORE}</span>` : ''}</div>
         <ul class="pr-meta">
@@ -392,91 +547,218 @@ function pfHeader(c) {
           <li>${pfIc('Mail', 16)}${esc(c.email)}</li>
           ${addr ? `<li>${pfIc('Home', 16)}<span class="pr-addr" title="${esc(addr)}">${esc(addr)}</span></li>` : ''}
         </ul>
-        <div class="pr-pills">${s ? pill('debt', 'PrstamosSolicitados', PH.DEBT, sumAmounts(s.debt)) : ''}${s ? pill('income', 'Payments', PH.INCOME, sumAmounts(s.income)) : ''}${pfInfoTabs(c).length ? pill('info', 'UserAttributes', PH.INFO) : ''}</div>
+        <div class="pr-pills">${s ? pill('debt', 'TaskAlt', PH.DEBT, getDebtBreakdown(c).total) : ''}${s ? pill('income', 'Payments', PH.INCOME, getPaidBreakdown(c).total) : ''}${pfInfoTabs(c).length ? pill('info', 'ClientInfo', PH.INFO) : ''}</div>
       </div>
-      <div class="pr-acts"><button type="button" class="ds-btn ds-btn--tertiary ds-btn--icon-md pr-md" data-act="menu" data-id="pfacc" aria-haspopup="menu" aria-expanded="${open}" aria-label="${PH.ACTIONS}">${pfIc('MoreVert')}</button>${open ? `<div class="ddl-menu pr-menu" role="menu" aria-label="${PH.ACTIONS}">${acts.map(a => `<button type="button" role="menuitem" data-act="pfaction" data-v="${a}">${PF_ACTION_LABEL[a]}</button>`).join('')}</div>` : ''}</div>
+      ${pfMoreMenu('pfacc', PH.ACTIONS, acts.map(a => [a, PF_ACTION_LABEL[a]]), 'pfaction')}
     </div></section>`;
 }
-// foto de muestra para el carrito según la prenda (las del inventario del prototipo)
-const cartImg = a => { const n = String(a || '').toLowerCase(); const f = n.includes('iphone') ? 'iphone-15-pro.png' : n.includes('anillo') || n.includes('arracada') || n.includes('cadena') ? 'anillo.png' : n.includes('laptop') || n.includes('teclado') ? 'teclado-rog.png' : ''; return f ? new URL('../assets/inventario/' + f, location.href).pathname : undefined; };
+
+/* ---------- Acciones rápidas (490adc8a9 fotos de prendas, 75c48fea5 estados y reactivación, 38e7b46e9 mismos montos que la tabla) ---------- */
 function pfQuick(c) {
   const list = c.contracts; if (!list || !list.length) return '';
-  const card = x => `<article class="pr-qcard" aria-label="${esc(x.folio)}"><div class="pr-qtop"><div><p class="pr-cap">${PT.QUICK_DUE(x.dueDate)}</p><h3>${esc(x.folio)}</h3></div>${pfChip(x.status, PF_STATUS_CHIP[x.status])}</div>
+  const card = x => `<article class="pr-qcard" aria-label="${esc(x.folio)}"><div class="pr-qtop"><div><p class="pr-cap">${PT.QUICK_DUE(x.dueDate)}</p>${pfFolio(c, x.folio, 'h3')}</div>${pfChip(x.status, ST_CONTRACT[x.status])}</div>
       <div class="pr-qamts"><div class="pr-f"><span>${PT.QUICK_RENEWAL}</span><b>${formatMXN(x.renewal)}</b></div><div class="pr-f"><span>${PT.QUICK_REDEMPTION}</span><b>${formatMXN(x.redemption)}</b></div></div>
-      <div class="pr-f"><span>${PT.QUICK_ARTICLES}</span><b class="pr-clip" title="${esc(x.articles.join(', '))}">${esc(x.articles.join(', '))}</b></div>
-      <div class="pr-qbtns"><button type="button" class="ds-btn ds-btn--secondary ds-btn--md" data-act="pfquick" data-k="${PT.QUICK_REDEMPTION}" data-v="${esc(x.folio)}">${PT.QUICK_REDEEM}</button><button type="button" class="ds-btn ds-btn--secondary ds-btn--md" data-act="pfquick" data-k="${PT.QUICK_RENEWAL}" data-v="${esc(x.folio)}">${PT.QUICK_RENEW}</button></div></article>`;
-  // apartado: Cuota y Liquidación; "Pagar cuota" y "Liquidar" lo mandan al carrito compartido (../carrito.js)
-  const lay = x => `<article class="pr-qcard" aria-label="${esc(x.folio)}"><div class="pr-qtop"><div><p class="pr-cap">${PT.QUICK_DUE(x.dueDate)}</p><h3>${esc(x.folio)}</h3></div>${pfChip(x.status, PF_STATUS_CHIP[x.status])}</div>
-      <div class="pr-qamts"><div class="pr-f"><span>Cuota</span><b>${formatMXN(x.fee)}</b></div><div class="pr-f"><span>Liquidación</span><b>${formatMXN(x.payoff)}</b></div></div>
-      <div class="pr-f"><span>Artículo · cuotas ${x.paid}/${x.of}</span><b class="pr-clip" title="${esc(x.article)}">${esc(x.article)}</b></div>
-      <div class="pr-qbtns"><button type="button" class="ds-btn ds-btn--secondary ds-btn--md" data-act="pfquick" data-k="liquidar" data-v="${esc(x.folio)}">Liquidar</button><button type="button" class="ds-btn ds-btn--secondary ds-btn--md" data-act="pfquick" data-k="cuota" data-v="${esc(x.folio)}">Pagar cuota</button></div></article>`;
-  return `<section class="pr-card" aria-label="${PT.QUICK_TITLE}"><h2 class="pr-h2">${PT.QUICK_TITLE}</h2><div class="qa-wrap"><button type="button" class="qa-arrow l" data-act="pfscroll" data-v="-1" aria-label="Anteriores" hidden>${PG.prev}</button><div class="qa-track pr-track" id="qaTrack">${list.map(card).join('')}${(c.layaways || []).map(lay).join('')}</div><button type="button" class="qa-arrow r" data-act="pfscroll" data-v="1" aria-label="Siguientes" hidden>${PG.next}</button></div></section>`;
+      <div class="pr-f"><span>${PT.QUICK_ARTICLES}</span><ul class="pr-thumbs">${x.articles.map(a => `<li><img src="${esc(a.photo)}" alt="${esc(a.name)}" title="${esc(a.name)}" width="48" height="48"></li>`).join('')}</ul></div>
+      ${x.status === 'Vencido'
+        ? `<div class="pr-qbtns"><p class="pr-late">${PT.QUICK_LATE_FEES}</p><button type="button" class="ds-btn ds-btn--secondary ds-btn--md" data-act="pfquick" data-k="${PT.QUICK_REACTIVATION}" data-v="${esc(x.folio)}">${PT.QUICK_REACTIVATE}</button></div>`
+        : `<div class="pr-qbtns"><button type="button" class="ds-btn ds-btn--secondary ds-btn--md" data-act="pfquick" data-k="${PT.QUICK_REDEMPTION}" data-v="${esc(x.folio)}">${PT.QUICK_REDEEM}</button><button type="button" class="ds-btn ds-btn--secondary ds-btn--md" data-act="pfquick" data-k="${PT.QUICK_RENEWAL}" data-v="${esc(x.folio)}">${PT.QUICK_RENEW}</button></div>`}</article>`;
+  return `<section class="pr-card" aria-label="${PT.QUICK_TITLE}"><h2 class="pr-h2">${PT.QUICK_TITLE}</h2><div class="qa-wrap"><button type="button" class="qa-arrow l" data-act="pfscroll" data-v="-1" aria-label="Anteriores" hidden>${PG.prev}</button><div class="qa-track pr-track" id="qaTrack">${list.map(card).join('')}</div><button type="button" class="qa-arrow r" data-act="pfscroll" data-v="1" aria-label="Siguientes" hidden>${PG.next}</button></div></section>`;
+}
+
+/* ---------- Operaciones (22d8186fc: tabs sobre la página y una card por tab; 8d0970d21 tabla de contratos como el perfil legacy) ---------- */
+function pfTxBlock(rows, S, k) {
+  const nq = norm(S.q || ''), est = [...new Set(rows.map(r => r.status))];
+  const list = rows.filter(r => (!S.est || r.status === S.est) && (!nq || norm([r.number, r.operation, methodText(r.method)].join(' ')).includes(nq)));
+  const pages = Math.max(1, Math.ceil(list.length / PF_PAGE)); if (S.page > pages) S.page = pages;
+  const slice = list.slice((S.page - 1) * PF_PAGE, S.page * PF_PAGE);
+  const tools = rows.length ? `<div class="pr-optools">${pfSearch(k, S.q, OPS.SEARCH_TX)}${pfFilterChip('est-' + k, OPS.FILTER, est, S.est, 'opest', k)}</div>` : '';
+  const head = ['No. transacción', 'Fecha de pago', 'Monto del pago', 'Tipo de operación', 'Método de pago'].map(h => `<th>${h}</th>`).join('') + '<th class="pr-stc">Estado</th><th><span class="sr">Acciones</span></th>';
+  const body = slice.length ? slice.map(r => `<tr><td>${esc(r.number)}</td><td class="nw">${esc(r.date)}</td><td class="nw">${formatMXN(r.amount)}</td><td>${esc(r.operation)}</td><td>${pfPay(r.method)}</td><td class="pr-stc">${pfChip(r.status, ST_TX[r.status])}</td><td class="r"><button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" data-act="optxd" data-k="${k}" data-v="${esc(r.id)}">${OPS.DETAILS}</button></td></tr>`).join('')
+    : `<tr><td class="empty" colspan="7">${pfEmpty(!!(S.q || S.est))}</td></tr>`;
+  return tools + pfTable(head, body) + pfPager(list.length, S.page, 'oppage', k);
+}
+function pfOrdBlock(c) {
+  const rows = (c.operations || {}).ordenes || [], S = st.prof.ord, ch = c.type !== 'marketplace', nq = norm(S.q || ''), est = [...new Set(rows.map(r => r.status))];
+  const list = rows.filter(r => (!S.est || r.status === S.est) && (!nq || norm([r.number, ...r.articles.map(a => a.name)].join(' ')).includes(nq)));
+  const pages = Math.max(1, Math.ceil(list.length / PF_PAGE)); if (S.page > pages) S.page = pages;
+  const slice = list.slice((S.page - 1) * PF_PAGE, S.page * PF_PAGE);
+  const tools = rows.length ? `<div class="pr-optools">${pfSearch('ord', S.q, OPS.SEARCH_ORD)}${pfFilterChip('est-ord', OPS.FILTER, est, S.est, 'opest', 'ord')}</div>` : '';
+  const head = ['No. orden', 'Artículos', 'Fecha', ...(ch ? ['Canal de venta'] : []), 'Total abonado', 'Tipo'].map(h => `<th class="${h === 'Artículos' ? 'w240' : ''}">${h}</th>`).join('') + '<th class="pr-stc">Estado</th>';
+  const body = slice.length ? slice.map(r => `<tr><td class="nw">${esc(r.number)}</td><td>${pfArtCell(r.articles[0] && r.articles[0].photo, articleSummary(r.articles), OPS.ARTICLE_COUNT(r.articles.length))}</td><td class="nw">${esc(r.date)}</td>${ch ? `<td>${esc(r.channel)}</td>` : ''}<td class="nw">${formatMXN(r.paid)}</td><td>${esc(r.type)}</td><td class="pr-stc">${pfChip(r.status, ST_ORDER[r.status])}</td></tr>`).join('')
+    : `<tr><td class="empty" colspan="${ch ? 7 : 6}">${pfEmpty(!!(S.q || S.est))}</td></tr>`;
+  return tools + pfTable(head, body) + pfPager(list.length, S.page, 'oppage', 'ord');
+}
+/* Filtro por vencimiento (ClientProfileDueFilter + DueCalendar): mismo botón que TableFilterChip y un calendario flotante;
+   por fecha un mes con "Rango" y "Aplicar" (Figma "Calendario"), por rango dos meses (Figma "Date Range Picker") */
+const SHORT_M = MONTH_NAMES.map(m => m.slice(0, 3).toLowerCase());
+const shortDate = d => `${d.getDate()} ${SHORT_M[d.getMonth()]}`;
+const rangeLabel = r => { if (!r.end || sameDay(r.start, r.end)) return shortDate(r.start); const [a, b] = dayKey(r.start) <= dayKey(r.end) ? [r.start, r.end] : [r.end, r.start]; return `${shortDate(a)} – ${shortDate(b)}`; };
+const inDue = (d, r) => { const k = dayKey(d), a = dayKey(r.start), b = r.end ? dayKey(r.end) : a; return k >= Math.min(a, b) && k <= Math.max(a, b); };
+const monthOf = d => ({ y: d.getFullYear(), m: d.getMonth() });
+const shiftMonth = (v, n) => monthOf(new Date(v.y, v.m + n, 1));
+function dayPos(day, draft, range) {
+  if (!draft) return 'none';
+  const { start, end } = draft;
+  if (!range || !end || sameDay(start, end)) return sameDay(day, start) ? 'single' : 'none';
+  const [a, b] = dayKey(start) <= dayKey(end) ? [start, end] : [end, start];
+  if (sameDay(day, a)) return 'start'; if (sameDay(day, b)) return 'end';
+  return inDue(day, draft) ? 'middle' : 'none';
+}
+function calMonth(side) {
+  const C = st.prof.cal, v = C[side], today = new Date();
+  const first = new Date(v.y, v.m, 1), off = (first.getDay() + 6) % 7, dim = new Date(v.y, v.m + 1, 0).getDate(), weeks = Math.ceil((off + dim) / 7);
+  const days = Array.from({ length: weeks * 7 }, (_, i) => new Date(v.y, v.m, i - off + 1));
+  const years = Array.from({ length: 6 }, (_, i) => today.getFullYear() - 2 + i);
+  const sel = (key, label, opts, cur) => { const open = C.sel === `${side}-${key}`; return `<span class="cli-selw"><button type="button" class="ds-field-wrap psel ${open ? 'open' : ''}" data-act="calsel" data-v="${side}-${key}" aria-haspopup="listbox" aria-expanded="${open}" aria-label="${label}"><span>${esc(opts.find(o => o[0] === cur)[1])}</span>${DS_CHEV}</button>${open ? `<div class="ddl-menu cli-selmenu" role="listbox" data-center>${opts.map(([val, l]) => `<button type="button" role="option" aria-selected="${val === cur}" class="${val === cur ? 'on' : ''}" data-act="calpick" data-k="${side}-${key}" data-v="${val}">${esc(l)}</button>`).join('')}</div>` : ''}</span>`; };
+  return `<div class="pr-calm"><div class="pr-calsel">${sel('m', CAL_T.MONTH, MONTH_NAMES.map((n, i) => [i, n]), v.m)}${sel('y', CAL_T.YEAR, years.map(y => [y, String(y)]), v.y)}</div>
+    <div class="pr-days ${C.range ? 'band' : ''}">${['L', 'M', 'M', 'J', 'V', 'S', 'D'].map(w => `<span class="wd" aria-hidden="true">${w}</span>`).join('')}${days.map(d => { const out = d.getMonth() !== v.m, pos = C.range && out ? 'none' : dayPos(d, C.draft, C.range); return `<button type="button" class="pr-day is-${pos} ${out ? 'is-out' : ''} ${sameDay(d, today) ? 'is-today' : ''}" aria-pressed="${pos !== 'none'}" aria-label="${d.getDate()} de ${MONTH_NAMES[d.getMonth()].toLowerCase()} de ${d.getFullYear()}" data-act="calday" data-v="${d.getTime()}">${d.getDate()}</button>`; }).join('')}</div></div>`;
+}
+function calPanel() {
+  const C = st.prof.cal;
+  if (!C.range) return `<div class="pr-cal menu" role="dialog" aria-label="${CAL_T.TRIGGER}">${calMonth('left')}<p class="pr-calhint">${CAL_T.DAY_HINT}</p><div class="pr-calfoot"><button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" data-act="calrange">${CAL_T.RANGE}</button><button type="button" class="ds-btn ds-btn--primary ds-btn--md" data-act="calapply">${CAL_T.APPLY}</button></div></div>`;
+  return `<div class="pr-cal pr-cal--range menu" role="dialog" aria-label="${CAL_T.TRIGGER}"><div class="pr-calrow">${calMonth('left')}${calMonth('right')}</div><div class="pr-calfoot div"><button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" data-act="calclear">${CAL_T.CLEAR}</button><span class="g"><button type="button" class="ds-btn ds-btn--tertiary ds-btn--md" data-act="calcancel">${CAL_T.CANCEL}</button><button type="button" class="ds-btn ds-btn--primary ds-btn--md" data-act="calapply" ${C.draft && !C.draft.end ? 'disabled' : ''}>${CAL_T.CONTINUE}</button></span></div></div>`;
+}
+function pfCtrBlock(c) {
+  const rows = c.pawnContracts || [], S = st.prof.ctr;
+  const list = rows.filter(k => (!S.est || k.status === S.est) && (!S.due || inDue(parseDueDate(k.dueDate), S.due))).sort((a, b) => b.folio.localeCompare(a.folio));
+  const pages = Math.max(1, Math.ceil(list.length / PF_PAGE)); if (S.page > pages) S.page = pages;
+  const slice = list.slice((S.page - 1) * PF_PAGE, S.page * PF_PAGE), calOpen = st.menu === 'cal' && st.prof.cal;
+  const tools = rows.length ? `<div class="pr-optools pr-optools--end"><div class="pr-fchip pr-calw"><button type="button" class="pr-fchip__btn ${S.due || calOpen ? 'is-on' : ''}" data-act="calopen" aria-haspopup="dialog" aria-expanded="${!!calOpen}">${pfIc('CalendarToday')}<span>${S.due ? rangeLabel(S.due) : CAL_T.TRIGGER}</span><span class="pr-fchip__arrow">${pfIc('ArrowDropDown')}</span></button>${calOpen ? calPanel() : ''}</div>${pfFilterChip('est-ctr', OPS.FILTER_STATUS, CT_STATUSES, S.est, 'opest', 'ctr')}</div>` : '';
+  const head = `<th class="w140">No contrato</th><th class="w240">Artículos</th><th class="pr-stc">Estado</th><th class="pr-duec w120">Fecha de vencimiento</th>${['Refrendo', 'Desempeño', 'Préstamo', 'Valor avalúo'].map(h => `<th class="r am">${h}</th>`).join('')}<th class="pr-sellc w180">Vendedor / sucursal</th><th><span class="sr">Opciones</span></th>`;
+  const body = slice.length ? slice.map(k => `<tr><td class="nw">${pfFolio(c, k.folio)}</td><td>${pfArtCell(k.articles[0] && k.articles[0].photo, articleSummary(k.articles), OPS.ARTICLE_COUNT(k.articles.length))}</td><td class="pr-stc">${pfChip(k.status, ST_CONTRACT[k.status])}</td><td class="pr-duec nw">${esc(k.dueDate)}</td>${['renewal', 'redemption', 'loan', 'appraisal'].map(f => `<td class="r nw">${formatMXN(k[f])}</td>`).join('')}<td class="pr-sellc"><span class="pr-sell"><span>${esc(k.seller)}</span><small>${esc(k.branch)}</small></span></td><td class="r pr-rowmenu">${pfMoreMenu('ctr:' + k.folio, OPS.ROW_ACTIONS(k.folio), CT_ROW_ACTIONS[k.status].map(a => [a, CT_ACTION_LABEL[a]]), 'ctrow', 'sm', `data-k="${esc(k.folio)}"`)}</td></tr>`).join('')
+    : `<tr><td class="empty pr-emptytxt" colspan="11">${S.est || S.due ? OPS.CT_EMPTY_FILTER : OPS.CT_EMPTY}</td></tr>`;
+  return tools + pfTable(head, body, 'pr-table--ctr') + pfPager(list.length, S.page, 'oppage', 'ctr');
 }
 function pfOps(c) {
-  const p = st.prof, tabs = PF_OP_TABS[c.type], tab = tabs.includes(p.otab) ? p.otab : tabs[0];
-  const all = pfOpRows(c, tab), rows = pfFilterOps(all, p.q, p.est);
-  const pages = Math.max(1, Math.ceil(rows.length / PF_PAGE)); if (p.page > pages) p.page = pages;
-  const from = (p.page - 1) * PF_PAGE, slice = rows.slice(from, from + PF_PAGE);
-  const statuses = [...new Set(all.map(r => r.status))];
-  const cols = PF_OP_COLS[tab].filter(col => !PF_OP_HIDDEN[c.type].includes(col[0]));
-  const filtered = !!(p.q || p.est);
-  const CARET = '<span class="car"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 15L7 10H17L12 15Z" fill="currentColor"/></svg></span>';
-  const open = st.menu === 'pfest';
-  const empty = `<div class="cempty pr-empty"><img src="assets/ilust-01-empty.svg" alt="" width="150" height="150"><p class="t pr-b">${filtered ? PT.OPERATIONS_EMPTY_TITLE : PT.OPERATIONS_NONE_TITLE}</p><p class="cap">${filtered ? PT.OPERATIONS_EMPTY_TEXT : PT.OPERATIONS_NONE_TEXT}</p></div>`;
-  const tools = all.length ? `<div class="ctools pr-tools"><div class="ds-field-wrap cli-search"><input class="ds-input" placeholder="${PT.SEARCH_PLACEHOLDER}" aria-label="${PT.SEARCH_PLACEHOLDER}" data-in="prq" data-fk="prq" value="${esc(p.q)}">${p.q ? `<button type="button" class="ds-field-addon ds-field-addon--right cli-search__btn" data-act="pfq0" aria-label="${PT.CLEAR_SEARCH}">${X_ICON.replace(/width="\d+" height="\d+"/, 'width="20" height="20"')}</button>` : `<span class="ds-field-addon ds-field-addon--right" aria-hidden="true">${ic('search')}</span>`}</div>
-      ${statuses.length > 1 ? `<div class="tfc-g"><div class="cli-selw"><button type="button" class="ds-chip ds-chip--filter cli-fchip ${p.est ? 'ds-chip--on' : ''} ${open ? 'open' : ''}" data-act="menu" data-id="pfest" aria-haspopup="listbox" aria-expanded="${open}"><span>${p.est ? esc(p.est) : PT.STATUS_FILTER}</span>${CARET}</button>${open ? `<div class="ddl-menu cli-chipmenu cli-chipmenu--r" role="listbox">${statuses.map(o => `<button type="button" role="option" aria-selected="${o === p.est}" class="${o === p.est ? 'on' : ''}" data-act="pfest" data-v="${o === p.est ? '' : esc(o)}">${esc(o)}</button>`).join('')}</div>` : ''}</div></div>` : ''}</div>` : '';
-  const pager = rows.length > PF_PAGE ? `<nav class="dpager" aria-label="Paginación"><span class="g"><button data-act="pfpage" data-v="1" aria-label="Primera página" ${p.page === 1 ? 'disabled' : ''}>${PG.first}</button><button data-act="pfpage" data-v="${p.page - 1}" aria-label="Página anterior" ${p.page === 1 ? 'disabled' : ''}>${PG.prev}</button></span><span class="t">${from + 1}-${from + slice.length} de ${rows.length} resultados</span><span class="g"><button data-act="pfpage" data-v="${p.page + 1}" aria-label="Página siguiente" ${p.page >= pages ? 'disabled' : ''}>${PG.next}</button><button data-act="pfpage" data-v="${pages}" aria-label="Última página" ${p.page >= pages ? 'disabled' : ''}>${PG.last}</button></span></nav>` : '';
-  return `<section class="pr-card" aria-label="${PT.OPERATIONS_TITLE}"><h2 class="pr-h2">${PT.OPERATIONS_TITLE}</h2>
-    <div class="ds-tabs__list cli-tabs" role="tablist">${tabs.map(t => `<button type="button" role="tab" class="ds-tabs__tab" aria-selected="${t === tab}" data-act="pfotab" data-v="${t}">${PF_OP_TAB_LABEL[t]} (${pfOpRows(c, t).length})</button>`).join('')}</div>
-    ${tools}<div class="pr-tablew"><table class="ds-table cli-table"><thead><tr>${cols.map(col => `<th class="${col[2] || ''}">${col[1]}</th>`).join('')}<th>Estado</th></tr></thead><tbody>${slice.length ? slice.map(r => `<tr>${cols.map(col => `<td class="${col[2] || ''}">${esc(r.cells[col[0]])}</td>`).join('')}<td>${pfChip(r.status, PF_STATUS_CHIP[r.status])}</td></tr>`).join('') : `<tr><td class="empty" colspan="${cols.length + 1}">${empty}</td></tr>`}</tbody></table></div>${pager}</section>`;
+  const p = st.prof, tabs = pfOpTabs(c), tab = tabs.includes(p.otab) ? p.otab : tabs[0];
+  const content = tab === 'transacciones' ? pfTxBlock((c.operations || {}).transacciones || [], p.tx, 'tx') : tab === 'ordenes' ? pfOrdBlock(c) : pfCtrBlock(c);
+  return `${tabs.length > 1 ? `<div class="ds-tabs__list cli-tabs pr-optabs" role="tablist">${tabs.map(t => `<button type="button" role="tab" class="ds-tabs__tab" aria-selected="${t === tab}" data-act="pfotab" data-v="${t}">${PF_OP_TAB_LABEL[t]}</button>`).join('')}</div>` : ''}
+    <section class="pr-card" aria-label="${PF_OP_TAB_LABEL[tab]}"><h2 class="pr-h2">${PF_OP_TAB_LABEL[tab]}</h2><div class="pr-opbody" ${tabs.length > 1 ? 'role="tabpanel"' : ''}>${content}</div></section>`;
 }
+const pfCrumbs = items => `<nav aria-label="Breadcrumb" class="ds-breadcrumb"><ol class="pos-crumbs">${items.map((it, i) => i < items.length - 1 ? `<li><a href="${it.href}" class="ds-breadcrumb__link" ${it.go ? `data-act="go" data-to="${it.go}"` : ''}>${esc(it.label)}</a><span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt="" /></span></li>` : `<li><span class="ds-breadcrumb__current" aria-current="page">${esc(it.label)}</span></li>`).join('')}</ol></nav>`;
 function clientProfileScreen() {
   const p = st.prof, c = getClientProfile(p.id);
-  const crumbs = `<nav aria-label="Breadcrumb" class="ds-breadcrumb"><ol class="pos-crumbs"><li><a href="../home/" class="ds-breadcrumb__link">${PT.BREADCRUMB_HOME}</a><span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt="" /></span></li><li><a href="./" class="ds-breadcrumb__link" data-act="go" data-to="clients">${PT.BREADCRUMB_CLIENTS}</a><span class="ds-breadcrumb__sep" aria-hidden="true"><img class="pos-crumb-sep" src="../assets/ds/ArrowForwardIos-D4D6D8.svg" alt="" /></span></li><li><span class="ds-breadcrumb__current" aria-current="page">${PT.TITLE}</span></li></ol></nav>`;
+  const crumbs = pfCrumbs([{ label: PT.BREADCRUMB_HOME, href: '../home/' }, { label: PT.BREADCRUMB_CLIENTS, href: './', go: 'clients' }, { label: PT.TITLE }]);
   let body;
   if (!c) body = `<section class="pr-card"><div class="cempty pr-empty"><img src="assets/ilust-01-empty.svg" alt="" width="150" height="150"><h2 class="pr-h2">${PT.NOT_FOUND_TITLE}</h2><p class="cap">${PT.NOT_FOUND_TEXT}</p><a class="ds-btn ds-btn--primary ds-btn--md" href="./" data-act="go" data-to="clients">${PT.BACK_TO_LIST}</a></div></section>`;
-  else body = (c.type === 'marketplace' ? pfAlert('info', PT.MARKETPLACE_ALERT_TITLE, PT.MARKETPLACE_ALERT_TEXT) : '') + (p.deactivated ? pfAlert('warning', PH.DEACTIVATED_TITLE, PH.DEACTIVATED_TEXT) : '') + pfHeader(c) + pfQuick(c) + pfOps(c);
+  else {
+    /* ProfileStatusAlerts: marketplace y dado de baja (o fusionado, con "Ver perfil de …") */
+    const merged = p.merged, act = merged ? `<div class="pr-alertact"><a class="ds-btn ds-btn--tertiary ds-btn--md" href="#perfil/${encodeURIComponent(merged.id)}">${esc(MERGE.VIEW_TARGET(merged.name))}</a></div>` : '';
+    body = (c.type === 'marketplace' ? pfAlert('info', PT.MARKETPLACE_ALERT_TITLE, PT.MARKETPLACE_ALERT_TEXT) : '') + (p.deactivated ? pfAlert('warning', PH.DEACTIVATED_TITLE, merged ? MERGE.DONE_TEXT(merged.name) : PH.DEACTIVATED_TEXT, act) : '') + pfHeader(c) + pfQuick(c) + pfOps(c);
+  }
   return `<div class="cli cp">${crumbs}<div class="cli-head"><h1 class="cli-title">${PT.TITLE}</h1></div>${body}</div>${sesiones()}`;
 }
+
+/* ---------- Detalle del contrato de empeño (ContractDetail/*, 496bbf842; responsivo de d8fe089ae) ---------- */
+const longDate = new Intl.DateTimeFormat('es-MX', { weekday: 'long', day: 'numeric', month: 'long' });
+const formatLongDate = v => { const t = longDate.format(parseDueDate(v)); return t.charAt(0).toUpperCase() + t.slice(1); };
+function contractScreen() {
+  const T = st.ct, d = getContractDetail(T.id, T.folio), profHref = `#perfil/${encodeURIComponent(T.id)}`;
+  const crumbs = pfCrumbs([{ label: PT.BREADCRUMB_HOME, href: '../home/' }, { label: PT.BREADCRUMB_CLIENTS, href: './', go: 'clients' }, { label: CTD.BREADCRUMB_PROFILE, href: profHref }, { label: CTD.BREADCRUMB_DETAIL }]);
+  if (!d) return `<div class="cli cp">${crumbs}<section class="pr-card"><div class="cempty pr-empty"><img src="assets/ilust-01-empty.svg" alt="" width="150" height="150"><h2 class="pr-h2">${CTD.NOT_FOUND_TITLE}</h2><p class="cap">${CTD.NOT_FOUND_TEXT}</p><a class="ds-btn ds-btn--primary ds-btn--md" href="${profHref}">${CTD.BACK_TO_PROFILE}</a></div></section></div>${sesiones()}`;
+  const k = d.contract, c = d.client, discharged = k.status === 'Desempeñado', expired = k.status === 'Vencido';
+  const menu = (discharged || expired ? ['print', 'email'] : ['extend', 'print', 'email']).map(v => [v, CT_MENU[v]]);
+  const head = `<div class="ct-head"><div class="ct-headtx"><h1 class="cli-title">${CTD.TITLE}</h1><ul class="ct-meta"><li><span class="cap">${CTD.FOLIO}</span><span class="v">${esc(k.folio)}</span></li><li><span class="cap">${CTD.STATUS}</span>${pfChip(k.status, ST_CONTRACT[k.status])}</li><li><span class="cap">${discharged ? CTD.DISCHARGED : CTD.DUE}</span><span class="v">${esc(k.dueDate)}</span></li></ul></div>${pfMoreMenu('ctmore', CTD.MORE, menu, 'ctmenu')}</div>`;
+  const addr = pfAddress(c).map(f => f.value).join(', '), ident = c.identification;
+  const line = (l, v) => `<span class="ct-pair"><span class="cap">${esc(l)}</span>${v}</span>`;
+  const sum = [['Total de avalúo:', d.summary.appraisal], ['Total del préstamo:', d.summary.loan], ['Extensiones:', d.summary.extensions], ['Reactivaciones:', d.summary.reactivations], ['Subtotal:', d.summary.subtotal], [`Interés ${INTEREST_RATE}%:`, d.summary.interest], [`IVA ${IVA_RATE}%:`, d.summary.iva], ['Total:', d.summary.total]];
+  const cards = `<div class="ct-cards"><section class="pr-card pr-card--sm" aria-label="${CTD.CLIENT_TITLE}"><h2 class="pr-h2">${CTD.CLIENT_TITLE}</h2><div class="ct-client"><a class="ct-name" href="${profHref}">${esc(fullName(c))}</a>
+      ${c.score && c.score !== 'Nuevo' ? line(CTD.SCORE, pfChip(c.score, PF_SCORE_CHIP[c.score])) : ''}${ident ? line(`${ident.type}:`, `<span class="cap">${esc(ident.number)}</span>`) : ''}${line(CTD.EMAIL, `<span class="cap">${esc(c.email)}</span>`)}${line(CTD.PHONE, `<span class="cap">${esc(formatPhone(c.phone))}</span>`)}${addr ? line(CTD.ADDRESS, `<span class="cap">${esc(addr)}</span>`) : ''}</div></section>
+    <section class="pr-card pr-card--sm" aria-label="${CTD.SUMMARY_TITLE}"><h2 class="pr-h2">${CTD.SUMMARY_TITLE}</h2><dl class="ct-sum">${sum.map(([l, v]) => `<div><dt>${esc(l)}</dt><dd>${formatMXN(v)}</dd></div>`).join('')}</dl></section></div>`;
+  const acts = CT_MAIN_ACTIONS[k.status], deadline = formatLongDate(k.dueDate);
+  const arts = `<section class="pr-card pr-card--sm ct-arts" aria-label="${CTD.ARTICLES_TITLE}"><div class="ct-artshead"><h2 class="pr-h2">${CTD.ARTICLES_TITLE}</h2>${discharged ? '' : `<p class="ct-deadline ${expired ? 'is-exp' : ''}">${pfIc('InfoCircle')}${esc(expired ? CTD.EXPIRED_SINCE(deadline) : CTD.DEADLINE(deadline))}</p>`}</div>
+    <div class="ct-artsbody ${acts.length ? 'has-acts' : ''}"><div class="ct-list"><h3 class="pr-h3 sb">${CTD.ARTICLES}</h3>${d.articles.map((a, i) => `<article class="ct-art"><div class="ct-img"><img src="${esc(a.photo)}" alt="${esc(a.name)}" width="96" height="96"><span class="ct-cond">${pfChip(a.condition, 'white')}</span></div>
+        <div class="ct-arttx"><h4>${esc(a.name)}</h4><p class="cap">${CTD.SKU} ${esc(a.sku)}</p><p class="cap">${CTD.APPRAISAL} ${formatMXN(a.appraisal)}</p><p class="strong">${CTD.LOAN} ${formatMXN(a.loan)}</p></div>
+        ${a.notes ? `<button type="button" class="ds-btn ds-btn--tertiary ds-btn--md ct-notes" data-act="ctnotes" data-v="${i}">${CTD.NOTES}${pfIc('Chat')}</button>` : ''}</article>`).join('')}</div>
+      ${acts.length ? `<div class="ct-actions">${expired ? `<p class="pr-late">${CTD.LATE_FEES}</p>` : ''}${acts.map((a, i) => `<button type="button" class="ds-btn ${i ? 'ds-btn--secondary' : 'ds-btn--primary'} ds-btn--md" data-act="ctaction" data-v="${a}">${CT_ACTION_LABEL[a]}</button>`).join('')}</div>` : ''}</div></section>`;
+  const tabs = CT_TABS.filter(([id]) => (id !== 'personas' || (c.cotitulares || []).length) && (id !== 'transacciones' || d.transactions.length));
+  const tab = tabs.some(t => t[0] === T.tab) ? T.tab : 'detalle';
+  let panel;
+  if (tab === 'detalle') panel = `<div class="ct-secs">${d.sections.map(s => `<section class="ct-sec" aria-label="${esc(s.title)}"><div class="ct-sectitle"><h3 class="pr-h3">${esc(s.title)}</h3>${s.help ? `<span class="ds-tooltip pr-tip" tabindex="0" aria-label="${esc(s.help)}">${pfIc('Help')}<span class="ds-tooltip__content" role="tooltip">${esc(s.help)}</span></span>` : ''}</div><dl class="ct-cols">${s.fields.map(([l, v]) => `<div><dt>${esc(l)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl></section>`).join('')}</div>`;
+  else if (tab === 'personas') panel = pfPeople(c);
+  else if (tab === 'transacciones') panel = pfTxBlock(d.transactions, T.tx, 'ctx');
+  else panel = pfTable(`<th>No. pago</th><th>Fecha límite</th>${['Interés', 'IVA', 'Refrendo', 'Desempeño'].map(h => `<th class="r am">${h}</th>`).join('')}<th class="pr-stc">Estado</th>`, d.amortization.map(r => `<tr><td>${r.period}</td><td class="nw">${esc(r.dueDate)}</td>${['interest', 'iva', 'renewal', 'redemption'].map(f => `<td class="r nw">${formatMXN(r[f])}</td>`).join('')}<td class="pr-stc">${pfChip(r.status, ST_AMORT[r.status])}</td></tr>`).join(''));
+  const tabsCard = `<section class="pr-card pr-card--sm"><div class="ct-tabsw"><div class="ds-tabs__list cli-tabs" role="tablist">${tabs.map(([id, l]) => `<button type="button" role="tab" class="ds-tabs__tab" aria-selected="${id === tab}" data-act="cttab" data-v="${id}">${l}</button>`).join('')}</div></div><div role="tabpanel" class="ct-panel">${panel}</div></section>`;
+  return `<div class="cli cp ct">${crumbs}${head}${cards}${arts}${tabsCard}</div>${sesiones()}`;
+}
+
 const DS_CHEV = '<svg class="dchev" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 function pfAct(a, v, t) {
-  const p = st.prof, c = getClientProfile(p.id), name = c ? fullName(c) : '';
+  const p = st.prof, c = st.screen === 'client' ? getClientProfile(p.id) : null, name = c ? fullName(c) : '';
   switch (a) {
-    case 'pfdetail': p.detail = v; p.itab = null; st.menu = null; render(); return true;
+    case 'pfdetail': p.detail = v; p.itab = null; p.open = []; st.menu = null; render(); return true;
     case 'pfitab': p.itab = v; render(); return true;
-    case 'pfedit': p.editSection = v || undefined; p.dlg = 'leave'; render(); return true;
+    case 'pfgroup': p.open = p.open.includes(v) ? p.open.filter(x => x !== v) : [...p.open, v]; render(); return true;
     case 'pfeditinfo': p.detail = null; p.editSection = undefined; p.dlg = 'leave'; render(); return true;
-    case 'pfaction': st.menu = null; if (v === 'edit') { p.editSection = undefined; p.dlg = 'leave'; } else p.dlg = v; p.dTried = p.rTried = false; render(); return true;
+    case 'pfaction': st.menu = null; if (v === 'edit') { p.editSection = undefined; p.dlg = 'leave'; } else p.dlg = v; Object.assign(p, { dReason: '', dTarget: '', dQuery: '', dSure: false, dTried: false, rReason: '', rDetail: '', rTried: false }); render(); return true;
     case 'pfleave': location.href = `cliente-nuevo.html?editar=${encodeURIComponent(p.id)}${p.editSection ? `&seccion=${p.editSection}` : ''}`; return true;
-    case 'pfsel': p[t.dataset.k] = v; st.menu = null; render(); return true;
-    case 'pfdeactivate': p.dTried = true; if (!p.dReason) { render(); return true; } p.dlg = null; p.deactivated = true; toastMsg(PH.DEACTIVATED_TOAST, 'ok', name); return true;
+    case 'pfsel': p[t.dataset.k] = v; if (t.dataset.k === 'dReason' && v !== PF_DUPLICATE) { p.dTarget = ''; p.dQuery = ''; p.dSure = false; } st.menu = null; render(); return true;
+    case 'pfpick': { const x = getMergeTarget(v); p.dTarget = v; p.dQuery = x ? x.name : ''; st.menu = null; render(); return true; }
+    case 'pfdeactivate': {
+      p.dTried = true;
+      if (!p.dReason) { render(); return true; }
+      const target = p.dReason === PF_DUPLICATE ? getMergeTarget(p.dTarget) : undefined;
+      if (p.dReason === PF_DUPLICATE && !(target && p.dSure)) { render(); return true; }
+      p.dlg = null; p.deactivated = true; p.merged = target || null;
+      toastMsg(target ? MERGE.DONE_TOAST(target.name) : PH.DEACTIVATED_TOAST, 'ok', name); return true;
+    }
     case 'pfreport': p.rTried = true; if (!p.rReason || !p.rDetail.trim()) { render(); return true; } p.dlg = null; p.rReason = p.rDetail = ''; p.rTried = false; toastMsg(PH.REPORT_TOAST, 'ok', name); return true;
     case 'pfquick': {
-      // la operación entra al carrito compartido (../carrito.js) a nombre de este cliente
-      if (!c || !window.atsCarrito) { toastMsg(PT.QUICK_ADDED, 'ok', `${t.dataset.k} · ${v}`); return true; }
-      const cli = { nuc: Number(c.nuc), nombre: name, telefono: c.phone };
-      const x = (c.contracts || []).find(k => k.folio === v), l = (c.layaways || []).find(k => k.folio === v);
-      let item = null, titulo = '';
-      if (x && t.dataset.k === PT.QUICK_RENEWAL) { item = { tipo: 'refrendo', titulo: 'Refrendo', detalle: `Fecha de vencimiento: ${x.dueDate}`, monto: x.renewal, contrato: x.folio, prestamo: x.redemption - x.renewal, imagen: cartImg(x.articles[0]) }; titulo = 'Refrendo'; }
-      if (x && t.dataset.k === PT.QUICK_REDEMPTION) { item = { tipo: 'desempeno', titulo: 'Desempeño', detalle: `Prendas: ${x.articles.join(', ')}`, monto: x.redemption, contrato: x.folio, imagen: cartImg(x.articles[0]) }; titulo = 'Desempeño'; }
-      if (l && t.dataset.k === 'cuota') { item = { tipo: 'apartado', titulo: 'Cuota de apartado', detalle: `Artículo: ${l.article}`, monto: l.fee, contrato: l.folio, prestamo: l.payoff - l.fee, imagen: cartImg(l.article) }; titulo = 'Cuota de apartado'; }
-      if (l && t.dataset.k === 'liquidar') { item = { tipo: 'apartado', titulo: 'Liquidación de apartado', detalle: `Artículo: ${l.article}`, monto: l.payoff, contrato: l.folio, imagen: cartImg(l.article) }; titulo = 'Liquidación'; }
-      if (!item) return true;
-      const ya = atsCarrito.leer().items.find(i => i.contrato === item.contrato && ['refrendo', 'desempeno', 'apartado'].includes(i.tipo));
+      const kind = t.dataset.k, x = c && (c.contracts || []).find(k => k.folio === v);
+      // Reactivar: aviso como en su React (el carrito compartido no tiene reactivaciones)
+      if (!x || kind === PT.QUICK_REACTIVATION || !window.atsCarrito) { toastMsg(PT.QUICK_ADDED, 'ok', `${kind} · ${v}`); return true; }
+      // Refrendo y Desempeño entran al carrito compartido (../carrito.js) a nombre de este cliente
+      const cli = { nuc: Number(c.nuc), nombre: name, telefono: c.phone }, imagen = x.articles[0] ? new URL(x.articles[0].photo, location.href).pathname : undefined;
+      const item = kind === PT.QUICK_RENEWAL
+        ? { tipo: 'refrendo', titulo: 'Refrendo', detalle: `Fecha de vencimiento: ${x.dueDate}`, monto: x.renewal, contrato: x.folio, prestamo: x.redemption - x.renewal, imagen }
+        : { tipo: 'desempeno', titulo: 'Desempeño', detalle: `Prendas: ${x.articles.map(a => a.name).join(', ')}`, monto: x.redemption, contrato: x.folio, imagen };
+      const ya = atsCarrito.leer().items.find(i => i.contrato === item.contrato && ['refrendo', 'desempeno'].includes(i.tipo));
       if (ya && Number((atsCarrito.leer().cliente || {}).nuc) === cli.nuc) { toastMsg('Ya está en el carrito', 'warn', `${ya.titulo} · ${v}`); return true; }
-      if (atsCarrito.agregarDe(cli, item)) toastMsg(`${titulo} agregado al carrito correctamente.`, 'ok', `${v} · ${formatMXN(item.monto)}`);
+      if (atsCarrito.agregarDe(cli, item)) toastMsg(`${item.titulo} agregado al carrito correctamente.`, 'ok', `${v} · ${formatMXN(item.monto)}`);
       return true;
     }
     case 'pfscroll': { const tr = document.getElementById('qaTrack'); if (tr) tr.scrollBy({ left: Number(v) * 316, behavior: 'smooth' }); return true; }
-    case 'pfotab': p.otab = v; p.q = ''; p.est = ''; p.page = 1; st.menu = null; render(); return true;
-    case 'pfest': p.est = v; p.page = 1; st.menu = null; render(); return true;
-    case 'pfq0': p.q = ''; p.page = 1; render(); return true;
-    case 'pfpage': p.page = Math.max(1, Number(v)); render(); return true;
+    case 'pfotab': p.otab = v; st.menu = null; render(); return true;
+    /* operaciones: k = tx | ord | ctr (perfil) o ctx (transacciones del contrato) */
+    case 'opest': { const S = opState(t.dataset.k); S.est = v; S.page = 1; st.menu = null; render(); return true; }
+    case 'opq0': { const S = opState(t.dataset.k); S.q = ''; S.page = 1; render(); const el = document.querySelector(`[data-fk="opq-${t.dataset.k}"]`); if (el) el.focus(); return true; }
+    case 'oppage': opState(t.dataset.k).page = Math.max(1, Number(v)); render(); return true;
+    case 'optxd': { const rows = t.dataset.k === 'ctx' ? getContractDetail(st.ct.id, st.ct.folio).transactions : (c.operations.transacciones || []); st.txRow = rows.find(r => r.id === v) || null; st.txFrom = t; render(); return true; }
+    case 'txdl': toastMsg(TXD.DOWNLOAD_TOAST, 'ok', st.txRow ? st.txRow.number : ''); return true;
+    case 'ctrow': {
+      const folio = t.dataset.k, href = contractHref(c, folio); st.menu = null;
+      if (v === 'detail' && href) { location.hash = href.slice(1); return true; }
+      toastMsg(OPS.ACTION_DONE, 'ok', `${CT_ACTION_LABEL[v]} · ${folio}`); return true;
+    }
+    /* calendario de vencimiento */
+    case 'calopen': {
+      if (st.menu === 'cal') { st.menu = null; render(); return true; }
+      const due = p.ctr.due, left = monthOf(due ? due.start : new Date());
+      p.cal = { range: !!(due && due.end), left, right: shiftMonth(left, 1), draft: due ? { ...due } : null, sel: null }; st.menu = 'cal'; render(); return true;
+    }
+    case 'calsel': p.cal.sel = p.cal.sel === v ? null : v; render(); return true;
+    case 'calpick': { const [side, key] = t.dataset.k.split('-'); p.cal[side] = { ...p.cal[side], [key]: Number(v) }; p.cal.sel = null; render(); return true; }
+    case 'calday': {
+      const C = p.cal, d = new Date(Number(v)); C.sel = null;
+      if (!C.range) C.draft = C.draft && sameDay(C.draft.start, d) && !C.draft.end ? null : { start: d };
+      else C.draft = C.draft && !C.draft.end ? { start: C.draft.start, end: d } : { start: d };
+      render(); return true;
+    }
+    case 'calrange': { const C = p.cal; if (C.draft) C.draft = { start: C.draft.start }; C.right = shiftMonth(C.left, 1); C.range = true; C.sel = null; render(); return true; }
+    case 'calclear': p.cal.draft = null; p.cal.sel = null; render(); return true;
+    case 'calcancel': st.menu = null; render(); return true;
+    case 'calapply': p.ctr.due = p.cal.draft || null; p.ctr.page = 1; st.menu = null; render(); return true;
+    /* detalle del contrato */
+    case 'cttab': st.ct.tab = v; render(); return true;
+    case 'ctnotes': { const d = getContractDetail(st.ct.id, st.ct.folio); st.ct.notes = d && d.articles[Number(v)]; st.ctFrom = t; render(); return true; }
+    case 'ctmenu': st.menu = null; toastMsg(OPS.ACTION_DONE, 'ok', `${CT_MENU[v]} · ${st.ct.folio}`); return true;
+    case 'ctaction': toastMsg(OPS.ACTION_DONE, 'ok', `${CT_ACTION_LABEL[v]} · ${st.ct.folio}`); return true;
   }
   return false;
 }
-/* el carrusel solo muestra sus flechas si las acciones rápidas no caben */
+/* el carrusel solo muestra sus flechas si las acciones rápidas no caben; las listas abren con la opción elegida a la vista (1382e1a56) */
 function pfAfterRender() {
+  document.querySelectorAll('.ddl-menu[data-center]').forEach(m => { const s = m.querySelector('[aria-selected="true"]'); if (s) m.scrollTop = s.offsetTop - (m.clientHeight - s.offsetHeight) / 2; });
   const tr = document.getElementById('qaTrack'); if (!tr) return;
   const wrap = tr.parentElement, l = wrap.querySelector('.qa-arrow.l'), r = wrap.querySelector('.qa-arrow.r');
   const sync = () => { const over = tr.scrollWidth > tr.clientWidth + 2; l.hidden = !over || tr.scrollLeft < 4; r.hidden = !over || tr.scrollLeft + tr.clientWidth >= tr.scrollWidth - 4; };
@@ -510,6 +792,12 @@ function modal() {
 }
 // al cerrar el modal el foco regresa al "Cargar cliente" que lo abrió (el render vuelve a crear el botón)
 function closeModal() {
+  /* la transacción y las notas van encima del resto: se cierran primero y el foco regresa al botón que las abrió */
+  if (st.txRow || (st.ct && st.ct.notes)) {
+    const from = st.txRow ? st.txFrom : st.ctFrom, sel = from && from.dataset ? `[data-act="${from.dataset.act}"][data-v="${from.dataset.v}"]` : null;
+    st.txRow = null; if (st.ct) st.ct.notes = null; st.menu = null; render();
+    const b = sel && document.querySelector(sel); if (b) b.focus(); return;
+  }
   if (!st.modal) { const p = st.prof; if (p.dlg) p.dlg = null; else p.detail = null; st.menu = null; render(); return; }
   const i = st.modal && st.modal.i; st.modal = null; render();
   const b = document.querySelector(`[data-act="extver"][data-v="${i}"]`); if (b) b.focus();
@@ -519,12 +807,14 @@ function closeModal() {
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-act]');
   // cerrar menús al hacer clic fuera
-  if (st.menu && !(t && (t.dataset.act === 'menu' || t.closest('.menu')))) { st.menu = null; if (!t) { render(); return; } }
+  // (un clic dentro de un panel .menu, como el calendario o la lista del AutoSelect, no lo cierra)
+  let closed = false;
+  if (st.menu && !e.target.closest('.menu') && !(t && t.dataset.act === 'menu')) { st.menu = null; closed = true; if (!t) { render(); return; } }
   if (!t) return;
-  // un clic dentro del modal no lo cierra: solo el fondo (mbg) y sus botones
-  if (t.dataset.act === 'mbg' && e.target.closest('[data-stop]')) return;
+  // un clic dentro del modal no lo cierra: solo el fondo (mbg) y sus botones (si cerró una lista abierta, se vuelve a pintar)
+  if (t.dataset.act === 'mbg' && e.target.closest('[data-stop]')) { if (closed) render(); return; }
   const a = t.dataset.act, v = t.dataset.v;
-  if (a.startsWith('pf') && pfAct(a, v, t)) return;
+  if (/^(pf|op|cal|ct|txdl)/.test(a)) { if (/^(pf|op|ct)/.test(a) && t.tagName === 'A') e.preventDefault(); if (pfAct(a, v, t)) return; }
   switch (a) {
     case 'noop': return;
     case 'go': e.preventDefault(); go(t.dataset.to); return;
@@ -580,7 +870,9 @@ document.addEventListener('click', e => {
 document.addEventListener('input', e => {
   const t = e.target; const k = t.dataset.in; if (!k) return;
   switch (k) {
-    case 'prq': st.prof.q = t.value; st.prof.page = 1; break;
+    case 'opq': { const S = opState(t.dataset.k); S.q = t.value; S.page = 1; break; }
+    /* DS AutoSelect "Cliente que se queda": al escribir se filtra la lista y se suelta el cliente elegido */
+    case 'pfauto': { const p = st.prof; p.dQuery = t.value; p.dTarget = ''; p.dSure = false; st.menu = 'pfauto'; break; }
     // el detalle del reporte se guarda sin volver a pintar (el cursor no se pierde); solo se repinta al quitar el error de "obligatorio"
     case 'pfrd': { const p = st.prof, err = p.rTried && !p.rDetail.trim(); p.rDetail = t.value; if (err && p.rDetail.trim()) render(); return; }
     case 'cliq': st.cli.q = t.value; clearTimeout(window.__cq); window.__cq = setTimeout(cliLoad, 250); return;
@@ -591,15 +883,22 @@ document.addEventListener('input', e => {
   }
   render();
 });
+// DS Checkbox de la baja por duplicado y DS AutoSelect: la lista se abre al entrar al campo
+document.addEventListener('change', e => { const t = e.target; if (t.dataset && t.dataset.chk === 'pfsure') { st.prof.dSure = t.checked; render(); } });
+document.addEventListener('focusin', e => { const t = e.target; if (t.dataset && t.dataset.in === 'pfauto' && st.menu !== 'pfauto' && !rendering) { st.menu = 'pfauto'; render(); } });
 document.addEventListener('keydown', e => {
   const t = e.target;
-  const pfOpen = st.screen === 'client' && (st.prof.dlg || st.prof.detail);
+  // encabezado de la GroupCard (role=button): Enter o espacio la abre y la cierra
+  if ((e.key === 'Enter' || e.key === ' ') && t.getAttribute && t.getAttribute('role') === 'button' && t.dataset.act) { e.preventDefault(); t.click(); return; }
+  if (e.key === 'Escape' && st.menu === 'cal' && st.prof.cal && st.prof.cal.sel) { st.prof.cal.sel = null; render(); return; }
+  const pfOpen = st.txRow || (st.ct && st.ct.notes) || (st.screen === 'client' && (st.prof.dlg || st.prof.detail));
   if (st.modal || pfOpen) {
     if (e.key === 'Escape') { if (st.menu) { st.menu = null; render(); } else closeModal(); return; }
     if (e.key === 'Enter' && t.dataset && t.dataset.in === 'vfy') { const b = document.querySelector('[data-act="vfyok"]'); if (b && !b.disabled) b.click(); return; }
     // aria-modal: el Tab no sale del modal
     if (e.key === 'Tab') {
-      const f = [...document.querySelectorAll('.cli-modal button:not([disabled]), .cli-modal input, .cli-modal textarea')]; if (!f.length) return;
+      const ms = document.querySelectorAll('.cli-modal'), top = ms[ms.length - 1]; if (!top) return;
+      const f = [...top.querySelectorAll('button:not([disabled]), input, textarea, a[href], [tabindex="0"]')]; if (!f.length) return;
       const i = f.indexOf(document.activeElement);
       if (i < 0) { e.preventDefault(); f[0].focus(); } else if (e.shiftKey && i === 0) { e.preventDefault(); f[f.length - 1].focus(); } else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
     }
@@ -610,16 +909,20 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && t.classList && t.classList.contains('crow')) t.click();
 });
 
-// Rutas (su React: /Directory y /Directory/<id>): #perfil/<id> abre el perfil del cliente; sin hash, el listado.
-// Cliente nuevo y Editar cliente regresan con ./#clientes o ./#perfil/<id>.
-function routeFromHash() {
-  const m = /^#perfil\/(.+)$/.exec(location.hash);
-  if (m) { const id = decodeURIComponent(m[1]); if (st.screen !== 'client' || st.prof.id !== id) { st.prof = newProf(id); st.menu = null; } st.screen = 'client'; }
-  else if (st.screen === 'client') st.screen = 'clients';
-  render(); window.scrollTo(0, 0);
+// Rutas (su React: /Directory, /Directory/<id> y /Directory/<id>/contrato/<folio>): #perfil/<id> abre el perfil del cliente y
+// #perfil/<id>/contrato/<folio> el detalle del contrato; sin hash, el listado. Cliente nuevo y Editar cliente regresan con ./#perfil/<id>.
+function applyHash() {
+  const m = /^#perfil\/([^/]+)(?:\/contrato\/(.+))?$/.exec(location.hash);
+  if (!m) { if (st.screen !== 'clients') st.screen = 'clients'; return; }
+  const id = decodeURIComponent(m[1]), folio = m[2] && decodeURIComponent(m[2]);
+  // como en su React, cada pantalla empieza con su estado limpio (tabs, filtros y modales)
+  if (folio) { if (st.screen !== 'contract' || !st.ct || st.ct.id !== id || st.ct.folio !== folio) st.ct = newCt(id, folio); if (st.prof.id !== id) st.prof = newProf(id); st.screen = 'contract'; }
+  else { if (st.screen !== 'client' || st.prof.id !== id) st.prof = newProf(id); st.screen = 'client'; }
+  st.menu = null; st.txRow = null;
 }
+function routeFromHash() { applyHash(); render(); window.scrollTo(0, 0); }
 addEventListener('hashchange', routeFromHash);
-if (/^#perfil\//.test(location.hash)) { const m = /^#perfil\/(.+)$/.exec(location.hash); st.prof = newProf(decodeURIComponent(m[1])); st.screen = 'client'; }
+applyHash();
 { const pt = takePendingToast(); if (pt) setTimeout(() => toastMsg(pt.title, 'ok', pt.message), 50); }
 // Cliente recién creado (useClientsRedesign): sale primero en la lista, resaltado y con el aviso "Cliente creado"; se lee una sola vez
 {

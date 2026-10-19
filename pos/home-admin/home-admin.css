@@ -1,168 +1,65 @@
-/* Inicio del Administrativo, rediseño de UX: AdminHomeV2 (src/components/Home/Admin/AdminHomeV2) y su vista previa
-   (/design-system/preview/home-admin) de la rama del equipo, sobre la maqueta public/maquetas/home-admin (Figma Home Admin 18764:17012).
-   Valores del DS (tokens.ts, Colors/colors.ts, Typography/typography.ts y los *.styles.ts de Chip, Button, IconButton, Alert,
-   Spinner y Toast). Tarjetas NewCardShell: blancas, radio 16, padding 12, separación 8 (16 en vacío), Card-shadow y sin borde. */
+/* ============================================================
+   Inicio del Administrativo (Home Admin) · HU-CP-400-F · rama del equipo, commit 1589eda61
+   Se apoya en ../inicio-operativo/inicio-operativo.css (tarjeta io-card, listas, dona, tabla, vacíos, skeleton,
+   error, toast y panel de la maqueta), que es la referencia de diseño de el equipo. Aquí solo va lo que el Home Admin
+   agrega: columnas de Ubicaciones, usuarios, enlace de la tienda, barras de Estados de conservación y celdas con detalle.
+   Solo tokens --ats-* / --pos-*; lo que no tiene token va como --propuesta-*.
+   ============================================================ */
 
-.home-admin {
-  --ha-primary: var(--ats-primary-300); --ha-link: var(--ats-primary-400); --ha-icon: var(--ats-neutral-700);
-  --ha-page: var(--pos-surface-page); --ha-empty: var(--ats-neutral-100); --ha-border: var(--ats-neutral-300); --ha-border-soft: color-mix(in srgb, var(--ats-neutral-300) 60%, transparent);
-  --ha-title: var(--pos-text-title); --ha-body: var(--ats-neutral-700); --ha-caption: var(--ats-neutral-600);
-  --ha-purple-50: var(--ats-primary-50); --ha-purple-100: var(--ats-primary-100);
-  --ha-ok-surface: var(--ats-success-green-50); --ha-ok-title: var(--ats-success-green-300); --ha-ok-icon: var(--ats-success-green-200);
-  --ha-warn-icon: var(--ats-alert-yellow-200);
-  --ha-info-surface: var(--ats-info-blue-50); --ha-info-icon: var(--ats-info-blue-200); --ha-info-title: var(--ats-info-blue-300);
-  --ha-err-surface: var(--ats-error-red-50); --ha-err-icon: var(--ats-error-red-200);
-  --ha-green-100: var(--ats-lime-100); --ha-pink-200: var(--ats-pink-400);
-  background: var(--ha-page);
+:root {
+  --propuesta-ilustracion-rojo-300: #ff7053;  /* sin token en ../ds: colors.illustrationRed300 del DS (naranja de las gráficas de el equipo) */
 }
 
-/* página: el ancho y los 64/24 a los lados los pone .pos-main; el contenido va a 1152 centrado, como en su vista previa */
-.pos-main.ha-main { padding-top: 16px; padding-bottom: 24px; }
-.ha-grid { display: flex; align-items: flex-start; gap: 16px; max-width: 1152px; margin: 0 auto; }
-.ha-col { flex: none; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
-.ha-role-note { max-width: 1152px; margin: 24px auto 0; font-size: 14px; line-height: 16.8px; color: var(--ha-caption); }   /* tablaContenido */
-.ha-main svg { display: block; flex: none; }
-/* el h1 "Inicio" solo es para lectores de pantalla: su código no muestra título ni breadcrumb */
-.ha-main .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+/* página: el ancho y los 64/24 a los lados los pone .pos-main; arriba 16 y abajo 48 como su NewAdminHomeView */
+.pos-main.ha-main { padding-top: 16px; padding-bottom: 48px; }
+.ha-role-note { margin: 0 0 16px; }
+.ha-caption { color: var(--ats-neutral-600); }
+/* tablaHeader del DS: 14/16.8 a 700 */
+.ha-t14b { margin: 0; font-size: 14px; line-height: 16.8px; font-weight: 700; color: var(--ats-neutral-700); }
+.ha-txt-stack { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 
-/* ---------- Tarjeta (NewCardShell) y encabezado (NewCardHeader) ---------- */
-.ha-card {   /* Card del DS (.ds-card): sin borde y con Card-shadow (ver ../pos.css) */
-  box-sizing: border-box; width: 100%; min-width: 0; display: flex; flex-direction: column; gap: 8px; padding: 12px;
-}
-.ha-card.is-empty { gap: 16px; }
-.ha-card__head { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 28px; }
-.ha-card__title { margin: 0; font-size: 16px; line-height: 24px; font-weight: 600; color: var(--ha-title); }   /* textoSemiBold */
-/* IconButton tertiary del DS (.ds-btn--tertiary): 28 en el encabezado, 40 en Apps */
-.pos .ds-btn.ha-ibtn { flex: none; width: 28px; height: 28px; padding: 4px; }
-.pos .ds-btn.ha-ibtn--lg { width: 40px; height: 40px; padding: 8px; }
-/* Button del DS (.ds-btn tertiary / secondary, md de 36) */
-.pos .ds-btn.ha-btn { flex: none; height: 36px; text-decoration: none; }
-.pos .ds-btn.ha-btn--icon { padding-left: 8px; }
-.ha-btn-stack { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
-.ha-ibtn:focus-visible, .ha-btn:focus-visible, .ha-choice:focus-visible, .ha-user:focus-visible, .ha-store:focus-visible {
-  box-shadow: none;
-  outline: 2px solid var(--ha-primary); outline-offset: 2px;
+/* Usuarios: avatar placeholder del DS (32, info-blue-50, 14/600) con el nombre debajo; "N más" y "Agregar usuario" */
+.ha-users { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 16px; width: 100%; }
+.ha-users__i { display: flex; flex-direction: column; align-items: center; gap: 8px; width: max-content; }
+.ha-users__i--more { justify-content: center; }
+.ha-avatar {
+  display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--ats-info-blue-50); font-size: 14px; line-height: 1.2; font-weight: 600; color: var(--pos-text-title);
 }
 
-/* Chips de estado: Status Chip del DS (.ds-tag--blanco / --verde / --gris, medidas en ../pos.css) */
+/* Diseño de marca: enlace en una línea con "…" y chip de estado a la derecha (fila de lista de 40) */
+.ha-brand { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; min-height: 40px; padding: 4px 0; box-sizing: border-box; }
+.ha-brand__txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ha-brand__url { color: var(--ats-primary-300); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* Estadísticas (NewCardStatRow): etiqueta labelRegular, valor tablaContenido, divisor #D4D6D899 */
-.ha-stats { display: flex; gap: 8px; margin: 0; white-space: nowrap; }
-.ha-stat { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; padding-right: 8px; }
-.ha-stat--auto { flex: 0 1 auto; }
-.ha-stat--fit { flex: none; }
-.ha-stat:not(:last-child) { border-right: 1px solid var(--ha-border-soft); }
-.ha-stat dt { font-size: 12px; line-height: 1; color: var(--ha-caption); overflow: hidden; text-overflow: ellipsis; }
-.ha-stat dd { margin: 0; font-size: 14px; line-height: 1.2; color: var(--ha-body); overflow: hidden; text-overflow: ellipsis; }
-.ha-store { color: var(--ha-primary); }
+/* Ubicaciones: columnas como "Empeños" (máx. 57, radio 4, 4 dentro del grupo y 16 entre grupos) */
+.ha-cols { display: flex; align-items: flex-end; gap: 16px; width: 100%; }
+.ha-cols__g { display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; min-width: 0; text-align: center; }
+.ha-cols__par { display: flex; align-items: flex-end; gap: 4px; width: 100%; }
+.ha-cols__par span { flex: 1; border-radius: 4px; background: var(--c); }
+.ha-stat-lbl { display: flex; align-items: center; gap: 8px; min-width: 0; }
 
-/* Tabla del DS (.ds-table) con las medidas de TableRow / TableCell: celdas de 40 con 4 arriba y abajo, 16 entre columnas,
-   separador neutral300, sin rayado ni hover */
-.pos .ds-table.ha-tbl { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.2; }
-.pos .ds-table.ha-tbl thead, .pos .ds-table.ha-tbl tbody tr, .pos .ds-table.ha-tbl tbody tr:nth-child(even), .pos .ds-table.ha-tbl tbody tr:hover { background: transparent; }
-.pos .ds-table.ha-tbl th, .pos .ds-table.ha-tbl td {
-  height: 48px; padding: 8px 16px 8px 0; box-sizing: border-box; vertical-align: middle; text-align: left;
-  font-size: 14px; line-height: 1.2; font-weight: var(--font-weight-regular); color: var(--ha-body); border-bottom: 1px solid var(--ha-border);
-}
-.pos .ds-table.ha-tbl th:last-child, .pos .ds-table.ha-tbl td:last-child { padding-right: 0; }
-.pos .ds-table.ha-tbl tr:last-child td { border-bottom: 0; }
-.pos .ds-table.ha-tbl th { font-weight: 600; color: var(--ha-title); }
-.ha-td__flex { display: flex; align-items: center; gap: 8px; }
-.ha-td--fit { white-space: nowrap; }
-.pos .ds-table.ha-tbl .ha-td--right { text-align: right; }
-.pos .ds-table.ha-tbl .ha-td--muted { color: var(--ha-caption); }
-.ha-td__sub { display: block; margin-top: 4px; font-size: 12px; line-height: 1; color: var(--ha-caption); white-space: nowrap; }
-.ha-td__main { display: block; }
-/* fila de pendiente (NewCardIssueRow): el ícono no se encoge */
-.ha-issue-ico { flex: none; display: flex; color: var(--ha-warn-icon); }
+/* Estados de conservación: fila con nombre / % del avalúo y la ChartBar del DS (8 de alto, fondo neutral300) */
+.ha-cons { display: flex; flex-direction: column; width: 100%; }
+.ha-cons__f { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; min-height: 40px; padding: 4px 0; box-sizing: border-box; }
+.ha-chartbar { display: flex; width: 100%; height: 8px; overflow: hidden; border-radius: 9999px; background: var(--ats-neutral-300); }
+.ha-chartbar span { flex: 0 0 auto; height: 100%; background: var(--c); }
 
-/* ChartBar + leyenda */
-.ha-chart { display: flex; flex-direction: column; }
-.ha-chart__caption { font-size: 12px; line-height: 1; color: var(--ha-body); padding-bottom: 4px; }
-.ha-chart__track { display: flex; height: 8px; border-radius: 100px; background: var(--ha-border); overflow: hidden; }
-.ha-chart__track span { height: 100%; }
-.ha-legend { display: flex; align-items: center; gap: 2px; padding: 2px 0; font-size: 14px; line-height: 1.2; color: var(--ha-body); white-space: nowrap; }
-.ha-legend__dot { width: 24px; height: 24px; display: grid; place-items: center; flex: none; }
-.ha-legend__dot::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+/* Tabuladores: chips y precio de mercado; a 420 o menos pueden bajar a dos renglones */
+.ha-tab-head { flex-wrap: wrap; }
 
-/* Alert warning sin fondo al pie de la tarjeta (NewCardWarningRow) */
-.ha-warn { display: flex; align-items: center; gap: 16px; padding: 4px 8px; border-radius: 8px; }
-.ha-warn__txt { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 1.2; color: var(--ha-body); }
-.ha-warn__txt svg { color: var(--ha-warn-icon); }
+/* TableCell "text-description" del DS: 4/8 de padding, texto 14 y detalle 12 neutral600 */
+.io-tabla td.ha-td-desc { padding-top: 4px; padding-bottom: 4px; }
+.ha-td-desc__t { margin: 0; font-size: 14px; line-height: 1.2; color: var(--ats-neutral-700); }
+.ha-td-desc__d { margin: 4px 0 0; font-size: 12px; line-height: 12px; color: var(--ats-neutral-600); }
 
-/* Facturación y suscripción */
-.ha-panel { background: var(--ha-page); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
-.ha-panel__label { font-size: 12px; line-height: 1; color: var(--ha-link); }
-.ha-kv { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; font-size: 14px; line-height: 1.2; color: var(--ha-body); border-bottom: .5px solid var(--ha-empty); }
-.ha-kv:last-child { border-bottom: 0; padding-bottom: 0; }
-.ha-kv--total { color: var(--ha-title); }
-.ha-kv__sub { display: block; font-size: 12px; line-height: 12px; margin-top: 4px; color: var(--ha-caption); }
-.ha-hr { flex: none; height: 1px; background: var(--ha-purple-100); }
-.ha-hr--gray { background: var(--ha-border); }
-.ha-net { display: flex; align-items: center; justify-content: space-between; font-size: 14px; line-height: 1.2; color: var(--ha-body); }
-.ha-net strong { font-size: 16px; font-weight: 600; color: var(--ha-ok-icon); }
-.ha-net--due strong { color: var(--ha-title); }   /* por pagar no es un error: sin rojo */
-.ha-summary { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 8px; background: var(--ha-ok-surface); color: var(--ha-ok-title); font-size: 14px; line-height: 1.2; }
-.ha-summary span { flex: 1; }
-.ha-summary svg { color: var(--ha-ok-icon); }
-.ha-summary--due { background: var(--ha-info-surface); color: var(--ha-info-title); }
-.ha-summary--due svg { color: var(--ha-info-icon); }
-.ha-pay { display: flex; align-items: center; gap: 8px; min-height: 24px; font-size: 14px; color: var(--ha-title); }
-.ha-pay__n { flex: 1; }
-.ha-pay__ico { flex: none; box-sizing: border-box; width: 24px; height: 24px; padding: 2px; border-radius: 60px; border: 1px solid var(--ha-border); background: var(--ha-page); display: grid; place-items: center; color: var(--ha-body); }
+/* Apps disponibles: ícono 20 en buttonIcon */
+.ha-addon-ico { display: flex; flex-shrink: 0; color: var(--ats-neutral-700); }
 
-/* Usuarios (Avatar 40) */
-.ha-users { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: flex-start; margin: 0; padding: 0; list-style: none; }
-.ha-user { width: 48px; display: flex; flex-direction: column; align-items: center; gap: 6px; border: 0; background: none; padding: 0; border-radius: 8px; cursor: pointer; font-family: inherit; }
-.pos .ds-avatar.ha-av { font-size: 15px; color: var(--ha-title); }   /* Avatar del DS (.ds-avatar--md, 40) */
-.ha-av img { display: block; width: 34px; height: auto; transform: translate(-3px, 1px); }
-.ha-user__lbl { font-size: 12px; line-height: 13.2px; color: var(--ha-caption); white-space: nowrap; max-width: 56px; overflow: hidden; text-overflow: ellipsis; }
-.ha-user--add { width: 52px; }
-.ha-user--add .ha-av { background: var(--ha-purple-50); color: var(--ha-primary); transition: background .15s; }
-.ha-user--add:hover .ha-av { background: var(--ha-purple-100); }
+/* flechas y botones de las tarjetas: SVG sin espacio fantasma */
+.ha-card svg { display: block; }
 
-/* Tabuladores: chips choice Oro / Plata y precio de mercado */
-.ha-tab-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.ha-chips { display: flex; gap: 8px; }
-/* Chip choice del DS (.ds-chip--choice / --on): 34 de alto como en el Figma */
-.pos .ds-chip.ha-choice { height: 34px; padding: 8px 12px; cursor: pointer; font-family: var(--font-family-sans); }
-.ha-tab-price { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; white-space: nowrap; }
-.ha-tab-price span:first-child { font-size: 12px; line-height: 1; color: var(--ha-caption); }
-.ha-tab-price span:last-child { font-size: 14px; line-height: 1.2; font-weight: 700; color: var(--ha-title); }   /* tablaHeader */
-
-/* Apps disponibles */
-.ha-addons { display: flex; flex-direction: column; gap: 12px; }
-.ha-addon { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 16px; background: var(--ha-page); }
-.ha-addon__ico { width: 36px; height: 36px; border-radius: 8px; display: grid; place-items: center; flex: none; }
-.ha-addon__name { flex: 1; min-width: 0; font-size: 14px; line-height: 1.2; color: var(--ha-title); }
-
-/* ---------- Estados ---------- */
-/* Vacío (NewCardEmptyState): ícono del módulo en círculo purple-50 de 48, título tablaHeader, texto tablaContenido, Button secondary */
-.ha-empty { display: flex; flex-direction: column; align-items: center; gap: 24px; padding-bottom: 12px; text-align: center; }
-.ha-empty__ico { width: 48px; height: 48px; border-radius: 100px; background: var(--ha-purple-50); color: var(--ha-link); display: grid; place-items: center; }
-.ha-empty__txt { margin: 0; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.2; }
-.ha-empty__txt b { font-weight: 700; color: var(--ha-title); }
-.ha-empty__txt span { color: var(--ha-caption); }
-/* Cargando (NewCardLoading): Spinner medium en 160 de alto */
-.ha-loading { height: 160px; display: grid; place-items: center; }
-/* el Spinner es el del DS (.ds-spinner--lg --brand) */
-/* Error (NewCardError): Alert error a lo ancho con "Reintentar"; a 480 o menos la acción baja con sangría de 32 */
-.ha-alert.ds-alert { flex-wrap: wrap; min-height: 56px; container-type: inline-size; }   /* Alert error del DS */
-.ha-alert__body { display: flex; align-items: flex-start; gap: 8px; flex: 1; min-width: 0; }
-.ha-alert__ico { flex: none; display: flex; color: var(--ha-err-icon); }
-.ha-alert__txt.ds-alert__body { margin: 0; font-size: 16px; line-height: 1.2; letter-spacing: .3px; color: var(--ha-body); }
-@container (max-width: 480px) { .ha-alert__action { order: 1; flex-basis: 100%; padding-left: 32px; } }
-
-/* ---------- Toast del DS (.ds-toast, estilos en ../pos.css): esquina superior derecha, 5 s con barra de tiempo ---------- */
-.ha-toasts { pointer-events: none; }
-.ha-toasts .ds-toast { pointer-events: auto; }
-
-/* ---------- Panel "Revisión" (no es UI del producto) ---------- */
-.ha-review { display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--ha-body); }
-.ha-review__title { margin: 0; font-size: 12px; line-height: 1.2; font-weight: 600; color: var(--ats-neutral-600); }
-.ha-review__group { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; border: 0; min-width: 0; }
-.ha-review__group legend { padding: 0; margin-bottom: 8px; font-size: 14px; line-height: 16.8px; color: var(--ats-neutral-600); }
-.ha-review__chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.pos .ha-review__chips .ds-chip.ha-choice { height: 36px; }
-.ha-review__note { margin: 0; font-size: 12px; line-height: 1.5; color: var(--ats-neutral-600); }
-.ha-review__note a { color: var(--ats-primary-300); }
+/* Dona a 375: la leyenda del Inicio operativo no parte renglón y "Debajo del mercado 8%" se salía 4 px de la tarjeta.
+   Aquí la etiqueta puede bajar a dos renglones; el porcentaje y el anillo no se encogen. */
+.ha-card .io-pie__ley span { flex-shrink: 1; min-width: 0; white-space: normal; }
+.ha-card .io-pie__ley svg { flex-shrink: 0; }

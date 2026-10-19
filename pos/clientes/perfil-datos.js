@@ -1,7 +1,8 @@
 /* Ataskate POS (Operativo) · Clientes — datos y utilidades compartidos por index.html (lista y Perfil del cliente) y
    cliente-nuevo.html (Cliente nuevo y Editar cliente). Es la versión en JS de la rama del equipo del repo del equipo
-   (hasta el commit 20f588788): src/components/ClientsRedesign/{clientsRedesign.mocks,createdClients}.ts y
-   Profile/{profile.mocks,profileOperations.mocks,profilePhotos.mocks,profile.helpers,profile.constants,profileEdits}.ts.
+   (hasta el commit 3e2d19b99): src/components/ClientsRedesign/{clientsRedesign.mocks,createdClients}.ts,
+   Profile/{profile.mocks,profileContracts.mocks,profileDebt*,profilePaid,pawnTransactions.mocks,profileOperations.mocks,profilePhotos.mocks,
+   profile.helpers,profile.constants,profileEdits,profileMerge,transactionDetail}.ts y ContractDetail/contractDetail.{helpers,mocks}.ts.
    Las ediciones y los clientes creados se guardan en sessionStorage con las mismas claves que su React (solo esta pestaña). */
 
 /* ---------- Íconos del DS (src/design-system/Icons/Icons.tsx), 24x24 con fill currentColor ---------- */
@@ -17,7 +18,19 @@ const CI_RAW = {
   Edit: ["0 0 24 24", "<path d=\"M5 19H6.4L15.025 10.375L13.625 8.975L5 17.6V19ZM19.3 8.925L15.05 4.725L16.45 3.325C16.8333 2.94167 17.3043 2.75 17.863 2.75C18.421 2.75 18.8917 2.94167 19.275 3.325L20.675 4.725C21.0583 5.10833 21.2583 5.571 21.275 6.113C21.2917 6.65433 21.1083 7.11667 20.725 7.5L19.3 8.925ZM17.85 10.4L7.25 21H3V16.75L13.6 6.15L17.85 10.4Z\" fill=\"currentColor\" /> "],
   ViewOn: ["0 0 24 24", "<path d=\"M12 16C13.25 16 14.3127 15.5627 15.188 14.688C16.0627 13.8127 16.5 12.75 16.5 11.5C16.5 10.25 16.0627 9.18733 15.188 8.312C14.3127 7.43733 13.25 7 12 7C10.75 7 9.68733 7.43733 8.812 8.312C7.93733 9.18733 7.5 10.25 7.5 11.5C7.5 12.75 7.93733 13.8127 8.812 14.688C9.68733 15.5627 10.75 16 12 16ZM12 14.2C11.25 14.2 10.6127 13.9373 10.088 13.412C9.56267 12.8873 9.3 12.25 9.3 11.5C9.3 10.75 9.56267 10.1123 10.088 9.587C10.6127 9.06233 11.25 8.8 12 8.8C12.75 8.8 13.3877 9.06233 13.913 9.587C14.4377 10.1123 14.7 10.75 14.7 11.5C14.7 12.25 14.4377 12.8873 13.913 13.412C13.3877 13.9373 12.75 14.2 12 14.2ZM12 19C9.68333 19 7.56667 18.3877 5.65 17.163C3.73333 15.9377 2.28333 14.2833 1.3 12.2C1.25 12.1167 1.21667 12.0123 1.2 11.887C1.18333 11.7623 1.175 11.6333 1.175 11.5C1.175 11.3667 1.18333 11.2373 1.2 11.112C1.21667 10.9873 1.25 10.8833 1.3 10.8C2.28333 8.71667 3.73333 7.06267 5.65 5.838C7.56667 4.61267 9.68333 4 12 4C14.3167 4 16.4333 4.61267 18.35 5.838C20.2667 7.06267 21.7167 8.71667 22.7 10.8C22.75 10.8833 22.7833 10.9873 22.8 11.112C22.8167 11.2373 22.825 11.3667 22.825 11.5C22.825 11.6333 22.8167 11.7623 22.8 11.887C22.7833 12.0123 22.75 12.1167 22.7 12.2C21.7167 14.2833 20.2667 15.9377 18.35 17.163C16.4333 18.3877 14.3167 19 12 19ZM12 17C13.8833 17 15.6127 16.504 17.188 15.512C18.7627 14.5207 19.9667 13.1833 20.8 11.5C19.9667 9.81667 18.7627 8.479 17.188 7.487C15.6127 6.49567 13.8833 6 12 6C10.1167 6 8.38733 6.49567 6.812 7.487C5.23733 8.479 4.03333 9.81667 3.2 11.5C4.03333 13.1833 5.23733 14.5207 6.812 15.512C8.38733 16.504 10.1167 17 12 17Z\" fill=\"currentColor\" /> "],
   MoreVert: ["0 0 24 24", "<path d=\"M12 20C11.45 20 10.9793 19.8043 10.588 19.413C10.196 19.021 10 18.55 10 18C10 17.45 10.196 16.979 10.588 16.587C10.9793 16.1957 11.45 16 12 16C12.55 16 13.021 16.1957 13.413 16.587C13.8043 16.979 14 17.45 14 18C14 18.55 13.8043 19.021 13.413 19.413C13.021 19.8043 12.55 20 12 20ZM12 14C11.45 14 10.9793 13.804 10.588 13.412C10.196 13.0207 10 12.55 10 12C10 11.45 10.196 10.979 10.588 10.587C10.9793 10.1957 11.45 10 12 10C12.55 10 13.021 10.1957 13.413 10.587C13.8043 10.979 14 11.45 14 12C14 12.55 13.8043 13.0207 13.413 13.412C13.021 13.804 12.55 14 12 14ZM12 8C11.45 8 10.9793 7.804 10.588 7.412C10.196 7.02067 10 6.55 10 6C10 5.45 10.196 4.97933 10.588 4.588C10.9793 4.196 11.45 4 12 4C12.55 4 13.021 4.196 13.413 4.588C13.8043 4.97933 14 5.45 14 6C14 6.55 13.8043 7.02067 13.413 7.412C13.021 7.804 12.55 8 12 8Z\" fill=\"currentColor\" /> "],
-  Fingerprint: ["0 0 24 24", "<path d=\"M3.25 9.6499C3.13333 9.56657 3.06267 9.46224 3.038 9.3369C3.01267 9.21224 3.05 9.08324 3.15 8.9499C4.18333 7.53324 5.479 6.43324 7.037 5.6499C8.59567 4.86657 10.2583 4.4749 12.025 4.4749C13.7917 4.4749 15.4583 4.8539 17.025 5.6119C18.5917 6.37057 19.9 7.46657 20.95 8.8999C21.0667 9.0499 21.104 9.18324 21.062 9.2999C21.0207 9.41657 20.95 9.51657 20.85 9.5999C20.75 9.68324 20.6333 9.72057 20.5 9.7119C20.3667 9.7039 20.25 9.63324 20.15 9.4999C19.2333 8.1999 18.0543 7.2039 16.613 6.5119C15.171 5.82057 13.6417 5.4749 12.025 5.4749C10.4083 5.4749 8.89167 5.82057 7.475 6.5119C6.05833 7.2039 4.88333 8.1999 3.95 9.4999C3.85 9.6499 3.73333 9.73324 3.6 9.7499C3.46667 9.76657 3.35 9.73324 3.25 9.6499ZM14.85 21.9749C13.1167 21.5416 11.7 20.6789 10.6 19.3869C9.5 18.0956 8.95 16.5166 8.95 14.6499C8.95 13.8166 9.25 13.1166 9.85 12.5499C10.45 11.9832 11.175 11.6999 12.025 11.6999C12.875 11.6999 13.6 11.9832 14.2 12.5499C14.8 13.1166 15.1 13.8166 15.1 14.6499C15.1 15.1999 15.3083 15.6626 15.725 16.0379C16.1417 16.4126 16.6333 16.5999 17.2 16.5999C17.7667 16.5999 18.25 16.4126 18.65 16.0379C19.05 15.6626 19.25 15.1999 19.25 14.6499C19.25 12.7166 18.5417 11.0916 17.125 9.7749C15.7083 8.45824 14.0167 7.7999 12.05 7.7999C10.0833 7.7999 8.39167 8.45824 6.975 9.7749C5.55833 11.0916 4.85 12.7082 4.85 14.6249C4.85 15.0249 4.88767 15.5249 4.963 16.1249C5.03767 16.7249 5.21667 17.4249 5.5 18.2249C5.55 18.3749 5.546 18.5082 5.488 18.6249C5.42933 18.7416 5.33333 18.8249 5.2 18.8749C5.06667 18.9249 4.93733 18.9206 4.812 18.8619C4.68733 18.8039 4.6 18.7082 4.55 18.5749C4.3 17.9249 4.121 17.2789 4.013 16.6369C3.90433 15.9956 3.85 15.3332 3.85 14.6499C3.85 12.4332 4.65433 10.5749 6.263 9.0749C7.871 7.5749 9.79167 6.8249 12.025 6.8249C14.275 6.8249 16.2083 7.5749 17.825 9.0749C19.4417 10.5749 20.25 12.4332 20.25 14.6499C20.25 15.4832 19.9543 16.1792 19.363 16.7379C18.771 17.2959 18.05 17.5749 17.2 17.5749C16.35 17.5749 15.621 17.2959 15.013 16.7379C14.4043 16.1792 14.1 15.4832 14.1 14.6499C14.1 14.0999 13.896 13.6372 13.488 13.2619C13.0793 12.8872 12.5917 12.6999 12.025 12.6999C11.4583 12.6999 10.9707 12.8872 10.562 13.2619C10.154 13.6372 9.95 14.0999 9.95 14.6499C9.95 16.2666 10.4293 17.6166 11.388 18.6999C12.346 19.7832 13.5833 20.5416 15.1 20.9749C15.25 21.0249 15.35 21.1082 15.4 21.2249C15.45 21.3416 15.4583 21.4666 15.425 21.5999C15.3917 21.7166 15.325 21.8166 15.225 21.8999C15.125 21.9832 15 22.0082 14.85 21.9749ZM6.5 4.4249C6.36667 4.50824 6.23333 4.5289 6.1 4.4869C5.96667 4.44557 5.86667 4.35824 5.8 4.2249C5.73333 4.09157 5.71667 3.97057 5.75 3.8619C5.78333 3.7539 5.86667 3.65824 6 3.5749C6.93333 3.0749 7.90833 2.69157 8.925 2.4249C9.94167 2.15824 10.975 2.0249 12.025 2.0249C13.0917 2.0249 14.1333 2.1539 15.15 2.4119C16.1667 2.67057 17.15 3.04157 18.1 3.5249C18.25 3.60824 18.3377 3.70824 18.363 3.8249C18.3877 3.94157 18.375 4.05824 18.325 4.1749C18.275 4.29157 18.1917 4.38324 18.075 4.4499C17.9583 4.51657 17.8167 4.50824 17.65 4.4249C16.7667 3.9749 15.854 3.6289 14.912 3.3869C13.9707 3.14557 13.0083 3.0249 12.025 3.0249C11.0583 3.0249 10.1083 3.13724 9.175 3.3619C8.24167 3.58724 7.35 3.94157 6.5 4.4249ZM9.45 21.6249C8.46667 20.5916 7.71267 19.5372 7.188 18.4619C6.66267 17.3872 6.4 16.1166 6.4 14.6499C6.4 13.1332 6.95 11.8539 8.05 10.8119C9.15 9.77057 10.475 9.2499 12.025 9.2499C13.575 9.2499 14.9083 9.77057 16.025 10.8119C17.1417 11.8539 17.7 13.1332 17.7 14.6499C17.7 14.7999 17.654 14.9206 17.562 15.0119C17.4707 15.1039 17.35 15.1499 17.2 15.1499C17.0667 15.1499 16.95 15.1039 16.85 15.0119C16.75 14.9206 16.7 14.7999 16.7 14.6499C16.7 13.3999 16.2373 12.3539 15.312 11.5119C14.3873 10.6706 13.2917 10.2499 12.025 10.2499C10.7583 10.2499 9.67067 10.6706 8.762 11.5119C7.854 12.3539 7.4 13.3999 7.4 14.6499C7.4 15.9999 7.63333 17.1456 8.1 18.0869C8.56667 19.0289 9.25 19.9749 10.15 20.9249C10.25 21.0249 10.3 21.1416 10.3 21.2749C10.3 21.4082 10.25 21.5249 10.15 21.6249C10.05 21.7249 9.93333 21.7749 9.8 21.7749C9.66667 21.7749 9.55 21.7249 9.45 21.6249ZM17 19.9249C15.5167 19.9249 14.229 19.4249 13.137 18.4249C12.0457 17.4249 11.5 16.1666 11.5 14.6499C11.5 14.5166 11.5457 14.3999 11.637 14.2999C11.729 14.1999 11.85 14.1499 12 14.1499C12.15 14.1499 12.271 14.1999 12.363 14.2999C12.4543 14.3999 12.5 14.5166 12.5 14.6499C12.5 15.8999 12.95 16.9249 13.85 17.7249C14.75 18.5249 15.8 18.9249 17 18.9249C17.1 18.9249 17.2417 18.9166 17.425 18.8999C17.6083 18.8832 17.8 18.8582 18 18.8249C18.15 18.7916 18.2793 18.8122 18.388 18.8869C18.496 18.9622 18.5667 19.0749 18.6 19.2249C18.6333 19.3582 18.6083 19.4749 18.525 19.5749C18.4417 19.6749 18.3333 19.7416 18.2 19.7749C17.9 19.8582 17.6377 19.9042 17.413 19.9129C17.1877 19.9209 17.05 19.9249 17 19.9249Z\" fill=\"currentColor\" /> "]
+  Fingerprint: ["0 0 24 24", "<path d=\"M3.25 9.6499C3.13333 9.56657 3.06267 9.46224 3.038 9.3369C3.01267 9.21224 3.05 9.08324 3.15 8.9499C4.18333 7.53324 5.479 6.43324 7.037 5.6499C8.59567 4.86657 10.2583 4.4749 12.025 4.4749C13.7917 4.4749 15.4583 4.8539 17.025 5.6119C18.5917 6.37057 19.9 7.46657 20.95 8.8999C21.0667 9.0499 21.104 9.18324 21.062 9.2999C21.0207 9.41657 20.95 9.51657 20.85 9.5999C20.75 9.68324 20.6333 9.72057 20.5 9.7119C20.3667 9.7039 20.25 9.63324 20.15 9.4999C19.2333 8.1999 18.0543 7.2039 16.613 6.5119C15.171 5.82057 13.6417 5.4749 12.025 5.4749C10.4083 5.4749 8.89167 5.82057 7.475 6.5119C6.05833 7.2039 4.88333 8.1999 3.95 9.4999C3.85 9.6499 3.73333 9.73324 3.6 9.7499C3.46667 9.76657 3.35 9.73324 3.25 9.6499ZM14.85 21.9749C13.1167 21.5416 11.7 20.6789 10.6 19.3869C9.5 18.0956 8.95 16.5166 8.95 14.6499C8.95 13.8166 9.25 13.1166 9.85 12.5499C10.45 11.9832 11.175 11.6999 12.025 11.6999C12.875 11.6999 13.6 11.9832 14.2 12.5499C14.8 13.1166 15.1 13.8166 15.1 14.6499C15.1 15.1999 15.3083 15.6626 15.725 16.0379C16.1417 16.4126 16.6333 16.5999 17.2 16.5999C17.7667 16.5999 18.25 16.4126 18.65 16.0379C19.05 15.6626 19.25 15.1999 19.25 14.6499C19.25 12.7166 18.5417 11.0916 17.125 9.7749C15.7083 8.45824 14.0167 7.7999 12.05 7.7999C10.0833 7.7999 8.39167 8.45824 6.975 9.7749C5.55833 11.0916 4.85 12.7082 4.85 14.6249C4.85 15.0249 4.88767 15.5249 4.963 16.1249C5.03767 16.7249 5.21667 17.4249 5.5 18.2249C5.55 18.3749 5.546 18.5082 5.488 18.6249C5.42933 18.7416 5.33333 18.8249 5.2 18.8749C5.06667 18.9249 4.93733 18.9206 4.812 18.8619C4.68733 18.8039 4.6 18.7082 4.55 18.5749C4.3 17.9249 4.121 17.2789 4.013 16.6369C3.90433 15.9956 3.85 15.3332 3.85 14.6499C3.85 12.4332 4.65433 10.5749 6.263 9.0749C7.871 7.5749 9.79167 6.8249 12.025 6.8249C14.275 6.8249 16.2083 7.5749 17.825 9.0749C19.4417 10.5749 20.25 12.4332 20.25 14.6499C20.25 15.4832 19.9543 16.1792 19.363 16.7379C18.771 17.2959 18.05 17.5749 17.2 17.5749C16.35 17.5749 15.621 17.2959 15.013 16.7379C14.4043 16.1792 14.1 15.4832 14.1 14.6499C14.1 14.0999 13.896 13.6372 13.488 13.2619C13.0793 12.8872 12.5917 12.6999 12.025 12.6999C11.4583 12.6999 10.9707 12.8872 10.562 13.2619C10.154 13.6372 9.95 14.0999 9.95 14.6499C9.95 16.2666 10.4293 17.6166 11.388 18.6999C12.346 19.7832 13.5833 20.5416 15.1 20.9749C15.25 21.0249 15.35 21.1082 15.4 21.2249C15.45 21.3416 15.4583 21.4666 15.425 21.5999C15.3917 21.7166 15.325 21.8166 15.225 21.8999C15.125 21.9832 15 22.0082 14.85 21.9749ZM6.5 4.4249C6.36667 4.50824 6.23333 4.5289 6.1 4.4869C5.96667 4.44557 5.86667 4.35824 5.8 4.2249C5.73333 4.09157 5.71667 3.97057 5.75 3.8619C5.78333 3.7539 5.86667 3.65824 6 3.5749C6.93333 3.0749 7.90833 2.69157 8.925 2.4249C9.94167 2.15824 10.975 2.0249 12.025 2.0249C13.0917 2.0249 14.1333 2.1539 15.15 2.4119C16.1667 2.67057 17.15 3.04157 18.1 3.5249C18.25 3.60824 18.3377 3.70824 18.363 3.8249C18.3877 3.94157 18.375 4.05824 18.325 4.1749C18.275 4.29157 18.1917 4.38324 18.075 4.4499C17.9583 4.51657 17.8167 4.50824 17.65 4.4249C16.7667 3.9749 15.854 3.6289 14.912 3.3869C13.9707 3.14557 13.0083 3.0249 12.025 3.0249C11.0583 3.0249 10.1083 3.13724 9.175 3.3619C8.24167 3.58724 7.35 3.94157 6.5 4.4249ZM9.45 21.6249C8.46667 20.5916 7.71267 19.5372 7.188 18.4619C6.66267 17.3872 6.4 16.1166 6.4 14.6499C6.4 13.1332 6.95 11.8539 8.05 10.8119C9.15 9.77057 10.475 9.2499 12.025 9.2499C13.575 9.2499 14.9083 9.77057 16.025 10.8119C17.1417 11.8539 17.7 13.1332 17.7 14.6499C17.7 14.7999 17.654 14.9206 17.562 15.0119C17.4707 15.1039 17.35 15.1499 17.2 15.1499C17.0667 15.1499 16.95 15.1039 16.85 15.0119C16.75 14.9206 16.7 14.7999 16.7 14.6499C16.7 13.3999 16.2373 12.3539 15.312 11.5119C14.3873 10.6706 13.2917 10.2499 12.025 10.2499C10.7583 10.2499 9.67067 10.6706 8.762 11.5119C7.854 12.3539 7.4 13.3999 7.4 14.6499C7.4 15.9999 7.63333 17.1456 8.1 18.0869C8.56667 19.0289 9.25 19.9749 10.15 20.9249C10.25 21.0249 10.3 21.1416 10.3 21.2749C10.3 21.4082 10.25 21.5249 10.15 21.6249C10.05 21.7249 9.93333 21.7749 9.8 21.7749C9.66667 21.7749 9.55 21.7249 9.45 21.6249ZM17 19.9249C15.5167 19.9249 14.229 19.4249 13.137 18.4249C12.0457 17.4249 11.5 16.1666 11.5 14.6499C11.5 14.5166 11.5457 14.3999 11.637 14.2999C11.729 14.1999 11.85 14.1499 12 14.1499C12.15 14.1499 12.271 14.1999 12.363 14.2999C12.4543 14.3999 12.5 14.5166 12.5 14.6499C12.5 15.8999 12.95 16.9249 13.85 17.7249C14.75 18.5249 15.8 18.9249 17 18.9249C17.1 18.9249 17.2417 18.9166 17.425 18.8999C17.6083 18.8832 17.8 18.8582 18 18.8249C18.15 18.7916 18.2793 18.8122 18.388 18.8869C18.496 18.9622 18.5667 19.0749 18.6 19.2249C18.6333 19.3582 18.6083 19.4749 18.525 19.5749C18.4417 19.6749 18.3333 19.7416 18.2 19.7749C17.9 19.8582 17.6377 19.9042 17.413 19.9129C17.1877 19.9209 17.05 19.9249 17 19.9249Z\" fill=\"currentColor\" /> "],
+  /* 22d8186fc–7e426b821: íconos nuevos del perfil, filtros, calendario y detalle de contrato */
+  TaskAlt: ["0 0 24 24", "<path d=\"M19 20V17H16V15H19V12H21V15H24V17H21V20H19ZM12 22C10.6167 22 9.31667 21.7373 8.1 21.212C6.88333 20.6873 5.825 19.975 4.925 19.075C4.025 18.175 3.31267 17.1167 2.788 15.9C2.26267 14.6833 2 13.3833 2 12C2 10.6167 2.26267 9.31667 2.788 8.1C3.31267 6.88333 4.025 5.825 4.925 4.925C5.825 4.025 6.88333 3.31233 8.1 2.787C9.31667 2.26233 10.6167 2 12 2C13.0833 2 14.1083 2.15833 15.075 2.475C16.0417 2.79167 16.9333 3.23333 17.75 3.8L16.3 5.275C15.6667 4.875 14.9917 4.56233 14.275 4.337C13.5583 4.11233 12.8 4 12 4C9.78333 4 7.896 4.779 6.338 6.337C4.77933 7.89567 4 9.78333 4 12C4 14.2167 4.77933 16.1043 6.338 17.663C7.896 19.221 9.78333 20 12 20C12.5333 20 13.05 19.95 13.55 19.85C14.05 19.75 14.5333 19.6083 15 19.425L16.5 20.95C15.8167 21.2833 15.1 21.5417 14.35 21.725C13.6 21.9083 12.8167 22 12 22ZM10.6 16.6L6.35 12.35L7.75 10.95L10.6 13.8L20.6 3.775L22 5.175L10.6 16.6Z\" fill=\"currentColor\"/>"],
+  /* "Información personal": mismo trazo que requestClientIcon.svg del perfil legacy (su ProfileIcons.tsx; no existe en el DS) */
+  ClientInfo: ["0 0 24 24", "<path d=\"M2 23V21H22V23H2ZM4 20V14C3.45 13.1 3.025 12.1458 2.725 11.1375C2.425 10.1292 2.275 9.1 2.275 8.05C2.275 7.03333 2.40417 6.03333 2.6625 5.05C2.92083 4.06667 3.225 3.1 3.575 2.15C3.70833 1.8 3.925 1.52083 4.225 1.3125C4.525 1.10417 4.85833 1 5.225 1C5.74167 1 6.18333 1.175 6.55 1.525C6.91667 1.875 7.06667 2.29167 7 2.775L6.725 5.05C6.625 5.85 6.69583 6.60833 6.9375 7.325C7.17917 8.04167 7.54167 8.67083 8.025 9.2125C8.50833 9.75417 9.09167 10.1875 9.775 10.5125C10.4583 10.8375 11.2 11 12 11C13 11 14.0042 11.1042 15.0125 11.3125C16.0208 11.5208 16.9 11.8167 17.65 12.2C18.4 12.5833 18.9792 13.0708 19.3875 13.6625C19.7958 14.2542 20 14.9833 20 15.85V20H4ZM6 18H18V15.85C18 15.45 17.9 15.0958 17.7 14.7875C17.5 14.4792 17.2167 14.2333 16.85 14.05C16.1667 13.7167 15.375 13.4583 14.475 13.275C13.575 13.0917 12.75 13 12 13C10.9 13 9.87917 12.775 8.9375 12.325C7.99583 11.875 7.19583 11.2708 6.5375 10.5125C5.87917 9.75417 5.38333 8.87917 5.05 7.8875C4.71667 6.89583 4.61667 5.86667 4.75 4.8C4.58333 5.3 4.4625 5.83333 4.3875 6.4C4.3125 6.96667 4.275 7.51667 4.275 8.05C4.275 9.01667 4.44583 9.94583 4.7875 10.8375C5.12917 11.7292 5.53333 12.6 6 13.45V18ZM12 10C10.9 10 9.95833 9.60833 9.175 8.825C8.39167 8.04167 8 7.1 8 6C8 4.9 8.39167 3.95833 9.175 3.175C9.95833 2.39167 10.9 2 12 2C13.1 2 14.0417 2.39167 14.825 3.175C15.6083 3.95833 16 4.9 16 6C16 7.1 15.6083 8.04167 14.825 8.825C14.0417 9.60833 13.1 10 12 10ZM12 8C12.55 8 13.0208 7.80417 13.4125 7.4125C13.8042 7.02083 14 6.55 14 6C14 5.45 13.8042 4.97917 13.4125 4.5875C13.0208 4.19583 12.55 4 12 4C11.45 4 10.9792 4.19583 10.5875 4.5875C10.1958 4.97917 10 5.45 10 6C10 6.55 10.1958 7.02083 10.5875 7.4125C10.9792 7.80417 11.45 8 12 8ZM8 20V19.075C8 17.9583 8.3875 17 9.1625 16.2C9.9375 15.4 10.8833 15 12 15H16V17H12C11.4333 17 10.9583 17.2042 10.575 17.6125C10.1917 18.0208 10 18.5083 10 19.075V20H8Z\" fill=\"currentColor\"/>"],
+  CalendarToday: ["0 0 24 24", "<path d=\"M5 22C4.45 22 3.979 21.8043 3.587 21.413C3.19567 21.021 3 20.55 3 20V6C3 5.45 3.19567 4.97933 3.587 4.588C3.979 4.196 4.45 4 5 4H6V2H8V4H16V2H18V4H19C19.55 4 20.021 4.196 20.413 4.588C20.8043 4.97933 21 5.45 21 6V20C21 20.55 20.8043 21.021 20.413 21.413C20.021 21.8043 19.55 22 19 22H5ZM5 20H19V10H5V20ZM5 8H19V6H5V8Z\" fill=\"currentColor\"/>"],
+  Download: ["960 0 24 24", "<path d=\"M972 15.575C971.867 15.575 971.742 15.5542 971.625 15.5125C971.508 15.4708 971.4 15.4 971.3 15.3L967.7 11.7C967.5 11.5 967.404 11.2667 967.413 11C967.421 10.7333 967.517 10.5 967.7 10.3C967.9 10.1 968.138 9.99583 968.412 9.9875C968.688 9.97917 968.925 10.075 969.125 10.275L971 12.15V5C971 4.71667 971.096 4.47917 971.287 4.2875C971.479 4.09583 971.717 4 972 4C972.283 4 972.521 4.09583 972.713 4.2875C972.904 4.47917 973 4.71667 973 5V12.15L974.875 10.275C975.075 10.075 975.312 9.97917 975.588 9.9875C975.863 9.99583 976.1 10.1 976.3 10.3C976.483 10.5 976.579 10.7333 976.588 11C976.596 11.2667 976.5 11.5 976.3 11.7L972.7 15.3C972.6 15.4 972.492 15.4708 972.375 15.5125C972.258 15.5542 972.133 15.575 972 15.575ZM966 20C965.45 20 964.979 19.8042 964.588 19.4125C964.196 19.0208 964 18.55 964 18V16C964 15.7167 964.096 15.4792 964.287 15.2875C964.479 15.0958 964.717 15 965 15C965.283 15 965.521 15.0958 965.712 15.2875C965.904 15.4792 966 15.7167 966 16V18H978V16C978 15.7167 978.096 15.4792 978.288 15.2875C978.479 15.0958 978.717 15 979 15C979.283 15 979.521 15.0958 979.713 15.2875C979.904 15.4792 980 15.7167 980 16V18C980 18.55 979.804 19.0208 979.413 19.4125C979.021 19.8042 978.55 20 978 20H966Z\" fill=\"currentColor\"/>"],
+  InfoCircle: ["0 0 20 20", "<path d=\"M9 15H11V9H9V15ZM10 7C10.2833 7 10.5208 6.90417 10.7125 6.7125C10.9042 6.52083 11 6.28333 11 6C11 5.71667 10.9042 5.47917 10.7125 5.2875C10.5208 5.09583 10.2833 5 10 5C9.71667 5 9.47917 5.09583 9.2875 5.2875C9.09583 5.47917 9 5.71667 9 6C9 6.28333 9.09583 6.52083 9.2875 6.7125C9.47917 6.90417 9.71667 7 10 7ZM10 20C8.61667 20 7.31667 19.7375 6.1 19.2125C4.88333 18.6875 3.825 17.975 2.925 17.075C2.025 16.175 1.3125 15.1167 0.7875 13.9C0.2625 12.6833 0 11.3833 0 10C0 8.61667 0.2625 7.31667 0.7875 6.1C1.3125 4.88333 2.025 3.825 2.925 2.925C3.825 2.025 4.88333 1.3125 6.1 0.7875C7.31667 0.2625 8.61667 0 10 0C11.3833 0 12.6833 0.2625 13.9 0.7875C15.1167 1.3125 16.175 2.025 17.075 2.925C17.975 3.825 18.6875 4.88333 19.2125 6.1C19.7375 7.31667 20 8.61667 20 10C20 11.3833 19.7375 12.6833 19.2125 13.9C18.6875 15.1167 17.975 16.175 17.075 17.075C16.175 17.975 15.1167 18.6875 13.9 19.2125C12.6833 19.7375 11.3833 20 10 20ZM10 18C12.2333 18 14.125 17.225 15.675 15.675C17.225 14.125 18 12.2333 18 10C18 7.76667 17.225 5.875 15.675 4.325C14.125 2.775 12.2333 2 10 2C7.76667 2 5.875 2.775 4.325 4.325C2.775 5.875 2 7.76667 2 10C2 12.2333 2.775 14.125 4.325 15.675C5.875 17.225 7.76667 18 10 18Z\" fill=\"currentColor\"/>"],
+  Chat: ["0 0 24 24", "<path d=\"M6 14H14V12H6V14ZM6 11H18V9H6V11ZM6 8H18V6H6V8ZM2 22V4C2 3.45 2.19583 2.97917 2.5875 2.5875C2.97917 2.19583 3.45 2 4 2H20C20.55 2 21.0208 2.19583 21.4125 2.5875C21.8042 2.97917 22 3.45 22 4V16C22 16.55 21.8042 17.0208 21.4125 17.4125C21.0208 17.8042 20.55 18 20 18H6L2 22ZM5.15 16H20V4H4V17.125L5.15 16Z\" fill=\"currentColor\"/>"],
+  Help: ["0 0 24 24", "<path d=\"M11.95 18C12.3 18 12.596 17.879 12.838 17.637C13.0793 17.3957 13.2 17.1 13.2 16.75C13.2 16.4 13.0793 16.1043 12.838 15.863C12.596 15.621 12.3 15.5 11.95 15.5C11.6 15.5 11.304 15.621 11.062 15.863C10.8207 16.1043 10.7 16.4 10.7 16.75C10.7 17.1 10.8207 17.3957 11.062 17.637C11.304 17.879 11.6 18 11.95 18ZM12.1 7.7C12.5667 7.7 12.9417 7.829 13.225 8.087C13.5083 8.34567 13.65 8.68333 13.65 9.1C13.65 9.38333 13.5543 9.67067 13.363 9.962C13.171 10.254 12.9 10.5583 12.55 10.875C12.05 11.3083 11.6833 11.725 11.45 12.125C11.2167 12.525 11.1 12.925 11.1 13.325C11.1 13.5583 11.1877 13.754 11.363 13.912C11.5377 14.0707 11.7417 14.15 11.975 14.15C12.2083 14.15 12.4167 14.0667 12.6 13.9C12.7833 13.7333 12.9 13.525 12.95 13.275C13 12.9917 13.1127 12.7293 13.288 12.488C13.4627 12.246 13.75 11.9333 14.15 11.55C14.6667 11.0667 15.0293 10.625 15.238 10.225C15.446 9.825 15.55 9.38333 15.55 8.9C15.55 8.05 15.2293 7.354 14.588 6.812C13.946 6.27067 13.1167 6 12.1 6C11.4 6 10.7793 6.13333 10.238 6.4C9.696 6.66667 9.275 7.075 8.975 7.625C8.85833 7.84167 8.81667 8.054 8.85 8.262C8.88333 8.47067 9 8.64167 9.2 8.775C9.41667 8.90833 9.65433 8.95 9.913 8.9C10.171 8.85 10.3833 8.70833 10.55 8.475C10.7333 8.225 10.9543 8.03333 11.213 7.9C11.471 7.76667 11.7667 7.7 12.1 7.7ZM12 22C10.6333 22 9.34167 21.7373 8.125 21.212C6.90833 20.6873 5.846 19.975 4.938 19.075C4.02933 18.175 3.31267 17.1167 2.788 15.9C2.26267 14.6833 2 13.3833 2 12C2 10.6167 2.26267 9.31667 2.788 8.1C3.31267 6.88333 4.02933 5.825 4.938 4.925C5.846 4.025 6.90833 3.31233 8.125 2.787C9.34167 2.26233 10.6333 2 12 2C13.4 2 14.7083 2.26233 15.925 2.787C17.1417 3.31233 18.2 4.025 19.1 4.925C20 5.825 20.7083 6.88333 21.225 8.1C21.7417 9.31667 22 10.6167 22 12C22 13.3833 21.7417 14.6833 21.225 15.9C20.7083 17.1167 20 18.175 19.1 19.075C18.2 19.975 17.1417 20.6873 15.925 21.212C14.7083 21.7373 13.4 22 12 22ZM12 20C14.2333 20 16.125 19.221 17.675 17.663C19.225 16.1043 20 14.2167 20 12C20 9.78333 19.225 7.89567 17.675 6.337C16.125 4.779 14.2333 4 12 4C9.81667 4 7.93733 4.779 6.362 6.337C4.78733 7.89567 4 9.78333 4 12C4 14.2167 4.78733 16.1043 6.362 17.663C7.93733 19.221 9.81667 20 12 20Z\" fill=\"currentColor\"/>"],
+  FilterAlt: ["0 0 24 24", "<path d=\"M11 20C10.7167 20 10.4794 19.904 10.288 19.712C10.096 19.5207 10 19.2833 10 19V13L4.20003 5.6C3.95003 5.26667 3.9127 4.91667 4.08803 4.55C4.2627 4.18333 4.5667 4 5.00003 4H19C19.4334 4 19.7377 4.18333 19.913 4.55C20.0877 4.91667 20.05 5.26667 19.8 5.6L14 13V19C14 19.2833 13.9044 19.5207 13.713 19.712C13.521 19.904 13.2834 20 13 20H11ZM12 12.3L16.95 6H7.05003L12 12.3Z\" fill=\"currentColor\"/>"],
+  ArrowDropDown: ["0 0 24 24", "<path d=\"M12 15L7 10H17L12 15Z\" fill=\"currentColor\"/>"],
+  ChevronDown: ["0 0 24 24", "<path d=\"M7 10L12 15L17 10\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>"],
 };
 const CI = (name, size = 20) => { const [vb, body] = CI_RAW[name]; return `<svg width="${size}" height="${size}" viewBox="${vb}" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${body}</svg>`; };
 
@@ -82,33 +95,89 @@ const onlyDigits = s => String(s || '').replace(/\D/g, '');
 const formatPhone = p => { const d = onlyDigits(p); return d.length === 10 ? `${d.slice(0, 2)} ${d.slice(2, 6)} ${d.slice(6)}` : p; };
 const fullName = c => [c.name, c.lastName ?? c.last].filter(Boolean).join(' ');
 const getInitials = (a, b) => ((a || '')[0] || '').toUpperCase() + ((b || '')[0] || '').toUpperCase();
-const sumAmounts = a => a.pawn + a.loan + a.layaway;
+const sumAmounts = a => a.pawn + a.layaway; /* desde 7e426b821 el resumen ya no trae préstamos */
 
-/* ---------- Mocks del perfil (profile.mocks.ts, profileOperations.mocks.ts, profilePhotos.mocks.ts) ---------- */
-const OP_CONTRATOS = [
-  { id: 'k1', status: 'Por vencer', cells: { folio: 'EMP-024583', articles: 'Anillo de oro 14k, cadena', loan: '$8,500.00', renewal: '$1,020.00', redemption: '$9,520.00', dueDate: '18/10/2026', branch: 'Sucursal Centro' } },
-  { id: 'k2', status: 'Vigente', cells: { folio: 'EMP-024611', articles: 'iPhone 15 Pro 256 GB', loan: '$12,000.00', renewal: '$1,440.00', redemption: '$13,440.00', dueDate: '02/11/2026', branch: 'Sucursal Centro' } },
-  { id: 'k3', status: 'Vencido', cells: { folio: 'EMP-023977', articles: 'Laptop Dell Latitude 7440, cargador, mochila y mouse inalámbrico', loan: '$6,200.00', renewal: '$744.00', redemption: '$6,944.00', dueDate: '30/09/2026', branch: 'Sucursal Tijuana' } },
-  { id: 'k4', status: 'Desempeñado', cells: { folio: 'EMP-022140', articles: 'Reloj Tissot PRX', loan: '$4,800.00', renewal: '$576.00', redemption: '$5,376.00', dueDate: '14/07/2026', branch: 'Sucursal Centro' } },
+/* ---------- Mocks del perfil (hasta 3e2d19b99): profilePhotos.mocks.ts (solo prendas), profileContracts.mocks.ts,
+   profileDebt.mocks.ts, pawnTransactions.mocks.ts, profileOperations.mocks.ts y profile.mocks.ts ---------- */
+/* Fotos de prendas de su public/fotos-prendas (aquí en assets/prendas). Sin fotos de personas: su PROFILE_PHOTOS no se trajo */
+const ARTICLES = {
+  ring: { name: 'Anillo de oro 14k', photo: 'assets/prendas/anillo-oro.png' },
+  iphone: { name: 'iPhone 15 Pro 256 GB', photo: 'assets/prendas/iphone-15-pro.png' },
+  watch: { name: 'Reloj inteligente', photo: 'assets/prendas/reloj-inteligente.jpg' },
+  ipad: { name: 'iPad mini 64 GB', photo: 'assets/prendas/ipad-mini.jpg' },
+  headphones: { name: 'Audífonos Sony WH-XB910N', photo: 'assets/prendas/audifonos-sony.jpg' },
+  xbox: { name: 'Xbox Series X', photo: 'assets/prendas/xbox-series-x.jpg' },
+};
+/* Refrendo = interés mensual del 10 % + IVA del 16 % (11.6 % del préstamo). Avalúo ≈ préstamo / 0.7 (aforo del 70 %) */
+const pawnContract = (id, folio, articles, loan, seller, branch, dueDate, status) => {
+  const renewal = Math.round(loan * 0.116);
+  return { id, folio, articles, renewal, redemption: loan + renewal, loan, appraisal: Math.round(loan / 0.7), seller, branch, dueDate, status };
+};
+const PAWN_CONTRACTS = (() => {
+  const C = 'Sucursal Centro', T = 'Sucursal Tijuana', M = 'Sucursal Mérida', { ring, iphone, watch, ipad, headphones, xbox } = ARTICLES;
+  return [
+    pawnContract('k1', 'EMP-024583', [ring, watch], 8500, 'Karla Méndez', C, '18/10/2026', 'Por vencer'),
+    pawnContract('k2', 'EMP-024611', [iphone], 12000, 'Luis Ortega', C, '02/11/2026', 'Próximo pago'),
+    pawnContract('k3', 'EMP-023977', [ipad, headphones], 6200, 'Andrea Ruiz', T, '30/09/2026', 'Vencido'),
+    pawnContract('k4', 'EMP-024702', [xbox], 3200, 'Karla Méndez', C, '20/11/2026', 'Próximo pago'),
+    pawnContract('k5', 'EMP-022140', [watch], 4800, 'Luis Ortega', M, '14/07/2026', 'Desempeñado'),
+    pawnContract('k6', 'EMP-024720', [headphones], 1800, 'Andrea Ruiz', C, '16/10/2026', 'Por vencer'),
+    pawnContract('k7', 'EMP-024735', [ring], 5400, 'Karla Méndez', M, '21/10/2026', 'Por vencer'),
+    pawnContract('k8', 'EMP-024741', [ipad], 4600, 'Luis Ortega', C, '24/10/2026', 'Próximo pago'),
+    pawnContract('k9', 'EMP-024756', [iphone, watch], 15800, 'Andrea Ruiz', T, '27/10/2026', 'Próximo pago'),
+    pawnContract('k10', 'EMP-024768', [xbox, headphones], 5900, 'Karla Méndez', C, '30/10/2026', 'Próximo pago'),
+    pawnContract('k11', 'EMP-024779', [watch], 3900, 'Luis Ortega', C, '06/11/2026', 'Próximo pago'),
+    pawnContract('k12', 'EMP-024790', [ring], 7200, 'Andrea Ruiz', M, '12/11/2026', 'Próximo pago'),
+    pawnContract('k13', 'EMP-024802', [ipad, iphone], 18400, 'Karla Méndez', C, '04/12/2026', 'Próximo pago'),
+    pawnContract('k14', 'EMP-023912', [headphones], 1500, 'Luis Ortega', T, '08/10/2026', 'Vencido'),
+    pawnContract('k15', 'EMP-023865', [xbox], 3600, 'Andrea Ruiz', C, '02/10/2026', 'Vencido'),
+    pawnContract('k16', 'EMP-022905', [ring, watch], 9100, 'Karla Méndez', C, '22/08/2026', 'Desempeñado'),
+  ];
+})();
+/* Cards de acciones rápidas: salen de los mismos contratos de la tabla (38e7b46e9) para que estado, refrendo y desempeño coincidan */
+const quickContracts = (rows, folios) => folios.flatMap(folio => {
+  const r = rows.find(c => c.folio === folio);
+  return !r || r.status === 'Desempeñado' ? [] : [{ id: r.id, folio, dueDate: r.dueDate, status: r.status, renewal: r.renewal, redemption: r.redemption, articles: r.articles }];
+});
+/* Apartados activos (desglose de "Saldo por pagar") */
+const PAWN_LAYAWAYS = [
+  { id: 'a1', folio: 'APA-000812', article: ARTICLES.watch, dueDate: '22/10/2026', total: 5800, paid: 3500, status: 'Por vencer' },
+  { id: 'a2', folio: 'APA-000846', article: ARTICLES.headphones, dueDate: '15/11/2026', total: 3200, paid: 1000, status: 'Al corriente' },
 ];
-const OP_TRANSACCIONES = [
-  { id: 't1', status: 'Pagado', cells: { folio: 'REF-009341', date: '12/10/2026 11:42', operation: 'Refrendo', amount: '$1,020.00', method: 'Efectivo', branch: 'Sucursal Centro' } },
-  { id: 't2', status: 'Pagado', cells: { folio: 'DES-004512', date: '14/07/2026 17:05', operation: 'Desempeño', amount: '$5,376.00', method: 'Tarjeta ****9785', branch: 'Sucursal Centro' } },
-  { id: 't3', status: 'Devolución', cells: { folio: 'VTA-018220', date: '03/06/2026 13:18', operation: 'Compra', amount: '$3,200.00', method: 'Tarjeta ****2345', branch: 'Sucursal Mérida' } },
-  { id: 't4', status: 'Pagado', cells: { folio: 'APT-002931', date: '21/05/2026 10:09', operation: 'Abono de apartado', amount: '$1,500.00', method: 'Transferencia', branch: 'Sucursal Centro' } },
+const PAY = { amex: { kind: 'card', brand: 'amex', last4: '9785' }, mastercard: { kind: 'card', brand: 'mastercard', last4: '2345' }, visa: { kind: 'card', brand: 'visa', last4: '4410' }, cash: { kind: 'cash' } };
+const tx = (id, number, date, amount, operation, method, status, reference, articles) => ({ id, number, date, amount, operation, method, status, reference, articles });
+const PAWN_TRANSACTIONS = [
+  tx('t1', '48292', '12/10/2026', 986, 'Refrendo', PAY.amex, 'Pagado', 'EMP-024583'),
+  tx('t11', '48306', '10/10/2026', 1000, 'Abono de apartado', PAY.mastercard, 'Pagado', 'APA-000846', [ARTICLES.headphones]),
+  tx('t12', '48305', '09/10/2026', 1833, 'Refrendo', PAY.visa, 'Pagado', 'EMP-024756'),
+  tx('t2', '48293', '08/10/2026', 5376, 'Desempeño', PAY.mastercard, 'Pagado'),
+  tx('t15', '48307', '04/10/2026', 2450, 'Compra', PAY.visa, 'Pagado', 'ORD-031455', [ARTICLES.ipad]),
+  tx('t14', '48303', '03/10/2026', 1500, 'Abono de apartado', PAY.cash, 'Pagado', 'APA-000812', [ARTICLES.watch]),
+  tx('t3', '48294', '01/10/2026', 6944, 'Desempeño', PAY.amex, 'Pagado'),
+  tx('t4', '48295', '24/09/2026', 4000, 'Compra', PAY.mastercard, 'Devolución'),
+  tx('t5', '48296', '18/09/2026', 2000, 'Apartado', PAY.mastercard, 'Pagado', 'APA-000812', [ARTICLES.watch]),
+  tx('t6', '48297', '10/09/2026', 6000, 'Abono de apartado', PAY.amex, 'Pagado', 'APA-000790', [ARTICLES.ring]),
+  tx('t7', '48298', '02/09/2026', 12000, 'Desempeño', PAY.amex, 'Incidencia'),
+  tx('t9', '48300', '20/08/2026', 719, 'Refrendo', PAY.cash, 'Pagado', 'EMP-023977'),
+  tx('t10', '48301', '14/08/2026', 1440, 'Refrendo', PAY.cash, 'Pendiente'),
 ];
-const OP_VENTA_TRANSACCIONES = [
-  { id: 's1', status: 'Pagado', cells: { folio: 'VTA-019034', date: '09/10/2026 16:30', operation: 'Compra', amount: '$18,450.00', method: 'Tarjeta ****4410', branch: 'Sucursal Centro' } },
-  { id: 's2', status: 'Pagado', cells: { folio: 'APT-003117', date: '28/09/2026 12:02', operation: 'Abono de apartado', amount: '$2,000.00', method: 'Efectivo', branch: 'Sucursal Centro' } },
+const order = (id, number, articles, date, channel, paid, type, status) => ({ id, number, articles, date, channel, paid, type, status });
+const PAWN_ORDERS = [
+  order('o1', 'ORD-031402', [ARTICLES.headphones], '24/09/2026', 'Sucursal Centro', 4000, 'Venta', 'Cancelado'),
+  order('o2', 'ORD-031377', [ARTICLES.ipad, ARTICLES.watch], '18/09/2026', 'Sucursal Centro', 8000, 'Apartado', 'Pendiente'),
 ];
-const OP_VENTA_ORDENES = [
-  { id: 'o1', status: 'Entregado', cells: { folio: 'ORD-031502', date: '09/10/2026', articles: 'Esclava de oro 10k', total: '$18,450.00', channel: 'Sucursal Centro' } },
-  { id: 'o2', status: 'Pendiente', cells: { folio: 'ORD-031288', date: '28/09/2026', articles: 'Consola PlayStation 5, 2 controles', total: '$9,800.00', channel: 'Apartado en sucursal' } },
+const SALE_TRANSACTIONS = [
+  tx('s1', '49034', '09/10/2026', 18450, 'Compra', PAY.visa, 'Pagado'),
+  tx('s2', '49117', '28/09/2026', 2000, 'Abono de apartado', PAY.cash, 'Pagado'),
 ];
-const OP_MARKETPLACE = [
-  { id: 'm1', status: 'En camino', cells: { folio: 'MKT-104223', date: '11/10/2026', articles: 'Anillo de compromiso oro blanco 0.30 ct', total: '$14,999.00', channel: 'Marketplace' } },
-  { id: 'm2', status: 'Entregado', cells: { folio: 'MKT-101870', date: '02/08/2026', articles: 'Audífonos AirPods Pro', total: '$3,499.00', channel: 'Marketplace' } },
-  { id: 'm3', status: 'Cancelado', cells: { folio: 'MKT-099412', date: '15/06/2026', articles: 'Bolsa Michael Kors', total: '$2,150.00', channel: 'Marketplace' } },
+const SALE_ORDERS = [
+  order('so1', 'ORD-031502', [ARTICLES.ring], '09/10/2026', 'Sucursal Centro', 18450, 'Venta', 'Entregado'),
+  order('so2', 'ORD-031288', [ARTICLES.xbox], '28/09/2026', 'Sucursal Centro', 2000, 'Apartado', 'Pendiente'),
+];
+const MARKETPLACE_ORDERS = [
+  order('m1', 'MKT-104223', [ARTICLES.ring], '11/10/2026', 'Marketplace', 14999, 'Venta', 'En camino'),
+  order('m2', 'MKT-101870', [ARTICLES.headphones], '02/08/2026', 'Marketplace', 3499, 'Venta', 'Entregado'),
+  order('m3', 'MKT-099412', [ARTICLES.watch], '15/06/2026', 'Marketplace', 2150, 'Venta', 'Cancelado'),
 ];
 /* NUCs de la lista mock que se registraron para venta; el resto son de empeño */
 const SALE_CLIENT_NUCS = [1129, 1118, 1105, 1087, 1072];
@@ -125,29 +194,25 @@ const PERFIL_PAWN_FULL = {
     { id: 'co2', name: 'Sofía', lastName: 'Gómez Ruiz', relationship: 'Hijo(a)', role: 'Beneficiario' },
   ],
   fingerprints: ['Pulgar derecho', 'Índice derecho', 'Pulgar izquierdo', 'Índice izquierdo'],
-  summary: { debt: { pawn: 26700, loan: 15000, layaway: 3300 }, otherHousesDebt: { pawn: 4200, loan: 0, layaway: 0 }, income: { pawn: 12400, loan: 3600, layaway: 2000 } },
-  contracts: [
-    { id: 'q1', folio: 'EMP-024583', dueDate: '18/10/2026', status: 'Por vencer', renewal: 1020, redemption: 9520, articles: ['Anillo de oro 14k', 'Cadena'] },
-    { id: 'q2', folio: 'EMP-024611', dueDate: '02/11/2026', status: 'Vigente', renewal: 1440, redemption: 13440, articles: ['iPhone 15 Pro 256 GB'] },
-    { id: 'q3', folio: 'EMP-023977', dueDate: '30/09/2026', status: 'Vencido', renewal: 744, redemption: 6944, articles: ['Laptop Dell Latitude 7440', 'Cargador', 'Mochila'] },
-    { id: 'q4', folio: 'EMP-024702', dueDate: '20/11/2026', status: 'Vigente', renewal: 384, redemption: 3584, articles: ['Taladro DeWalt 20V'] },
-  ],
-  // apartados vigentes (Figma "Carrito - Pasarela de pago", Acciones rápidas: Cuota / Liquidación / Artículo / Cuotas · Pagar cuota)
-  layaways: [{ id: 'l1', folio: 'APT-003114', dueDate: '25/10/2026', status: 'Vigente', fee: 1000, payoff: 6000, paid: 4, of: 12, article: 'Smart Band Watch Very Fit Pro M3 Negro' }],
-  operations: { contratos: OP_CONTRATOS, transacciones: OP_TRANSACCIONES },
+  summary: { debt: { pawn: 26700, layaway: 3300 }, otherHousesDebt: { pawn: 4200, layaway: 0 }, income: { pawn: 12400, layaway: 2000 } },
+  contracts: quickContracts(PAWN_CONTRACTS, ['EMP-024583', 'EMP-024611', 'EMP-023977', 'EMP-024702']),
+  pawnContracts: PAWN_CONTRACTS,
+  layaways: PAWN_LAYAWAYS,
+  operations: { transacciones: PAWN_TRANSACTIONS, ordenes: PAWN_ORDERS },
 };
 /* Empeño con datos incompletos: sin laboral, sin cotitulares, sin huellas e INE vencida */
 const PERFIL_PAWN_PARTIAL = {
   address: { street: 'Calle 60', exterior: '491-A', colony: 'Centro', municipality: 'Mérida', state: 'Yucatán', postalCode: '97000' },
   personal: { civil: 'Soltero(a)', nationality: 'Mexicana', birthDate: '03/09/1996', curp: 'MALA960903MYNRRN04', rfc: 'MALA960903KQ2', activity: 'Servicios profesionales' },
   identification: { type: 'INE', number: '1029384756102', issuedAt: '10/01/2016', validUntil: '31/12/2025', expired: true, hasFront: true, hasBack: false },
-  summary: { debt: { pawn: 2900, loan: 0, layaway: 0 }, income: { pawn: 540, loan: 0, layaway: 0 } },
-  contracts: [{ id: 'q5', folio: 'EMP-024799', dueDate: '16/10/2026', status: 'Por vencer', renewal: 348, redemption: 3248, articles: ['Arracadas de oro 10k'] }],
-  operations: { contratos: OP_CONTRATOS.slice(0, 1), transacciones: [] },
+  summary: { debt: { pawn: 2900, layaway: 0 }, income: { pawn: 540, layaway: 0 } },
+  contracts: quickContracts(PAWN_CONTRACTS, ['EMP-024583']),
+  pawnContracts: PAWN_CONTRACTS.slice(0, 1),
+  operations: { transacciones: [] },
 };
 const PERFIL_SALE = {
   address: { street: 'Av. Juárez', exterior: '118', interior: 'Int. 4', colony: 'Centro', municipality: 'Guadalajara', state: 'Jalisco', postalCode: '44100' },
-  operations: { ordenes: OP_VENTA_ORDENES, transacciones: OP_VENTA_TRANSACCIONES },
+  operations: { transacciones: SALE_TRANSACTIONS, ordenes: SALE_ORDERS },
 };
 const PERFIL_DETALLES = { c1131: PERFIL_PAWN_FULL, c1127: PERFIL_PAWN_PARTIAL, c1129: PERFIL_SALE };
 const PERFIL_DEFAULT = { venta: PERFIL_SALE, empeno: { ...PERFIL_PAWN_FULL, cotitulares: [], labor: undefined } };
@@ -156,9 +221,10 @@ const PERFIL_DEFAULT = { venta: PERFIL_SALE, empeno: { ...PERFIL_PAWN_FULL, coti
    TODO de su código: el cliente de Red ataskate no tiene perfil, sus datos están protegidos hasta cargarlo con verificación */
 function getClientProfile(id) {
   const edited = getEditedProfile(id);
-  if (edited) return edited;
+  /* una edición guardada antes de esta versión trae operaciones con la forma vieja (operations.contratos): se le ponen las de ahora */
+  if (edited && edited.operations && !edited.operations.contratos) return edited;
   const mk = EXT_CLI.find(c => c.id === id && c.src === 'mk');
-  if (mk) return { id: mk.id, type: 'marketplace', name: mk.name, lastName: mk.last, email: mk.email, phone: mk.phone, operations: { ordenes: OP_MARKETPLACE } };
+  if (mk) return { id: mk.id, type: 'marketplace', name: mk.name, lastName: mk.last, email: mk.email, phone: mk.phone, operations: { ordenes: MARKETPLACE_ORDERS } };
   const base = c => ({ id: c.id, name: c.name, lastName: c.last, email: c.email, phone: c.phone, nuc: c.nuc, score: c.score });
   const created = getCreatedClients().find(c => c.id === id);
   if (created) { const type = created.mode || 'empeno'; return { ...base(created), type, personal: type === 'empeno' ? { nationality: created.nat } : undefined, operations: {} }; }
@@ -167,7 +233,120 @@ function getClientProfile(id) {
   const type = SALE_CLIENT_NUCS.includes(own.nuc) ? 'venta' : 'empeno';
   const detail = PERFIL_DETALLES[own.id] || PERFIL_DEFAULT[type];
   const personal = type === 'empeno' ? { ...detail.personal, nationality: own.nat } : undefined;
-  return { ...base(own), ...detail, type, personal };
+  const profile = { ...base(own), ...detail, type, personal };
+  if (!edited) return profile;
+  const { summary, contracts, pawnContracts, layaways, operations } = profile;
+  return { ...edited, summary, contracts, pawnContracts, layaways, operations };
+}
+
+/* ---------- Fechas (profileCalendar.ts) ---------- */
+const MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+/* dd/mm/aaaa → Date (sin hora) */
+const parseDueDate = v => { const [d, m, y] = String(v).split('/').map(Number); return new Date(y, m - 1, d); };
+const dayKey = d => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+const sameDay = (a, b) => !!(a && b && dayKey(a) === dayKey(b));
+const pad2 = n => String(n).padStart(2, '0');
+const formatDate = d => `${pad2(d.getDate())}/${pad2(d.getMonth() + 1)}/${d.getFullYear()}`;
+const addMonths = (d, n) => new Date(d.getFullYear(), d.getMonth() + n, d.getDate());
+
+/* ---------- Saldo por pagar (profileDebt.ts) y saldo pagado (profilePaid.ts) ---------- */
+const sumBy = (rows, f) => rows.reduce((a, r) => a + f(r), 0);
+const layawayPending = r => r.total - r.paid;
+/* Si el cliente trae el detalle (contratos y apartados) el total sale de ahí; si no, del resumen guardado */
+function getDebtBreakdown(c) {
+  const pawns = (c.pawnContracts || []).filter(k => k.status !== 'Desempeñado').sort((a, b) => parseDueDate(a.dueDate) - parseDueDate(b.dueDate));
+  const layaways = c.layaways || [];
+  const amounts = pawns.length + layaways.length ? { pawn: sumBy(pawns, k => k.redemption), layaway: sumBy(layaways, layawayPending) } : (c.summary && c.summary.debt) || { pawn: 0, layaway: 0 };
+  return { pawns, layaways, amounts, total: amounts.pawn + amounts.layaway };
+}
+const PAID_GROUP_BY_OPERATION = { Refrendo: 'pawn', Abono: 'pawn', Reactivación: 'pawn', Extensión: 'pawn', Desempeño: 'pawn', Apartado: 'layaway', 'Abono de apartado': 'layaway', 'Liquidación de apartado': 'layaway', Compra: 'purchase' };
+/* Pagos confirmados de operaciones que siguen abiertas (empeños y apartados sin liquidar) más todo lo pagado en el mes en curso.
+   TODO de su código: el backend debe exponer si la operación sigue abierta */
+function getPaidBreakdown(c, today = new Date()) {
+  const open = new Set([...(c.pawnContracts || []).filter(k => k.status !== 'Desempeñado').map(k => k.folio), ...(c.layaways || []).map(l => l.folio)]);
+  const sameMonth = v => { const d = parseDueDate(v); return d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear(); };
+  const paid = (c.operations.transacciones || []).filter(r => r.status === 'Pagado' && r.operation in PAID_GROUP_BY_OPERATION && (sameMonth(r.date) || (r.reference !== undefined && open.has(r.reference))));
+  const pick = id => paid.filter(r => PAID_GROUP_BY_OPERATION[r.operation] === id);
+  const groups = { pawn: pick('pawn'), layaway: pick('layaway'), purchase: pick('purchase') };
+  const amounts = { pawn: sumBy(groups.pawn, r => r.amount), layaway: sumBy(groups.layaway, r => r.amount), purchase: sumBy(groups.purchase, r => r.amount) };
+  return { period: `${MONTH_NAMES[today.getMonth()].toLowerCase()} ${today.getFullYear()}`, groups, amounts, total: amounts.pawn + amounts.layaway + amounts.purchase };
+}
+
+/* ---------- Detalle de una transacción (transactionDetail.ts). TODO de su código: servicio de detalle; si la fila no trae su origen,
+   el prototipo le asigna un contrato u orden de los mocks de forma estable ---------- */
+const TX_PAWN_OPS = ['Refrendo', 'Desempeño', 'Reactivación', 'Extensión', 'Abono'];
+const TX_RECURRENT = ['Refrendo', 'Abono de apartado', 'Abono'];
+const round2 = v => Math.round(v * 100) / 100;
+const txSeed = r => [...r.number].reduce((s, ch) => s + ch.charCodeAt(0), 0);
+function txBreakdown(r, isPawn) {
+  const total = { label: 'Total', amount: r.amount, total: true };
+  if (r.operation === 'Refrendo') { const i = round2(r.amount / 1.16); return [{ label: 'Interés del periodo', amount: i }, { label: 'IVA 16%', amount: round2(r.amount - i) }, total]; }
+  if (isPawn) { const loan = round2(r.amount / (1 + 0.1 * 1.16)), i = round2(loan * 0.1); return [{ label: 'Préstamo', amount: loan }, { label: 'Interés', amount: i }, { label: 'IVA 16%', amount: round2(r.amount - loan - i) }, total]; }
+  const sub = round2(r.amount / 1.16); return [{ label: 'Subtotal', amount: sub }, { label: 'IVA 16%', amount: round2(r.amount - sub) }, total];
+}
+function getTransactionDetail(r) {
+  const isPawn = TX_PAWN_OPS.includes(r.operation), list = Object.values(ARTICLES), seed = txSeed(r);
+  const contract = isPawn ? PAWN_CONTRACTS.find(k => k.folio === r.reference) || PAWN_CONTRACTS[seed % PAWN_CONTRACTS.length] : undefined;
+  const reference = r.reference || (contract && contract.folio) || `ORD-${r.number}`;
+  const label = reference.startsWith('EMP-') ? 'Contrato' : reference.startsWith('APA-') ? 'Apartado' : 'Orden';
+  return { referenceLabel: label, reference, articles: r.articles || (contract && contract.articles) || [list[seed % list.length]], kind: TX_RECURRENT.includes(r.operation) ? 'Recurrente' : 'Única',
+    company: 'Multiapoyo', branch: (contract && contract.branch) || 'Sucursal Centro', cashier: (contract && contract.seller) || 'Karla Méndez', time: `${10 + (seed % 8)}:${pad2(seed % 60)}`, breakdown: txBreakdown(r, isPawn) };
+}
+
+/* ---------- Detalle del contrato de empeño (ContractDetail/contractDetail.helpers.ts y .mocks.ts) ---------- */
+const ARTICLE_EXTRA = {
+  'Anillo de oro 14k': { condition: 'Bueno', notes: 'Peso 4.2 g. Sin piedras; leve desgaste.' },
+  'iPhone 15 Pro 256 GB': { condition: 'Bueno', notes: 'Incluye cable. Pantalla sin rayones; batería al 89 %.' },
+  'Reloj inteligente': { condition: 'Regular', notes: 'Correa con desgaste visible.' },
+  'iPad mini 64 GB': { condition: 'Bueno' },
+  'Audífonos Sony WH-XB910N': { condition: 'Bueno', notes: 'Con estuche original.' },
+  'Xbox Series X': { condition: 'Excelente', notes: 'Incluye un control y cable HDMI.' },
+};
+const planSections = (k, pawnDate, rate) => [
+  { id: 'empeno', title: 'Detalle del empeño', fields: [['Vendedor', k.seller], ['Fecha de empeño', pawnDate], ['Vencimiento del contrato', k.dueDate], ['Tienda', 'Multiapoyo'], ['Sucursal', k.branch], ['No. artículos', String(k.articles.length)]] },
+  { id: 'plazo', title: 'Intereses del plazo', fields: [['Nombre', 'Electrónico y joyería'], ['Tasa', 'Fija'], ['Interés', `${rate}%`], ['Duración', 'Mensual'], ['Cobro', 'Interés total desde el inicio'], ['Refrendos', 'Ilimitados']] },
+  { id: 'moratorios', title: 'Intereses moratorios', help: 'Se cobran cuando el contrato vence y el cliente no pagó a tiempo.', fields: [['Nombre', 'Días de gracia'], ['Al ocurrir', 'Después del periodo'], ['Interés', '5%'], ['Reflejado en el contrato', 'No']] },
+  { id: 'adicionales', title: 'Intereses adicionales', help: 'Cargos extra del plan, como el almacenamiento de la prenda.', fields: [['Nombre', 'Almacenamiento'], ['Al ocurrir', 'Durante el periodo'], ['Interés', '0.5%'], ['Reflejado en el contrato', 'Sí']] },
+];
+const PLAN_PERIODS = 3, INTEREST_RATE = 10, IVA_RATE = 16;
+/* TODO de su código: servicio de detalle del contrato; hoy se arma con los mocks del perfil */
+function getContractDetail(clientId, folio) {
+  const client = getClientProfile(clientId), k = client && (client.pawnContracts || []).find(x => x.folio === folio);
+  if (!client || !k) return null;
+  const due = parseDueDate(k.dueDate), today = new Date();
+  const interest = round2(k.loan * INTEREST_RATE / 100), iva = round2(interest * IVA_RATE / 100);
+  /* periodos mensuales hasta el vencimiento; los pasados ya se refrendaron */
+  const amortization = Array.from({ length: PLAN_PERIODS }, (_, i) => {
+    const date = addMonths(due, i + 1 - PLAN_PERIODS), last = i === PLAN_PERIODS - 1;
+    const paid = date < today && (!last || k.status === 'Desempeñado'), overdue = last && k.status === 'Vencido';
+    return { period: i + 1, dueDate: formatDate(date), interest, iva, renewal: round2(interest + iva), redemption: round2(k.loan + interest + iva), status: paid ? 'Pagado' : overdue ? 'Vencido' : 'Por pagar' };
+  });
+  /* un pago por periodo cubierto: refrendos y, si aplica, el desempeño final */
+  const paidRows = amortization.filter(r => r.status === 'Pagado');
+  const transactions = paidRows.map((r, i) => {
+    const discharge = k.status === 'Desempeñado' && i === paidRows.length - 1;
+    return { id: `${k.id}-t${r.period}`, number: `TX-${k.folio.slice(-4)}${r.period}`, date: r.dueDate, amount: discharge ? r.redemption : r.renewal, operation: discharge ? 'Desempeño' : 'Refrendo',
+      method: i % 2 ? { kind: 'cash' } : { kind: 'card', brand: 'visa', last4: '4821' }, status: 'Pagado', reference: k.folio, articles: k.articles };
+  }).reverse();
+  /* reparte avalúo y préstamo del contrato entre sus prendas; el resto queda en la primera */
+  const n = k.articles.length, ap = Math.floor(k.appraisal / n), lo = Math.floor(k.loan / n);
+  const articles = k.articles.map((a, i) => ({ ...a, sku: `${k.folio.replace(/\W/g, '')}${i + 1}`.padEnd(10, 'X').toUpperCase(), condition: (ARTICLE_EXTRA[a.name] || {}).condition || 'Bueno',
+    notes: (ARTICLE_EXTRA[a.name] || {}).notes, appraisal: i ? ap : k.appraisal - ap * (n - 1), loan: i ? lo : k.loan - lo * (n - 1) }));
+  const pawnDate = formatDate(addMonths(due, -PLAN_PERIODS)), first = amortization[0];
+  return { client, contract: k, pawnDate, articles, sections: planSections(k, pawnDate, INTEREST_RATE), amortization, transactions,
+    summary: { appraisal: k.appraisal, loan: k.loan, extensions: 0, reactivations: 0, subtotal: k.loan, interest: first.interest, iva: first.iva, total: first.redemption } };
+}
+
+/* ---------- Baja por registro duplicado (profileMerge.ts, 15c423c26). TODO de su código: buscar en el servicio de clientes ---------- */
+const mergeCandidates = clientId => CLIENTES.filter(c => c.id !== clientId).map(c => ({ value: c.id, label: `${fullName(c)} · NUC ${c.nuc}` }));
+const getMergeTarget = id => { const c = CLIENTES.find(x => x.id === id); return c ? { id: c.id, name: fullName(c), initials: getInitials(c.name, c.last), subtitle: `NUC ${c.nuc} · Tel. ${c.phone}` } : undefined; };
+/* Lo que tiene el registro duplicado; solo se listan los conceptos con algo que pasar */
+function mergeSummary(c) {
+  const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+  const docs = [c.identification, c.addressProof, c.incomeProof].filter(Boolean).length, ops = c.operations || {};
+  return [[(c.pawnContracts || []).length, 'contrato de empeño', 'contratos de empeño'], [(ops.transacciones || []).length, 'transacción', 'transacciones'], [(ops.ordenes || []).length, 'orden', 'órdenes'],
+    [(c.layaways || []).length, 'apartado', 'apartados'], [(c.cotitulares || []).length, 'cotitular o beneficiario', 'cotitulares y beneficiarios'], [(c.fingerprints || []).length, 'huella', 'huellas'], [docs, 'documento', 'documentos']]
+    .filter(([n]) => n > 0).map(([n, a, b]) => plural(n, a, b));
 }
 
 /* Aviso que debe verse en la pantalla a la que se navega (su toast global): Editar cliente → "Cambios guardados" en el perfil */

@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="../ds/components.css" />
 <link rel="stylesheet" href="../pos.css?v=ux68-ds1" />
 <link rel="stylesheet" href="../carrito.css?v=2" />
-<link rel="stylesheet" href="clientes.css?v=107" />
+<link rel="stylesheet" href="clientes.css?v=108" />
 </head>
 <!-- Operativo: el menú lateral es cajón (se abre con la hamburguesa), igual que en ../inventario/ -->
 <body class="pos cli-page" data-plataforma-fija="op">
@@ -83,7 +83,7 @@
 
 
 
-<!-- Clientes (prototipo de Product Design · rama del equipo, commits 8f7723ad6 y 2d1b103b4): listado y perfil del cliente.
+<!-- Clientes (prototipo de Product Design · rama del equipo, commits 8f7723ad6 … 3e2d19b99): listado, perfil del cliente y detalle del contrato.
      clientes.js pinta aquí el breadcrumb del DS, el título y la pantalla; "Crear cliente" abre cliente-nuevo.html -->
 <div class="pos-cuerpo">
   <!-- controles del prototipo (no son parte del producto): ../demo.js los pone en la pestaña "Prototipo" del riel izquierdo.
@@ -102,6 +102,10 @@
     <button type="button" data-act="protoperfil" data-v="c1127">Empeño con datos parciales</button>
     <button type="button" data-act="protoperfil" data-v="c1129">Venta</button>
     <button type="button" data-act="protoperfil" data-v="mk-1">Marketplace</button>
+    <span class="proto-cap">Detalle del contrato: ver ejemplo</span>
+    <button type="button" data-act="protoperfil" data-v="c1131/contrato/EMP-024583">Por vencer</button>
+    <button type="button" data-act="protoperfil" data-v="c1131/contrato/EMP-023977">Vencido</button>
+    <button type="button" data-act="protoperfil" data-v="c1131/contrato/EMP-022140">Desempeñado</button>
     <span class="sep" aria-hidden="true"></span>
     <span class="proto-cap">Datos para verificar (ficticios)</span>
     <dl class="proto-kv">
@@ -117,8 +121,8 @@
   </main>
 </div>
 
-<script src="perfil-datos.js?v=4"></script>
-<script src="clientes.js?v=14"></script>
+<script src="perfil-datos.js?v=5"></script>
+<script src="clientes.js?v=15"></script>
 <script src="../carrito.js?v=2"></script>
 <script src="../navbar.js?v=3"></script>
 <script src="../menu-op.js?v=14"></script>

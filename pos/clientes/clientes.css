@@ -8,6 +8,7 @@
   --propuesta-neutral-200: #e8e9ea; /* sin token en el DS: propuesta */
   --propuesta-surface-page: #fbfbfe; /* sin token en el DS: propuesta */
   --propuesta-text-title: #1d1e20; /* sin token en el DS: propuesta */
+  --propuesta-surface-card-gray: #f7f7f7; /* sin token en el DS: propuesta · surfaceCardGray de su React (bloques grises del perfil) */
 }
 
 /* reseteo del prototipo, acotado al contenido del módulo (no toca el header ni el menú compartidos) */
@@ -188,39 +189,50 @@ a.ds-btn--primary:hover,a.ds-btn--primary:focus-visible{color:var(--ats-white)}
 .cli-sessions__add:hover{background:var(--ats-primary-10)}
 .cli-sessions__add:focus-visible{outline:2px solid var(--ats-primary-300);outline-offset:-2px}
 
-/* ---------- Perfil de cliente (rediseño 20f588788) ---------- */
+/* ---------- Perfil de cliente (su React hasta 3e2d19b99) ---------- */
 .cp{gap:16px}
 .pr-card{background:var(--ats-white);border-radius:var(--radius-md);box-shadow:var(--pos-shadow-card);padding:24px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.pr-card--sm{padding:16px} /* DetailCard del detalle de contrato */
 .pr-h2{font-size:20px;line-height:24px;font-weight:600;color:var(--propuesta-text-title)}
+.pr-h3{font-size:16px;line-height:19.2px;font-weight:700;color:var(--propuesta-text-title)}
+.pr-h3.sb{font-weight:600}
 .pr-top{display:flex;align-items:flex-start;gap:16px}
 .pr-photo{position:relative;flex:none}
 .pr-ph{font-weight:600}
-.pr-phedit{position:absolute;right:-8px;bottom:-8px;background:var(--ats-white);border-radius:50%}
 .pr-md{color:var(--ats-neutral-700)}
 .pr-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
 .pr-name{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .pr-name h2{font-size:20px;line-height:24px;font-weight:600;color:var(--propuesta-text-title)}
 .pr-cap{font-size:14px;line-height:16.8px;color:var(--ats-neutral-600)}
+.pr-capt{font-size:16px;line-height:19.2px;letter-spacing:.3px;color:var(--ats-neutral-600)}
 .pr-meta{list-style:none;display:flex;flex-wrap:wrap;align-items:center;row-gap:8px;font-size:16px;line-height:19.2px;letter-spacing:.3px}
 .pr-meta li{display:inline-flex;align-items:center;gap:8px;min-width:0;padding:0 12px;color:var(--ats-neutral-700)}
 .pr-meta li:first-child{padding-left:0}
 .pr-meta li+li{border-left:1px solid var(--ats-neutral-300)}
 .pr-meta svg{color:var(--ats-neutral-700)}
 .pr-addr{display:block;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pr-pills{display:flex;flex-wrap:wrap;align-items:center;gap:12px 32px}
-.pr-pill{display:inline-flex;align-items:center;gap:8px;font-size:16px;line-height:19.2px;letter-spacing:.3px}
-.pr-pic{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--ats-primary-50);color:var(--ats-primary-300)}
-.pr-pl{color:var(--ats-neutral-700)}
-.pr-pa{font-weight:700;color:var(--propuesta-text-title)}
+/* chips del encabezado (DS Chip choice con ícono): abren su detalle y quedan activos mientras está abierto */
+.pr-pills{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.ds-chip--choice.pr-pill{gap:8px;padding:8px 12px;font-size:14px;line-height:16.8px;font-weight:400;color:var(--ats-neutral-700);cursor:pointer;transition:border-color .15s,background .15s}
+.ds-chip--choice.pr-pill:hover{border-color:var(--ats-primary-300)}
+.ds-chip--choice.pr-pill.ds-chip--on{color:var(--ats-primary-400);font-weight:400}
+.pr-pill svg{color:var(--ats-neutral-700)}
 .pr-acts{position:relative;flex:none}
 .pr-acts .pr-menu{left:auto;right:0;top:44px;width:220px}
 .pr-f{display:flex;flex-direction:column;gap:4px;min-width:0}
 .pr-f span,.pr-f dt{font-size:14px;line-height:16.8px;color:var(--ats-neutral-600)}
 .pr-f b,.pr-f dd{margin:0;font-size:16px;line-height:19.2px;font-weight:600;letter-spacing:.3px;color:var(--propuesta-text-title);overflow-wrap:anywhere}
-.pr-clip{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-/* Acciones rápidas: carrusel de tarjetas sin borde (Card-shadow); deja aire para que no se corte la sombra */
+/* avisos arriba del perfil (marketplace, dado de baja) y dentro de modales: a todo el ancho */
+.pr-alert{width:100%;box-sizing:border-box}
+.pr-alertact{margin-top:8px}
+/* Número de contrato (ContractFolio): morado, seminegrita; con detalle es un enlace */
+.pr-folio{border-radius:var(--radius-xs);text-decoration:none}
+.pr-folio:hover{text-decoration:underline;text-decoration-color:var(--ats-primary-300)}
+.pr-folio__t{white-space:nowrap;font-size:16px;line-height:19.2px;font-weight:600;letter-spacing:.3px;color:var(--ats-primary-300)}
+
+/* Acciones rápidas: carrusel de tarjetas de 300 (3e2d19b99: se queda el carrusel), sin borde y con Card-shadow */
 .qa-wrap{position:relative}
-.qa-track{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 12px 14px;margin:-4px -12px -14px;scroll-padding-left:12px}
+.qa-track{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:8px 12px 14px;margin:-8px -12px -14px;scroll-padding-left:12px}
 .qa-track::-webkit-scrollbar{display:none}
 .qa-arrow{position:absolute;top:50%;z-index:2;transform:translateY(-50%);display:flex;width:36px;height:36px;padding:8px;border-radius:var(--radius-full);background:var(--ats-white);color:var(--ats-primary-300);box-shadow:var(--pos-shadow-card)}
 .qa-arrow:hover{background:var(--ats-primary-50)}
@@ -228,35 +240,231 @@ a.ds-btn--primary:hover,a.ds-btn--primary:focus-visible{color:var(--ats-white)}
 .qa-arrow[hidden]{display:none}
 .pr-qcard{flex:0 0 300px;scroll-snap-align:start;display:flex;flex-direction:column;gap:12px;box-sizing:border-box;padding:16px;border:0;border-radius:var(--radius-md);background:var(--ats-white);box-shadow:var(--pos-shadow-card)}
 .pr-qtop{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-.pr-qtop h3{font-size:16px;line-height:19.2px;font-weight:700;color:var(--propuesta-text-title)}
 .pr-qtop .pr-cap{margin-bottom:2px}
+.pr-qtop .ds-tag{flex:none;white-space:nowrap}
 .pr-qamts,.pr-qbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.pr-qbtns{margin-top:auto}
+.pr-qbtns{margin-top:auto;align-items:center}
 .pr-qbtns .ds-btn{width:100%}
-/* Operaciones */
-.pr-tools{justify-content:space-between;flex-wrap:wrap}
-.pr-tools .cli-search{flex:0 1 480px;min-width:260px;max-width:480px}
-.pr-tablew{min-width:0;overflow-x:auto}
+.pr-late{font-size:14px;line-height:16.8px;color:var(--ats-error-red-300)}
+/* fotos de las prendas: 48, fondo gris, sin componente en el DS */
+.pr-thumbs{list-style:none;display:flex;flex-wrap:wrap;gap:8px}
+.pr-thumbs img{width:48px;height:48px;box-sizing:border-box;padding:4px;object-fit:contain;border-radius:var(--radius-sm);background:var(--propuesta-surface-card-gray)}
+
+/* Operaciones: tabs sobre la página y la card de la tab activa */
+.pr-optabs{margin-bottom:-4px}
+.pr-opbody{display:flex;flex-direction:column;gap:16px;min-width:0}
+.pr-optools{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px}
+.pr-optools--end{justify-content:flex-end}
+.pr-search{flex:0 1 480px;min-width:260px;max-width:480px}
+.pr-search .ds-input{font-size:16px;letter-spacing:.3px}
+.pr-search .ds-input::-webkit-search-cancel-button{display:none}
+.pr-tablew{position:relative;min-width:0;overflow-x:auto} /* relative: el texto oculto (.sr) de los encabezados no se sale del scroll */
 .cli-tabs{overflow-x:auto;scrollbar-width:none}
 .cli-tabs .ds-tabs__tab{flex:none;white-space:nowrap}
+.pr-table td{height:40px}
+.pr-table th.r.am,.pr-table td.r{white-space:nowrap}
+.pr-table th.am{min-width:120px;box-sizing:border-box}
+.pr-table .w120{min-width:120px}.pr-table .w140{min-width:140px}.pr-table .w160{min-width:160px}.pr-table .w180{min-width:180px}.pr-table .w240{min-width:240px}
+.pr-table .nw{white-space:nowrap}
+.pr-table td b{font-weight:700;color:var(--propuesta-text-title)}
+/* StatusCell: el chip no se parte y se separa de la columna anterior; DueCell y SellerCell con aire a la izquierda */
+.pr-table .pr-stc{white-space:nowrap;padding-left:32px}
+.pr-table .pr-duec{padding-left:24px}
+.pr-table .pr-sellc{padding-left:40px}
+.pr-table td.empty.pr-emptytxt{padding:24px 16px;font-size:14px;color:var(--ats-neutral-600)}
+.pr-table td.pr-rowmenu{width:40px;padding-top:0;padding-bottom:0}
+.pr-table .pr-acts .pr-menu{top:36px}
+/* DS TableCell "articulo" y "text-description" */
+.pr-art{display:flex;align-items:center;gap:8px;min-width:0}
+.pr-art img{width:40px;height:40px;flex:none;box-sizing:border-box;object-fit:contain;border-radius:var(--radius-xs);background:var(--propuesta-surface-page)}
+.pr-art .tx,.pr-sell{display:flex;flex-direction:column;gap:4px;min-width:0}
+.pr-art .m,.pr-sell span{font-size:14px;line-height:1.2;color:var(--ats-neutral-700)}
+.pr-art .d,.pr-sell small{font-size:12px;line-height:14.4px;color:var(--ats-neutral-600)}
+/* Método de pago: logo de la tarjeta (DS CreditCard: 24, redondo, borde neutral300) + últimos 4 y marca */
+.pr-pay{display:inline-flex;align-items:center;gap:8px}
+.pr-pay .tx{display:flex;flex-direction:column}
+.pr-pay .tx span{font-size:14px;line-height:1.2;color:var(--ats-neutral-700)}
+.pr-pay .tx small{font-size:12px;line-height:14.4px;color:var(--ats-neutral-600)}
+.pr-cc{display:inline-flex;width:24px;height:24px;flex:none;box-sizing:border-box;border:1px solid var(--ats-neutral-300);border-radius:var(--radius-full);overflow:hidden}
+.pr-cc img{width:100%;height:100%}
 .pr-empty{padding:48px 16px}
 .pr-empty .pr-b{font-size:16px;font-weight:700;color:var(--propuesta-text-title)}
+/* DS TableFilterChip (el mismo de ../codigos-acceso/): botón de 40 con ícono, etiqueta y flecha; lista abajo a la derecha */
+.pr-fchip{position:relative;display:inline-flex}
+.pr-fchip__btn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:4px 16px;box-sizing:border-box;border-radius:var(--radius-sm);border:1px solid var(--ats-neutral-300);background:var(--ats-white);font-size:16px;line-height:19.2px;letter-spacing:.3px;color:var(--ats-neutral-600);white-space:nowrap;transition:border-color .15s,color .15s}
+.pr-fchip__btn:hover,.pr-fchip__btn.is-on{border-color:var(--ats-primary-400);color:var(--ats-primary-400)}
+.pr-fchip__arrow{display:inline-flex;transition:transform .2s ease-in-out}
+.pr-fchip__btn[aria-expanded='true'] .pr-fchip__arrow{transform:rotate(180deg)}
+.pr-fchip__menu{position:absolute;top:calc(100% + 8px);right:0;z-index:45;min-width:max(100%,200px);box-sizing:border-box;overflow:hidden;background:var(--ats-white);border:1px solid var(--propuesta-surface-page);border-radius:var(--radius-sm);box-shadow:var(--pos-shadow-dropdown)}
+.pr-fchip__opt{display:flex;align-items:center;width:100%;height:40px;padding:8px;box-sizing:border-box;text-align:left;font-size:16px;line-height:19.2px;letter-spacing:.3px;color:var(--ats-neutral-700);white-space:nowrap;transition:background .1s}
+.pr-fchip__opt:hover{background:var(--ats-neutral-50)}
+.pr-fchip__opt[aria-selected='true']{color:var(--ats-primary-400);background:var(--ats-neutral-50)}
+/* Calendario del filtro de vencimiento (nuevo patrón de su React: Figma "Calendario" y "Date Range Picker" con SelectionInput, Button y tokens) */
+.pr-cal{position:absolute;top:calc(100% + 4px);right:0;z-index:46;width:320px;box-sizing:border-box;display:flex;flex-direction:column;background:var(--ats-white);border-radius:var(--radius-md);box-shadow:var(--pos-shadow-dropdown)}
+.pr-cal--range{width:640px}
+.pr-calrow{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}
+.pr-calm{display:flex;flex-direction:column;gap:12px;padding:16px}
+.pr-calm+.pr-calm{border-left:1px solid var(--ats-neutral-300)}
+.pr-calsel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pr-calsel .psel{width:100%;height:40px;padding:0 10px 0 14px;gap:4px;font-size:16px}
+.pr-calsel .ddl-menu{top:44px}
+.pr-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));row-gap:4px;justify-items:center}
+.pr-days.band{justify-items:stretch}
+.pr-days .wd{padding:4px 0;text-align:center;font-size:12px;line-height:14.4px;font-weight:700;color:var(--propuesta-text-title)}
+.pr-day{width:40px;height:40px;border-radius:var(--radius-full);font-size:16px;letter-spacing:.3px;color:var(--ats-neutral-700);transition:background .1s}
+.band .pr-day{width:100%}
+.pr-day:hover{background:var(--propuesta-neutral-200)}
+.pr-day.is-out{color:var(--ats-neutral-400)}
+.pr-day.is-today{background:var(--propuesta-surface-card-gray)}
+.pr-day.is-single,.pr-day.is-start,.pr-day.is-end{background:var(--ats-primary-300);color:var(--ats-white)}
+.pr-day.is-middle{background:var(--ats-primary-50);border-radius:0}
+.pr-day.is-start{border-radius:var(--radius-full) 0 0 var(--radius-full)}
+.pr-day.is-end{border-radius:0 var(--radius-full) var(--radius-full) 0}
+.pr-calhint{padding:0 16px;font-size:14px;line-height:16.8px;color:var(--ats-neutral-600)}
+.pr-calfoot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px 16px}
+.pr-calfoot.div{border-top:1px solid var(--ats-neutral-300)}
+.pr-calfoot .g{display:flex;gap:8px}
 .pr-hint{font-size:16px;line-height:19.2px;letter-spacing:.3px;color:var(--ats-neutral-600)}
-/* Información personal (modal ancho) */
+
+/* Información personal (modal ancho): misma cuadrícula de 4 columnas en todos los grupos (6c35ce0fc) */
 .pr-ibody{display:flex;flex-direction:column;gap:24px}
 .pr-stick{position:sticky;top:0;z-index:2;background:var(--ats-white);padding-bottom:8px}
-.pr-isec{display:flex;flex-direction:column;gap:16px;padding:24px;background:var(--ats-neutral-100);border-radius:var(--radius-md)}
+.pr-isec{display:flex;flex-direction:column;gap:12px;padding:16px 24px;background:var(--propuesta-surface-card-gray);border-radius:var(--radius-md)}
 .pr-sh{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px}
 .pr-sh h3{font-size:16px;line-height:19.2px;font-weight:700;color:var(--propuesta-text-title)}
-.pr-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px 32px;margin:0}
-.pr-fields.c4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.pr-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 32px;margin:0}
 .pr-igroup{display:flex;flex-direction:column;gap:12px}
 .pr-igroup h4{font-size:16px;line-height:19.2px;font-weight:600;color:var(--ats-neutral-700)}
 .pr-chips{display:flex;flex-wrap:wrap;gap:8px}
+.ds-chip--choice.pr-fp{gap:8px;font-weight:400}
+.pr-fp svg{color:var(--ats-primary-300)}
 .pr-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:var(--radius-sm);background:var(--ats-primary-10)}
 .pr-item .tx{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
 .pr-item .tx b{font-weight:400;font-size:16px;line-height:19.2px;letter-spacing:.3px;color:var(--ats-neutral-700)}
 .pr-item .tx small{font-size:12px;line-height:12px;color:var(--ats-neutral-600)}
+
+/* Saldo por pagar / Saldo pagado (7e426b821): total arriba, barra (DS ChartBar + ChartLegend) y una GroupCard por concepto */
+.ds-modal.cli-modal.pr-debtm{width:960px}
+.pr-debtm .ds-modal__body,.pr-txm .ds-modal__body,.pr-lg .ds-modal__body{flex:1;min-height:0;overflow-y:auto;margin:0 -4px;padding:0 4px 8px}
+.cli-modal.pr-endfoot .ds-modal__footer{justify-content:flex-end}
+.pr-debt{display:flex;flex-direction:column;gap:16px;min-width:0}
+.pr-total{display:flex;flex-direction:column;gap:4px;padding:16px 24px;border-radius:var(--radius-md);background:var(--propuesta-surface-card-gray)}
+.pr-total .lbl{font-size:12px;line-height:14.4px;font-weight:700;color:var(--ats-neutral-600)}
+.pr-total .amt{font-size:28px;line-height:34px;font-weight:500;color:var(--propuesta-text-title)}
+.pr-total .hint{font-size:14px;line-height:16.8px;color:var(--ats-neutral-600)}
+.pr-bar{display:flex;height:8px;margin-top:8px;overflow:hidden;border-radius:var(--radius-full);background:var(--ats-neutral-300)}
+.pr-bar span{display:block;height:100%}
+.pr-legend{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px;font-size:12px;line-height:14.4px;color:var(--ats-neutral-600)}
+.pr-legend li{display:inline-flex;align-items:center;gap:8px}
+.pr-legend .dot{width:8px;height:8px;border-radius:var(--radius-full)}
+.pr-groups{display:flex;flex-direction:column;gap:12px;min-width:0}
+/* DS GroupCard: sin borde (Card-shadow); abierta, contorno morado claro como en su React */
+.pr-gc{position:relative;display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:var(--radius-md);background:var(--ats-white);box-shadow:var(--pos-shadow-card);min-width:0}
+.pr-gc.is-open{box-shadow:var(--pos-shadow-card),inset 0 0 0 1px var(--ats-primary-200)}
+.pr-gc__head{display:flex;align-items:center;gap:8px;padding-right:8px;cursor:pointer;border-radius:var(--radius-sm)}
+.pr-gc__chev{display:flex;width:28px;height:28px;padding:4px;box-sizing:border-box;flex:none;color:var(--ats-primary-300);transition:transform .15s ease-in-out}
+.is-open .pr-gc__chev{transform:rotate(180deg)}
+.pr-gc__tx{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
+.pr-gc__title{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:16px;line-height:19.2px;letter-spacing:.3px;color:var(--ats-neutral-700)}
+.pr-gc__title b{font-size:20px;line-height:24px;font-weight:600;color:var(--propuesta-text-title);white-space:nowrap}
+.pr-gc__sub{font-size:12px;line-height:14.4px;color:var(--ats-neutral-600);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pr-gc__body{min-width:0;overflow-x:auto;padding:0 16px 16px}
+/* Detalle de transacción (92f7ebdf5): bloques grises sin borde, datos clave a 4 columnas y botones del pie de 220 */
+.ds-modal.cli-modal.pr-txm{width:1040px}
+.pr-txm .ds-modal__footer .ds-btn{min-width:220px}
+.pr-txd{display:flex;flex-direction:column;gap:24px;min-width:0}
+.pr-gray{padding:16px;border-radius:var(--radius-md);background:var(--propuesta-surface-card-gray);min-width:0}
+.pr-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0}
+.pr-facts>div{display:flex;flex-direction:column;gap:16px;padding:0 16px;min-width:0}
+.pr-facts>div+div{border-left:1px solid var(--ats-neutral-300)}
+.pr-facts dt{font-size:16px;line-height:19.2px;font-weight:700;letter-spacing:.3px;color:var(--propuesta-text-title)}
+.pr-facts dd{margin:0;font-size:16px;line-height:19.2px;letter-spacing:.3px;color:var(--ats-neutral-700);overflow-wrap:anywhere}
+.pr-txarts{list-style:none;display:flex;flex-direction:column;gap:16px;padding-top:24px;border-top:1px solid var(--ats-neutral-300)}
+.pr-txarts li{display:flex;align-items:center;gap:24px}
+.pr-txarts img{width:72px;height:72px;flex:none;object-fit:contain;border-radius:var(--radius-sm);background:var(--propuesta-surface-card-gray)}
+.pr-txarts span{display:flex;flex-direction:column;gap:8px;min-width:0}
+.pr-txarts b{font-size:16px;line-height:19.2px;font-weight:700;letter-spacing:.3px;color:var(--propuesta-text-title)}
+.pr-txarts small{font-size:12px;line-height:14.4px;color:var(--ats-neutral-700)}
+.pr-table--gray tbody tr{background:transparent}
+.pr-txrow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.pr-lines{display:flex;flex-direction:column;gap:8px;margin:12px 0 0}
+.pr-lines>div{display:flex;justify-content:space-between;gap:16px}
+.pr-lines dt,.pr-lines dd{margin:0;font-size:16px;line-height:19.2px;letter-spacing:.3px}
+.pr-lines dt{color:var(--ats-neutral-600)}
+.pr-lines dd{color:var(--ats-neutral-700);text-align:right}
+.pr-lines .tot{padding-top:8px;border-top:1px solid var(--ats-neutral-300)}
+.pr-lines .tot dt,.pr-lines .tot dd{font-weight:700;color:var(--propuesta-text-title)}
+/* Baja por registro duplicado (15c423c26): modal grande, AutoSelect, cliente que se queda y confirmación */
+.ds-modal.cli-modal.pr-lg{width:800px}
+.pr-auto-chev{color:var(--ats-neutral-500);pointer-events:none}
+.pr-auto-open{border-color:var(--ats-primary-400)}
+.pr-auto-open .pr-auto-chev svg{transform:rotate(180deg)}
+.pr-automenu{max-height:240px}
+.pr-autoempty{padding:8px 16px;font-size:14px;color:var(--ats-neutral-600)}
+.pr-ferr{margin-top:-8px;font-size:14px;line-height:16.8px;color:var(--ats-error-red-300)}
+.pr-target{padding:12px 16px}
+
+/* ---------- Detalle del contrato de empeño (496bbf842; responsivo d8fe089ae) ---------- */
+.ct-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:-8px}
+.ct-headtx{display:flex;flex-direction:column;gap:16px;min-width:0}
+.ct-meta{list-style:none;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:16px;line-height:19.2px;letter-spacing:.3px}
+.ct-meta li{display:flex;align-items:center;gap:4px;white-space:nowrap}
+.ct-meta li+li{padding-left:8px;border-left:1px solid var(--ats-neutral-300)}
+.ct-meta .cap{color:var(--ats-neutral-600)}
+.ct-meta .v{color:var(--propuesta-text-title)}
+.ct-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(360px,100%),1fr));gap:16px}
+.ct-client{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;font-size:16px;line-height:19.2px;letter-spacing:.3px}
+.ct-name{width:100%;font-weight:600;color:var(--ats-primary-400);text-decoration:underline}
+.ct-pair{display:flex;align-items:center;gap:4px;min-width:0;overflow-wrap:anywhere}
+.ct-pair .cap{color:var(--ats-neutral-600)}
+.ct-pair>.cap:first-child{flex:none;align-self:flex-start}
+.ct-sum{display:flex;flex-direction:column;margin:0}
+.ct-sum>div{display:flex;justify-content:space-between;gap:16px;padding:4px 0}
+.ct-sum>div+div{border-top:1px solid var(--ats-neutral-300)}
+.ct-sum dt,.ct-sum dd{margin:0;font-size:16px;line-height:19.2px;letter-spacing:.3px}
+.ct-sum dt{color:var(--ats-neutral-600)}
+.ct-sum dd{color:var(--ats-neutral-700);white-space:nowrap}
+.ct-arts{container-type:inline-size}
+.ct-artshead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 24px;padding-bottom:16px;border-bottom:1px solid var(--ats-neutral-300)}
+.ct-deadline{display:flex;align-items:center;gap:8px;font-size:16px;line-height:19.2px;font-weight:700;letter-spacing:.3px;color:var(--ats-info-blue-300)}
+.ct-deadline svg{color:var(--ats-info-blue-200)}
+.ct-deadline.is-exp{color:var(--ats-error-red-300)}
+.ct-deadline.is-exp svg{color:var(--ats-error-red-200)}
+.ct-artsbody{display:grid;grid-template-columns:1fr;gap:16px}
+.ct-artsbody.has-acts{grid-template-columns:minmax(0,1fr) 344px}
+.ct-list{display:flex;flex-direction:column;gap:16px;padding:16px 16px 0 0;min-width:0}
+.has-acts .ct-list{border-right:1px solid var(--ats-neutral-300)}
+.ct-art{display:flex;align-items:flex-start;gap:16px;padding:0 4px}
+.ct-img{position:relative;display:flex;align-items:center;justify-content:center;flex:none;width:120px;height:120px;border-radius:var(--radius-md);background:var(--propuesta-surface-card-gray)}
+.ct-img img{width:96px;height:96px;object-fit:contain;border-radius:var(--radius-sm)}
+.ct-cond{position:absolute;top:8px;left:8px}
+.ct-arttx{display:flex;flex:1;flex-direction:column;gap:8px;min-width:0;font-size:16px;line-height:19.2px;letter-spacing:.3px}
+.ct-arttx h4{font-size:16px;line-height:19.2px;font-weight:600;color:var(--ats-primary-400)}
+.ct-arttx .cap{color:var(--ats-neutral-600)}
+.ct-arttx .strong{color:var(--propuesta-text-title)}
+.ds-btn.ct-notes{gap:8px;flex:none}
+.ct-actions{display:flex;flex-direction:column;gap:8px;padding-top:16px}
+.ct-actions .ds-btn{width:100%}
+/* bajo 760 de card, los botones bajan debajo de los artículos */
+@container (max-width: 760px){
+  .ct-artsbody.has-acts{grid-template-columns:1fr}
+  .has-acts .ct-list{border-right:0;padding-right:0}
+  .ct-actions{border-top:1px solid var(--ats-neutral-300)}
+}
+.ct-tabsw{min-width:0;overflow-x:auto}
+.ct-panel{min-width:0}
+.ct-secs{display:flex;flex-direction:column;padding-left:16px}
+.ct-sec{display:flex;flex-direction:column;gap:16px;padding:24px 0}
+.ct-sec:first-child{padding-top:8px}
+.ct-sec+.ct-sec{border-top:1px solid var(--ats-neutral-300)}
+.ct-sectitle{display:flex;align-items:center;gap:16px}
+.ct-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0}
+.ct-cols dt,.ct-cols dd{margin:0;font-size:16px;line-height:19.2px;letter-spacing:.3px}
+.ct-cols dt{margin-bottom:8px;color:var(--ats-neutral-500)}
+.ct-cols dd{color:var(--ats-neutral-700)}
+/* DS Tooltip con el "?" (HelpIcon) del título de la sección; el texto se acomoda en varias líneas */
+.pr-tip{color:var(--ats-primary-300);cursor:help;border-radius:var(--radius-full)}
+.pr-tip .ds-tooltip__content{width:max-content;max-width:240px;white-space:normal;text-align:center;line-height:1.3}
 
 /* ---------- Responsivo ---------- */
 @media (max-width: 1100px){
@@ -265,10 +473,20 @@ a.ds-btn--primary:hover,a.ds-btn--primary:focus-visible{color:var(--ats-white)}
   .tfc-g{flex-wrap:wrap;gap:8px}
 }
 @media (max-width:900px){
-  .pr-fields,.pr-fields.c4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pr-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
   .pr-top{flex-wrap:wrap}
+  .pr-facts{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:16px}
+  .pr-facts>div:nth-child(odd){border-left:0}
+  .ct-cols{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width: 700px){
+  /* calendario del vencimiento: fijo bajo el header y a lo ancho; en rango, los dos meses uno debajo del otro */
+  .pr-cal,.pr-cal--range{position:fixed;top:calc(var(--pos-header-h, 56px) + 16px);left:16px;right:16px;width:auto;max-width:400px;margin:0 auto;max-height:calc(100vh - var(--pos-header-h, 56px) - 72px);overflow-y:auto}
+  .pr-calrow{grid-auto-flow:row}
+  .pr-calm+.pr-calm{border-left:0;border-top:1px solid var(--ats-neutral-300)}
+  .pr-txrow{grid-template-columns:minmax(0,1fr)}
+  .ct-head{align-items:flex-start}
+
   /* tabla sin filas: sin encabezado, para que el estado vacío quepa en la card a 375 */
   .cli-table:has(td.empty) thead{display:none}
   /* otras fuentes: la tabla se desplaza dentro de la card y "Cargar cliente" queda fijo a la derecha */
@@ -288,8 +506,24 @@ a.ds-btn--primary:hover,a.ds-btn--primary:focus-visible{color:var(--ats-white)}
   .pr-meta{flex-direction:column;align-items:flex-start}
   .pr-meta li{padding:0}
   .pr-meta li+li{border-left:0}
-  .pr-fields,.pr-fields.c4{grid-template-columns:minmax(0,1fr)}
+  .pr-fields{grid-template-columns:minmax(0,1fr)}
   .pr-isec{padding:16px}
+  .pr-card--sm{padding:16px}
+  .pr-search{flex:1 1 100%;min-width:0;max-width:none}
+  .pr-optools--end{justify-content:flex-start}
+  .pr-total{padding:16px}
+  .pr-gc__title b{font-size:16px;line-height:19.2px}
+  .pr-txm .ds-modal__footer .ds-btn{min-width:0;flex:1 1 100%}
+  .pr-txarts li{gap:16px}
+  .ct-cols{grid-template-columns:minmax(0,1fr)}
+  .ct-secs{padding-left:0}
+  .ct-art{flex-wrap:wrap}
+  .ct-img{width:96px;height:96px}
+  .ct-img img{width:80px;height:80px}
+  .ct-meta{flex-direction:column;align-items:flex-start;gap:4px}
+  .ct-meta li+li{padding-left:0;border-left:0}
+  .ct-arttx{flex:1 1 150px}
+  .ct-notes{margin-left:112px}
   .pr-qcard{flex-basis:min(300px,calc(100vw - 96px))}
   .ds-modal.cli-modal.pr-sm{width:100%}
 }

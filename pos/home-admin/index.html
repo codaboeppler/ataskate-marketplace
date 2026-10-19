@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Ataskate POS — Inicio Administrativo</title>
-<meta name="description" content="Ataskate POS (Administrativo): Inicio del Administrativo por tarjetas, rediseño de UX con estados normal, cargando, cuenta nueva y error." />
+<meta name="description" content="Ataskate POS (Administrativo): Inicio del Administrativo por tarjetas alineado con el Inicio operativo, con estados con datos, cuenta nueva, cargando y error." />
 <meta name="robots" content="noindex" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,7 +16,8 @@
 <link rel="stylesheet" href="../ds/components.css" />
 <link rel="stylesheet" href="../pos.css?v=ux68-ds1" />
 <link rel="stylesheet" href="../carrito.css?v=2-ds1" />
-<link rel="stylesheet" href="home-admin.css?v=2-ds1" />
+<link rel="stylesheet" href="../inicio-operativo/inicio-operativo.css?v=1" />
+<link rel="stylesheet" href="home-admin.css?v=3-lucas" />
 </head>
 <!-- data-plataforma-fija: "admin" para módulos del Administrativo, "op" para el Operativo -->
 <body class="pos home-admin pos-menu-fijo" data-plataforma-fija="admin">
@@ -81,34 +82,31 @@
   <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/navbar/logout.svg" alt="" />Cerrar sesión</button>
 </div>
 
-<!-- Inicio del Administrativo, rediseño de UX (AdminHomeV2 y la vista previa /design-system/preview/home-admin de la rama del equipo,
-     sobre su maqueta public/maquetas/home-admin). 14 tarjetas en mampostería (NewCardMasonry: columnas de 300 mínimo, separación 16,
-     tarjeta i a la columna i mod n; con 3 columnas queda el acomodo de Figma) centradas a 1152. Cada tarjeta tiene estados
-     normal, cargando, cuenta nueva (vacío) y error; el rol filtra las tarjetas. Las pinta home-admin.js.
-     Sin breadcrumb ni título visible, como en su código. ?nueva=1 (llega del registro por invitación) abre "Cuenta nueva". -->
+<!-- Inicio del Administrativo (HU-CP-400-F), rama del equipo commit 1589eda61 "Home Admin aligned with the Inicio operativo":
+     NewAdminHomeView y su vista previa /design-system/preview/home-admin. Requiere atención + 13 tarjetas en 3 columnas fijas
+     (una sola a 1180 px o menos), con estados con datos, cuenta nueva (vacíos), cargando (skeleton) y error con Reintentar.
+     Sin breadcrumb ni título visible, como en su código. Lo pinta home-admin.js según ?perfil=dueno|gerente&estado=datos|vacio|cargando|error;
+     ?nueva=1 (llega del registro por invitación) entra en "Cuenta nueva". -->
 <div class="pos-cuerpo">
-<main class="pos-main ha-main" id="haMain">
-  <h1 class="sr-only">Inicio</h1>
-  <div class="ha-grid" id="haGrid"></div>
-  <!-- solo con 1 o 2 tarjetas: explica por qué el Inicio se ve corto -->
-  <p class="ha-role-note" id="haRoleNote" hidden></p>
-  <noscript><p class="ha-role-note">Esta maqueta necesita JavaScript para mostrar las tarjetas.</p></noscript>
+<main class="pos-main ha-main" id="haRoot">
+  <noscript><p>Esta maqueta necesita JavaScript para mostrar las tarjetas.</p></noscript>
 </main>
 </div>
 
-<!-- avisos (Toast del DS) -->
-<div class="ds-toast-region ha-toasts" id="haToasts" role="region" aria-label="Avisos" aria-live="polite"></div>
+<!-- anuncios para lector de pantalla (perfil, carga, error, reintento y avisos) -->
+<div class="sr-only" id="haLive" role="status" aria-live="polite"></div>
+<!-- aviso del prototipo ("Abriría: …") cuando el módulo no tiene pantalla en el prototipo -->
+<div class="io-toast" id="haToast" aria-hidden="true" hidden></div>
 
-<!-- Panel de revisión (no es UI del producto): ../demo.js lo vuelve la pestaña "Revisión" del riel de flujos -->
-<div class="ha-review" id="haReview" data-proto-panel="Revisión" hidden>
-  <p class="ha-review__title">Solo para revisar la maqueta</p>
-  <fieldset class="ha-review__group"><legend>Estado</legend><div class="ha-review__chips" id="haStates"></div></fieldset>
-  <fieldset class="ha-review__group"><legend>Rol</legend><div class="ha-review__chips" id="haRoles"></div></fieldset>
-  <fieldset class="ha-review__group"><legend>Saldo del mes</legend><div class="ha-review__chips" id="haBalances"></div></fieldset>
-  <p class="ha-review__note">"Cuenta nueva" es como entra quien acaba de crear su cuenta en el <a href="../registro-invitacion/">registro por invitación</a>. "Error de carga" falla Facturación y Archivos; "Reintentar" las carga. El rol solo filtra las tarjetas: el menú lateral es el del prototipo.</p>
+<!-- Controles del prototipo (en su vista previa, la barra de chips Perfil / Estado): ../demo.js los cuelga del riel izquierdo -->
+<div class="io-proto" id="haProto" data-proto-panel="Estados de la maqueta" hidden>
+  <p class="io-proto__title">Solo para revisar la maqueta</p>
+  <label class="ds-field"><span class="ds-label">Perfil</span><select class="ds-select--standalone" id="haPPerfil"></select></label>
+  <label class="ds-field"><span class="ds-label">Estado</span><select class="ds-select--standalone" id="haPEstado"></select></label>
+  <p class="io-proto__nota">También por URL: ?perfil=dueno|gerente&amp;estado=datos|vacio|cargando|error. Con error fallan Facturación y Precio de venta vs. mercado; "Reintentar" las carga. "Cuenta nueva" es como entra quien acaba de crear su cuenta en el <a href="../registro-invitacion/">registro por invitación</a>. El gerente no ve facturación ni configuración general.</p>
 </div>
 
-<script src="home-admin.js?v=2-ds1"></script>
+<script src="home-admin.js?v=3-lucas"></script>
 <script src="../carrito.js?v=2-ds1"></script>
 <script src="../navbar.js?v=3"></script>
 <script src="../menu-op.js?v=14-ds1"></script>
