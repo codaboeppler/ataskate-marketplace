@@ -3,7 +3,7 @@
    Reconstrucción estática de src/components/Home/Admin/NewAdminHome/** (NewAdminHomeView, HomeCardsRegistry,
    las 14 tarjetas, NewCard*, emptyStates, EmptyStateGhosts, chartColors, attention.utils, homeCards.utils)
    y de su vista previa src/components/PosPreview/HomeAdmin/** (/design-system/preview/home-admin).
-   Reutiliza las piezas y el CSS del Inicio operativo de Product Design (../inicio-operativo/: io-card, io-lista, io-pie,
+   Reutiliza las piezas y el CSS del Inicio operativo de Product Design (../home/: io-card, io-lista, io-pie,
    io-tabla, io-panel, io-sk, io-err, io-toast, io-proto), que es la referencia de diseño del commit.
    Perfil y estado: panel "Estados de la maqueta" (../demo.js) o URL ?perfil=dueno|gerente&estado=datos|vacio|cargando|error.
    ?nueva=1 (llega del registro por invitación) entra en "Cuenta nueva". Sin latencia simulada: "Cargando" solo por el panel o la URL. */

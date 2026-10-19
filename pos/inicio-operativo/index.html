@@ -1,114 +1,12 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-MX">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Ataskate POS — Inicio operativo por rol</title>
-<meta name="description" content="Ataskate POS (Operativo): Inicio operativo (Home op) por rol, prototipo de Product Design (UX), rama del equipo. Tarjetas por rol, estados de tarjeta y reglas de caja." />
-<meta name="robots" content="noindex" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="../ds/primitives.css" />
-<link rel="stylesheet" href="../ds/semantic.css" />
-<link rel="stylesheet" href="../ds/elevation.css" />
-<link rel="stylesheet" href="../ds/base.css" />
-<link rel="stylesheet" href="../ds/components.css" />
-<link rel="stylesheet" href="../pos.css?v=ux68-ds1" />
-<link rel="stylesheet" href="../carrito.css?v=2-ds1" />
-<link rel="stylesheet" href="inicio-operativo.css?v=1" />
+<title>Ataskate POS — Inicio</title>
+<!-- El Inicio operativo por rol ahora es el Home del Operativo: vive en ../home/ (2026-10-19). -->
+<script>location.replace('../home/' + location.search + location.hash);</script>
+<meta http-equiv="refresh" content="0; url=../home/" />
 </head>
-<!-- Inicio operativo por rol: prototipo de Product Design (UX), rama del equipo (src/components/PosPreview/InicioOperativo, commits 4b51aba28 y 995acb9fd).
-     Menú lateral fijo como en su maqueta (menuMode="fixed"); lo pinta ../menu-op.js y el JS de la página oculta los módulos sin acceso por rol. -->
-<body class="pos inicio-op pos-menu-fijo" data-plataforma-fija="op">
-<header class="pos-header">
-  <div class="pos-header__menu">
-    <button class="pos-hbtn pos-hbtn--plain pos-menu" type="button" aria-label="Menú">
-      <img src="../assets/menu.svg" width="24" height="24" alt="" />
-    </button>
-    <a class="pos-brand" href="./" aria-label="Ataskate · Operativo">
-      <img class="pos-brand__logo" src="../assets/logo-ataskate.svg" alt="ataskate" />
-      <span class="pos-brand__role">Operativo</span>
-    </a>
-  </div>
-
-  <form class="pos-search" role="search" onsubmit="return false">
-    <input class="pos-search__input" type="search" placeholder="Buscar" aria-label="Buscar en el Operativo" />
-    <button class="pos-search__go" type="submit" aria-label="Buscar"><img src="../assets/search.svg" width="24" height="24" alt="" /></button>
-  </form>
-
-  <div class="pos-header__ctas">
-    <button class="pos-hbtn pos-hide-sm" type="button" aria-label="Notificaciones">
-      <img src="../assets/notification.svg" width="24" height="24" alt="" />
-    </button>
-    <button class="pos-hbtn pos-hide-xs" type="button" id="posCaja" aria-label="Flujo de fondos · caja abierta" aria-haspopup="dialog" aria-expanded="false" aria-controls="posCajaPanel">
-      <img src="../assets/pos-terminal.svg" width="24" height="24" alt="" />
-      <span class="pos-hbtn__status" aria-hidden="true"></span>
-    </button>
-    <button class="pos-hbtn pos-hide-sm" type="button" id="posAjustes" aria-label="Configuración" aria-haspopup="menu" aria-expanded="false" aria-controls="posAjustesMenu">
-      <img src="../assets/settings.svg" width="24" height="24" alt="" />
-    </button>
-    <button class="pos-hbtn pos-cart" type="button" id="posCart" aria-label="Carrito, 0 artículos">
-      <img src="../assets/cart.svg" width="24" height="24" alt="" />
-      <span id="posCartN">0</span>
-    </button>
-    <button class="pos-hbtn pos-profile" type="button" aria-label="RP · Cambiar de usuario">
-      <span class="ds-avatar">RP</span>
-      <img src="../assets/sync.svg" width="24" height="24" alt="" />
-    </button>
-  </div>
-</header>
-
-<!-- paneles del Header (HU-CE-595-F / 573-F): se anclan bajo la barra; los abre y cierra ../navbar.js -->
-<div class="pos-navpanel pos-caja" id="posCajaPanel" role="dialog" aria-labelledby="posCajaTitulo" hidden>
-  <div class="pos-caja__head">
-    <h2 id="posCajaTitulo">Flujo de fondos</h2>
-    <button class="ds-btn ds-btn--primary pos-caja__btn" type="button">Cerrar flujo</button>
-    <button class="pos-caja__x" type="button" aria-label="Cerrar"><img src="../assets/navbar/close.svg" alt="" /></button>
-  </div>
-  <dl class="pos-caja__tiles">
-    <div class="pos-caja__tile"><dt>Saldo total</dt><dd>$23,218</dd></div>
-    <div class="pos-caja__tile"><dt>Ingresos</dt><dd>$23,218</dd></div>
-    <div class="pos-caja__tile"><dt>Salidas</dt><dd>$8,038</dd></div>
-  </dl>
-</div>
-<div class="pos-navpanel pos-ajustes" id="posAjustesMenu" role="menu" aria-label="Configuración · sesión de Omar, omar@ejemplo.com" hidden>
-  <div class="pos-ajustes__user" role="presentation">
-    <span class="ds-avatar ds-avatar--md pos-ajustes__av" aria-hidden="true">OM</span>
-    <span><b>Omar</b><small>omar@ejemplo.com</small></span>
-  </div>
-  <button class="pos-ajustes__item pos-ajustes__item--plat" type="button" role="menuitem"><img src="../assets/navbar/menu-admin.png" alt="" />Ir a Administrativo</button>
-  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/sync.svg" alt="" />Sucursal Polanco</button>
-  <button class="pos-ajustes__item pos-ajustes__item--fila" type="button" role="menuitem"><img src="../assets/navbar/logout.svg" alt="" />Cerrar sesión</button>
-</div>
-
-<div class="pos-cuerpo">
-  <!-- barra de sucursal + main (o las vistas de revisión); lo pinta inicio-operativo.js según ?rol=&escenario=&sucursal=&cajas=&vista= -->
-  <div id="ioRoot"></div>
-  <noscript><p class="pos-main">Esta maqueta necesita JavaScript para mostrar las tarjetas.</p></noscript>
-</div>
-
-<!-- anuncios para lector de pantalla (cambio de sucursal o rol, carga, error, reintento y avisos) -->
-<div class="sr-only" id="ioLive" role="status" aria-live="polite"></div>
-<!-- aviso del prototipo ("Abriría: …"); el lector lo recibe por la región de arriba -->
-<div class="io-toast" id="ioToast" aria-hidden="true" hidden></div>
-
-<!-- Controles del prototipo (en su React, la barra negra flotante): ../demo.js los cuelga del riel izquierdo como "Estados de la maqueta" -->
-<div class="io-proto" id="ioProto" data-proto-panel="Estados de la maqueta" hidden>
-  <p class="io-proto__title">Solo para revisar la maqueta</p>
-  <label class="ds-field"><span class="ds-label">Rol</span><select class="ds-select--standalone" id="ioPRol"></select></label>
-  <label class="ds-field"><span class="ds-label">Escenario</span><select class="ds-select--standalone" id="ioPEsc"></select></label>
-  <label class="ds-field"><span class="ds-label">Sucursal</span><select class="ds-select--standalone" id="ioPSuc"></select></label>
-  <label class="ds-field"><span class="ds-label">Cajas</span><select class="ds-select--standalone" id="ioPCaj"></select></label>
-  <label class="ds-field"><span class="ds-label">Vista</span><select class="ds-select--standalone" id="ioPVis"></select></label>
-  <p class="io-proto__nota">También por URL: ?rol=dueno|gerente|cajero|valuador&amp;escenario=datos|vacio|cargando|error&amp;sucursal=todas|Centro|Norte|…&amp;cajas=sin|abiertas|corte&amp;vista=estados|matriz. Con error fallan Ingresos y En almoneda. Polanco y Satélite tienen tabulador propio; Tlalpan, ninguno activo.</p>
-</div>
-
-<script src="inicio-operativo.js?v=2"></script>
-<script src="../carrito.js?v=2-ds1"></script>
-<script src="../navbar.js?v=3"></script>
-<script src="../menu-op.js?v=14-ds1"></script>
-<script src="../demo.js?v=18-ds1"></script>
-<script src="../comentarios.js?v=6"></script>
-</body>
+<body><a href="../home/">Ir al Inicio</a></body>
 </html>

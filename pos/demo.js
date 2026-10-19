@@ -5,9 +5,10 @@
 (() => {
   const base = new URL('.', document.currentScript.src);   // …/pos/
   const DEMOS = [
-    ['Home Operativo 3.0', 'POS · Inicio por widgets', 'home/'],
-    ['Home Operativo vacío', 'POS · sucursal sin datos todavía', 'home/?vacio=1'],
-    ['Inicio operativo por rol', 'Operativo · tarjetas por rol, estados y reglas de caja', 'inicio-operativo/'],
+    ['Home Operativo', 'Operativo · inicio por rol, estados de tarjeta y reglas de caja', 'home/'],
+    ['Home Operativo vacío', 'Operativo · todas las tarjetas sin datos', 'home/?escenario=vacio'],
+    ['Home Operativo 3.0 (anterior)', 'POS · Inicio por widgets', 'home-3/'],
+    ['Home Operativo 3.0 vacío (anterior)', 'POS · sucursal sin datos todavía', 'home-3/?vacio=1'],
     ['Inventario', 'POS · artículos a la venta (comercial)', 'inventario/'],
     ['Inventario prendario', 'POS · artículos empeñados', 'inventario/?tipo=prendario'],
     ['Inventario vacío', 'POS · sin artículos todavía', 'inventario/?vacio=1'],
