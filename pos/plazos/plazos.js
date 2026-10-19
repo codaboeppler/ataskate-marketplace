@@ -31,8 +31,9 @@ const SCORE_OPTIONS = [
   { v: 'bueno', label: 'Bueno', sub: '633 - 670' },
   { v: 'excelente', label: 'Excelente', sub: '671 - 850' },
 ];
-const CONTRACT_STATUS_OPTIONS = [{ v: 'vigente', label: 'Vigente' }, { v: 'vencido', label: 'Vencido' }, { v: 'refrendado', label: 'Refrendado' }];
-const CHANNEL_OPTIONS = [{ v: 'sucursal', label: 'Sucursal' }, { v: 'app', label: 'App móvil' }, { v: 'web', label: 'Sitio web' }];
+/* 2e8bac542: mismas opciones que la plataforma (en la pantalla real vienen del servicio) */
+const CONTRACT_STATUS_OPTIONS = [{ v: 'vigente', label: 'Vigente' }, { v: 'mora', label: 'En mora' }];
+const CHANNEL_OPTIONS = [{ v: 'online', label: 'Tienda en línea' }, { v: 'sucursal', label: 'En sucursal' }];
 const COMPARATOR_OPTIONS = [{ v: 'mayor', label: 'Mayor a' }, { v: 'menor', label: 'Menor a' }, { v: 'igual', label: 'Igual a' }];
 const COMMISSION_OPTIONS = [{ v: 'porcentaje', label: 'Porcentaje %' }, { v: 'monto', label: 'Monto fijo $' }];
 const REFINANCING_CONDITIONS = [
@@ -107,11 +108,6 @@ const filterPlazosByNode = (plazos, kind, nodeId) => {
   const ids = getSubtreeIds(kind, nodeId), field = kind === 'sucursales' ? 'branchIds' : 'categoryIds';
   return plazos.filter(p => p[field].some(x => ids.has(x)));
 };
-/* getLeafRows: hojas en el orden del árbol, con el nombre de su padre directo */
-const getLeafRows = kind => {
-  const walk = (list, parentName) => list.flatMap(n => (n.children && n.children.length ? walk(n.children, n.label) : [{ id: n.id, name: n.label, parentName }]));
-  return walk(ARBOL[kind], '');
-};
 /* computeNewCheckedIds del Tree del DS: cascada hacia abajo y luego recalcula hacia arriba */
 const computeNewCheckedIds = (kind, id, actuales, marcar) => {
   const res = new Set(actuales);
@@ -136,7 +132,9 @@ const currencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', cu
 /* formato de dinero de la guía: $1,500.00 (null → $0.00) */
 const formatCurrency = v => currencyFormatter.format(v ?? 0);
 const formatPercent = v => `${v}%`;
-const formatAmountRange = (min, max) => `${formatCurrency(min)} - ${formatCurrency(max)}`;
+/* formatWholeCurrency (2e8bac542): montos de configuración sin centavos ($1,500) en el detalle; en operaciones sigue $1,500.00 */
+const wholeCurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+const formatWholeCurrency = v => wholeCurrencyFormatter.format(v ?? 0);
 const DATE_PATTERN = /^(\d{2})\/(\d{2})\/(\d{4})$/;
 const parseDate = value => {
   const m = DATE_PATTERN.exec(String(value ?? '').trim());
@@ -159,7 +157,6 @@ const getDurationDays = (duration, unit) => toNumber(duration) * DURATION_UNIT_D
 const formatDuration = (duration, unit) => { const n = toNumber(duration); return `${n} ${DURATION_UNIT_LABELS[unit][n === 1 ? 0 : 1]}`; };
 /* tasa que se muestra: la fija o la MENOR de los rangos dinámicos */
 const getBaseRate = p => (p.rateType === 'fixed' || p.ranges.length === 0 ? toNumber(p.rate) : Math.min(...p.ranges.map(r => toNumber(r.rate))));
-const formatRate = p => `${RATE_TYPE_LABELS[p.rateType]} ${getBaseRate(p)}%`;
 /* las hojas son las que tienen "-" (categorías) o tipo 2 (sucursales) */
 const isLeafBranchId = id => id.endsWith(':2');
 const isLeafCategoryId = id => id.includes('-');
@@ -177,24 +174,19 @@ const money2num = v => { const n = num(v); return n == null ? null : Math.round(
 /* Detalle (plazosPreviewDetail.utils.ts) */
 const optionLabels = (values, options) => values.map(v => (options.find(o => o.v === v) || {}).label).filter(Boolean);
 const optionLabel = (v, options) => (options.find(o => o.v === v) || {}).label || '';
-/* 50bac0a4d: sin fin → "Desde 01 Sep 2026, sin fecha de fin" */
-const getValidity = p => {
-  const start = formatDate(p.startDate); if (!start) return '';
-  const end = formatDate(p.endDate);
-  if (!end) return `Desde ${start}, sin fecha de fin`;
-  return `${start} al ${end}`;
-};
-const getRenewalsLabel = p => (p.renewalsLimited ? p.renewals : 'Ilimitados');
+/* "Regular, Bueno o Excelente" (joinWithOr) */
+const joinWithOr = vals => (vals.length > 1 ? `${vals.slice(0, -1).join(', ')} o ${vals[vals.length - 1]}` : vals.join(''));
 const getAgeLabel = p => (!p.ageMin && !p.ageMax ? '' : `${p.ageMin || '18'} - ${p.ageMax || '100'} años`);
 const getConditionValue = c => {
   const comparador = optionLabel(c.comparator, COMPARATOR_OPTIONS);
   const porTipo = {
-    contractStatus: () => optionLabels(c.values, CONTRACT_STATUS_OPTIONS).join(', '),
+    contractStatus: () => joinWithOr(optionLabels(c.values, CONTRACT_STATUS_OPTIONS)),
     renewals: () => `${comparador} ${c.count} refrendos`,
     amount: () => formatCurrency(c.amount),
-    score: () => optionLabels(c.values, SCORE_OPTIONS).join(', '),
-    commission: () => `${optionLabel(c.comparator, COMMISSION_OPTIONS)} ${c.count}`,
-    channel: () => optionLabels(c.values, CHANNEL_OPTIONS).join(', '),
+    score: () => joinWithOr(optionLabels(c.values, SCORE_OPTIONS)),
+    /* 2e8bac542: "$150.00" con monto fijo o "2%" con porcentaje */
+    commission: () => (c.comparator === 'monto' ? formatCurrency(Number(c.count)) : formatPercent(c.count)),
+    channel: () => joinWithOr(optionLabels(c.values, CHANNEL_OPTIONS)),
   };
   return porTipo[c.type]().trim();
 };
@@ -1403,8 +1395,9 @@ function renderSugeridos(box) {
 }
 
 /* ==========================================================================
-   DETALLE (PreviewInstallmentDetail · patrón CompanyDetail de AccessCodes, sin pestañas):
-   encabezado con título, chip y acciones; cards en 2 columnas. Cada vez que se abre hace un get (sin latencia simulada).
+   DETALLE (PreviewInstallmentDetail de 2e8bac542): encabezado con título, chip, vigencia debajo y acciones;
+   a la izquierda la frase resumen y las mismas secciones que el formulario de creación (solo lo capturado);
+   a la derecha la simulación fija. Cada vez que se abre hace un get (sin latencia simulada).
    ========================================================================== */
 /* Card del detalle (PreviewDetailCard): región con su h2, un hr y el contenido o la caja de carga */
 const tarjetaDetalle = (id, titulo, contenido, cargando) => `<section class="card dcard" aria-labelledby="${id}-title" aria-busy="${cargando}">
@@ -1412,41 +1405,81 @@ const tarjetaDetalle = (id, titulo, contenido, cargando) => `<section class="car
     <hr class="divider">
     ${cargando ? '<div class="loading-box"><span class="ds-spinner"></span><p class="t-caption">Cargando plazo</p></div>' : contenido}
   </section>`;
-/* Campo de solo lectura (PreviewViewField): caption + valor; vacío → "Sin registrar"; si lleva chips, van en lugar del valor */
-const campoVista = (label, value, contenido) => `<div class="view-field"><span class="t-caption">${esc(label)}</span>${contenido
-  ?? `<span class="view-field__value">${esc(String(value ?? '').trim() ? value : 'Sin registrar')}</span>`}</div>`;
-const campoChips = (label, valores) => campoVista(label, '', valores.length ? `<div class="chip-row">${valores.map(v => ui.chipInfo(v, 'gray')).join('')}</div>` : undefined);
-/* Tabla de amortización del detalle (variant "summary"): Fecha · Pago · Saldo; la última fila es el desempeño */
+/* Fila etiqueta | valor (PreviewDetailRow dentro de DetailRows, un <dl>) */
+const filaDetalle = (label, valor) => `<dt><span class="t-texto detail-rows__label">${esc(label)}</span></dt><dd class="detail-rows__value">${valor}</dd>`;
+const textoDetalle = t => `<span class="t-texto">${esc(t)}</span>`;
+/* "Desde 01 Sep 2026 · sin fecha de fin" o "01 Sep 2026 – 30 Sep 2027" (getValidityLine) */
+const getValidityLine = p => {
+  const start = formatDate(p.startDate), end = formatDate(p.endDate);
+  if (!start) return '';
+  return end ? `${start} – ${end}` : `Desde ${start} · sin fecha de fin`;
+};
+/* "$1,500 – $25,000" o "Desde $1,500" (montos de configuración sin centavos) */
+const getAmountLine = p => {
+  const min = formatWholeCurrency(p.minAmount ?? 0);
+  return p.maxAmount ? `${min} – ${formatWholeCurrency(p.maxAmount)}` : `Desde ${min}`;
+};
+/* "Presta $1,500 a $25,000 a 30 días con 4.5% de interés fijo, refrendable hasta 3 veces." (getSummarySentence) */
+const getSummarySentence = p => {
+  const min = formatWholeCurrency(p.minAmount ?? 0);
+  const amount = p.maxAmount ? [{ text: `${min} a ${formatWholeCurrency(p.maxAmount)}`, strong: true }] : [{ text: 'desde' }, { text: min, strong: true }];
+  const rate = formatPercent(getBaseRate(p));
+  const interest = p.rateType === 'fixed' ? [{ text: rate, strong: true }, { text: 'de interés fijo' }] : [{ text: 'interés dinámico desde' }, { text: rate, strong: true }];
+  const n = toNumber(p.renewals);
+  const renewal = p.renewalsLimited ? [{ text: ', refrendable hasta' }, { text: String(n), strong: true }, { text: n === 1 ? 'vez.' : 'veces.' }] : [{ text: ', con refrendos ilimitados.' }];
+  return [{ text: 'Presta' }, ...amount, { text: 'a' }, { text: formatDuration(p.duration, p.durationUnit), strong: true }, { text: 'con' }, ...interest, ...renewal];
+};
+const fraseHTML = p => getSummarySentence(p).map((part, i) => `${i > 0 && !part.text.startsWith(',') ? ' ' : ''}${part.strong ? `<strong class="t-texto-bold">${esc(part.text)}</strong>` : esc(part.text)}`).join('');
+/* "Tasa fija 4.5% · sin prorrateo diario" (getBaseInterestLine) */
+const getBaseInterestLine = p => `${p.rateType === 'fixed' ? `Tasa fija ${formatPercent(p.rate)}` : 'Tasa dinámica'} · ${p.proration ? 'con' : 'sin'} prorrateo diario`;
+const getRenewalsLine = p => (p.renewalsLimited ? `Hasta ${p.renewals}` : 'Ilimitados');
+/* Cliente objetivo como chips: "21 a 65 años", "Score de cliente: Regular, Bueno o Excelente" (getTargetChips) */
+const getTargetChips = p => {
+  const conEtiqueta = (label, valores) => (valores.length ? `${label}: ${joinWithOr(valores)}` : '');
+  return [getAgeLabel(p).replace(' - ', ' a '), conEtiqueta('Sexo', optionLabels(p.sex, SEX_OPTIONS)),
+    conEtiqueta('Estado civil', optionLabels(p.civilStatus, CIVIL_STATUS_OPTIONS)), conEtiqueta('Score de cliente', optionLabels(p.score, SCORE_OPTIONS))].filter(Boolean);
+};
+/* Refinanciamiento como chips: "Número de refrendos: Mayor a 2 refrendos" (getRefinancingChips) */
+const getRefinancingChips = p => p.refinancingConditions.map(c => { const v = getConditionValue(c); return v ? `${condicionMeta(c.type).label}: ${v}` : ''; }).filter(Boolean);
+
+/* Sucursales y categorías (plazosPreviewSelection.utils buildSelectionTree): árbol de solo lectura con lo elegido.
+   Cada grupo dice "X de Y" (blue si tiene algo, gray si no) y solo salen los grupos con algo elegido; si hay una
+   sola raíz (la empresa), arranca en sus hijos. */
+const contarHojas = n => (n.children && n.children.length ? n.children.reduce((t, c) => t + contarHojas(c), 0) : 1);
+const podar = (n, ids) => {
+  if (!n.children || !n.children.length) return ids.has(n.id) ? { node: { id: n.id, label: n.label, children: [] }, selected: 1 } : null;
+  const kept = n.children.map(c => podar(c, ids)).filter(Boolean);
+  const selected = kept.reduce((t, k) => t + k.selected, 0);
+  return { node: { id: n.id, label: n.label, chip: `${selected} de ${contarHojas(n)}`, chipColor: selected > 0 ? 'blue' : 'gray', children: kept.filter(k => k.selected > 0).map(k => k.node) }, selected };
+};
+const buildSelectionTree = (kind, selectedIds) => {
+  const nodes = ARBOL[kind];
+  const roots = nodes.length === 1 && nodes[0].children && nodes[0].children.length ? nodes[0].children : nodes;
+  const ids = new Set(selectedIds);
+  const items = roots.map(n => podar(n, ids)).filter(Boolean);
+  return { nodes: items.filter(i => i.selected > 0).map(i => i.node), selected: items.reduce((t, i) => t + i.selected, 0), total: roots.reduce((t, n) => t + contarHojas(n), 0) };
+};
+/* Tree del DS con showChip y defaultExpanded={false}: chevron de 28, nodo blanco de radio 12, chip a la derecha */
+const nodoSeleccion = (n, nivel, abiertos) => {
+  const hijos = n.children.length > 0, abierto = abiertos.has(n.id);
+  return `<div class="sel-node" role="treeitem" aria-level="${nivel + 1}"${hijos ? ` aria-expanded="${abierto}"` : ''} style="padding-left:${nivel === 0 ? 8 : 18 + nivel * 20}px">
+      ${hijos ? `<button type="button" class="sel-node__chev" aria-label="${abierto ? 'Contraer' : 'Expandir'} ${esc(n.label)}" aria-expanded="${abierto}" data-sel-toggle="${esc(n.id)}">${icon('ChevronDown')}</button>` : '<span class="sel-node__spacer"></span>'}
+      <span class="sel-node__label">${esc(n.label)}</span>
+      ${n.chip ? ui.chipInfo(n.chip, n.chipColor) : ''}
+    </div>${hijos && abierto ? n.children.map(c => nodoSeleccion(c, nivel + 1, abiertos)).join('') : ''}`;
+};
+const seleccionHTML = (kind, ids, unidad, abiertos) => {
+  const t = buildSelectionTree(kind, ids);
+  return `${textoDetalle(`${t.selected} de ${t.total} ${unidad}`)}${t.selected > 0 ? `<section class="sel-panel" aria-label="${kind === 'sucursales' ? 'Sucursales' : 'Categorías'} elegidas"><div class="sel-tree" role="tree">${t.nodes.map(n => nodoSeleccion(n, 0, abiertos)).join('')}</div></section>` : ''}`;
+};
+/* Simulación del detalle (PreviewAmortizationTable variant "summary"): Pago · Fecha · Monto;
+   "Refrendo N" con su pago y la última fila "Desempeño" seleccionada */
 const tablaResumen = (p, monto) => {
   const filas = buildAmortization(p, monto ?? 0);
-  return ui.tabla('Tabla de amortización', ['Fecha', 'Pago', 'Saldo'], filas.map((r, i) => {
-    const ultima = i === filas.length - 1;
-    return [r.date, formatCurrency(ultima ? r.payoff : r.renewal), formatCurrency(ultima ? 0 : r.amount)];
-  }));
+  return `<div class="table-wrap" role="region" aria-label="Pagos de la simulación" tabindex="0"><table class="ds-table">
+    <thead><tr><th scope="col">Pago</th><th scope="col">Fecha</th><th scope="col">Monto</th></tr></thead>
+    <tbody>${filas.map((r, i) => { const ultima = i === filas.length - 1; return `<tr${ultima ? ' class="is-selected"' : ''}><td>${ultima ? 'Desempeño' : `Refrendo ${r.period}`}</td><td>${esc(r.date)}</td><td class="cell-right">${formatCurrency(ultima ? r.payoff : r.renewal)}</td></tr>`; }).join('')}</tbody></table></div>`;
 };
-/* Segmentación: solo las hojas asignadas, en el orden del árbol, con su padre directo; se ven 5 y "Ver todas (N)" */
-const VISIBLE_ITEMS = 5;
-const bloqueSegmento = (id, titulo, filas) => `<div class="seg-group" data-seg="${id}" data-total="${filas.length}">
-    <div class="seg-heading"><h3 class="t-texto-bold">${titulo}</h3>${ui.chipInfo(String(filas.length), 'blue')}</div>
-    ${filas.length ? `<ul class="seg-list" id="${id}-list" aria-label="${titulo}">${filas.map((r, i) => `<li class="seg-item"${i >= VISIBLE_ITEMS ? ' data-extra hidden' : ''}>
-        <div class="trunc"><span class="trunc__text">${esc(r.name)}</span></div><span class="t-caption">${esc(r.parentName)}</span></li>`).join('')}</ul>`
-      : '<p class="t-texto">Sin elementos asignados</p>'}
-    ${filas.length > VISIBLE_ITEMS ? ui.btn(`Ver todas (${filas.length})`, { variant: 'tertiary', attrs: `aria-expanded="false" aria-controls="${id}-list" data-ver-todas` }) : ''}
-  </div>`;
-/* Nombres truncados (PreviewTruncatedName): si de verdad se cortan, el envoltorio es enfocable y lleva tooltip */
-function vigilarTruncados(caja) {
-  const envolturas = [...caja.querySelectorAll('.trunc')];
-  const revisar = w => {
-    const t = w.firstElementChild;
-    if (t.scrollWidth > t.clientWidth) { w.tabIndex = 0; w.setAttribute('data-tip', esc(t.textContent)); }
-    else { w.removeAttribute('tabindex'); w.removeAttribute('data-tip'); }
-  };
-  envolturas.forEach(revisar);
-  if (typeof ResizeObserver === 'undefined') return;
-  const ro = new ResizeObserver(entries => entries.forEach(en => revisar(en.target.parentElement)));
-  envolturas.forEach(w => ro.observe(w.firstElementChild));
-  cleanup.push(() => ro.disconnect());
-}
 /* ⋮ del detalle (PreviewDetailActions): Duplicar siempre; Desactivar si es Vigente; Activar si es Programado o Inactivo */
 const accionesDetalle = p => {
   const items = [{ action: 'duplicar', label: 'Duplicar', icon: 'ContentCopy' }];
@@ -1456,12 +1489,12 @@ const accionesDetalle = p => {
 };
 
 function renderDetail(main, id) {
-  const st = { fetched: null, loading: true, error: false, monto: PLAZOS_SIMULATION_DEFAULT_AMOUNT };
+  const st = { fetched: null, loading: true, error: false, monto: PLAZOS_SIMULATION_DEFAULT_AMOUNT, abiertos: new Set() };
   const actual = () => getPlazo(id) || st.fetched;
   main.innerHTML = `<div class="page">${ui.breadcrumb([])}<div class="title-row"></div><div id="detalle"></div></div>`;
   const page = main.querySelector('.page'), cuerpo = page.querySelector('#detalle');
 
-  /* breadcrumb "… › Plazos › {nombre}", h1 + chip y acciones. Sin plazo en memoria: "Cargando plazo" y sin chip */
+  /* breadcrumb "… › Plazos › {nombre}", h1 + chip, la vigencia debajo y acciones. Sin plazo en memoria: "Cargando plazo" */
   function pintarEncabezado() {
     const p = actual(), titulo = p ? p.name : 'Cargando plazo';
     page.querySelector('.ds-breadcrumb').outerHTML = ui.breadcrumb([
@@ -1469,75 +1502,55 @@ function renderDetail(main, id) {
     ]);
     const acciones = p && !st.loading
       ? `<div class="title-row__actions">${ui.btn('Editar plazo', { variant: 'secondary', iconLeft: 'Edit', attrs: 'data-action="editar"' })}${ui.menu('m-detail', `Más acciones de ${p.name}`, accionesDetalle(p))}</div>` : '';
-    page.querySelector('.title-row').outerHTML = `<div class="title-row"><div class="title-row__heading"><h1 class="t-titulo-pagina">${esc(titulo)}</h1>${p ? ui.chip(p.status) : ''}</div>${acciones}</div>`;
+    page.querySelector('.title-row').outerHTML = `<div class="title-row"><div class="title-col"><div class="title-row__heading"><h1 class="t-titulo-pagina">${esc(titulo)}</h1>${p ? ui.chip(p.status) : ''}</div>${p ? `<p class="t-texto title-col__sub">${esc(getValidityLine(p))}</p>` : ''}</div>${acciones}</div>`;
+  }
+
+  function pintarSeleccion() {
+    const p = actual(); if (!p) return;
+    const caja = cuerpo.querySelector('[data-seleccion]'); if (!caja) return;
+    caja.innerHTML = filaDetalle('Categorías', seleccionHTML('categorias', p.categoryIds, 'categorías', st.abiertos))
+      + filaDetalle('Sucursales', seleccionHTML('sucursales', p.branchIds, 'sucursales', st.abiertos));
   }
 
   function pintarCuerpo() {
-    const p = actual(), L = st.loading;
+    const p = actual();
     if (st.error) {
       cuerpo.innerHTML = ui.alert('error', { title: 'No pudimos cargar el plazo', action: ui.btn('Reintentar', { variant: 'tertiary', attrs: 'data-retry' }) });
       return;
     }
+    /* mientras carga: una sola card "Resumen" con la caja de carga */
+    if (st.loading) { cuerpo.innerHTML = tarjetaDetalle('plazo-cargando', 'Resumen', '', true); return; }
     /* id inexistente: el aviso de "no encontrado" (en la maqueta sí se llega por URL) */
-    if (!L && !p) { cuerpo.innerHTML = ui.alert('warning', { title: 'No encontramos este plazo.' }); return; }
-    /* PreviewDetailTerms de 50bac0a4d: el Estado ya no se repite (vive en el encabezado) y Vigencia ocupa dos columnas
-       (WideField). Cliente objetivo y Refinanciamiento se resumen aquí cuando no tienen reglas. */
-    const resumen = L ? '' : `<div class="fields-grid">
-        <div class="wide-field">${campoVista('Vigencia', getValidity(p))}</div>
-        ${campoVista('Interés base', formatRate(p))}
-        ${campoVista('Monto del préstamo', formatAmountRange(p.minAmount, p.maxAmount))}
-        ${campoVista('Duración', formatDuration(p.duration, p.durationUnit))}
-        ${campoVista('Refrendos', getRenewalsLabel(p))}
-        ${campoVista('Prorrateo diario', p.proration ? 'Aplica' : 'No aplica')}
-        ${!p.targetEnabled ? campoVista('Cliente objetivo', 'Cualquier cliente') : ''}
-        ${!p.refinancingEnabled ? campoVista('Refinanciamiento automático', 'Sin reglas') : ''}
-      </div>`;
-    /* la card de Condiciones se fue: solo con tasa dinámica queda una card con la tabla de rangos */
-    const rangos = L || p.rateType !== 'dynamic' ? '' : ui.tabla('Rangos de la tasa dinámica', ['% Préstamo sobre avalúo', 'Hasta %', 'Interés'], p.ranges.map(r => [formatPercent(r.from), formatPercent(r.to), formatPercent(r.rate)]));
-    const adicionales = L ? '' : p.additionalInterests.length
-      ? ui.tabla('Intereses adicionales', ['Nombre', 'Cuándo se cobra', 'Tasa', 'Se refleja en contrato'],
-        p.additionalInterests.map(a => [a.name, optionLabel(a.collect, COLLECT_OPTIONS), formatPercent(a.rate), a.showContract ? 'Sí' : 'No']))
-      : '<p class="t-texto">Sin intereses adicionales</p>';
-    /* PreviewDetailProfile de 50bac0a4d: las cards solo salen si tienen reglas; si solo una aplica, ocupa todo el ancho */
-    const cliente = L || !p.targetEnabled ? '' : `<div class="stack-8">
-        ${campoChips('Sexo', optionLabels(p.sex, SEX_OPTIONS))}
-        ${campoChips('Estado civil', optionLabels(p.civilStatus, CIVIL_STATUS_OPTIONS))}
-        ${campoChips('Score de cliente', optionLabels(p.score, SCORE_OPTIONS))}
-        ${campoVista('Rango de edad', getAgeLabel(p))}
-      </div>`;
-    const refi = L || !p.refinancingEnabled ? ''
-      : `<div class="stack-8">${p.refinancingConditions.map(c => campoVista(condicionMeta(c.type).label, getConditionValue(c))).join('')}</div>`;
-    /* los árboles son constantes en la maqueta: la segmentación sale aunque la carga del listado haya fallado */
-    const segmentacion = L ? '' : `<div class="seg-columns">
-        ${bloqueSegmento('plazo-sucursales', 'Sucursales', getLeafRows('sucursales').filter(r => p.branchIds.includes(r.id)))}
-        ${bloqueSegmento('plazo-categorias', 'Categorías', getLeafRows('categorias').filter(r => p.categoryIds.includes(r.id)))}
-      </div>`;
-    const simulacion = L ? '' : `<div class="stack-8">
-        ${ui.field({ id: 'plazo-simulacion-monto', label: 'Simular con', input: ui.input({ id: 'plazo-simulacion-monto', value: st.monto != null ? formatCurrency(st.monto) : '', attrs: 'inputmode="decimal" autocomplete="off"' }) })}
-        <h3 class="t-texto-bold">Tabla de amortización</h3>
-        <div id="sim-tabla">${tablaResumen(p, st.monto)}</div>
-      </div>`;
-    const tarjetaCliente = cliente ? tarjetaDetalle('plazo-cliente', 'Cliente objetivo', cliente, false) : '';
-    const tarjetaRefi = refi ? tarjetaDetalle('plazo-refinanciamiento', 'Refinanciamiento automático', refi, false) : '';
-    const perfil = tarjetaCliente && tarjetaRefi ? `<div class="pair-row">${tarjetaCliente}${tarjetaRefi}</div>` : tarjetaCliente || tarjetaRefi;
-    cuerpo.innerHTML = `<div class="stack-24">
-      <div class="detail-layout">
-        <div class="detail-col">
-          ${tarjetaDetalle('plazo-resumen', 'Resumen', resumen, L)}
-          ${p && p.rateType === 'dynamic' ? tarjetaDetalle('plazo-condiciones', 'Rangos de la tasa dinámica', rangos, L) : ''}
-          ${tarjetaDetalle('plazo-adicionales', 'Intereses adicionales', adicionales, L)}
-          ${perfil}
-        </div>
-        <div class="detail-col">
-          ${tarjetaDetalle('plazo-segmentacion', 'Segmentación', segmentacion, L)}
-          ${tarjetaDetalle('plazo-simulacion', 'Simulación', simulacion, L)}
-        </div>
+    if (!p) { cuerpo.innerHTML = ui.alert('warning', { title: 'No encontramos este plazo.' }); return; }
+    const objetivo = p.targetEnabled ? getTargetChips(p) : [];
+    const refi = p.refinancingEnabled ? getRefinancingChips(p) : [];
+    const chips = valores => `<div class="chip-row">${valores.map(v => ui.chipInfo(v, 'gray')).join('')}</div>`;
+    const condiciones = `<dl class="detail-rows">
+        ${filaDetalle('Monto del préstamo', textoDetalle(getAmountLine(p)))}
+        ${filaDetalle('Duración', textoDetalle(formatDuration(p.duration, p.durationUnit)))}
+        ${filaDetalle('Interés base', textoDetalle(getBaseInterestLine(p)) + (p.rateType === 'dynamic' ? ui.tabla('Rangos de la tasa dinámica', ['% Préstamo sobre avalúo', 'Hasta %', 'Interés'], p.ranges.map(r => [formatPercent(r.from), formatPercent(r.to), formatPercent(r.rate)])) : ''))}
+        ${filaDetalle('Refrendos', textoDetalle(getRenewalsLine(p)))}
+      </dl>`;
+    /* PreviewDetailCharges: nombre, "3 días · Después del periodo · 1%" y si va en contrato */
+    const cargos = `<div class="stack-8">${p.additionalInterests.map(a => `<div class="charge-line"><span class="t-texto-bold">${esc(a.name)}</span><span class="t-texto charge-line__conf">${esc(getInterestConfigLabel(a))}</span>${ui.chipInfo(a.showContract ? 'En contrato' : 'Fuera de contrato', 'gray')}</div>`).join('')}</div>`;
+    cuerpo.innerHTML = `<div class="detail-split">
+      <div class="detail-col">
+        <section class="card sentence-card" aria-label="Resumen del plazo"><p class="t-texto">${fraseHTML(p)}</p></section>
+        ${tarjetaDetalle('plazo-segmentacion', 'Sucursales y categorías', '<dl class="detail-rows" data-seleccion></dl>', false)}
+        ${tarjetaDetalle('plazo-condiciones', 'Condiciones', condiciones, false)}
+        ${p.additionalInterests.length ? tarjetaDetalle('plazo-intereses', 'Intereses adicionales', cargos, false) : ''}
+        ${objetivo.length ? tarjetaDetalle('plazo-cliente', 'Cliente objetivo', chips(objetivo), false) : ''}
+        ${refi.length ? tarjetaDetalle('plazo-refinanciamiento', 'Refinanciamiento automático', chips(refi), false) : ''}
       </div>
-      ${ui.note('Manuel v2 (“Yo te lo quitaría”): desde 50bac0a4d el Estado solo va en el encabezado y el interés base solo en el Resumen.')}
+      <aside class="simulator-aside">
+        ${tarjetaDetalle('plazo-simulacion', 'Simula un préstamo', `<div class="stack-8">
+          ${ui.field({ id: 'plazo-simulacion-monto', label: 'Monto a prestar', help: esc(`Permitido: ${getAmountLine(p)}`), input: ui.input({ id: 'plazo-simulacion-monto', value: st.monto != null ? formatCurrency(st.monto) : '', attrs: 'inputmode="decimal" autocomplete="off"' }) })}
+          <div id="sim-tabla">${tablaResumen(p, st.monto)}</div>
+        </div>`, false)}
+      </aside>
     </div>`;
-    if (L) return;
-    vigilarTruncados(cuerpo);
-    /* Simular con: TextInput currency; se recalcula con cada tecla (vacío = 0) */
+    pintarSeleccion();
+    /* Monto a prestar: TextInput currency; se recalcula con cada tecla (vacío = 0) */
     const inp = cuerpo.querySelector('#plazo-simulacion-monto');
     bindMoney(inp);
     inp.addEventListener('input', () => { st.monto = money2num(inp.value); cuerpo.querySelector('#sim-tabla').innerHTML = tablaResumen(actual(), st.monto); });
@@ -1548,23 +1561,22 @@ function renderDetail(main, id) {
   function fetchPlazo() {
     st.loading = true; st.error = false; pintar();
     if (demo.escenario === 'slow') return; // "Carga lenta": estado de carga fijo
-    const t = (() => {
-      if (demo.failNextGet) { demo.failNextGet = false; st.error = true; }
-      else { const s = db.plazos.find(x => x.id === id); st.fetched = s ? clone(s) : null; }
-      st.loading = false; pintar();
-    })();
+    if (demo.failNextGet) { demo.failNextGet = false; st.error = true; }
+    else { const s = db.plazos.find(x => x.id === id); st.fetched = s ? clone(s) : null; }
+    st.loading = false; pintar();
   }
 
   page.addEventListener('click', e => {
     /* "Plazos" del breadcrumb: el listado le regresa el foco a la fila de este plazo (el router navega después) */
     if (e.target.closest('[data-volver]')) { focoAlVolver = id; return; }
     if (e.target.closest('[data-retry]')) { fetchPlazo(); return; }
-    const ver = e.target.closest('[data-ver-todas]');
-    if (ver) {
-      const grupo = ver.closest('[data-seg]'), abierto = ver.getAttribute('aria-expanded') === 'true';
-      grupo.querySelectorAll('[data-extra]').forEach(li => { li.hidden = abierto; });
-      ver.setAttribute('aria-expanded', String(!abierto));
-      ver.querySelector('span').textContent = abierto ? `Ver todas (${grupo.dataset.total})` : 'Ver menos';
+    /* abrir o cerrar un grupo del árbol de Sucursales y categorías (todos plegados al abrir) */
+    const tog = e.target.closest('[data-sel-toggle]');
+    if (tog) {
+      const nid = tog.dataset.selToggle;
+      if (st.abiertos.has(nid)) st.abiertos.delete(nid); else st.abiertos.add(nid);
+      pintarSeleccion();
+      cuerpo.querySelector(`[data-sel-toggle="${CSS.escape(nid)}"]`)?.focus();
       return;
     }
     const act = e.target.closest('[data-action]');
@@ -1873,7 +1885,8 @@ function buildForm(main, root, f, { isEdit, original, sug, title }) {
   function drawSegmentacion() {
     /* el error va dentro del FormTree (helperText), debajo de la lista */
     const bloque = kind => `<div class="fblock"><div data-formtree="${kind}"></div></div>`;
-    sec.segmentacion.innerHTML = cabeza('segmentacion', 'Segmentación', 'Elige a qué categorías y sucursales aplica este plazo.',
+    /* título "Sucursales y categorías" desde 2e8bac542 (también en la vista ampliada) */
+    sec.segmentacion.innerHTML = cabeza('segmentacion', 'Sucursales y categorías', 'Elige a qué categorías y sucursales aplica este plazo.',
       ui.btn('Expandir vista', { variant: 'tertiary', iconLeft: 'ExpandContent', attrs: 'data-seg-expand' }))
       + `<div class="row2">${bloque('categorias')}${bloque('sucursales')}</div>`;
     ['categorias', 'sucursales'].forEach(kind => montarFormTree(sec.segmentacion.querySelector(`[data-formtree="${kind}"]`), kind, { alto: 240, ampliar: true }));
@@ -1883,7 +1896,7 @@ function buildForm(main, root, f, { isEdit, original, sug, title }) {
      al cerrar se repinta la card y el foco vuelve a "Expandir vista" */
   function abrirArbolAmpliado() {
     openModal({
-      title: 'Segmentación', size: 'large', body: '<div class="row2"><div data-formtree-modal="categorias"></div><div data-formtree-modal="sucursales"></div></div>',
+      title: 'Sucursales y categorías', size: 'large', body: '<div class="row2"><div data-formtree-modal="categorias"></div><div data-formtree-modal="sucursales"></div></div>',
       onMount: ov => { ['categorias', 'sucursales'].forEach(kind => montarFormTree(ov.querySelector(`[data-formtree-modal="${kind}"]`), kind, { alto: 480, ampliar: false })); pintarError('categoryIds'); pintarError('branchIds'); },
       onClose: () => { drawSegmentacion(); return sec.segmentacion.querySelector('[data-seg-expand]'); },
     });
@@ -2092,6 +2105,7 @@ function buildForm(main, root, f, { isEdit, original, sug, title }) {
       if (meta.opciones) ctrl = '<div data-cond-ams></div>';
       if (c.type === 'amount') ctrl = ui.input({ id: `condicion-${c.id}`, value: c.amount != null ? formatCurrency(c.amount) : '', placeholder: '$', attrs: `inputmode="decimal" autocomplete="off" aria-label="${meta.label}" data-money data-cond-monto` });
       if (c.type === 'renewals' || c.type === 'commission') ctrl = dobleHTML({ id: `condicion-${c.id}`, ariaLabel: meta.label, options: c.type === 'commission' ? COMMISSION_OPTIONS : COMPARATOR_OPTIONS, value: c.comparator, inputValue: c.count, inputmode: c.type === 'commission' ? 'decimal' : 'numeric' });
+      /* RefinancingConditionCard de 2e8bac542: la pregunta encima de su campo (ConditionBody en columna, gap 8) */
       return `<div class="condition" role="group" aria-label="${meta.label}" data-cond="${c.id}">
         <div class="condition__head"><h3 class="t-texto-bold">${meta.label}</h3>${ui.iconBtn('Delete', `Eliminar condición ${meta.label}`, `data-del-cond="${c.id}"`)}</div>
         <div class="condition__body"><p class="t-texto">${meta.q}</p><div class="condition__ctrl">${ctrl}</div></div>
@@ -2100,10 +2114,11 @@ function buildForm(main, root, f, { isEdit, original, sug, title }) {
     sec.refinanciamiento.innerHTML = cabeza('refinanciamiento', 'Refinanciamiento automático',
       'Cuando un contrato cumpla estas reglas, el cliente verá nuevas opciones de préstamo.',
       ui.switch({ id: 'plazo-refinanciamiento-switch', checked: f.refinancingEnabled, attrs: 'data-switch="refinancingEnabled" aria-label="Activar refinanciamiento automático"' }))
-      + (f.refinancingEnabled ? `<hr class="divider"><div class="fblock">
-          ${condiciones.map(condHTML).join('')}
+      /* sin divisor; las condiciones van en 2 columnas sobre gris, como las tarjetas de intereses (ConditionList) */
+      + (f.refinancingEnabled ? `<div class="fblock">
+          ${condiciones.length ? `<div class="condition-list">${condiciones.map(condHTML).join('')}</div>` : ''}
           ${disponibles.length ? `<div>${ui.btnSelect('Agregar condición', { variant: 'secondary', attrs: 'data-add-cond' })}</div>` : ''}
-          ${ui.note('Opciones de “Estado de contrato” y “Canal de venta” de ejemplo: en producto llegan del servicio.')}
+          ${ui.note('Opciones de “Estado de contrato” y “Canal de venta” iguales a la plataforma (2e8bac542): en producto llegan del servicio.')}
         </div>` : '');
     if (!f.refinancingEnabled) return;
     /* "Agregar condición" (ButtonSelect): al elegir, la condición se agrega y el foco vuelve al botón (select → focusTrigger);
