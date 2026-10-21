@@ -344,6 +344,20 @@ html { scroll-padding-top: calc(var(--pos-header-h, 60px) + 80px); }
   font-size: 16px; line-height: 19.2px; font-weight: 400; letter-spacing: .3px; color: var(--text-body);
   background: var(--surface-card); text-align: left; white-space: nowrap; cursor: pointer;
 }
+/* TableFilterChipGroups (7a50b498d): filas de 40 px, volver con borde inferior, contador primary400 */
+/* el DS lo ancla a la izquierda (left: 0); aquí el chip queda al borde derecho de la tarjeta y la recortaría, así que abre hacia la izquierda */
+.plz .ds-filter-chip__list--groups { left: auto; right: 0; min-width: max(100%, 200px); }
+.plz .ds-filter-chip__row {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--sp-8); width: 100%; height: 40px; padding: var(--sp-8);
+  border: 0; background: var(--surface-card); font-size: 14px; line-height: 16.8px; color: var(--text-body); text-align: left; white-space: nowrap; cursor: pointer;
+}
+.plz .ds-filter-chip__row:hover, .plz .ds-filter-chip__row:focus-visible { background: var(--ats-neutral-50); outline: 0; }
+.plz .ds-filter-chip__row svg { width: 20px; height: 20px; }
+.plz .ds-filter-chip__row--back { justify-content: flex-start; border-bottom: 1px solid var(--border-default); font-weight: 600; }
+.plz .ds-filter-chip__row--back svg { width: 16px; height: 16px; }
+.plz .ds-filter-chip__count { display: inline-flex; align-items: center; gap: var(--sp-4); color: var(--ats-primary-400); }
+.plz .ds-filter-chip__opts { display: flex; flex-direction: column; gap: var(--sp-4); padding: var(--sp-8); }
+.plz .ds-filter-chip__opts .ds-check { white-space: nowrap; }
 /* la opción elegida no se distingue (TableFilterChip); aria-selected se conserva */
 .plz .ds-filter-chip__list [role="option"]:hover, .plz .ds-filter-chip__list [role="option"]:focus-visible { background: var(--ats-neutral-50); outline: 0; }
 
