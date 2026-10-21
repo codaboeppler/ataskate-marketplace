@@ -332,6 +332,13 @@
         ${soloLeer ? '' : `<div class="cot-crear" role="button" tabindex="0" id="cotCrear" data-drop="__nuevo__">${ico('add', 24)}<span>${T.crearZona}</span></div>`}</div>`;
   }
 
+  /* SelectionInput del DS: se pinta el <select> y ../ds/selection-input.js lo convierte en el componente (botón píldora + listbox).
+     Igual que campoSelect, pero la etiqueta acepta HTML (el "(Opcional)" del DS). */
+  function selectDS(id, etqHTML, opciones, valor, err) {
+    return `<div class="ds-field"><label class="ds-label" for="${id}">${etqHTML}</label>
+      <select class="ds-select--standalone${err ? ' ds-input--error' : ''}" id="${id}"${err ? ` aria-invalid="true" aria-describedby="${id}E"` : ''}><option value=""${valor ? '' : ' selected'}>${T.selecciona}</option>${opciones.map(([v, l]) => `<option value="${esc(v)}"${String(v) === String(valor) ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select>${ayuda(err, id + 'E')}</div>`;
+  }
+
   /* ========== modo guiado (artículos con 7 o más propiedades, p. ej. un auto) ==========
      Solo UI: usa las mismas propiedades dinámicas de GetArticleProperties (tipo 1 texto, 2 número, 3 lista, 4 casilla), en el
      orden del catálogo, y guarda los mismos valores en a.valores. No necesita campos ni servicios nuevos:
@@ -406,7 +413,7 @@
         <div class="cot-chips" role="radiogroup" aria-labelledby="${id}L"${err ? ` aria-describedby="${id}E"` : ''}>${p.valores.map((x, i) =>
           `<button type="button" class="ds-chip ds-chip--choice${x === v ? ' ds-chip--on' : ''}" role="radio" aria-checked="${x === v}" id="${id}R${i}" data-prop="${p.id}" data-v="${esc(x)}" tabindex="${x === v || (!v && i === 0) ? 0 : -1}">${iconoOpcion(x)}${esc(x)}</button>`).join('')}</div>${ayuda(err, id + 'E')}</div>`;
     }
-    if (p.tipo === 3) return campoSelect(id, p.nombre + (p.obl ? '' : ' (opcional)'), p.valores.map((x) => [x, x]), v, err);
+    if (p.tipo === 3) return selectDS(id, etq, p.valores.map((x) => [x, x]), v, err);
     if (p.tipo === 2 && unidadDe(p.nombre) === 'km') {
       return `<div class="ds-field cot-km"><label class="ds-label" for="${id}">${etq}</label>${odometroHTML(a, p, id, err)}${ayuda(err, id + 'E')}</div>`;
     }
@@ -566,6 +573,7 @@
   }
   let refocando = false;   // pintar() devuelve el foco al mismo campo: no cuenta como "entrar" al campo
   function pintar(foco) {
+    if (window.DSSelectionInput) window.DSSelectionInput.cerrar(false);   // la lista abierta del SelectionInput se cierra al repintar
     const activo = foco || (document.activeElement && document.activeElement.id);
     const pos = document.activeElement && 'selectionStart' in document.activeElement ? document.activeElement.selectionStart : null;
     const ae = document.activeElement;
@@ -574,7 +582,8 @@
     pintarPasos(); pintarIzq(); pintarDer(); pintarBarra();
     refocando = true;
     if (sel && document.querySelector(sel)) { document.querySelector(sel).focus(); refocando = false; return; }
-    if (activo && $(activo)) { const f = $(activo); f.focus(); try { if (pos != null && f.setSelectionRange) f.setSelectionRange(pos, pos); } catch (e) { /* select */ } }
+    if (activo && /-ds$/.test(activo) && $(activo.slice(0, -3)) && window.DSSelectionInput) { const s = $(activo.slice(0, -3)); window.DSSelectionInput.mejorar(s); if (s._dsBtn) s._dsBtn.focus(); }
+    else if (activo && $(activo)) { const f = $(activo); f.focus(); try { if (pos != null && f.setSelectionRange) f.setSelectionRange(pos, pos); } catch (e) { /* select */ } }
     refocando = false;
   }
 
