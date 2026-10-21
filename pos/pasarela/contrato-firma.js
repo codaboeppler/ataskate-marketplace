@@ -23,6 +23,7 @@
   /* ---------- utilidades ---------- */
   const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const r2 = (n) => Math.round((Number(n) || 0) * 100) / 100;
+  const num = (n) => r2(n).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const mxn = (n) => '$' + r2(n).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const pad = (n, l) => String(n).padStart(l, '0');
   const ddmmaaaa = (d) => pad(d.getDate(), 2) + '/' + pad(d.getMonth() + 1, 2) + '/' + d.getFullYear();
@@ -62,6 +63,7 @@
     'cliente frecuente': { nombre: 'Cliente frecuente', pct: 5.5, pagos: [30], periodo: 30 },
   };
   const IVA = 0.16, ALMACENAJE = 0.2;   // reparto ilustrativo del cargo del periodo: 80 % interés, 20 % almacenaje
+  const REFRENDOS = 12;   // total de refrendos aplicables del plazo de ejemplo (límite de refrendos, HU-CE-521-B)
 
   /* ---------- armar los contratos de la transacción ---------- */
   function contratosDe(recibo) {
@@ -83,8 +85,26 @@
       });
       const ult = pagos[pagos.length - 1];
       const cat = r2((Math.pow(1 + pl.pct / 100, 360 / pl.periodo) - 1) * 100);
+      /* tabla de amortización: cada refrendo renueva el plazo completo (30 días) con el mismo saldo insoluto; se lista hasta el
+         último refrendo permitido. En la app la devuelve el servicio (GetTermPaytable / HU-CE-580-B), el front no calcula. */
+      const ciclo = pl.pagos[pl.pagos.length - 1];
+      let acumulado = 0;
+      const amortizacion = [];
+      for (let j = 0; j < REFRENDOS; j++) {
+        pagos.forEach((p, k) => {
+          const dia = j * ciclo + pl.pagos[k];
+          const fin = k === pagos.length - 1;
+          const pagado = r2(acumulado + p.refrendo);
+          amortizacion.push({ n: amortizacion.length + 1, ciclo: j + 1, fin, fecha: ddmmaaaa(masDias(hoy, dia)), dias: pl.pagos[k] - (k ? pl.pagos[k - 1] : 0),
+            saldo: prestamo, interes: p.interes, almacenaje: p.almacenaje, iva: p.iva, refrendo: p.refrendo, desempeno: p.desempeno, pagado,
+            nota: j === 0 && fin ? 'Fecha límite del contrato' : j === REFRENDOS - 1 && fin ? 'Último refrendo permitido' : fin ? 'Refrendo ' + (j + 1) : '' });
+          if (fin) acumulado = pagado;
+        });
+      }
+      const fines = amortizacion.filter((x) => x.fin);
+      const totales = { interes: r2(fines.reduce((s, x) => s + x.interes, 0)), almacenaje: r2(fines.reduce((s, x) => s + x.almacenaje, 0)), iva: r2(fines.reduce((s, x) => s + x.iva, 0)), refrendos: acumulado };
       return {
-        folio, item: it, articulos: arts, prestamo, avaluo, plazo: pl, pagos, cat, tasaAnual: r2(pl.pct * 360 / pl.periodo),
+        folio, item: it, articulos: arts, prestamo, avaluo, plazo: pl, pagos, cat, tasaAnual: r2(pl.pct * 360 / pl.periodo), amortizacion, totales, refrendosMax: REFRENDOS,
         fechaLimite: ult.fecha, refrendo: ult.refrendo, desempeno: ult.desempeno, totalPagar: ult.desempeno,
         fecha: ddmmaaaa(hoy), hora: hhmm(hoy), cliente: recibo.cliente || { nombre: 'Cliente' }, cotitulares: it.cotitulares || [],
         operacion: recibo.folio, caja: 'Caja 03', sucursal: recibo.sucursal || EMPRESA.sucursal, pagosOperacion: recibo.pagos || [],
@@ -134,7 +154,7 @@
       seccion('financiera', 'Tabla financiera', tabla(['CAT', 'Tasa de interés anual', 'Monto del préstamo', 'Monto total a pagar', 'Comisiones'],
         [[`<b>${c.cat.toFixed(1)} %</b><small>Sin IVA. Para fines informativos y de comparación</small>`, `${c.tasaAnual.toFixed(1)} % fija`, `<b>${mxn(c.prestamo)}</b> MXN`, `${mxn(c.totalPagar)} MXN<small>al plazo máximo</small>`, 'Almacenaje incluido en el cargo del periodo. Avalúo: $0.00. Reposición de contrato: $0.00']])
         + '<p class="cf-nota"><b>Metodología de cálculo de interés:</b> tasa de interés anual fija dividida entre 360 días por el saldo insoluto del préstamo por los días efectivamente transcurridos.</p>'),
-      seccion('plazo', 'Plazo y condiciones de pago', `<p>Plazo <b>${esc(c.plazo.nombre)}</b> (${c.plazo.pct} % por periodo). Fecha límite para refrendar o desempeñar: <b>${esc(c.fechaLimite)}</b>. Si el vencimiento cae en día inhábil, se considera el día hábil siguiente.</p>
+      seccion('plazo', 'Plazo y condiciones de pago', `<p>Plazo <b>${esc(c.plazo.nombre)}</b> (${c.plazo.pct} % por periodo). Fecha límite para refrendar o desempeñar: <b>${esc(c.fechaLimite)}</b>. Total de refrendos aplicables: <b>${c.refrendosMax}</b> (ver la tabla de amortización). Si el vencimiento cae en día inhábil, se considera el día hábil siguiente.</p>
         <p>Métodos de pago aceptados: efectivo en sucursal, tarjetas de crédito y débito, transferencia electrónica y pago en línea en ${esc(E.web)}.</p>`),
       seccion('iva', 'Nota de IVA y remisión al procedimiento', `<p>El interés y el almacenaje causan IVA a la tasa del 16 %. El procedimiento para desempeño, refrendo, finiquito y reclamo del remanente se encuentra descrito en las cláusulas de este contrato.</p>`),
       seccion('dudas', 'Dudas, aclaraciones y reclamaciones', `<p>Domicilio: ${esc(E.domicilio)}. Teléfono: ${esc(E.telefono)}. Correo electrónico: ${esc(E.correo)}, en un horario de ${esc(E.horario)}. Página de internet: ${esc(E.web)}.</p>
@@ -147,6 +167,21 @@
         c.articulos.map((a) => [`<span class="cf-prenda">${imgArt(a, 'cf-prenda__img')}<b>${esc(a.nombre)}</b></span>`, esc(describe(a) || '—'), esc(a.estado || '—'), mxn(a.avaluo), mxn(a.prestamo), (a.avaluo ? (a.prestamo / a.avaluo * 100).toFixed(0) : '—') + ' %'])
           .concat([[`<b>Total · ${c.articulos.length} ${c.articulos.length === 1 ? 'prenda' : 'prendas'}</b>`, '', '', `<b>${mxn(c.avaluo)}</b>`, `<b>${mxn(c.prestamo)}</b>`, (c.avaluo ? (c.prestamo / c.avaluo * 100).toFixed(0) : '—') + ' %']]), 'cf-tabla--prenda')),
     ];
+    /* hoja de la tabla de amortización: todos los periodos hasta el último refrendo permitido */
+    const A = c.amortizacion, primerLimite = A.findIndex((y) => y.fin) + 1;
+    const amort = seccion('amortizacion', 'Tabla de amortización', `<div class="cf-amort__datos">
+        <div><small>Monto del préstamo</small><b>${mxn(c.prestamo)}</b></div>
+        <div><small>Plazo</small><b>${esc(c.plazo.nombre)} · ${c.plazo.pct} % por periodo</b></div>
+        <div><small>Tasa de interés anual</small><b>${c.tasaAnual.toFixed(1)} % fija</b></div>
+        <div><small>Refrendos aplicables</small><b>${c.refrendosMax}</b></div>
+        <div><small>Pagos</small><b>${A.length} fechas de pago</b></div>
+      </div>
+      <p class="cf-nota cf-amort__mxn">Importes en pesos mexicanos (MXN).</p>
+      ${tabla(['No.', 'Fecha de pago', 'Saldo insoluto', 'Interés', 'Almacenaje', 'IVA', 'Pago para refrendar', 'Pago para desempeñar', 'Refrendos pagados acumulados', 'Concepto'],
+        A.map((x) => [x.n, `${esc(x.fecha)}<small>${x.dias} días</small>`, num(x.saldo), num(x.interes), num(x.almacenaje), num(x.iva), `<b>${num(x.refrendo)}</b>`, `<b>${num(x.desempeno)}</b>`, num(x.pagado),
+          x.nota ? `<span class="cf-amort__nota${x.n === primerLimite ? ' is-limite' : ''}">${esc(x.nota)}</span>` : (x.fin ? '' : 'Pago parcial del periodo')])
+          .concat([['<b>Totales</b>', `${c.refrendosMax} periodos`, '', `<b>${num(c.totales.interes)}</b>`, `<b>${num(c.totales.almacenaje)}</b>`, `<b>${num(c.totales.iva)}</b>`, `<b>${num(c.totales.refrendos)}</b>`, '', `<b>${num(c.totales.refrendos)}</b>`, 'Si refrenda en cada fecha límite']]), 'cf-tabla--num cf-tabla--amort')}
+      <p class="cf-nota">Supone que EL CONSUMIDOR paga cada refrendo en su fecha límite y no hace abonos a capital: el saldo insoluto se mantiene en ${mxn(c.prestamo)}. Un abono a capital reduce el saldo y los cargos de los periodos siguientes. Si paga después de la fecha límite se cobran intereses moratorios. Para desempeñar en cualquier fecha se paga la columna "Pago para desempeñar" de esa fecha.</p>`);
     const firmaCli = firma
       ? `<div class="cf-firma__trazo"><img src="${firma.img}" alt="Firma de ${esc(cli.nombre)}" /></div>`
       : `<div class="cf-firma__trazo cf-firma__trazo--pend"><span>Firma pendiente</span></div>`;
@@ -163,8 +198,8 @@
       seccion('anexo', 'Anexo 1 · Fotografías de la prenda', `<p class="cf-nota">Fotografías tomadas al cotizar el empeño. Forman parte de este contrato e identifican la prenda que queda en garantía.</p>
         <div class="cf-fotos">${c.articulos.map((a, k) => `<figure class="cf-foto">${imgArt(a, 'cf-foto__img')}<figcaption><b>${k + 1}. ${esc(a.nombre)}</b><small>${esc(describe(a) || 'Sin características')} · Avalúo ${mxn(a.avaluo)}</small></figcaption></figure>`).join('')}</div>`),
     ];
-    return `<article class="cf-hoja" aria-label="Contrato ${esc(c.folio)}, hoja 1 de 2">${hoja1.join('')}<p class="cf-hoja__pie">Hoja 1 de 2 · Contrato ${esc(c.folio)}</p></article>
-      <article class="cf-hoja" aria-label="Contrato ${esc(c.folio)}, hoja 2 de 2">${hoja2.join('')}<p class="cf-hoja__pie">Hoja 2 de 2 · Contrato ${esc(c.folio)}</p></article>`;
+    const hojas = [hoja1.join(''), amort, hoja2.join('')];
+    return hojas.map((h, i) => `<article class="cf-hoja${i === 1 ? ' cf-hoja--ancha' : ''}" aria-label="Contrato ${esc(c.folio)}, hoja ${i + 1} de ${hojas.length}">${h}<p class="cf-hoja__pie">Hoja ${i + 1} de ${hojas.length} · Contrato ${esc(c.folio)}</p></article>`).join('');
   }
 
   /* ---------- ticket de empeño (80 mm) ---------- */

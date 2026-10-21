@@ -216,3 +216,27 @@ html.cf-abierto { overflow: hidden; }
   .rc-hero:has(.rc-hero__estado) .rc-anim { grid-row: 1 / 4; }
   .rc-hero:has(.rc-hero__estado) .rc-hero__acciones { grid-row: 5; }
 }
+
+/* ===== hoja de la tabla de amortización (más ancha: 11 columnas) ===== */
+.cf-hoja--ancha { max-width: 960px; padding-left: 24px; padding-right: 24px; }
+.cf-amort__datos { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+.cf-amort__datos div { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 8px; background: var(--ats-primary-10); }
+.cf-amort__datos small { font-size: 10px; line-height: 13px; color: var(--ats-neutral-600); }
+.cf-amort__datos b { font-size: 13px; line-height: 18px; }
+.cf-tabla--amort { font-size: 10.5px; line-height: 14px; }
+.cf-tabla--amort th, .cf-tabla--amort td { padding: 6px 5px; }
+.cf-tabla--amort th { white-space: normal; font-size: 10px; line-height: 13px; }
+.cf-tabla--amort th:first-child, .cf-tabla--amort td:first-child { text-align: center; }
+.cf-tabla--amort td:nth-child(2), .cf-tabla--amort th:nth-child(2) { text-align: left; white-space: nowrap; }
+.cf-tabla--amort td:nth-child(2) small { display: block; color: var(--ats-neutral-500); }
+.cf-tabla--amort td:last-child, .cf-tabla--amort th:last-child { text-align: left; white-space: normal; font-variant-numeric: normal; }
+.cf-tabla--amort .cf-amort__nota { white-space: normal; }
+.cf-tabla--amort tbody tr:nth-child(even) td { background: var(--ats-neutral-50); }
+.cf-tabla--amort tbody tr:last-child td { background: var(--ats-primary-10); border-bottom: 0; }
+.cf-amort__nota { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--ats-neutral-100); font-size: 10px; line-height: 14px; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); white-space: nowrap; }
+.cf-amort__nota.is-limite { background: var(--pos-warning-surface, var(--surface-warning-subtle)); }
+@media (max-width: 900px) { .cf-amort__datos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media print { .cf-tabla--amort tbody tr { break-inside: avoid; } }
+.cf-amort__mxn { margin: 0 0 6px !important; text-align: right; }
+.cf-tabla.cf-tabla--amort th:nth-child(n) { white-space: normal; vertical-align: bottom; }
+.cf-tabla.cf-tabla--amort th:nth-child(n+3) { text-align: right; }
