@@ -510,6 +510,12 @@
         titulo: c.articulos.length === 1 ? c.articulos[0].nombre : `Empeño · ${c.articulos.length} artículos`,
         detalle: `Contrato ${c.id} · Plazo ${p ? p.nombre + ' (' + p.pct + '%)' : ''} · Avalúo ${money0(totalAvaluo([c]))}${ext ? ` · Extensión ${ext.dias} día${ext.dias === 1 ? '' : 's'} (${money(ext.monto)})` : ''}`,
         monto: totalPrestar([c]), plazo: p ? p.nombre : '', extension: ext,
+        // prendas del contrato para el contrato y el ticket de empeño (../pasarela/contrato-firma.js)
+        articulos: c.articulos.filter(completo).map((a) => ({
+          nombre: a.nombre, ruta: a.ruta, avaluo: a.avaluo || 0, prestamo: a.prestamo || 0,
+          estado: ((a.estados || []).find((x) => String(x.id) === String(a.estado)) || {}).nombre || '',
+          caracteristicas: (a.props || []).map((pp) => { const v = a.valores[pp.id]; return v === 'true' ? pp.nombre : v && v !== 'false' ? (/accesorios/i.test(pp.nombre) ? 'accesorios ' : '') + v + (/\(g\)/.test(pp.nombre) ? ' g' : '') : ''; }).filter(Boolean).join(' · '),
+        })),
         cotitulares: c.cotit.activo ? st.personas.filter((x) => (c.cotit.roles[x.pid] || {}).cot || (c.cotit.roles[x.pid] || {}).ben).map((x) => x.nombres + ' ' + x.paterno) : [] };
     });
     let ok = true;

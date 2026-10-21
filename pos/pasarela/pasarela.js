@@ -31,6 +31,18 @@
       { id: 'm4', tipo: 'apartado', titulo: 'Bocina Bluetooth', detalle: 'SKU 512-004219', monto: 1000, imagen: '../assets/inventario/bocina.png' },
     ],
   };
+  /* empeño de muestra (?empeno=1): un contrato con dos prendas; el préstamo sale de la caja (monto negativo) */
+  const MUESTRA_EMPENO = {
+    cliente: { nuc: 'NUC-204381', nombre: 'Valentina López', telefono: '5512345678', correo: 'valentina.lopez@ejemplo.com' },
+    items: [
+      { id: 'e1', tipo: 'empeno', contrato: '000124', titulo: 'Empeño · 2 artículos', detalle: 'Contrato IZT-000124 · Plazo Mensual (6.5%)', plazo: 'Mensual', monto: -13000, imagen: '../assets/inventario/anillo.png',
+        cotitulares: ['Ricardo López Ejemplo'],
+        articulos: [
+          { nombre: 'Anillo de oro', ruta: ['Joyas y relojes', 'Joyería', 'Oro'], caracteristicas: '14K · 12 g · accesorios 2 g', estado: 'Excelente', avaluo: 12500, prestamo: 8000, imagen: '../assets/inventario/anillo.png' },
+          { nombre: 'Consola Xbox Series S', ruta: ['Electrónica', 'Videojuegos', 'Consolas'], caracteristicas: 'Microsoft · 512 GB · SN DEMO-4821', estado: 'Bueno', avaluo: 8200, prestamo: 5000, imagen: '../assets/inventario/xbox.png' },
+        ] },
+    ],
+  };
   const leerCarrito = () => {
     try {
       const c = window.atsCarrito && typeof window.atsCarrito.leer === 'function' ? window.atsCarrito.leer() : JSON.parse(localStorage.getItem(CLAVE) || 'null');
@@ -91,7 +103,7 @@
   const reiniciar = (forzarMuestra) => {
     const c = forzarMuestra ? null : leerCarrito();
     Object.assign(st, {
-      carrito: c || ((m) => { const n = Number(qs.get('arts')); if (n > 0) m.items = m.items.slice(0, n); return m; })(JSON.parse(JSON.stringify(MUESTRA))),
+      carrito: c || ((m) => { const n = Number(qs.get('arts')); if (n > 0) m.items = m.items.slice(0, n); return m; })(JSON.parse(JSON.stringify(qs.get('empeno') === '1' ? MUESTRA_EMPENO : MUESTRA))),
       muestra: !c,
       pagos: [],
       abierto: null,
@@ -334,7 +346,14 @@
   const vistaRecibo = () => {
     const r = st.recibo;
     const cli = r.cliente;
+    // contratos de empeño de la transacción (firma digital y ticket de empeño en ./contrato-firma.js)
+    const ctrs = window.AtsContrato ? window.AtsContrato.contratosDe(r) : [];
+    const ctrDe = (it) => ctrs.find((x) => x.item === it);
+    const firmados = ctrs.filter((x) => window.AtsContrato.firmaDe(r, x.folio)).length;
+    const pendientes = ctrs.length - firmados;
     const entregaDe = (it) => {
+      const k = ctrDe(it);
+      if (k) return 'Contrato ' + k.folio + ' · ' + k.articulos.length + (k.articulos.length === 1 ? ' prenda' : ' prendas') + ' · ' + (window.AtsContrato.firmaDe(r, k.folio) ? 'firmado' : 'firma pendiente');
       if (!SE_ENTREGA.includes(norm(it.tipo))) return it.contrato ? 'Contrato ' + it.contrato : (it.detalle || etiqueta(it.tipo));
       const o = r.entrega[it.id];
       return 'Entrega ' + (o === 'sucursal' || !o ? 'en sucursal' : 'a domicilio');
@@ -343,7 +362,7 @@
     const pagado = r2(r.pagos.reduce((s, p) => s + p.monto, 0));
     const fila = (ico, t, d, m) => `<li class="rc-fila">${ico}<span class="rc-fila__txt"><b>${t}</b><small>${d}</small></span><span class="rc-fila__monto">${m}</span></li>`;
     const arts = r.items.map((it) => fila(`<span class="pas-art__img rc-fila__img">${imgArt(it)}</span>`,
-      esc(etiqueta(it.tipo) === 'Compra' ? it.titulo : etiqueta(it.tipo) + ' · ' + it.titulo), esc(entregaDe(it)), mxn(it.monto))).join('');
+      esc(etiqueta(it.tipo) === 'Compra' || String(it.titulo).startsWith(etiqueta(it.tipo)) ? it.titulo : etiqueta(it.tipo) + ' · ' + it.titulo), esc(entregaDe(it)), mxn(it.monto))).join('');
     const pagos = r.pagos.map((p) => fila(`<span class="rc-fila__ico"><img src="${A(p.metodo)}" alt="" /></span>`,
       nombreMetodo(p.metodo), esc(p.detalle), mxn(p.monto))).join('');
     const dato = (t, d) => `<div class="rc-dato"><dt>${t}</dt><dd>${d}</dd></div>`;
@@ -355,9 +374,17 @@
         </div>
         <h1 tabindex="-1" id="tRecibo">Transacción registrada</h1>
         <p>${sale ? 'Se entregaron' : 'Se cobraron'} <b>${mxn(Math.abs(r.total))} MXN</b>${cli ? (sale ? ' a ' : ' de ') + '<b>' + esc(cli.nombre) + '</b>' : ' en venta al público'}</p>
+        ${ctrs.length ? `<div class="rc-hero__estado">${pendientes
+          ? `<span class="ds-tag ds-tag--amarillo">${pendientes === 1 ? 'Falta firmar el contrato' : 'Faltan ' + pendientes + ' contratos por firmar'}</span>`
+          : `<span class="ds-tag ds-tag--verde">${ctrs.length === 1 ? 'Contrato firmado' : 'Contratos firmados'}</span>`}</div>` : ''}
         <div class="rc-hero__acciones">
           <button class="ds-btn ds-btn--secondary ds-btn--md pas-btn-ico" type="button" data-accion="compartir"><img src="${A('recibo')}" alt="" />Compartir recibo</button>
-          <button class="ds-btn ds-btn--primary ds-btn--md pas-btn-ico" type="button" data-accion="imprimir"><img src="${A('imprimir')}" alt="" />Imprimir</button>
+          ${ctrs.length
+            ? `<button class="ds-btn ds-btn--secondary ds-btn--md pas-btn-ico" type="button" data-accion="ticket"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 8V5H8v3H6V3h12v5h-2zM4 10h16v7h-4v4H8v-4H4v-7zm6 9h4v-4h-4v4zm8-5.5a1 1 0 100-2 1 1 0 000 2z" fill="currentColor"/></svg>Ticket de empeño</button>
+               ${pendientes
+                 ? `<button class="ds-btn ds-btn--primary ds-btn--md pas-btn-ico" type="button" data-accion="firmar"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83a.996.996 0 000-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z" fill="currentColor"/></svg>${pendientes === ctrs.length && ctrs.length === 1 ? 'Firmar contrato' : 'Firmar contratos (' + firmados + '/' + ctrs.length + ')'}</button>`
+                 : `<button class="ds-btn ds-btn--secondary ds-btn--md pas-btn-ico" type="button" data-accion="ver-contrato">Ver contrato</button>`}`
+            : `<button class="ds-btn ds-btn--primary ds-btn--md pas-btn-ico" type="button" data-accion="imprimir"><img src="${A('imprimir')}" alt="" />Imprimir</button>`}
         </div>
       </header>
       <div class="rc-grid">
@@ -615,6 +642,7 @@
       folio: 'OP-' + pick(4) + '-' + pick(4),
       fecha: ahora.getDate() + ' ' + meses[ahora.getMonth()] + ' ' + ahora.getFullYear() + ', ' + String(ahora.getHours()).padStart(2, '0') + ':' + String(ahora.getMinutes()).padStart(2, '0'),
       sucursal: 'Multi apoyo Iztapalapa', cliente: st.carrito.cliente, items: st.carrito.items.slice(), pagos: st.pagos.slice(), c: cuentas(), total: cuentas().total, entrega,
+      creado: ahora.getTime(), firmas: {},
     };
     st.vista = 'recibo';
     if (vaciar) { vaciarCarrito(); pintarContador(0); }
@@ -657,6 +685,15 @@
       case 'modo': st.modo = t.dataset.modo; render(); { const b = $main.querySelector('[data-accion="modo"]'); if (b) b.focus(); } break;
       case 'art-entrega': st.porArt[t.dataset.art] = t.dataset.opcion; render(); break;
       case 'imprimir': window.print(); break;
+      case 'firmar': case 'ver-contrato': case 'ticket': {
+        if (!window.AtsContrato || !st.recibo) break;
+        // al firmar se repinta el recibo (cambia el botón); al cerrar, contrato-firma.js avisa con "ats-contrato-cerrado"
+        const alCambiar = () => { render(); };
+        if (a === 'firmar') window.AtsContrato.firmar({ recibo: st.recibo, alCambiar });
+        if (a === 'ver-contrato') window.AtsContrato.ver({ recibo: st.recibo });
+        if (a === 'ticket') window.AtsContrato.ticket({ recibo: st.recibo });
+        break;
+      }
       case 'compartir': {
         const tel = st.recibo && st.recibo.cliente && st.recibo.cliente.telefono;
         toast('success', 'Recibo compartido', tel ? 'Se envió por WhatsApp al número que termina en ' + String(tel).slice(-4) + '.' : 'Se copió el enlace del recibo.');
@@ -664,6 +701,11 @@
       }
       default: break;
     }
+  });
+  // el botón que abrió la firma se repintó: el foco vuelve a la acción del contrato que quedó en el encabezado
+  window.addEventListener('ats-contrato-cerrado', () => {
+    const b = $main.querySelector('[data-accion="firmar"]') || $main.querySelector('[data-accion="ver-contrato"]') || $main.querySelector('[data-accion="ticket"]');
+    if (b) b.focus();
   });
   // cerrar el menú ⋮ con clic afuera o Esc
   document.addEventListener('click', (e) => { if (st.menu && !e.target.closest('.pas-menu-wrap')) { st.menu = null; render(); } });
@@ -701,12 +743,20 @@
     rechazada: () => ESTADOS_PROTO.terminal(),
     'error-terminal': () => ESTADOS_PROTO.terminal(),
     cargando: () => { ESTADOS_PROTO.completo(); st.vista = 'cargando'; },
-    recibo: () => { ESTADOS_PROTO.completo(); },
+    recibo: () => {
+      const c = cuentas();
+      if (c.total >= 0) { ESTADOS_PROTO.completo(); return; }
+      // empeño: el préstamo se le entrega al cliente (parte por transferencia y el resto en efectivo)
+      const total = Math.abs(c.total), spei = Math.min(10000, total);
+      st.pagos.push({ id: 'p' + (++seq), metodo: 'transferencia', monto: spei, detalle: 'Transferencia SPEI · cuenta ••• 4821' });
+      if (total > spei) st.pagos.push({ id: 'p' + (++seq), metodo: 'efectivo', monto: r2(total - spei), recibido: 0, cambio: 0, detalle: 'Efectivo entregado' });
+    },
   };
   const irA = (nombre) => {
     clearTimeout(terminalTimer); cerrarModal();
     const carrito = st.carrito, muestra = st.muestra;
     reiniciar(); st.carrito = carrito; st.muestra = muestra;
+    if (nombre === 'recibo-empeno') { st.carrito = JSON.parse(JSON.stringify(MUESTRA_EMPENO)); st.muestra = true; ESTADOS_PROTO.recibo(); generarRecibo(false); return; }
     (ESTADOS_PROTO[nombre] || (() => {}))();
     if (nombre === 'recibo') { generarRecibo(false); return; }
     render();
@@ -726,5 +776,5 @@
   window.addEventListener('ats-carrito', () => { if (st.vista === 'cobro' && !st.pagos.length) { reiniciar(qs.get('muestra') === '1'); render(); } });
 
   reiniciar(qs.get('muestra') === '1');
-  if (qs.get('estado') && ESTADOS_PROTO[qs.get('estado')]) irA(qs.get('estado')); else render();
+  if (qs.get('estado') && (ESTADOS_PROTO[qs.get('estado')] || qs.get('estado') === 'recibo-empeno')) irA(qs.get('estado')); else render();
 })();

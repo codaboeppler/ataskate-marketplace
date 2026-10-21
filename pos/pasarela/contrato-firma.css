@@ -1,0 +1,218 @@
+/* Contrato de empeño: firma digital y ticket de empeño (contrato-firma.js). Solo tokens del DS (--ats-*, --pos-*);
+   lo que no tiene token va como --propuesta-*. */
+:root {
+  --propuesta-paper-shadow: 0 1px 3px rgba(0, 0, 0, .08), 0 8px 24px rgba(0, 0, 0, .06);   /* hoja sobre el fondo gris (no hay token de "papel") */
+  --propuesta-ticket-w: 302px;   /* 80 mm a 96 dpi */
+}
+
+/* ===== capa y modal ===== */
+html.cf-abierto { overflow: hidden; }
+.cf-ov { position: fixed; inset: 0; z-index: 85; display: grid; place-items: center; padding: 24px; background: var(--pos-overlay, var(--surface-overlay)); }
+.cf-modal { display: flex; flex-direction: column; width: min(1180px, 100%); max-height: calc(100dvh - 48px); border-radius: 16px; background: var(--surface-foreground); box-shadow: var(--pos-shadow-popup); outline: none; overflow: hidden; }
+.cf-modal--firma, .cf-modal--ver { height: calc(100dvh - 48px); }
+.cf-modal--ver { width: min(920px, 100%); }
+.cf-modal--ticket { width: min(560px, 100%); }
+.cf-modal__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 20px 24px 16px; border-bottom: 1px solid var(--pos-border-soft); }
+.cf-modal__head h2 { margin: 0; font-size: 20px; line-height: 26px; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); }
+.cf-modal__head p { margin: 2px 0 0; font-size: 14px; line-height: 20px; color: var(--ats-neutral-600); }
+.cf-x { flex: none; color: var(--ats-neutral-600); margin: -6px -8px 0 0; }
+.cf-modal__body { flex: 1 1 auto; min-height: 0; overflow: auto; }
+.cf-modal__pie { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 12px; padding: 16px 24px; border-top: 1px solid var(--pos-border-soft); background: var(--surface-foreground); }
+.cf-btn-ico { display: inline-flex; align-items: center; gap: 8px; }
+
+/* ===== firmar: documento a la izquierda, panel de firma a la derecha ===== */
+.cf-modal--firma .cf-modal__body { overflow: hidden; }
+.cf-firmar { display: grid; grid-template-columns: minmax(0, 1fr) 380px; height: 100%; min-height: 0; }
+.cf-doc { min-height: 0; overflow: auto; padding: 24px; background: var(--surface-background-secondary); display: flex; flex-direction: column; align-items: center; gap: 24px; outline: none; }
+.cf-doc:focus-visible { box-shadow: inset 0 0 0 2px var(--ats-primary-300); }
+.cf-modal--ver .cf-modal__body { display: flex; flex-direction: column; overflow: hidden; }
+.cf-doc--ver { flex: 1 1 auto; }
+.cf-alerta { flex: none; width: auto; margin: 16px 24px 0; }
+.cf-panel { min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: 20px; padding: 24px; border-left: 1px solid var(--pos-border-soft); }
+.cf-contratos { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; max-width: 760px; }
+.cf-contratos .is-on { background: var(--ats-primary-100); border-color: var(--ats-primary-300); color: var(--ats-primary-400); }
+
+.cf-paso { display: flex; flex-direction: column; gap: 10px; }
+.cf-paso__head { display: flex; align-items: center; gap: 10px; }
+.cf-paso__head h3 { flex: 1 1 auto; margin: 0; font-size: 16px; line-height: 22px; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); }
+.cf-num { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--ats-primary-100); color: var(--ats-primary-400); font-size: 13px; font-weight: var(--font-weight-semibold); }
+.cf-ayuda { margin: 0; display: flex; align-items: center; gap: 6px; font-size: 13px; line-height: 18px; color: var(--ats-neutral-600); }
+.cf-ayuda.is-ok { color: var(--ats-success-green-300); font-weight: var(--font-weight-semibold); }
+.cf-ir { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; }
+.cf-ir[hidden] { display: none; }
+.cf-acepta { align-items: flex-start; }
+.cf-acepta .ds-check__text { font-size: 14px; line-height: 20px; color: var(--ats-neutral-700); }
+.cf-borrar { display: inline-flex; align-items: center; gap: 6px; }
+
+.cf-resumen { margin: 0; padding: 16px; border-radius: 12px; background: var(--ats-primary-10); display: flex; flex-direction: column; gap: 8px; }
+.cf-resumen div { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; line-height: 20px; }
+.cf-resumen dt { color: var(--ats-neutral-600); }
+.cf-resumen dd { margin: 0; color: var(--ats-neutral-700); font-variant-numeric: tabular-nums; }
+.cf-resumen b { font-weight: var(--font-weight-semibold); }
+
+/* pad de firma: control (lleva borde, como los campos); con trazo el borde pasa a primario */
+.cf-pad { position: relative; height: 180px; border: 1px solid var(--ats-neutral-300); border-radius: 12px; background: var(--surface-foreground); overflow: hidden; }
+.cf-pad.is-firmado { border-color: var(--ats-primary-300); }
+.cf-pad:focus-within { box-shadow: var(--pos-focus-ring); }
+.cf-pad canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: crosshair; z-index: 1; outline: none; }
+.cf-pad__l { position: absolute; left: 32px; right: 20px; bottom: 44px; border-bottom: 1px solid var(--ats-neutral-300); }
+.cf-pad__x { position: absolute; left: 14px; bottom: 46px; font-size: 14px; color: var(--ats-neutral-400); }
+.cf-pad__ph { position: absolute; left: 0; right: 0; bottom: 16px; text-align: center; font-size: 13px; color: var(--ats-neutral-400); transition: opacity .15s; }
+.cf-pad.is-firmado .cf-pad__ph { opacity: 0; }
+
+.cf-falta { margin: auto 0 0; padding: 12px; border-radius: 8px; background: var(--pos-warning-surface, var(--surface-warning-subtle)); font-size: 13px; line-height: 18px; color: var(--ats-neutral-700); }
+.cf-falta.is-ok { background: var(--ats-success-green-50); color: var(--ats-success-green-300); font-weight: var(--font-weight-semibold); }
+
+/* ===== hoja del contrato ===== */
+.cf-hoja { width: 100%; max-width: 760px; padding: 40px 44px 28px; background: var(--surface-foreground); box-shadow: var(--propuesta-paper-shadow); border-radius: 4px; color: var(--ats-neutral-700); font-size: 12px; line-height: 18px; display: flex; flex-direction: column; gap: 16px; }
+.cf-hoja p { margin: 0; }
+.cf-hoja p + p { margin-top: 6px; }
+.cf-hoja b { font-weight: var(--font-weight-semibold); }
+.cf-hoja__pie { margin-top: 8px !important; padding-top: 10px; border-top: 1px solid var(--pos-border-soft); text-align: right; font-size: 11px; color: var(--ats-neutral-500); }
+.cf-sec__t { margin: 0 0 6px; font-size: 12px; line-height: 16px; font-weight: var(--font-weight-semibold); letter-spacing: .4px; text-transform: uppercase; color: var(--ats-primary-400); }
+.cf-nota { margin-top: 6px !important; font-size: 11px; line-height: 16px; color: var(--ats-neutral-600); }
+
+.cf-ident { display: flex; align-items: center; gap: 14px; padding-bottom: 14px; border-bottom: 2px solid var(--ats-primary-400); }
+.cf-logo, .tk-logo { flex: none; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 12px; background: var(--ats-success-green-100); color: var(--ats-primary-400); font-size: 22px; font-weight: 800; }
+.cf-ident > div { flex: 1 1 auto; min-width: 0; }
+.cf-ident__n { font-size: 16px; line-height: 22px; font-weight: var(--font-weight-semibold); }
+.cf-ident__s { font-size: 11px; color: var(--ats-neutral-600); }
+.cf-ident__suc { flex: none; font-size: 11px; color: var(--ats-neutral-600); }
+.cf-folio { padding: 12px 14px; border-radius: 8px; background: var(--ats-primary-10); }
+.cf-folio__t { font-size: 14px; line-height: 20px; font-weight: var(--font-weight-semibold); }
+.cf-folio dl { margin: 8px 0 0; display: flex; flex-wrap: wrap; gap: 6px 28px; }
+.cf-folio dt { font-size: 11px; color: var(--ats-neutral-600); }
+.cf-folio dd { margin: 0; font-size: 13px; }
+
+.cf-tabla-wrap { overflow-x: auto; }
+.cf-tabla { width: 100%; border-collapse: collapse; font-size: 11px; line-height: 15px; }
+.cf-tabla th { padding: 6px 8px; background: var(--ats-neutral-100); color: var(--ats-neutral-700); font-weight: var(--font-weight-semibold); text-align: left; vertical-align: bottom; border-bottom: 1px solid var(--ats-neutral-300); }
+.cf-tabla td { padding: 7px 8px; border-bottom: 1px solid var(--pos-table-line, var(--pos-border-soft)); vertical-align: top; }
+.cf-tabla td small { display: block; margin-top: 2px; font-size: 10px; line-height: 13px; color: var(--ats-neutral-500); }
+.cf-tabla--num td:nth-child(n+3), .cf-tabla--num th:nth-child(n+3), .cf-tabla--prenda td:nth-child(n+4), .cf-tabla--prenda th:nth-child(n+4) { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cf-tabla--prenda tr:last-child td { border-bottom: 0; background: var(--ats-primary-10); }
+.cf-prenda { display: flex; align-items: center; gap: 8px; min-width: 140px; }
+.cf-prenda__img { flex: none; width: 36px; height: 36px; border-radius: 6px; object-fit: contain; background: var(--pos-surface-media, var(--ats-neutral-100)); }
+.cf-sinfoto { display: grid; place-items: center; font-size: 11px; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-600); }
+
+.cf-firmas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 4px; }
+.cf-firma { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px; }
+.cf-firma b { font-size: 12px; }
+.cf-firma small { font-size: 10px; line-height: 14px; color: var(--ats-neutral-500); }
+.cf-firma__trazo { width: 100%; height: 72px; display: grid; place-items: center; }
+.cf-firma__trazo img { max-width: 100%; max-height: 72px; object-fit: contain; }
+.cf-firma__trazo--pend { border: 1px dashed var(--ats-primary-200); border-radius: 8px; background: var(--ats-primary-10); }
+.cf-firma__trazo--pend span { font-size: 11px; font-weight: var(--font-weight-semibold); color: var(--ats-primary-400); }
+.cf-firma__sello, .cf-firma__huella { align-content: center; gap: 2px; color: var(--ats-neutral-500); }
+.cf-firma__sello span { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: var(--font-weight-semibold); color: var(--ats-success-green-300); }
+.cf-firma__sello small, .cf-firma__huella span { font-size: 10px; }
+.cf-firma__l { display: block; width: 100%; border-bottom: 1px solid var(--ats-neutral-700); margin-bottom: 4px; }
+.cf-sello { margin-top: 12px !important; display: flex; align-items: flex-start; gap: 6px; padding: 8px 10px; border-radius: 8px; background: var(--ats-success-green-50); font-size: 11px; line-height: 15px; color: var(--ats-success-green-300); }
+.cf-sello svg { flex: none; }
+
+.cf-qr { display: flex; align-items: center; gap: 14px; padding: 12px; border-radius: 8px; background: var(--ats-neutral-50); }
+.cf-qr__c, .tk-qr__c { flex: none; width: 64px; height: 64px; padding: 4px; background: var(--surface-foreground); }
+.cf-qr__c svg, .tk-qr__c svg { display: block; width: 100%; height: 100%; fill: var(--ats-neutral-700); }
+.cf-qr__t { font-size: 13px; font-weight: var(--font-weight-semibold); }
+.cf-redes { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 11px; color: var(--ats-neutral-600); }
+.cf-redes span::before { content: "• "; }
+.cf-fotos { margin-top: 10px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.cf-foto { margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.cf-foto__img { width: 100%; aspect-ratio: 1; border-radius: 8px; object-fit: contain; background: var(--pos-surface-media, var(--ats-neutral-100)); }
+.cf-foto figcaption b { display: block; font-size: 11px; }
+.cf-foto figcaption small { font-size: 10px; line-height: 14px; color: var(--ats-neutral-500); }
+
+/* ===== ticket de empeño (térmico, 80 mm) ===== */
+.cf-modal--ticket .cf-modal__body { padding: 20px 24px; background: var(--surface-background-secondary); display: flex; flex-direction: column; gap: 16px; align-items: center; }
+.cf-tksel { width: 100%; }
+.cf-tkarea { display: flex; flex-direction: column; gap: 20px; align-items: center; }
+.tk { width: var(--propuesta-ticket-w); padding: 18px 16px 22px; background: var(--surface-foreground); box-shadow: var(--propuesta-paper-shadow); color: var(--ats-neutral-700); font-size: 11px; line-height: 15px; display: flex; flex-direction: column; gap: 12px;
+  -webkit-mask: radial-gradient(6px at 50% 100%, transparent 98%, var(--ats-neutral-700)) 50% 100% / 14px 100% repeat-x; mask: radial-gradient(6px at 50% 100%, transparent 98%, var(--ats-neutral-700)) 50% 100% / 14px 100% repeat-x; }
+.tk b { font-weight: var(--font-weight-semibold); }
+.tk p { margin: 0; }
+.tk-marca { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 1px dashed var(--ats-neutral-300); }
+.tk-logo { width: 36px; height: 36px; border-radius: 10px; font-size: 16px; }
+.tk-marca div { display: flex; flex-direction: column; }
+.tk-marca b { font-size: 14px; line-height: 18px; }
+.tk-marca small { font-size: 10px; line-height: 13px; color: var(--ats-neutral-600); }
+.tk-titulo { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.tk-titulo > span:first-child { font-size: 13px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; color: var(--ats-primary-400); }
+.tk-folio { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px; border-radius: 8px; background: var(--ats-primary-10); }
+.tk-folio small { font-size: 10px; color: var(--ats-neutral-600); }
+.tk-folio b { font-size: 20px; line-height: 24px; letter-spacing: 1px; }
+.cf-barras { width: 100%; height: 30px; fill: var(--ats-neutral-700); }
+.tk-meta { display: flex; justify-content: space-between; gap: 6px; font-size: 10px; color: var(--ats-neutral-600); }
+.tk-bloque { display: flex; flex-direction: column; gap: 4px; padding-top: 10px; border-top: 1px dashed var(--ats-neutral-300); }
+.tk-bloque h4 { margin: 0 0 2px; font-size: 10px; line-height: 14px; font-weight: var(--font-weight-semibold); letter-spacing: .5px; text-transform: uppercase; color: var(--ats-neutral-500); }
+.tk-fila { display: flex; justify-content: space-between; gap: 8px; font-variant-numeric: tabular-nums; }
+.tk-prenda { display: flex; gap: 8px; }
+.tk-prenda + .tk-prenda { margin-top: 6px; }
+.tk-prenda__img { flex: none; width: 34px; height: 34px; border-radius: 6px; object-fit: contain; background: var(--pos-surface-media, var(--ats-neutral-100)); }
+.tk-prenda > div { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+.tk-prenda small { color: var(--ats-neutral-600); }
+.tk-prenda .tk-fila { margin-top: 2px; font-size: 10px; color: var(--ats-neutral-600); }
+.tk-monto { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 8px; border-radius: 8px; background: var(--ats-neutral-700); color: var(--surface-foreground); text-align: center; }
+.tk-monto small { font-size: 10px; opacity: .8; }
+.tk-monto > b { font-size: 22px; line-height: 28px; }
+.tk-monto i { font-style: normal; font-size: 11px; font-weight: 400; }
+.tk-monto span { font-size: 10px; opacity: .9; }
+.tk-dos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tk-dos div { display: flex; flex-direction: column; align-items: center; padding: 8px 4px; border: 1px solid var(--ats-neutral-300); border-radius: 8px; }
+.tk-dos small { font-size: 10px; color: var(--ats-neutral-600); }
+.tk-dos b { font-size: 14px; font-variant-numeric: tabular-nums; }
+.tk-firma { align-items: center; text-align: center; }
+.tk-firma img { max-width: 80%; height: 52px; object-fit: contain; }
+.tk-firma__vacio { height: 40px; }
+.tk-firma__l { width: 80%; border-bottom: 1px solid var(--ats-neutral-700); }
+.tk-firma small { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; color: var(--ats-neutral-600); }
+.tk-qr { display: flex; align-items: center; gap: 10px; padding-top: 10px; border-top: 1px dashed var(--ats-neutral-300); }
+.tk-qr__c { width: 58px; height: 58px; }
+.tk-qr div { display: flex; flex-direction: column; }
+.tk-qr small { color: var(--ats-neutral-600); }
+.tk-legal { font-size: 9px; line-height: 13px; color: var(--ats-neutral-500); text-align: center; }
+.tk-gracias { font-size: 12px; font-weight: var(--font-weight-semibold); text-align: center; }
+
+/* ===== en el recibo: estado de la firma ===== */
+.rc-hero__estado { margin-top: 6px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.rc-hero__estado .ds-tag { display: inline-flex; align-items: center; gap: 4px; }
+
+/* ===== responsivo ===== */
+@media (max-width: 900px) {
+  .cf-ov { padding: 0; }
+  .cf-modal, .cf-modal--firma, .cf-modal--ver { width: 100%; height: 100dvh; max-height: 100dvh; border-radius: 0; }
+  .cf-modal--ticket { height: auto; max-height: 100dvh; }
+  .cf-modal--firma .cf-modal__body { overflow: auto; }
+  .cf-firmar { display: flex; flex-direction: column; height: auto; }
+  .cf-doc { flex: none; height: 58dvh; padding: 16px; }
+  .cf-panel { overflow: visible; border-left: 0; border-top: 1px solid var(--pos-border-soft); padding: 20px 16px; }
+  .cf-modal__head { padding: 16px; }
+  .cf-modal__pie { padding: 12px 16px; }
+  .cf-modal__pie .ds-btn { flex: 1 1 0; justify-content: center; }
+}
+@media (max-width: 560px) {
+  .cf-hoja { padding: 24px 18px 18px; }
+  .cf-ident { flex-wrap: wrap; }
+  .cf-ident__suc { width: 100%; }
+  .cf-firmas { grid-template-columns: 1fr; gap: 16px; }
+  .cf-modal--ticket .cf-modal__body { padding: 16px; }
+  .cf-modal__pie { flex-direction: column-reverse; }
+}
+
+/* ===== impresión: solo los tickets ===== */
+.cf-print { display: none; }
+@media print {
+  html.cf-imprimiendo body > *:not(.cf-print) { display: none !important; }
+  html.cf-imprimiendo .cf-print { display: block; }
+  html.cf-imprimiendo .cf-print .tk { box-shadow: none; -webkit-mask: none; mask: none; margin: 0 auto 12mm; break-after: page; }
+  html.cf-imprimiendo .tk-monto { background: none; color: var(--ats-neutral-700); border: 1px solid var(--ats-neutral-700); }
+  @page { margin: 4mm; }
+}
+
+/* el encabezado compacto del recibo gana un renglón (estado de la firma) cuando hay empeño */
+.rc-hero:has(.rc-hero__estado) { grid-template-rows: auto auto auto auto; }
+.rc-hero:has(.rc-hero__estado) .rc-anim { grid-row: 1 / 5; }
+.rc-hero .rc-hero__estado { margin-top: 6px; }
+@media (max-width: 560px) {
+  .rc-hero:has(.rc-hero__estado) .rc-anim { grid-row: 1 / 4; }
+  .rc-hero:has(.rc-hero__estado) .rc-hero__acciones { grid-row: 5; }
+}

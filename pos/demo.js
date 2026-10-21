@@ -20,6 +20,7 @@
     ['Prendario en mora', 'POS · contrato en mora vigente', 'v2-prendario/?estado=mora'],
     ['Marketplace', 'Ficha del cliente', 'v2-marketplace/'],
     ['Pasarela de pago', 'POS · cobro del carrito: tarjeta, transferencia, efectivo y eWallet', 'pasarela/'],
+    ['Firmar contrato de empeño', 'POS · transacción registrada: firma digital del contrato y ticket de empeño', 'pasarela/?estado=recibo-empeno'],
     ['Clientes', 'Operativo · listado y perfil', 'clientes/'],
     ['Cliente nuevo', 'Operativo · alta de cliente', 'clientes/cliente-nuevo.html'],
     ['Carrito', 'Operativo · operaciones del cliente y resumen del cobro', 'home/?carrito=1'],

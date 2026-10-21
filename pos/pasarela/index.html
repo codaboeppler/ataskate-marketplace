@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="../pos.css?v=ux68-ds1" />
 <link rel="stylesheet" href="../carrito.css?v=2-ds1" />
 <link rel="stylesheet" href="pasarela.css?v=29-ds1" />
+<link rel="stylesheet" href="contrato-firma.css?v=2" />
 </head>
 <!-- Pasarela de pago (Figma "Carrito - Pasarela de pago", Section 1 · 2934:14981). Lee el carrito compartido (localStorage "ats-carrito");
      si está vacío carga un carrito de muestra. ./pasarela.js pinta la pantalla de cobro, los modales de la terminal y el recibo. -->
@@ -106,6 +107,7 @@
       <option value="error-terminal">Error de terminal</option>
       <option value="cargando">Registrando la operación</option>
       <option value="recibo">Transacción registrada (recibo)</option>
+      <option value="recibo-empeno">Transacción registrada · empeño (firmar contrato)</option>
     </select>
   </label>
   <label class="ds-field"><span class="ds-label">Respuesta de la terminal</span>
@@ -133,9 +135,10 @@
 
 <script src="../navbar.js?v=3"></script>
 <script src="../menu-op.js?v=14-ds1"></script>
-<script src="../demo.js?v=19-ds1"></script>
+<script src="../demo.js?v=20-ds1"></script>
 <script src="../comentarios.js?v=6"></script>
 <script src="../carrito.js?v=2-ds1"></script>
-<script src="pasarela.js?v=23-ds1"></script>
+<script src="contrato-firma.js?v=2"></script>
+<script src="pasarela.js?v=24-ds1"></script>
 </body>
 </html>
