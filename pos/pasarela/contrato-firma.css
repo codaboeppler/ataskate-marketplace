@@ -30,12 +30,10 @@ html.cf-abierto { overflow: hidden; }
 .cf-alerta { flex: none; width: auto; margin: 16px 24px 0; }
 .cf-panel { min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: 20px; padding: 24px; border-left: 1px solid var(--pos-border-soft); }
 .cf-contratos { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; max-width: 760px; }
-.cf-contratos .is-on { background: var(--ats-primary-100); border-color: var(--ats-primary-300); color: var(--ats-primary-400); }
 
 .cf-paso { display: flex; flex-direction: column; gap: 10px; }
 .cf-paso__head { display: flex; align-items: center; gap: 10px; }
 .cf-paso__head h3 { flex: 1 1 auto; margin: 0; font-size: 16px; line-height: 22px; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); }
-.cf-num { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--ats-primary-100); color: var(--ats-primary-400); font-size: 13px; font-weight: var(--font-weight-semibold); }
 .cf-ayuda { margin: 0; display: flex; align-items: center; gap: 6px; font-size: 13px; line-height: 18px; color: var(--ats-neutral-600); }
 .cf-ayuda.is-ok { color: var(--ats-success-green-300); font-weight: var(--font-weight-semibold); }
 .cf-ir { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; }
@@ -60,8 +58,6 @@ html.cf-abierto { overflow: hidden; }
 .cf-pad__ph { position: absolute; left: 0; right: 0; bottom: 16px; text-align: center; font-size: 13px; color: var(--ats-neutral-400); transition: opacity .15s; }
 .cf-pad.is-firmado .cf-pad__ph { opacity: 0; }
 
-.cf-falta { margin: auto 0 0; padding: 12px; border-radius: 8px; background: var(--pos-warning-surface, var(--surface-warning-subtle)); font-size: 13px; line-height: 18px; color: var(--ats-neutral-700); }
-.cf-falta.is-ok { background: var(--ats-success-green-50); color: var(--ats-success-green-300); font-weight: var(--font-weight-semibold); }
 
 /* ===== hoja del contrato ===== */
 .cf-hoja { width: 100%; max-width: 760px; padding: 40px 44px 28px; background: var(--surface-foreground); box-shadow: var(--propuesta-paper-shadow); border-radius: 4px; color: var(--ats-neutral-700); font-size: 12px; line-height: 18px; display: flex; flex-direction: column; gap: 16px; }
@@ -230,13 +226,97 @@ html.cf-abierto { overflow: hidden; }
 .cf-tabla--amort td:nth-child(2), .cf-tabla--amort th:nth-child(2) { text-align: left; white-space: nowrap; }
 .cf-tabla--amort td:nth-child(2) small { display: block; color: var(--ats-neutral-500); }
 .cf-tabla--amort td:last-child, .cf-tabla--amort th:last-child { text-align: left; white-space: normal; font-variant-numeric: normal; }
-.cf-tabla--amort .cf-amort__nota { white-space: normal; }
 .cf-tabla--amort tbody tr:nth-child(even) td { background: var(--ats-neutral-50); }
 .cf-tabla--amort tbody tr:last-child td { background: var(--ats-primary-10); border-bottom: 0; }
-.cf-amort__nota { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--ats-neutral-100); font-size: 10px; line-height: 14px; font-weight: var(--font-weight-semibold); color: var(--ats-neutral-700); white-space: nowrap; }
-.cf-amort__nota.is-limite { background: var(--pos-warning-surface, var(--surface-warning-subtle)); }
 @media (max-width: 900px) { .cf-amort__datos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media print { .cf-tabla--amort tbody tr { break-inside: avoid; } }
 .cf-amort__mxn { margin: 0 0 6px !important; text-align: right; }
 .cf-tabla.cf-tabla--amort th:nth-child(n) { white-space: normal; vertical-align: bottom; }
 .cf-tabla.cf-tabla--amort th:nth-child(n+3) { text-align: right; }
+
+/* ===== varias fotos por prenda ===== */
+.cf-prenda > span:last-child { display: flex; flex-direction: column; gap: 2px; }
+.cf-galeria { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--pos-border-soft); }
+.cf-galeria:first-of-type { border-top: 0; padding-top: 0; }
+.cf-galeria__t { display: flex; flex-direction: column; gap: 2px; }
+.cf-galeria__t b { font-size: 12px; }
+.cf-galeria__t small { font-size: 10px; line-height: 14px; color: var(--ats-neutral-500); }
+.cf-galeria .cf-fotos { margin-top: 0; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+
+/* ===== galería de una prenda: foto principal + datos + miniaturas ===== */
+.cf-gal { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 16px; margin-top: 12px; padding: 12px; border-radius: 12px; background: var(--ats-neutral-50); }
+.cf-gal__main { position: relative; display: block; width: 100%; aspect-ratio: 1; padding: 0; border: 0; border-radius: 10px; overflow: hidden; background: var(--surface-foreground); cursor: zoom-in; }
+.cf-gal__main img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.cf-gal__main:focus-visible { outline: none; box-shadow: var(--pos-focus-ring); }
+.cf-gal__lado { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.cf-gal__n { font-size: 13px; line-height: 18px; font-weight: var(--font-weight-semibold); }
+.cf-gal__d { font-size: 11px; line-height: 15px; color: var(--ats-neutral-600); }
+.cf-gal__datos { margin: 2px 0 0; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.cf-gal__datos div { display: flex; flex-direction: column; }
+.cf-gal__datos dt { font-size: 10px; color: var(--ats-neutral-500); }
+.cf-gal__datos dd { margin: 0; font-size: 12px; font-weight: var(--font-weight-semibold); font-variant-numeric: tabular-nums; }
+.cf-gal__etq { margin-top: auto !important; font-size: 11px; line-height: 15px; color: var(--ats-neutral-600); }
+.cf-gal__etq b { color: var(--ats-neutral-700); }
+.cf-gal__thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
+.cf-gal__th { display: flex; flex-direction: column; gap: 4px; padding: 4px; border: 1px solid transparent; border-radius: 8px; background: var(--surface-foreground); cursor: pointer; text-align: left; font-family: inherit; }
+.cf-gal__th img { width: 100%; aspect-ratio: 1; object-fit: contain; border-radius: 6px; }
+.cf-gal__th span { font-size: 10px; line-height: 13px; color: var(--ats-neutral-600); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.cf-gal__th:hover { border-color: var(--ats-primary-200); }
+.cf-gal__th[aria-pressed="true"] { border-color: var(--ats-primary-300); box-shadow: 0 0 0 1px var(--ats-primary-300); }
+.cf-gal__th[aria-pressed="true"] span { color: var(--ats-primary-400); font-weight: var(--font-weight-semibold); }
+.cf-gal__th:focus-visible { outline: none; box-shadow: var(--pos-focus-ring); }
+.cf-gal--vacia .cf-gal__main { display: grid; place-items: center; font-size: 28px; cursor: default; }
+@media (max-width: 560px) {
+  .cf-gal { grid-template-columns: 1fr; }
+  .cf-gal__main { max-height: 300px; }
+  .cf-gal__thumbs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* ===== visor a pantalla completa ===== */
+.cf-visor { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column; background: var(--surface-scrim); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: var(--surface-foreground); }
+.cf-visor__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 16px 24px; }
+.cf-visor__n { margin: 0; font-size: 16px; line-height: 22px; font-weight: var(--font-weight-semibold); }
+.cf-visor__etq { margin: 2px 0 0; font-size: 13px; line-height: 18px; opacity: .85; }
+.cf-visor__escena { flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; gap: 24px; padding: 0 24px; }
+.cf-visor__img { max-width: min(900px, 100%); max-height: 100%; min-width: 0; object-fit: contain; border-radius: 12px; background: var(--surface-foreground); touch-action: pan-y; user-select: none; }
+.cf-visor__tira { display: flex; justify-content: center; gap: 10px; padding: 16px 24px 24px; overflow-x: auto; }
+.cf-visor__th { flex: none; width: 64px; height: 64px; padding: 0; border: 2px solid transparent; border-radius: 8px; background: var(--surface-foreground); overflow: hidden; cursor: pointer; opacity: .7; }
+.cf-visor__th img { width: 100%; height: 100%; object-fit: contain; }
+.cf-visor__th[aria-current="true"] { border-color: var(--ats-primary-300); opacity: 1; }
+@media (max-width: 560px) {
+  .cf-visor__top { padding: 12px 16px; }
+  .cf-visor__escena { position: relative; padding: 0 8px; gap: 0; }
+  .cf-visor__nav[data-v="ant"] { left: 12px; }
+  .cf-visor__nav[data-v="sig"] { right: 12px; }
+  .cf-visor__th { width: 52px; height: 52px; }
+}
+@media print {
+  .cf-gal__zoom, .cf-gal__cont { display: none; }
+  .cf-gal__th { border: 0; box-shadow: none; }
+}
+.cf-visor__escena { padding-bottom: 8px; }
+.cf-visor__img { height: 100%; width: auto; max-height: 760px; max-width: min(900px, calc(100% - 144px)); aspect-ratio: 1 / 1; padding: 16px; box-sizing: border-box; }
+@media (max-width: 560px) { .cf-visor__img { width: 100%; height: auto; max-width: 100%; padding: 8px; } }
+
+/* ===== piezas del DS dentro de la firma, el ticket y la galería: aquí solo tamaño y posición ===== */
+.cf-ov.ds-modal-overlay { z-index: 85; padding: 24px; }
+.cf-modal.ds-modal { max-width: none; overflow: hidden; display: flex; flex-direction: column; }
+.cf-modal .ds-modal__header.cf-modal__head { padding: 20px 24px 16px; }
+.cf-modal--firma .ds-modal__body, .cf-modal--ver .ds-modal__body { padding: 0; }
+.cf-modal--ticket .ds-modal__body { padding: 20px 24px; }
+.cf-modal .ds-modal__footer.cf-modal__pie { padding: 16px 24px; }
+.cf-num { flex: none; }
+.cf-falta { margin-top: auto; }
+.cf-nfotos { align-self: flex-start; gap: 4px; padding: 0; }
+.cf-gal__cont { position: absolute; left: 8px; top: 8px; }
+.cf-gal__zoom { position: absolute; right: 8px; bottom: 8px; gap: 4px; }
+.cf-visor__x { flex: none; }
+.cf-visor__nav { flex: none; }
+.cf-tabla--amort .cf-amort__nota { white-space: normal; }
+@media (max-width: 900px) { .cf-ov.ds-modal-overlay { padding: 0; } .cf-modal.ds-modal { border-radius: 0; border: 0; } }
+@media (max-width: 560px) {
+  .cf-visor__nav { position: absolute; top: 50%; margin-top: -20px; z-index: 1; }
+  .cf-visor__nav[data-v="ant"] { left: 12px; }
+  .cf-visor__nav[data-v="sig"] { right: 12px; }
+}
+.cf-visor__th:focus-visible { outline: none; box-shadow: var(--pos-focus-ring); }

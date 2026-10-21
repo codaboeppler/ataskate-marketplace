@@ -20,6 +20,7 @@
   const ICO = {
     tag: P('M21.41 11.41 12.58 2.58A2 2 0 0 0 11.17 2H4a2 2 0 0 0-2 2v7.17a2 2 0 0 0 .59 1.41l8.83 8.83a2 2 0 0 0 2.83 0l7.16-7.17a2 2 0 0 0 0-2.83ZM12.83 20 4 11.17V4h7.17L20 12.83 12.83 20ZM6.5 8a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z'),
     add: P('M11 13H5v-2h6V5h2v6h6v2h-6v6h-2v-6Z'),
+    menos: P('M5 13v-2h14v2H5Z'),
     close: P('M6.4 19 5 17.6l5.6-5.6L5 6.4 6.4 5l5.6 5.6L17.6 5 19 6.4 13.4 12l5.6 5.6-1.4 1.4-5.6-5.6L6.4 19Z'),
     trash: P('M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21H7ZM17 6H7v13h10V6ZM9 17h2V8H9v9Zm4 0h2V8h-2v9Z'),
     drag: P('M9 20a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm6 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm-6-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm6 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4ZM9 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm6 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z'),
@@ -78,6 +79,26 @@
     plata: [{ id: 1, tipo: 3, nombre: 'Ley', valores: ['.925', '.950'], obl: true }, { id: 2, tipo: 2, nombre: 'Peso de la prenda (g)', obl: true }, { id: 3, tipo: 2, nombre: 'Peso de accesorios (g)', obl: false }],
     general: (marcas) => [{ id: 14, tipo: 1, nombre: 'Modelo', obl: true }, { id: 15, tipo: 1, nombre: 'Número de serie', obl: true }, { id: 13, tipo: 2, nombre: 'Año', obl: false }, { id: 12, tipo: 4, nombre: 'Incluye cargador o accesorios', obl: false }, { id: 11, tipo: 3, nombre: 'Marca', valores: marcas, obl: true }],
   };
+  // autos: la marca y el modelo son el artículo del catálogo ("Nissan Versa"); sus propiedades dinámicas (tipo 1 texto, 2 número,
+  // 3 lista, 4 casilla) son las mismas para todos los modelos, en el orden en que se capturan
+  const AUTO = [
+    { id: 23, tipo: 3, nombre: 'Año', valores: Array.from({ length: 15 }, (_, i) => String(2026 - i)), obl: true },
+    { id: 24, tipo: 1, nombre: 'Versión', obl: false },
+    { id: 25, tipo: 3, nombre: 'Transmisión', valores: ['Automática', 'Manual'], obl: true },
+    { id: 26, tipo: 3, nombre: 'Combustible', valores: ['Gasolina', 'Diésel', 'Híbrido', 'Eléctrico'], obl: true },
+    { id: 27, tipo: 3, nombre: 'Color', valores: ['Blanco', 'Negro', 'Gris', 'Plata', 'Rojo', 'Azul', 'Otro'], obl: false },
+    { id: 28, tipo: 2, nombre: 'Kilometraje (km)', obl: true },
+    { id: 29, tipo: 1, nombre: 'Número de serie (NIV)', obl: true },
+    { id: 30, tipo: 1, nombre: 'Placas', obl: true },
+    { id: 31, tipo: 1, nombre: 'Número de motor', obl: false },
+    { id: 32, tipo: 4, nombre: 'Factura original', obl: false },
+    { id: 33, tipo: 4, nombre: 'Tarjeta de circulación vigente', obl: false },
+    { id: 34, tipo: 4, nombre: 'Verificación vigente', obl: false },
+    { id: 35, tipo: 4, nombre: 'Tenencias o refrendos pagados', obl: false },
+    { id: 36, tipo: 4, nombre: 'Sin reporte de robo (REPUVE)', obl: false },
+    { id: 37, tipo: 4, nombre: 'Duplicado de llaves', obl: false },
+    { id: 38, tipo: 4, nombre: 'Llanta de refacción y herramienta', obl: false },
+  ];
   const CATALOGO = [
     { id: 501, nombre: 'Anillo de oro', ruta: ['Joyas y relojes', 'Joyería', 'Oro'], tipo: 'oro' },
     { id: 502, nombre: 'Cadena de oro', ruta: ['Joyas y relojes', 'Joyería', 'Oro'], tipo: 'oro' },
@@ -88,6 +109,9 @@
     { id: 603, nombre: 'Consola Nintendo Switch 2', ruta: ['Electrónica', 'Videojuegos', 'Consolas'], tipo: 'general', marcas: ['Nintendo', 'Sony', 'Microsoft'] },
     { id: 604, nombre: 'Taladro Bosch', ruta: ['Herramientas', 'Eléctricas', 'Taladros'], tipo: 'general', marcas: ['Bosch', 'DeWalt', 'Makita'] },
     { id: 605, nombre: 'Bicicleta de montaña', ruta: ['Deportes', 'Ciclismo', 'Bicicletas'], tipo: 'general', sinProps: true },
+    ...[['Nissan', 'Versa'], ['Nissan', 'Sentra'], ['Nissan', 'March'], ['Chevrolet', 'Aveo'], ['Volkswagen', 'Jetta'], ['Volkswagen', 'Vento'],
+      ['Toyota', 'Corolla'], ['Honda', 'Civic'], ['Mazda', 'Mazda 3'], ['Kia', 'Rio']].map(([m, n], i) => (
+      { id: 701 + i, nombre: m === 'Mazda' ? n : m + ' ' + n, ruta: ['Vehículos', 'Autos', m], tipo: 'general', props: AUTO, alias: 'auto carro coche vehiculo' })),
   ];
   const ESTADOS = [{ id: 1, nombre: 'Excelente', pct: 70 }, { id: 2, nombre: 'Bueno', pct: 60 }, { id: 3, nombre: 'Regular', pct: 45 }];
   // plazos que regresa GetTermSelectionList; el especial ("A medida") solo sale con un cliente vinculado
@@ -115,10 +139,10 @@
       if (proto.busqueda === 'error') throw new Error('servicio');
       if (proto.busqueda === 'vacia') return [];
       const t = sinAcentos(q);
-      return CATALOGO.filter((c) => sinAcentos(c.nombre + ' ' + c.ruta.join(' ')).includes(t));
+      return CATALOGO.filter((c) => sinAcentos(c.nombre + ' ' + c.ruta.join(' ') + ' ' + (c.alias || '')).includes(t));
     },
     async estados() { return ESTADOS; },          // GetStatesConservationByArticle
-    propiedades(c) { return c.sinProps ? [] : c.tipo === 'general' ? props.general(c.marcas) : props[c.tipo]; },   // GetArticleProperties
+    propiedades(c) { return c.sinProps ? [] : c.props ? c.props.map((x) => ({ ...x })) : c.tipo === 'general' ? props.general(c.marcas) : props[c.tipo]; },   // GetArticleProperties
     // GetPledgeAppraisal: avalúo del metal = peso neto × precio por gramo del metal fino × pureza
     avaluoMetal(tipo, pureza, pesoNeto) {
       const fr = tipo === 'oro' ? Number(String(pureza).replace('K', '')) / 24 : Number(pureza);
@@ -308,6 +332,115 @@
         ${soloLeer ? '' : `<div class="cot-crear" role="button" tabindex="0" id="cotCrear" data-drop="__nuevo__">${ico('add', 24)}<span>${T.crearZona}</span></div>`}</div>`;
   }
 
+  /* ========== modo guiado (artículos con 7 o más propiedades, p. ej. un auto) ==========
+     Solo UI: usa las mismas propiedades dinámicas de GetArticleProperties (tipo 1 texto, 2 número, 3 lista, 4 casilla), en el
+     orden del catálogo, y guarda los mismos valores en a.valores. No necesita campos ni servicios nuevos:
+     - ficha arriba que se arma con lo capturado (título con las primeras listas/textos, detalle con el resto) y el avance;
+     - listas de 4 opciones o menos como opciones de un toque; las largas siguen como lista desplegable;
+     - números con su unidad (lo que viene entre paréntesis en el nombre: "Kilometraje (km)") y separador de miles;
+     - textos de serie, NIV, placas o motor en mayúsculas; el NIV avisa cuántos caracteres lleva (17);
+     - las casillas como checklist de lo que entrega el cliente. */
+  const GUIADO_MIN = 7;
+  const propsGuiadas = (a) => a.props.filter((p) => p.tipo !== 5);
+  const esGuiado = (a) => propsGuiadas(a).length >= GUIADO_MIN;
+  const unidadDe = (n) => { const m = /\(([^)]+)\)\s*$/.exec(n); return m ? m[1] : ''; };
+  const sinUnidad = (n) => n.replace(/\s*\([^)]*\)\s*$/, '');
+  const esMayus = (n) => /serie|niv|vin|placa|motor/i.test(n);
+  const esNiv = (n) => /\bNIV\b|\bVIN\b/i.test(n);
+  const miles = (v) => { const n = num(v); return n == null ? '' : n.toLocaleString('es-MX'); };
+  const esVehiculo = (a) => /veh[ií]culo|auto|moto|camioneta/i.test(a.ruta.join(' '));
+  ICO.auto = P('M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11v6a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H8v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-6Zm2.2-1h9.6l-1.1-3.2a.5.5 0 0 0-.5-.3H8.8a.5.5 0 0 0-.5.3L7.2 10ZM7.5 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm9 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z');
+  ICO.doc = P('M8 18h8v-2H8v2Zm0-4h8v-2H8v2Zm-2 8q-.825 0-1.412-.587T4 20V4q0-.825.588-1.413T6 2h8l6 6v12q0 .825-.587 1.413T18 22H6Zm7-13V4H6v16h12V9h-5Z');
+  const SVG_S = (d) => `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+  const ICONO_OPCION = {
+    automatica: SVG_S('<circle cx="12" cy="12" r="9"/><text x="12" y="16.2" text-anchor="middle" font-size="11" font-weight="800" fill="currentColor" stroke="none" font-family="Nunito, sans-serif">A</text>'),
+    manual: SVG_S('<circle cx="5" cy="5" r="1.6"/><circle cx="12" cy="5" r="1.6"/><circle cx="19" cy="5" r="1.6"/><circle cx="5" cy="19" r="1.6"/><circle cx="12" cy="19" r="1.6"/><circle cx="19" cy="19" r="1.6"/><path d="M5 6.6v10.8M12 6.6v10.8M19 6.6v10.8M5 12h14"/>'),
+    gasolina: P('M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33a2.5 2.5 0 0 0 3.5 2.29v7.21a1 1 0 0 1-2 0V14a2 2 0 0 0-2-2h-1V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v16h10v-7.5h1.5v5a2.5 2.5 0 0 0 5 0V9c0-.69-.28-1.32-.73-1.77ZM12 10H6V5h6v5Zm6 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z'),
+    diesel: P('M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2c0-3.32-2.67-7.25-8-11.8Zm-1 15.5v-7h2.2a3.5 3.5 0 0 1 0 7H11Zm1.6-1.6h.6a1.9 1.9 0 0 0 0-3.8h-.6v3.8Z'),
+    hibrido: P('M6.05 8.05a7.007 7.007 0 0 0-.02 9.88c1.47-3.4 4.09-6.24 7.36-7.93A15.952 15.952 0 0 0 8.67 19.8c2.6 1.23 5.8.78 7.95-1.37C19.1 15.95 20 4 20 4S8.05 4.9 6.05 8.05Z'),
+    electrico: P('M7 2v11h3v9l7-12h-4l4-8H7Z'),
+  };
+  const iconoOpcion = (v) => ICONO_OPCION[sinAcentos(v).replace(/[^a-z]/g, '')] || '';
+
+  /* kilometraje: odómetro (dígitos como en el tablero) y uso promedio por año según el Año del artículo */
+  const anioDe = (a) => { const p = a.props.find((x) => /^a[nñ]o\b/i.test(sinAcentos(x.nombre)) || /^año/i.test(x.nombre)); return p ? Number(a.valores[p.id]) || null : null; };
+  const KM_MAX = 300000, KM_PASO = 1000;   // rango del slider; en las casillas se puede escribir hasta 999,999
+  const odoDigitos = (n) => { const d = String(n == null ? 0 : Math.min(Math.max(0, Math.round(n)), 999999)).padStart(6, '0').split(''); return d.map((x, i) => `<span${i === d.length - 1 ? ' class="is-ult"' : ''}>${x}</span>`).join(''); };
+  function usoHTML(a, n) {
+    const anio = anioDe(a), anios = anio ? Math.max(1, hoy.getFullYear() - anio) : null;
+    const porAnio = n != null && anios ? Math.round(n / anios) : null;
+    const uso = porAnio == null ? null : porAnio < 10000 ? ['ds-tag--verde', 'Uso bajo'] : porAnio <= 20000 ? ['ds-tag--azul', 'Uso promedio'] : ['ds-tag--amarillo', 'Uso alto'];
+    return uso ? `<span class="ds-tag ${uso[0]}">${uso[1]}</span>≈ ${porAnio.toLocaleString('es-MX')} km por año${anio ? ` desde ${anio}` : ''}` : anio ? 'Escribe en las casillas lo que marca el tablero o usa el control.' : 'Escribe lo que marca el tablero. Con el año se calcula el uso por año.';
+  }
+  function odometroHTML(a, p, id, err) {
+    const v = a.valores[p.id] || '', n = num(v);
+    const pct = Math.min(100, ((n || 0) / KM_MAX) * 100);
+    return `<div class="cot-km__fila">
+        <div class="cot-odo${n == null ? ' is-vacio' : ''}${err ? ' is-error' : ''}" id="cotOdo${p.id}">
+          <span class="cot-odo__dig" aria-hidden="true">${odoDigitos(n)}</span><span class="cot-odo__u" aria-hidden="true">km</span>
+          <input class="cot-odo__in" id="${id}" value="${esc(v)}" inputmode="numeric" maxlength="6" autocomplete="off" data-num data-miles data-odo="${p.id}"${err ? ` aria-invalid="true" aria-describedby="${id}E"` : ` aria-describedby="cotOdo${p.id}U"`} />
+        </div>
+        <div class="cot-km__ctl">
+          <button type="button" class="ds-btn ds-btn--secondary ds-btn--icon-sm cot-km__paso" id="cotOdoMenos${p.id}" data-odo-paso="-${KM_PASO}" data-pid="${p.id}" aria-label="Restar ${KM_PASO.toLocaleString('es-MX')} km">${ICO.menos}</button>
+          <input type="range" class="cot-rango" id="cotOdoR${p.id}" min="0" max="${KM_MAX}" step="${KM_PASO}" value="${Math.min(n || 0, KM_MAX)}" style="--p:${pct}%" data-odo-rango="${p.id}" aria-label="Kilometraje" aria-valuetext="${(n || 0).toLocaleString('es-MX')} km" />
+          <button type="button" class="ds-btn ds-btn--secondary ds-btn--icon-sm cot-km__paso" id="cotOdoMas${p.id}" data-odo-paso="${KM_PASO}" data-pid="${p.id}" aria-label="Sumar ${KM_PASO.toLocaleString('es-MX')} km">${ICO.add}</button>
+        </div>
+      </div>
+      <p class="ds-helper cot-odo__uso" id="cotOdo${p.id}U">${usoHTML(a, n)}</p>`;
+  }
+  /* placas: dibujo de una placa que se llena mientras se escribe */
+  const placaHTML = (v, id, err) => `<div class="cot-placa${v ? '' : ' is-vacio'}${err ? ' is-error' : ''}">
+      <span class="cot-placa__top" aria-hidden="true">MÉXICO</span>
+      <input class="cot-placa__in" id="${id}" value="${esc(v)}" autocomplete="off" spellcheck="false" maxlength="9" placeholder="ABC-123-D" data-mayus data-placa${err ? ` aria-invalid="true" aria-describedby="${id}E"` : ''} />
+      <span class="cot-placa__pie" aria-hidden="true">Transporte privado</span></div>`;
+
+  function htmlCampoGuiado(a, p) {
+    const v = a.valores[p.id] || '';
+    const err = p.obl && !v && ver('p' + p.id) ? T.obligatorio : '';
+    const id = 'cotProp' + p.id;
+    const etq = `${esc(p.tipo === 2 ? sinUnidad(p.nombre) : p.nombre)}${p.obl ? '' : `<span class="ds-label__optional">${T.opcional}</span>`}`;
+    if (p.tipo === 3 && p.valores.length <= 4) {
+      // DS ChoiceChip (ds-chip--choice / ds-chip--on): una opción por grupo
+      const ancho = p.valores.join('').length > 18;
+      return `<div class="ds-field${ancho ? ' cot-campo--ancho' : ''}"><span class="ds-label" id="${id}L">${etq}</span>
+        <div class="cot-chips" role="radiogroup" aria-labelledby="${id}L"${err ? ` aria-describedby="${id}E"` : ''}>${p.valores.map((x, i) =>
+          `<button type="button" class="ds-chip ds-chip--choice${x === v ? ' ds-chip--on' : ''}" role="radio" aria-checked="${x === v}" id="${id}R${i}" data-prop="${p.id}" data-v="${esc(x)}" tabindex="${x === v || (!v && i === 0) ? 0 : -1}">${iconoOpcion(x)}${esc(x)}</button>`).join('')}</div>${ayuda(err, id + 'E')}</div>`;
+    }
+    if (p.tipo === 3) return campoSelect(id, p.nombre + (p.obl ? '' : ' (opcional)'), p.valores.map((x) => [x, x]), v, err);
+    if (p.tipo === 2 && unidadDe(p.nombre) === 'km') {
+      return `<div class="ds-field cot-km"><label class="ds-label" for="${id}">${etq}</label>${odometroHTML(a, p, id, err)}${ayuda(err, id + 'E')}</div>`;
+    }
+    if (p.tipo === 2) {
+      // DS Input con addon derecho para la unidad
+      const u = unidadDe(p.nombre);
+      return `<div class="ds-field"><label class="ds-label" for="${id}">${etq}</label>
+        <div class="ds-field-wrap${err ? ' ds-field-wrap--error' : ''}"><input class="ds-input" id="${id}" value="${esc(document.activeElement && document.activeElement.id === id ? v : miles(v))}" inputmode="numeric" data-num data-miles${err ? ` aria-invalid="true" aria-describedby="${id}E"` : ''} />${u ? `<span class="ds-field-addon ds-field-addon--right" aria-hidden="true">${esc(u)}</span>` : ''}</div>${ayuda(err, id + 'E')}</div>`;
+    }
+    if (/placa/i.test(p.nombre)) {
+      return `<div class="ds-field cot-placas"><label class="ds-label" for="${id}">${etq}</label>${placaHTML(v, id, err)}${ayuda(err, id + 'E')}</div>`;
+    }
+    const niv = esNiv(p.nombre);
+    const largo = String(v).length;
+    return `<div class="ds-field"><label class="ds-label" for="${id}">${etq}</label>
+      <div class="ds-field-wrap${err ? ' ds-field-wrap--error' : ''}"><input class="ds-input${esMayus(p.nombre) ? ' cot-mayus' : ''}" id="${id}" value="${esc(v)}" autocomplete="off" spellcheck="false"${esMayus(p.nombre) ? ' data-mayus' : ''}${niv ? ' maxlength="17"' : ''}${err ? ` aria-invalid="true" aria-describedby="${id}E"` : niv ? ` aria-describedby="${id}H"` : ''} /></div>
+      ${err ? ayuda(err, id + 'E') : niv ? `<p class="ds-helper" id="${id}H">${largo === 17 ? 'NIV completo · 17 caracteres' : `${largo} de 17 caracteres`}</p>` : ''}</div>`;
+  }
+  function htmlGuiado(a) {
+    const ps = propsGuiadas(a), datos = ps.filter((p) => p.tipo !== 4), docs = ps.filter((p) => p.tipo === 4);
+    // bloques por tipo de dato (sin metadatos nuevos): identificadores (serie, NIV, placas, motor), opciones de un toque, números y el resto
+    const ident = datos.filter((p) => p.tipo === 1 && esMayus(p.nombre));
+    const opciones = datos.filter((p) => p.tipo === 3 && p.valores.length <= 4);
+    const numeros = datos.filter((p) => p.tipo === 2);
+    const generales = datos.filter((p) => !ident.includes(p) && !opciones.includes(p) && !numeros.includes(p));
+    const bloque = (titulo, ps2, cls) => (ps2.length ? `<section class="cot-grupo"><h3 class="cot-grupo__t">${titulo}</h3><div class="cot-guiado${cls ? ' ' + cls : ''}">${ps2.map((p) => htmlCampoGuiado(a, p)).join('')}</div></section>` : '');
+    return `${bloque('Datos generales', generales)}
+      ${bloque('Especificaciones', opciones)}
+      ${bloque(numeros.some((p) => unidadDe(p.nombre) === 'km') ? 'Uso' : 'Medidas', numeros, 'cot-guiado--uno')}
+      ${bloque('Identificación', ident)}
+      ${docs.length ? `<section class="cot-grupo"><h3 class="cot-grupo__t">Lo que entrega el cliente</h3>
+        <div class="cot-docs__grid">${docs.map((p) => `<label class="ds-check"><input type="checkbox" id="cotProp${p.id}"${a.valores[p.id] === 'true' ? ' checked' : ''} /><span class="ds-check__wrap"><span class="ds-check__box"></span></span>${esc(p.nombre)}</label>`).join('')}</div></section>` : ''}`;
+  }
+
   /* ========== derecha paso 1: evaluación del artículo ========== */
   function htmlCampoProp(a, p) {
     const v = a.valores[p.id] || '';
@@ -322,7 +455,7 @@
     const cOk = carCompleta(a); const pOk = preCompleto(a);
     const vis = visibles(a);
     const car = `<div class="cot-sec">${seccion('car', T.car, T.carSub, cOk, st.secCar)}
-      ${st.secCar ? (vis.length ? `<div class="cot-grid3">${vis.map((p) => htmlCampoProp(a, p)).join('')}</div>` : `<p class="cot-caption">${T.carVacio}</p>`) : ''}
+      ${st.secCar ? (vis.length ? (esGuiado(a) ? htmlGuiado(a) : `<div class="cot-grid3">${vis.map((p) => htmlCampoProp(a, p)).join('')}</div>`) : `<p class="cot-caption">${T.carVacio}</p>`) : ''}
       ${st.secCar ? (a.notasAbiertas ? `<div class="ds-field cot-notas"><label class="ds-label" for="cotNotas">${T.notasLbl}<span class="ds-label__optional">${T.opcional}</span></label><textarea class="ds-textarea" id="cotNotas" rows="3">${esc(a.valores.notes || '')}</textarea></div>`
         : `<button class="ds-btn ds-btn--tertiary cot-link cot-link--sm" type="button" id="cotAddNotas">${ico('add', 20)}${T.notas}</button>`) : ''}</div>`;
     const e = estadoDe(a);
@@ -431,6 +564,7 @@
     if (!a) { der.className = 'cot-der cot-der--vacio'; der.innerHTML = `<p class="cot-caption">${T.vacioPanel}</p>`; return; }
     der.className = 'cot-der'; der.innerHTML = htmlEvaluacion(a);
   }
+  let refocando = false;   // pintar() devuelve el foco al mismo campo: no cuenta como "entrar" al campo
   function pintar(foco) {
     const activo = foco || (document.activeElement && document.activeElement.id);
     const pos = document.activeElement && 'selectionStart' in document.activeElement ? document.activeElement.selectionStart : null;
@@ -438,8 +572,10 @@
     const attr = !foco && ae && ['data-art', 'data-toggle-con', 'data-pl-toggle', 'data-sec', 'data-add-art'].find((k) => ae.hasAttribute && ae.hasAttribute(k));
     const sel = attr ? `[${attr}="${ae.getAttribute(attr)}"]` : null;
     pintarPasos(); pintarIzq(); pintarDer(); pintarBarra();
-    if (sel && document.querySelector(sel)) { document.querySelector(sel).focus(); return; }
+    refocando = true;
+    if (sel && document.querySelector(sel)) { document.querySelector(sel).focus(); refocando = false; return; }
     if (activo && $(activo)) { const f = $(activo); f.focus(); try { if (pos != null && f.setSelectionRange) f.setSelectionRange(pos, pos); } catch (e) { /* select */ } }
+    refocando = false;
   }
 
   /* ========== acciones ========== */
@@ -726,6 +862,41 @@
   izq.addEventListener('dragend', () => { if (st.arrastre) { st.arrastre = null; pintar(); } });
 
   // panel derecho
+  // kilometraje: actualiza casillas, slider y texto de ayuda sin repintar todo (para no perder el foco al arrastrar)
+  function pintarKm(pid, n, desde) {
+    const o = $('cotOdo' + pid); if (!o) return;
+    o.querySelector('.cot-odo__dig').innerHTML = odoDigitos(n); o.classList.toggle('is-vacio', n == null);
+    const r = $('cotOdoR' + pid); if (r && desde !== 'rango') { r.value = Math.min(n || 0, KM_MAX); }
+    if (r) { r.style.setProperty('--p', Math.min(100, ((n || 0) / KM_MAX) * 100) + '%'); r.setAttribute('aria-valuetext', (n || 0).toLocaleString('es-MX') + ' km'); }
+    const inp = $('cotProp' + pid); if (inp && desde !== 'in') inp.value = n == null ? '' : String(n);
+    const a = artSel(); const u = $('cotOdo' + pid + 'U'); if (a && u) u.innerHTML = usoHTML(a, n);
+  }
+  der.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-odo-paso]'); const a = artSel(); if (!b || !a) return;
+    const pid = b.dataset.pid, n = Math.min(999999, Math.max(0, (num(a.valores[pid]) || 0) + Number(b.dataset.odoPaso)));
+    a.valores[pid] = String(n); st.sucios.add(a.id + ':p' + pid); actualizarArt(a, b.id);
+  });
+  // DS ChoiceChip de una opción (role=radio): clic elige; ← → recorren el grupo
+  der.addEventListener('click', (e) => {
+    const c = e.target.closest('.ds-chip[data-prop]'); const a = artSel(); if (!c || !a) return;
+    a.valores[c.dataset.prop] = c.dataset.v; st.sucios.add(a.id + ':p' + c.dataset.prop); actualizarArt(a, c.id);
+  });
+  der.addEventListener('keydown', (e) => {
+    const c = e.target.closest('.ds-chip[data-prop]'); if (!c || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) return;
+    e.preventDefault();
+    const g = [...c.parentElement.querySelectorAll('.ds-chip[data-prop]')], k = g.indexOf(c) + (e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 1);
+    g[(k + g.length) % g.length].click();
+  });
+  // "Falta: Placas": lleva al campo (en las opciones de un toque, a la primera)
+  der.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-ir]'); if (!b) return;
+    const el = $('cotProp' + b.dataset.ir + 'R0') || $('cotProp' + b.dataset.ir);
+    if (el) { el.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); el.focus({ preventScroll: true }); }
+  });
+  // al salir del kilometraje se ve con separador de miles
+  der.addEventListener('focusout', (e) => { const t = e.target; if (t.dataset && t.dataset.miles !== undefined && t.dataset.odo === undefined && t.value) t.value = miles(t.value); });
+  der.addEventListener('focusin', (e) => { const t = e.target; if (t.dataset && t.dataset.miles !== undefined && t.value) t.value = t.value.replace(/[^0-9]/g, ''); if (t.dataset && t.dataset.odo && !t._sel && !refocando) { t._sel = true; requestAnimationFrame(() => { try { t.select(); } catch (er) { /* */ } }); } });
+  der.addEventListener('focusout', (e) => { if (e.target.dataset && e.target.dataset.odo) e.target._sel = false; });
   der.addEventListener('click', (e) => {
     const t = e.target.closest('button, [data-pl-toggle]'); if (!t) return;
     const a = artSel();
@@ -754,7 +925,11 @@
     const a = artSel(); const t = e.target;
     if (t.id === 'cotNotas' && a) { a.valores.notes = t.value; return; }
     if (!a || st.paso !== 1) return;
-    if (t.id.startsWith('cotProp') && t.type !== 'checkbox') { const pid = t.id.slice(7); a.valores[pid] = t.value; st.sucios.add(a.id + ':p' + pid); if (t.tagName === 'SELECT') actualizarArt(a, t.id); else { clearTimeout(t._r); t._r = setTimeout(() => actualizarArt(a, t.id), 300); } return; }
+    if (t.dataset.mayus !== undefined) { const c0 = t.selectionStart; t.value = t.value.toUpperCase(); try { t.setSelectionRange(c0, c0); } catch (er) { /* sin cursor */ } }
+    if (t.dataset.placa !== undefined) { const pl = t.closest('.cot-placa'); if (pl) pl.classList.toggle('is-vacio', !t.value); }
+    if (t.dataset.odo) { const nn = Number(t.value.replace(/[^0-9]/g, '')) || 0; pintarKm(t.dataset.odo, t.value ? nn : null, 'in'); }
+    if (t.dataset.odoRango && a) { const pid = t.dataset.odoRango; a.valores[pid] = t.value; st.sucios.add(a.id + ':p' + pid); pintarKm(pid, Number(t.value), 'rango'); clearTimeout(t._r); t._r = setTimeout(() => actualizarArt(a, t.id), 250); return; }
+    if (t.id.startsWith('cotProp') && t.type !== 'checkbox') { const pid = t.id.slice(7); a.valores[pid] = t.dataset.miles !== undefined ? t.value.replace(/[^0-9]/g, '') : t.value; st.sucios.add(a.id + ':p' + pid); if (t.tagName === 'SELECT') actualizarArt(a, t.id); else { clearTimeout(t._r); t._r = setTimeout(() => actualizarArt(a, t.id), 300); } return; }
     if (t.id === 'cotEstado') { a.estado = t.value; st.sucios.add(a.id + ':estado'); actualizarArt(a, t.id); return; }
     if (t.id === 'cotAvaluo' || t.id === 'cotPrestamo') {
       const k = t.id === 'cotAvaluo' ? 'avaluo' : 'prestamo'; a[k] = num(t.value); st.sucios.add(a.id + ':' + k);
@@ -816,6 +991,15 @@
     const c2 = nuevoContrato('00002'); c2.articulos.push(listo(601, { 11: 'Samsung', 12: 'true', 14: 'UN55', 15: 'SN12345' }, 2, 6000, 3000));
     st.contratos = [c1, c2]; seleccionarArticulo(c1.articulos[0].id);
   }
+  function ejemploAuto() {
+    reiniciar();
+    const cat = catDe(701);
+    const a = { id: 'ej-701-' + Math.random().toString(36).slice(2, 6), catId: 701, nombre: cat.nombre, ruta: cat.ruta, tipo: cat.tipo, props: SRV.propiedades(cat),
+      valores: { 23: '2020', 25: 'Automática', 28: '45000', 32: 'true', 33: 'true', 37: 'true', 34: 'false', 35: 'false', 36: 'false', 38: 'false' },
+      estados: ESTADOS, estado: '', avaluo: null, prestamo: null, venta: null, terminos: 0, notasAbiertas: false };
+    const c1 = nuevoContrato('00001'); c1.articulos.push(a);
+    st.contratos = [c1]; seleccionarArticulo(a.id);
+  }
   $('protoBusqueda').addEventListener('change', (e) => { proto.busqueda = e.target.value; });
   $('protoValida').addEventListener('change', (e) => { proto.valida = e.target.value; });
   $('protoLegal').addEventListener('change', (e) => { proto.legal = e.target.value; });
@@ -824,6 +1008,7 @@
     const k = b.dataset.proto;
     if (k === 'vacio') reiniciar();
     if (k === 'ejemplo') ejemplo();
+    if (k === 'auto') ejemploAuto();
     if (k === 'plazos') { ejemplo(); st.paso = 2; st.selContrato = '00001'; }
     if (k === 'sincar') { if (st.paso === 2) st.paso = 1; const cat = catDe(605); const n = nuevoContrato(siguienteId()); n.articulos.push({ id: 'ej-605-' + Date.now().toString(36), catId: 605, nombre: cat.nombre, ruta: cat.ruta, tipo: 'general', props: [], valores: {}, estados: ESTADOS, estado: '', avaluo: null, prestamo: null, venta: null, terminos: 0, notasAbiertas: false }); st.contratos.push(n); seleccionarArticulo(n.articulos[0].id); }
     pintar();
@@ -834,6 +1019,7 @@
   const borrador = leerBorrador();
   if (borrador) { Object.assign(st, borrador); asegurarSeleccion(); }
   else if (params.get('paso') === '2') { ejemplo(); st.paso = 2; st.selContrato = '00001'; }
+  else if (params.get('ejemplo') === 'auto') ejemploAuto();
   else if (params.get('ejemplo')) ejemplo();
   pintar();
 })();

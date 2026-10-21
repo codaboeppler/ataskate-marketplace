@@ -42,6 +42,10 @@
     correo: '<path d="M4 20c-.55 0-1.02-.2-1.41-.59A1.93 1.93 0 012 18V6c0-.55.2-1.02.59-1.41C2.98 4.2 3.45 4 4 4h16c.55 0 1.02.2 1.41.59.39.39.59.86.59 1.41v12c0 .55-.2 1.02-.59 1.41-.39.39-.86.59-1.41.59H4zm8-7L4 8v10h16V8l-8 5zm0-2l8-5H4l8 5z" fill="currentColor"/>',
     whatsapp: '<path d="M12.04 2a9.93 9.93 0 00-8.6 14.9L2 22l5.25-1.38A9.94 9.94 0 1012.04 2zm0 18.17c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.26 8.26 0 1115.29-4.4 8.25 8.25 0 01-8.3 8.26zm4.53-6.18c-.25-.12-1.47-.72-1.7-.8-.23-.09-.39-.13-.56.12-.16.25-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.6.19 1.13.16 1.56.1.47-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.22-.16-.47-.28z" fill="currentColor"/>',
     borrar: '<path d="M7 21c-.55 0-1.02-.2-1.41-.59A1.93 1.93 0 015 19V6H4V4h5V3h6v1h5v2h-1v13c0 .55-.2 1.02-.59 1.41-.39.39-.86.59-1.41.59H7zM17 6H7v13h10V6zM9 17h2V8H9v9zm4 0h2V8h-2v9z" fill="currentColor"/>',
+    zoom: '<path d="M19.6 21l-6.3-6.3A6.5 6.5 0 119.5 16c-1.6 0-3-.5-4.2-1.4L19.6 21zM9.5 14a4.5 4.5 0 100-9 4.5 4.5 0 000 9zM8.5 12V10.5H7v-2h1.5V7h2v1.5H12v2h-1.5V12h-2z" fill="currentColor"/>',
+    fotos: '<path d="M9 14h10l-3.45-4.5-2.3 3-1.55-2L9 14zm-1 4c-.55 0-1.02-.2-1.41-.59A1.93 1.93 0 016 16V4c0-.55.2-1.02.59-1.41C6.98 2.2 7.45 2 8 2h12c.55 0 1.02.2 1.41.59.39.39.59.86.59 1.41v12c0 .55-.2 1.02-.59 1.41-.39.39-.86.59-1.41.59H8zm0-2h12V4H8v12zm-4 6c-.55 0-1.02-.2-1.41-.59A1.93 1.93 0 012 20V6h2v14h14v2H4z" fill="currentColor"/>',
+    izq: '<path d="M14 18l-6-6 6-6 1.4 1.4-4.6 4.6 4.6 4.6L14 18z" fill="currentColor"/>',
+    der: '<path d="M9.4 18L8 16.6l4.6-4.6L8 7.4 9.4 6l6 6-6 6z" fill="currentColor"/>',
     abajo: '<path d="M12 16l-6-6 1.4-1.4 4.6 4.6 4.6-4.6L18 10l-6 6z" fill="currentColor"/>',
     huella: '<path d="M17.81 4.47c-.08 0-.16-.02-.23-.06C15.66 3.42 14 3 12.01 3c-1.98 0-3.86.47-5.57 1.41-.24.13-.54.04-.68-.2a.506.506 0 01.2-.68C7.82 2.52 9.86 2 12.01 2c2.13 0 3.99.47 6.03 1.52.25.13.34.43.21.67a.49.49 0 01-.44.28zM3.5 9.72a.499.499 0 01-.41-.79c.99-1.4 2.25-2.5 3.75-3.27C9.98 4.04 14 4.03 17.15 5.65c1.5.77 2.76 1.86 3.75 3.25a.5.5 0 01-.12.7c-.23.16-.54.11-.7-.12a9.388 9.388 0 00-3.39-2.94c-2.87-1.47-6.54-1.47-9.4.01-1.36.7-2.5 1.7-3.4 2.96-.08.14-.23.21-.39.21zm6.25 12.07a.47.47 0 01-.35-.15c-.87-.87-1.34-1.43-2.01-2.64-.69-1.23-1.05-2.73-1.05-4.34 0-2.97 2.54-5.39 5.66-5.39s5.66 2.42 5.66 5.39c0 .28-.22.5-.5.5s-.5-.22-.5-.5c0-2.42-2.09-4.39-4.66-4.39-2.57 0-4.66 1.97-4.66 4.39 0 1.44.32 2.77.93 3.85.64 1.15 1.08 1.64 1.85 2.42.19.2.19.51 0 .71-.11.1-.24.15-.37.15zm7.17-1.85c-1.19 0-2.24-.3-3.1-.89-1.49-1.01-2.38-2.65-2.38-4.39 0-.28.22-.5.5-.5s.5.22.5.5c0 1.41.72 2.74 1.94 3.56.71.48 1.54.71 2.54.71.24 0 .64-.03 1.04-.1.27-.05.53.13.58.41.05.27-.13.53-.41.58-.57.11-1.07.12-1.21.12z" fill="currentColor"/>',
   };
@@ -127,7 +131,11 @@
     return `<svg class="cf-barras" viewBox="0 0 ${x} 40" preserveAspectRatio="none" aria-hidden="true">${h}</svg>`;
   };
   const logo = (cls) => `<span class="${cls}" aria-hidden="true">${esc(iniciales(EMPRESA.comercial).slice(0, 1))}</span>`;
-  const imgArt = (a, cls) => a.imagen ? `<img class="${cls}" src="${esc(a.imagen)}" alt="" />` : `<span class="${cls} cf-sinfoto" aria-hidden="true">${esc(iniciales(a.nombre))}</span>`;
+  /* fotos de la prenda: una prenda puede tener varias (a.fotos = [{src, etiqueta}]); a.imagen queda como respaldo */
+  const fotosDe = (a) => (Array.isArray(a.fotos) && a.fotos.length ? a.fotos : a.imagen ? [{ src: a.imagen, etiqueta: 'Vista general' }] : []);
+  const imgArt = (a, cls) => { const f = fotosDe(a)[0]; return f ? `<img class="${cls}" src="${esc(f.src)}" alt="" />` : `<span class="${cls} cf-sinfoto" aria-hidden="true">${esc(iniciales(a.nombre))}</span>`; };
+  const galId = (folio, k) => 'cfg-' + String(folio).replace(/[^A-Za-z0-9-]/g, '') + '-' + k;
+  const nFotos = (a, id) => { const n = fotosDe(a).length; return n > 1 ? `<button type="button" class="ds-btn ds-btn--link ds-btn--sm cf-nfotos" data-cf-fotos-de="${id}" aria-label="Ver las ${n} fotos de ${esc(a.nombre)}">${ic('fotos', 14)}${n} fotos</button>` : ''; };
   const describe = (a) => [a.ruta && a.ruta.length ? a.ruta[a.ruta.length - 1] : '', a.caracteristicas].filter(Boolean).join(' · ');
 
   function seccion(id, titulo, cuerpo) {
@@ -136,6 +144,90 @@
   function tabla(cabs, filas, cls) {
     return `<div class="cf-tabla-wrap"><table class="cf-tabla${cls ? ' ' + cls : ''}"><thead><tr>${cabs.map((c) => `<th scope="col">${c}</th>`).join('')}</tr></thead>
       <tbody>${filas.map((f) => `<tr>${f.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  }
+
+  /* galería de una prenda: foto principal grande (abre el visor), datos de la prenda y miniaturas que cambian la principal */
+  function galeriaHTML(a, k, id) {
+    const fs = fotosDe(a), f0 = fs[0];
+    const datos = `<dl class="cf-gal__datos"><div><dt>Estado</dt><dd>${esc(a.estado || '—')}</dd></div><div><dt>Avalúo</dt><dd>${mxn(a.avaluo)}</dd></div><div><dt>Préstamo</dt><dd>${mxn(a.prestamo)}</dd></div></dl>`;
+    if (!f0) return `<div class="cf-gal cf-gal--vacia" id="${id}"><span class="cf-gal__main cf-sinfoto" aria-hidden="true">${esc(iniciales(a.nombre))}</span>
+      <div class="cf-gal__lado"><p class="cf-gal__n">Prenda ${k + 1} · ${esc(a.nombre)}</p><p class="cf-gal__d">${esc(describe(a) || 'Sin características')}</p>${datos}<p class="cf-gal__etq">Sin fotografías: no se tomaron al cotizar.</p></div></div>`;
+    return `<div class="cf-gal" id="${id}" data-nombre="${esc(a.nombre)}" data-i="0">
+      <button type="button" class="cf-gal__main" data-cf-visor aria-label="Ampliar las fotos de ${esc(a.nombre)}">
+        <img src="${esc(f0.src)}" alt="${esc(a.nombre)}: ${esc(f0.etiqueta || 'foto 1')}" />
+        ${fs.length > 1 ? `<span class="ds-tag ds-tag--gris cf-gal__cont" aria-hidden="true">1 / ${fs.length}</span>` : ''}
+        <span class="ds-tag ds-tag--blanco cf-gal__zoom" aria-hidden="true">${ic('zoom', 16)}Ampliar</span>
+      </button>
+      <div class="cf-gal__lado">
+        <p class="cf-gal__n">Prenda ${k + 1} · ${esc(a.nombre)}</p>
+        <p class="cf-gal__d">${esc(describe(a) || 'Sin características')}</p>
+        ${datos}
+        <p class="cf-gal__etq" aria-live="polite"><b>Foto 1 de ${fs.length}</b> · ${esc(f0.etiqueta || 'Vista general')}</p>
+        ${fs.length > 1 ? `<div class="cf-gal__thumbs" role="group" aria-label="Fotos de ${esc(a.nombre)}">${fs.map((f, i) =>
+          `<button type="button" class="cf-gal__th" data-cf-foto="${i}" data-src="${esc(f.src)}" data-etq="${esc(f.etiqueta || 'Foto ' + (i + 1))}" aria-pressed="${i === 0}" aria-label="Foto ${i + 1} de ${fs.length}: ${esc(f.etiqueta || '')}"><img src="${esc(f.src)}" alt="" /><span>${esc(f.etiqueta || 'Foto ' + (i + 1))}</span></button>`).join('')}</div>` : ''}
+      </div>
+    </div>`;
+  }
+  const fotosGal = (gal) => {
+    const th = [...gal.querySelectorAll('.cf-gal__th')];
+    if (th.length) return th.map((b) => ({ src: b.dataset.src, etiqueta: b.dataset.etq }));
+    const im = gal.querySelector('.cf-gal__main img');
+    return im ? [{ src: im.getAttribute('src'), etiqueta: '' }] : [];
+  };
+  function mostrarFoto(gal, i) {
+    const fs = fotosGal(gal); if (!fs.length) return;
+    i = (i + fs.length) % fs.length; gal.dataset.i = String(i);
+    const f = fs[i], im = gal.querySelector('.cf-gal__main img');
+    im.src = f.src; im.alt = gal.dataset.nombre + ': ' + (f.etiqueta || 'foto ' + (i + 1));
+    const ct = gal.querySelector('.cf-gal__cont'); if (ct) ct.textContent = (i + 1) + ' / ' + fs.length;
+    gal.querySelector('.cf-gal__etq').innerHTML = `<b>Foto ${i + 1} de ${fs.length}</b> · ${esc(f.etiqueta || '')}`;
+    gal.querySelectorAll('.cf-gal__th').forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
+  }
+  /* visor a pantalla completa (encima del modal): flechas, miniaturas, teclado (← → Esc) y deslizar con el dedo */
+  let visor = null, visorPrevio = null;
+  function abrirVisor(gal, i) {
+    const fs = fotosGal(gal); if (!fs.length || !capa) return;
+    cerrarVisor(true);
+    visorPrevio = document.activeElement;
+    visor = document.createElement('div');
+    visor.className = 'cf-visor';
+    visor.setAttribute('role', 'dialog'); visor.setAttribute('aria-modal', 'true'); visor.setAttribute('aria-label', 'Fotos de ' + gal.dataset.nombre);
+    const varias = fs.length > 1;
+    visor.innerHTML = `<div class="cf-visor__top"><div><p class="cf-visor__n">${esc(gal.dataset.nombre)}</p><p class="cf-visor__etq" aria-live="polite"></p></div>
+        <button type="button" class="ds-btn ds-btn--secondary ds-btn--icon-md cf-visor__x" data-v="cerrar" aria-label="Cerrar visor">${ic('close', 24)}</button></div>
+      <div class="cf-visor__escena">
+        ${varias ? `<button type="button" class="ds-btn ds-btn--secondary ds-btn--icon-lg cf-visor__nav" data-v="ant" aria-label="Foto anterior">${ic('izq', 28)}</button>` : ''}
+        <img class="cf-visor__img" alt="" draggable="false" />
+        ${varias ? `<button type="button" class="ds-btn ds-btn--secondary ds-btn--icon-lg cf-visor__nav" data-v="sig" aria-label="Foto siguiente">${ic('der', 28)}</button>` : ''}
+      </div>
+      ${varias ? `<div class="cf-visor__tira" role="group" aria-label="Miniaturas">${fs.map((f, k) => `<button type="button" class="cf-visor__th" data-v="ir" data-k="${k}" aria-label="Foto ${k + 1}: ${esc(f.etiqueta || '')}"><img src="${esc(f.src)}" alt="" /></button>`).join('')}</div>` : ''}`;
+    capa.appendChild(visor);
+    const pintarV = (k) => {
+      k = (k + fs.length) % fs.length; visor.dataset.i = String(k);
+      const im = visor.querySelector('.cf-visor__img'); im.src = fs[k].src; im.alt = gal.dataset.nombre + ': ' + (fs[k].etiqueta || 'foto ' + (k + 1));
+      visor.querySelector('.cf-visor__etq').textContent = `Foto ${k + 1} de ${fs.length}${fs[k].etiqueta ? ' · ' + fs[k].etiqueta : ''}`;
+      visor.querySelectorAll('.cf-visor__th').forEach((b, n) => b.setAttribute('aria-current', String(n === k)));
+      mostrarFoto(gal, k);   // al cerrar, la galería del contrato queda en la misma foto
+    };
+    visor.mover = (d) => pintarV(Number(visor.dataset.i) + d);
+    visor.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-v]');
+      if (!b) { if (e.target === visor || e.target.classList.contains('cf-visor__escena')) cerrarVisor(); return; }
+      if (b.dataset.v === 'cerrar') cerrarVisor();
+      if (b.dataset.v === 'ant') visor.mover(-1);
+      if (b.dataset.v === 'sig') visor.mover(1);
+      if (b.dataset.v === 'ir') pintarV(Number(b.dataset.k));
+    });
+    let x0 = null;
+    visor.addEventListener('pointerdown', (e) => { if (e.target.classList.contains('cf-visor__img')) x0 = e.clientX; });
+    visor.addEventListener('pointerup', (e) => { if (x0 != null && varias && Math.abs(e.clientX - x0) > 40) visor.mover(e.clientX < x0 ? 1 : -1); x0 = null; });
+    pintarV(i || 0);
+    visor.querySelector('[data-v="cerrar"]').focus();
+  }
+  function cerrarVisor(sinFoco) {
+    if (!visor) return;
+    visor.remove(); visor = null;
+    if (!sinFoco && visorPrevio && document.contains(visorPrevio)) visorPrevio.focus();
   }
 
   /* contrato completo: 14 secciones en el orden por defecto de HU-IN-374 y el anexo fotográfico */
@@ -164,7 +256,7 @@
         c.pagos.map((p) => [p.opc, p.fecha, mxn(p.mutuo), mxn(p.interes), mxn(p.almacenaje), mxn(p.iva), `<b>${mxn(p.refrendo)}</b>`, `<b>${mxn(p.desempeno)}</b>`]), 'cf-tabla--num')
         + '<p class="cf-nota">Después de la fecha límite se cobran intereses moratorios conforme a la cláusula de desempeño extemporáneo.</p>'),
       seccion('prenda', 'Tabla de la prenda', tabla(['Prenda', 'Descripción y características', 'Estado', 'Avalúo', 'Préstamo', '% Préstamo / avalúo'],
-        c.articulos.map((a) => [`<span class="cf-prenda">${imgArt(a, 'cf-prenda__img')}<b>${esc(a.nombre)}</b></span>`, esc(describe(a) || '—'), esc(a.estado || '—'), mxn(a.avaluo), mxn(a.prestamo), (a.avaluo ? (a.prestamo / a.avaluo * 100).toFixed(0) : '—') + ' %'])
+        c.articulos.map((a, k) => [`<span class="cf-prenda">${imgArt(a, 'cf-prenda__img')}<span><b>${esc(a.nombre)}</b>${nFotos(a, galId(c.folio, k))}</span></span>`, esc(describe(a) || '—'), esc(a.estado || '—'), mxn(a.avaluo), mxn(a.prestamo), (a.avaluo ? (a.prestamo / a.avaluo * 100).toFixed(0) : '—') + ' %'])
           .concat([[`<b>Total · ${c.articulos.length} ${c.articulos.length === 1 ? 'prenda' : 'prendas'}</b>`, '', '', `<b>${mxn(c.avaluo)}</b>`, `<b>${mxn(c.prestamo)}</b>`, (c.avaluo ? (c.prestamo / c.avaluo * 100).toFixed(0) : '—') + ' %']]), 'cf-tabla--prenda')),
     ];
     /* hoja de la tabla de amortización: todos los periodos hasta el último refrendo permitido */
@@ -179,7 +271,7 @@
       <p class="cf-nota cf-amort__mxn">Importes en pesos mexicanos (MXN).</p>
       ${tabla(['No.', 'Fecha de pago', 'Saldo insoluto', 'Interés', 'Almacenaje', 'IVA', 'Pago para refrendar', 'Pago para desempeñar', 'Refrendos pagados acumulados', 'Concepto'],
         A.map((x) => [x.n, `${esc(x.fecha)}<small>${x.dias} días</small>`, num(x.saldo), num(x.interes), num(x.almacenaje), num(x.iva), `<b>${num(x.refrendo)}</b>`, `<b>${num(x.desempeno)}</b>`, num(x.pagado),
-          x.nota ? `<span class="cf-amort__nota${x.n === primerLimite ? ' is-limite' : ''}">${esc(x.nota)}</span>` : (x.fin ? '' : 'Pago parcial del periodo')])
+          x.nota ? `<span class="ds-tag ${x.n === primerLimite ? 'ds-tag--amarillo' : 'ds-tag--gris'} cf-amort__nota">${esc(x.nota)}</span>` : (x.fin ? '' : 'Pago parcial del periodo')])
           .concat([['<b>Totales</b>', `${c.refrendosMax} periodos`, '', `<b>${num(c.totales.interes)}</b>`, `<b>${num(c.totales.almacenaje)}</b>`, `<b>${num(c.totales.iva)}</b>`, `<b>${num(c.totales.refrendos)}</b>`, '', `<b>${num(c.totales.refrendos)}</b>`, 'Si refrenda en cada fecha límite']]), 'cf-tabla--num cf-tabla--amort')}
       <p class="cf-nota">Supone que EL CONSUMIDOR paga cada refrendo en su fecha límite y no hace abonos a capital: el saldo insoluto se mantiene en ${mxn(c.prestamo)}. Un abono a capital reduce el saldo y los cargos de los periodos siguientes. Si paga después de la fecha límite se cobran intereses moratorios. Para desempeñar en cualquier fecha se paga la columna "Pago para desempeñar" de esa fecha.</p>`);
     const firmaCli = firma
@@ -196,7 +288,7 @@
       seccion('qr', '', `<div class="cf-qr"><span class="cf-qr__c" role="img" aria-label="Código QR para pagar en línea">${QR}</span><div><p class="cf-qr__t">Refrenda o desempeña en línea</p><p>Escanea el código, crea tu perfil en ${esc(E.web)} y paga fácil.</p></div></div>`),
       seccion('redes', '', `<p class="cf-redes">Síguenos <span>Facebook ${esc(E.redes)}</span><span>Instagram ${esc(E.redes)}</span></p>`),
       seccion('anexo', 'Anexo 1 · Fotografías de la prenda', `<p class="cf-nota">Fotografías tomadas al cotizar el empeño. Forman parte de este contrato e identifican la prenda que queda en garantía.</p>
-        <div class="cf-fotos">${c.articulos.map((a, k) => `<figure class="cf-foto">${imgArt(a, 'cf-foto__img')}<figcaption><b>${k + 1}. ${esc(a.nombre)}</b><small>${esc(describe(a) || 'Sin características')} · Avalúo ${mxn(a.avaluo)}</small></figcaption></figure>`).join('')}</div>`),
+        ${c.articulos.map((a, k) => galeriaHTML(a, k, galId(c.folio, k))).join('')}`),
     ];
     const hojas = [hoja1.join(''), amort, hoja2.join('')];
     return hojas.map((h, i) => `<article class="cf-hoja${i === 1 ? ' cf-hoja--ancha' : ''}" aria-label="Contrato ${esc(c.folio)}, hoja ${i + 1} de ${hojas.length}">${h}<p class="cf-hoja__pie">Hoja ${i + 1} de ${hojas.length} · Contrato ${esc(c.folio)}</p></article>`).join('');
@@ -213,7 +305,7 @@
       <div class="tk-meta"><span>${esc(c.fecha)} · ${esc(c.hora)}</span><span>${esc(c.caja)}</span><span>Op. ${esc(c.operacion || '—')}</span></div>
       <section class="tk-bloque"><h4>Cliente</h4><p><b>${esc(cli.nombre)}</b></p><p>NUC ${esc(nucDe(cli))} · INE •••• ${esc(String(cli.nuc || '0000').replace(/\D/g, '').slice(-4))}</p></section>
       <section class="tk-bloque"><h4>Prendas (${c.articulos.length})</h4>
-        ${c.articulos.map((a) => `<div class="tk-prenda">${imgArt(a, 'tk-prenda__img')}<div><b>${esc(a.nombre)}</b><small>${esc(describe(a) || '—')}${a.estado ? ' · ' + esc(a.estado) : ''}</small><div class="tk-fila"><span>Avalúo ${mxn(a.avaluo)}</span><span>Préstamo ${mxn(a.prestamo)}</span></div></div></div>`).join('')}
+        ${c.articulos.map((a) => `<div class="tk-prenda">${imgArt(a, 'tk-prenda__img')}<div><b>${esc(a.nombre)}</b>${fotosDe(a).length > 1 ? `<small>${fotosDe(a).length} fotos en el contrato</small>` : ''}<small>${esc(describe(a) || '—')}${a.estado ? ' · ' + esc(a.estado) : ''}</small><div class="tk-fila"><span>Avalúo ${mxn(a.avaluo)}</span><span>Préstamo ${mxn(a.prestamo)}</span></div></div></div>`).join('')}
       </section>
       <div class="tk-monto"><small>Préstamo entregado</small><b>${mxn(c.prestamo)} <i>MXN</i></b><span>Plazo ${esc(c.plazo.nombre)} · ${c.plazo.pct} % · vence el <b>${esc(c.fechaLimite)}</b></span></div>
       <div class="tk-dos"><div><small>Para refrendar</small><b>${mxn(c.refrendo)}</b></div><div><small>Para desempeñar</small><b>${mxn(c.desempeno)}</b></div></div>
@@ -241,9 +333,13 @@
   const enfocables = (box) => [...box.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), a[href], [tabindex="0"], canvas')].filter((x) => x.offsetParent !== null);
   function teclas(e) {
     if (!capa) return;
+    if (visor) {
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); cerrarVisor(); return; }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); visor.mover(e.key === 'ArrowLeft' ? -1 : 1); return; }
+    }
     if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); cerrar(); return; }
     if (e.key !== 'Tab') return;
-    const box = capa.querySelector('.cf-modal'), f = enfocables(box);
+    const box = visor || capa.querySelector('.cf-modal'), f = enfocables(box);
     if (!f.length) { e.preventDefault(); box.focus(); return; }
     const i = f.indexOf(document.activeElement);
     if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
@@ -254,22 +350,31 @@
     cerrar(true);
     alCerrarCapa = alCerrar || null;
     capa = document.createElement('div');
-    capa.className = 'cf-ov';
-    capa.innerHTML = `<div class="cf-modal ${clase || ''}" role="dialog" aria-modal="true" aria-labelledby="cfTitulo" ${sub ? 'aria-describedby="cfSub"' : ''} tabindex="-1">
-        <header class="cf-modal__head"><div><h2 id="cfTitulo">${titulo}</h2>${sub ? `<p id="cfSub">${sub}</p>` : ''}</div>
+    capa.className = 'ds-modal-overlay cf-ov';
+    capa.innerHTML = `<div class="ds-modal cf-modal ${clase || ''}" role="dialog" aria-modal="true" aria-labelledby="cfTitulo" ${sub ? 'aria-describedby="cfSub"' : ''} tabindex="-1">
+        <header class="ds-modal__header cf-modal__head"><div><h2 class="ds-modal__title" id="cfTitulo">${titulo}</h2>${sub ? `<p id="cfSub">${sub}</p>` : ''}</div>
           <button class="ds-btn ds-btn--tertiary ds-btn--icon-md cf-x" type="button" data-cf="cerrar" aria-label="Cerrar">${ic('close', 24)}</button></header>
-        <div class="cf-modal__body">${cuerpo}</div>
-        ${pie ? `<footer class="cf-modal__pie">${pie}</footer>` : ''}
+        <div class="ds-modal__body cf-modal__body">${cuerpo}</div>
+        ${pie ? `<footer class="ds-modal__footer cf-modal__pie">${pie}</footer>` : ''}
       </div>`;
     document.body.appendChild(capa);
     document.documentElement.classList.add('cf-abierto');
     document.addEventListener('keydown', teclas, true);
     capa.addEventListener('mousedown', (e) => { if (e.target === capa) cerrar(); });
     capa.querySelector('[data-cf="cerrar"]').addEventListener('click', () => cerrar());
+    capa.addEventListener('click', (e) => {
+      const th = e.target.closest('[data-cf-foto]');
+      if (th) { mostrarFoto(th.closest('.cf-gal'), Number(th.dataset.cfFoto)); return; }
+      const m = e.target.closest('[data-cf-visor]');
+      if (m) { const g = m.closest('.cf-gal'); abrirVisor(g, Number(g.dataset.i) || 0); return; }
+      const ch = e.target.closest('[data-cf-fotos-de]');
+      if (ch) { const g = capa.querySelector('#' + ch.dataset.cfFotosDe); if (g) abrirVisor(g, 0); }
+    });
     return capa.querySelector('.cf-modal');
   }
   function cerrar(sinFoco) {
     if (!capa) return;
+    cerrarVisor(true);
     capa.remove(); capa = null;
     document.documentElement.classList.remove('cf-abierto');
     document.removeEventListener('keydown', teclas, true);
@@ -342,7 +447,7 @@
     const idx = contratos.indexOf(c);
     const st = { leido: false, acepta: false, pad: null };
     const selector = contratos.length > 1 ? `<div class="cf-contratos" role="group" aria-label="Contratos de esta transacción">${contratos.map((x, i) =>
-      `<button type="button" class="ds-chip ds-chip--choice${x === c ? ' is-on' : ''}" data-cf="contrato" data-folio="${esc(x.folio)}" aria-pressed="${x === c}">${esc(x.folio)}${firmaDe(recibo, x.folio) ? ' · firmado' : ''}</button>`).join('')}</div>` : '';
+      `<button type="button" class="ds-chip ds-chip--choice${x === c ? ' ds-chip--on' : ''}" data-cf="contrato" data-folio="${esc(x.folio)}" aria-pressed="${x === c}">${esc(x.folio)}${firmaDe(recibo, x.folio) ? ' · firmado' : ''}</button>`).join('')}</div>` : '';
     const box = abrir({
       clase: 'cf-modal--firma',
       titulo: 'Firmar contrato',
@@ -351,7 +456,7 @@
           <div class="cf-doc" tabindex="0" aria-label="Contrato para leer. Desplázate hasta el final." id="cfDoc">${selector}${contratoHTML(c, null)}</div>
           <aside class="cf-panel" aria-label="Firma del cliente">
             <section class="cf-paso" id="cfPasoLeer">
-              <div class="cf-paso__head"><span class="cf-num" aria-hidden="true">1</span><h3>Lee el contrato con el cliente</h3></div>
+              <div class="cf-paso__head"><span class="ds-badge ds-badge--brand cf-num" aria-hidden="true">1</span><h3>Lee el contrato con el cliente</h3></div>
               <div class="ds-progress" role="progressbar" aria-label="Lectura del contrato" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="cfProg"><div class="ds-progress__bar" style="width:0%"></div></div>
               <p class="cf-ayuda" id="cfLeerTxt">Desplázate hasta el final del contrato.</p>
               <button type="button" class="ds-btn ds-btn--tertiary ds-btn--sm cf-ir" data-cf="final">${ic('abajo', 16)}Ir al final</button>
@@ -364,16 +469,16 @@
               <div><dt>Prendas</dt><dd>${c.articulos.length}</dd></div>
             </dl>
             <section class="cf-paso">
-              <div class="cf-paso__head"><span class="cf-num" aria-hidden="true">2</span><h3>Acepta los términos</h3></div>
+              <div class="cf-paso__head"><span class="ds-badge ds-badge--brand cf-num" aria-hidden="true">2</span><h3>Acepta los términos</h3></div>
               <label class="ds-check cf-acepta"><input type="checkbox" id="cfAcepta" /><span class="ds-check__wrap"><span class="ds-check__box"></span></span><span class="ds-check__text">${esc(c.cliente.nombre)} leyó el contrato, recibió la explicación del préstamo y acepta sus términos.</span></label>
             </section>
             <section class="cf-paso">
-              <div class="cf-paso__head"><span class="cf-num" aria-hidden="true">3</span><h3 id="cfFirmaT">Firma del cliente</h3>
+              <div class="cf-paso__head"><span class="ds-badge ds-badge--brand cf-num" aria-hidden="true">3</span><h3 id="cfFirmaT">Firma del cliente</h3>
                 <button type="button" class="ds-btn ds-btn--tertiary ds-btn--sm cf-borrar" data-cf="borrar" disabled>${ic('borrar', 16)}Borrar</button></div>
               <div class="cf-pad"><canvas id="cfPad" aria-labelledby="cfFirmaT" aria-describedby="cfPadAyuda" role="img"></canvas><span class="cf-pad__x" aria-hidden="true">✕</span><span class="cf-pad__l" aria-hidden="true"></span><span class="cf-pad__ph" aria-hidden="true">Firma aquí con el dedo o la pluma</span></div>
               <p class="cf-ayuda" id="cfPadAyuda">${esc(c.cliente.nombre)} firma dentro del recuadro.</p>
             </section>
-            <p class="cf-falta" id="cfFalta" aria-live="polite"></p>
+            <div class="ds-alert ds-alert--warning cf-falta" id="cfFaltaBox" aria-live="polite"><div class="ds-alert__body-wrap"><p class="ds-alert__body" id="cfFalta"></p></div></div>
           </aside>
         </div>`,
       pie: `<button type="button" class="ds-btn ds-btn--md ds-btn--tertiary" data-cf="cerrar2">Firmar después</button>
@@ -386,7 +491,8 @@
       const f = faltan();
       btn.disabled = f.length > 0;
       $('cfFalta').textContent = f.length ? 'Para firmar falta: ' + f.join(', ') + '.' : 'Todo listo para firmar.';
-      $('cfFalta').classList.toggle('is-ok', !f.length);
+      $('cfFaltaBox').classList.toggle('ds-alert--warning', f.length > 0);
+      $('cfFaltaBox').classList.toggle('ds-alert--success', !f.length);
       box.querySelector('[data-cf="borrar"]').disabled = !st.pad || st.pad.vacia();
       box.querySelector('.cf-pad').classList.toggle('is-firmado', !!st.pad && !st.pad.vacia());
     };

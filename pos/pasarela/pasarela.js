@@ -35,11 +35,13 @@
   const MUESTRA_EMPENO = {
     cliente: { nuc: 'NUC-204381', nombre: 'Valentina López', telefono: '5512345678', correo: 'valentina.lopez@ejemplo.com' },
     items: [
-      { id: 'e1', tipo: 'empeno', contrato: '000124', titulo: 'Empeño · 2 artículos', detalle: 'Contrato IZT-000124 · Plazo Mensual (6.5%)', plazo: 'Mensual', monto: -13000, imagen: '../assets/inventario/anillo.png',
+      { id: 'e1', tipo: 'empeno', contrato: '000124', titulo: 'Empeño · 2 artículos', detalle: 'Contrato IZT-000124 · Plazo Mensual (6.5%)', plazo: 'Mensual', monto: -13000, imagen: 'assets/prendas/anillo-1-general.jpg',
         cotitulares: ['Ricardo López Ejemplo'],
         articulos: [
-          { nombre: 'Anillo de oro', ruta: ['Joyas y relojes', 'Joyería', 'Oro'], caracteristicas: '14K · 12 g · accesorios 2 g', estado: 'Excelente', avaluo: 12500, prestamo: 8000, imagen: '../assets/inventario/anillo.png' },
-          { nombre: 'Consola Xbox Series S', ruta: ['Electrónica', 'Videojuegos', 'Consolas'], caracteristicas: 'Microsoft · 512 GB · SN DEMO-4821', estado: 'Bueno', avaluo: 8200, prestamo: 5000, imagen: '../assets/inventario/xbox.png' },
+          { nombre: 'Anillo de oro', ruta: ['Joyas y relojes', 'Joyería', 'Oro'], caracteristicas: '14K · 12 g · accesorios 2 g', estado: 'Excelente', avaluo: 12500, prestamo: 8000, imagen: 'assets/prendas/anillo-1-general.jpg',
+            fotos: [{ src: 'assets/prendas/anillo-1-general.jpg', etiqueta: 'Vista general' }, { src: 'assets/prendas/anillo-2-kilataje.jpg', etiqueta: 'Detalle del kilataje (MEX 14K)' }, { src: 'assets/prendas/anillo-3-lateral.jpg', etiqueta: 'Detalle del borde labrado' }] },
+          { nombre: 'Consola Xbox Series S', ruta: ['Electrónica', 'Videojuegos', 'Consolas'], caracteristicas: 'Microsoft · 512 GB · SN DEMO-4821', estado: 'Bueno', avaluo: 8200, prestamo: 5000, imagen: 'assets/prendas/xbox-s-1-general.jpg',
+            fotos: [{ src: 'assets/prendas/xbox-s-1-general.jpg', etiqueta: 'Vista general con control' }, { src: 'assets/prendas/xbox-s-2-control.jpg', etiqueta: 'Control incluido' }, { src: 'assets/prendas/xbox-s-3-frente.jpg', etiqueta: 'Frente y ventilación' }] },
         ] },
     ],
   };

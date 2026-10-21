@@ -14,6 +14,7 @@
     ['Inventario vacío', 'POS · sin artículos todavía', 'inventario/?vacio=1'],
     ['Cotizador de empeño', 'POS · contratos, artículos y evaluación (PawnQuoterV4)', 'cotizador/'],
     ['Cotizador: selección de plazos', 'POS · plazos, cotitulares y extender fecha', 'cotizador/?paso=2'],
+    ['Cotizador: empeño de un auto', 'POS · ficha del vehículo, opciones de un toque y checklist de documentos', 'cotizador/?ejemplo=auto'],
     ['Comercial V1', 'POS · popup de apartados', ''],
     ['Comercial V2', 'POS · pestañas Compra | Apartado', 'v2/'],
     ['Prendario', 'POS · artículo en contrato vigente', 'v2-prendario/'],
