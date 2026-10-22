@@ -45,6 +45,21 @@
         ] },
     ],
   };
+  // 3 contratos en una transacción: el de la muestra (anillo + consola), uno de una laptop y uno de una pulsera
+  const MUESTRA_EMPENO_3 = (() => {
+    const m = JSON.parse(JSON.stringify(MUESTRA_EMPENO));
+    const [anillo, consola] = m.items[0].articulos;
+    m.items = [
+      { ...m.items[0], id: 'e1', contrato: '000124', titulo: 'Empeño · Anillo de oro', detalle: 'Contrato IZT-000124 · Plazo Mensual (6.5%)', monto: -anillo.prestamo, articulos: [anillo] },
+      { ...m.items[0], id: 'e2', contrato: '000125', titulo: 'Empeño · Consola Xbox Series S', detalle: 'Contrato IZT-000125 · Plazo Quincenal (3.5%)', plazo: 'Quincenal', monto: -consola.prestamo, imagen: consola.imagen, cotitulares: [], articulos: [consola] },
+      { ...m.items[0], id: 'e3', contrato: '000126', titulo: 'Empeño · 2 artículos', detalle: 'Contrato IZT-000126 · Plazo Mensual (6.5%)', monto: -9500, imagen: '', cotitulares: [],
+        articulos: [
+          { nombre: 'Laptop Lenovo IdeaPad', ruta: ['Electrónica', 'Cómputo', 'Laptops'], caracteristicas: 'Lenovo · 16 GB · 512 GB SSD', estado: 'Bueno', avaluo: 11000, prestamo: 6500 },
+          { nombre: 'Pulsera de plata', ruta: ['Joyas y relojes', 'Joyería', 'Plata'], caracteristicas: '.925 · 38 g', estado: 'Excelente', avaluo: 5000, prestamo: 3000 },
+        ] },
+    ];
+    return m;
+  })();
   const leerCarrito = () => {
     try {
       const c = window.atsCarrito && typeof window.atsCarrito.leer === 'function' ? window.atsCarrito.leer() : JSON.parse(localStorage.getItem(CLAVE) || 'null');
@@ -759,6 +774,7 @@
     const carrito = st.carrito, muestra = st.muestra;
     reiniciar(); st.carrito = carrito; st.muestra = muestra;
     if (nombre === 'recibo-empeno') { st.carrito = JSON.parse(JSON.stringify(MUESTRA_EMPENO)); st.muestra = true; ESTADOS_PROTO.recibo(); generarRecibo(false); return; }
+    if (nombre === 'recibo-empeno-3') { st.carrito = JSON.parse(JSON.stringify(MUESTRA_EMPENO_3)); st.muestra = true; ESTADOS_PROTO.recibo(); generarRecibo(false); return; }
     (ESTADOS_PROTO[nombre] || (() => {}))();
     if (nombre === 'recibo') { generarRecibo(false); return; }
     render();
@@ -778,5 +794,5 @@
   window.addEventListener('ats-carrito', () => { if (st.vista === 'cobro' && !st.pagos.length) { reiniciar(qs.get('muestra') === '1'); render(); } });
 
   reiniciar(qs.get('muestra') === '1');
-  if (qs.get('estado') && (ESTADOS_PROTO[qs.get('estado')] || qs.get('estado') === 'recibo-empeno')) irA(qs.get('estado')); else render();
+  if (qs.get('estado') && (ESTADOS_PROTO[qs.get('estado')] || qs.get('estado') === 'recibo-empeno' || qs.get('estado') === 'recibo-empeno-3')) irA(qs.get('estado')); else render();
 })();

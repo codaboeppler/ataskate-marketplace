@@ -438,6 +438,38 @@
   }
 
   /* ---------- modal "Firmar contrato" ---------- */
+  /* Navegador de contratos: con 2 o más contratos en la transacción, una barra arriba del modal con cada contrato como paso
+     (folio, prendas, préstamo y estado), el avance "N de M firmados" y Anterior / Siguiente. Un contrato firmado abre su
+     lectura; uno pendiente abre la firma. */
+  function navHTML(recibo, contratos, actual) {
+    if (contratos.length < 2) return '';
+    const n = contratos.filter((x) => firmaDe(recibo, x.folio)).length;
+    const i = contratos.indexOf(actual);
+    const ant = contratos[i - 1], sig = contratos[i + 1];
+    const paso = (x, k) => {
+      const f = firmaDe(recibo, x.folio), es = x === actual;
+      const estado = f ? ['ds-tag--verde', 'Firmado'] : es ? ['ds-tag--morado', 'Firmando'] : ['ds-tag--gris', 'Pendiente'];
+      return `<li><button type="button" class="cf-nav__paso${es ? ' is-actual' : ''}${f ? ' is-ok' : ''}" data-cf="ir" data-folio="${esc(x.folio)}"${es ? ' aria-current="step"' : ''}
+          aria-label="Contrato ${k + 1} de ${contratos.length}, ${esc(x.folio)}, ${estado[1].toLowerCase()}">
+          <span class="cf-nav__num" aria-hidden="true">${f ? ic('check', 16) : k + 1}</span>
+          <span class="cf-nav__txt"><b>${esc(x.folio)}</b><small>${x.articulos.length} ${x.articulos.length === 1 ? 'prenda' : 'prendas'} · ${mxn(x.prestamo)}</small></span>
+          <span class="ds-tag ${estado[0]} cf-nav__tag">${estado[1]}</span></button></li>`;
+    };
+    return `<nav class="cf-nav" aria-label="Contratos de esta transacción">
+        <div class="cf-nav__top">
+          <p class="cf-nav__t"><b>Contratos de esta transacción</b><span>${n} de ${contratos.length} firmados</span></p>
+          <div class="ds-progress cf-nav__prog${n === contratos.length ? ' ds-progress--success' : ''}" role="progressbar" aria-label="Contratos firmados" aria-valuemin="0" aria-valuemax="${contratos.length}" aria-valuenow="${n}"><div class="ds-progress__bar" style="width:${Math.round(n / contratos.length * 100)}%"></div></div>
+          <div class="cf-nav__flechas">
+            <button type="button" class="ds-btn ds-btn--secondary ds-btn--sm cf-btn-ico" data-cf="ir" data-folio="${ant ? esc(ant.folio) : ''}"${ant ? '' : ' disabled'} aria-label="Contrato anterior">${ic('izq', 16)}Anterior</button>
+            <button type="button" class="ds-btn ds-btn--secondary ds-btn--sm cf-btn-ico" data-cf="ir" data-folio="${sig ? esc(sig.folio) : ''}"${sig ? '' : ' disabled'} aria-label="Contrato siguiente">Siguiente${ic('der', 16)}</button>
+          </div>
+        </div>
+        <ol class="cf-nav__pasos">${contratos.map(paso).join('')}</ol>
+      </nav>`;
+  }
+  // un contrato firmado se lee; uno pendiente se firma
+  const irA = (recibo, folio, alCambiar) => (firmaDe(recibo, folio) ? ver({ recibo, folio, alCambiar }) : firmar({ recibo, folio, alCambiar }));
+
   function firmar({ recibo, folio, alCambiar }) {
     const contratos = contratosDe(recibo);
     if (!contratos.length) return;
@@ -446,14 +478,12 @@
     if (firmaDe(recibo, c.folio)) { ver({ recibo, folio: c.folio }); return; }
     const idx = contratos.indexOf(c);
     const st = { leido: false, acepta: false, pad: null };
-    const selector = contratos.length > 1 ? `<div class="cf-contratos" role="group" aria-label="Contratos de esta transacción">${contratos.map((x, i) =>
-      `<button type="button" class="ds-chip ds-chip--choice${x === c ? ' ds-chip--on' : ''}" data-cf="contrato" data-folio="${esc(x.folio)}" aria-pressed="${x === c}">${esc(x.folio)}${firmaDe(recibo, x.folio) ? ' · firmado' : ''}</button>`).join('')}</div>` : '';
     const box = abrir({
       clase: 'cf-modal--firma',
       titulo: 'Firmar contrato',
       sub: `Contrato ${esc(c.folio)} · ${esc(c.cliente.nombre)}${contratos.length > 1 ? ` · ${idx + 1} de ${contratos.length}` : ''}`,
-      cuerpo: `<div class="cf-firmar">
-          <div class="cf-doc" tabindex="0" aria-label="Contrato para leer. Desplázate hasta el final." id="cfDoc">${selector}${contratoHTML(c, null)}</div>
+      cuerpo: `${navHTML(recibo, contratos, c)}<div class="cf-firmar">
+          <div class="cf-doc" tabindex="0" aria-label="Contrato para leer. Desplázate hasta el final." id="cfDoc">${contratoHTML(c, null)}</div>
           <aside class="cf-panel" aria-label="Firma del cliente">
             <section class="cf-paso" id="cfPasoLeer">
               <div class="cf-paso__head"><span class="ds-badge ds-badge--brand cf-num" aria-hidden="true">1</span><h3>Lee el contrato con el cliente</h3></div>
@@ -521,15 +551,21 @@
       if (a === 'final') { doc.scrollTo({ top: doc.scrollHeight, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); doc.focus({ preventScroll: true }); setTimeout(leer, 700); }
       if (a === 'borrar') { st.pad.borrar(); $('cfPad').focus(); }
       if (a === 'cerrar2') cerrar();
-      if (a === 'contrato') firmar({ recibo, folio: t.dataset.folio, alCambiar });
+      if (a === 'ir' && t.dataset.folio) irA(recibo, t.dataset.folio, alCambiar);
       if (a === 'firmar') {
         const ahora = new Date();
         const hash = Array.from({ length: 4 }, (_, k) => (Math.abs((c.folio + ahora.getTime() + k).split('').reduce((h, ch) => ((h << 5) - h + ch.charCodeAt(0)) | 0, 7)) % 65536).toString(16).toUpperCase().padStart(4, '0')).join('-');
         recibo.firmas[c.folio] = { img: st.pad.imagen(), fecha: ddmmaaaa(ahora), hora: hhmm(ahora), hash };
         if (alCambiar) alCambiar();
-        const sig = contratos.find((x) => !firmaDe(recibo, x.folio));
-        toast('success', 'Contrato firmado', `${c.folio} quedó firmado por ${c.cliente.nombre}.`);
-        ver({ recibo, folio: c.folio, siguiente: sig ? sig.folio : null, alCambiar });
+        const sig = contratos.slice(idx + 1).concat(contratos.slice(0, idx)).find((x) => !firmaDe(recibo, x.folio));
+        if (sig) {
+          const n = contratos.filter((x) => firmaDe(recibo, x.folio)).length;
+          toast('success', 'Contrato firmado', `${c.folio} quedó firmado (${n} de ${contratos.length}). Sigue ${sig.folio}.`);
+          firmar({ recibo, folio: sig.folio, alCambiar });
+        } else {
+          toast('success', contratos.length > 1 ? 'Contratos firmados' : 'Contrato firmado', contratos.length > 1 ? `Los ${contratos.length} contratos quedaron firmados por ${c.cliente.nombre}.` : `${c.folio} quedó firmado por ${c.cliente.nombre}.`);
+          ver({ recibo, folio: c.folio, alCambiar });
+        }
       }
     });
     actualizar();
@@ -542,12 +578,13 @@
     const contratos = contratosDe(recibo);
     const c = contratos.find((x) => x.folio === folio) || contratos[0];
     if (!c) return;
+    if (siguiente === undefined) { const p = contratos.find((x) => !firmaDe(recibo, x.folio)); siguiente = p ? p.folio : null; }
     const f = firmaDe(recibo, c.folio);
     const box = abrir({
       clase: 'cf-modal--ver',
       titulo: f ? 'Contrato firmado' : 'Contrato',
       sub: `Contrato ${esc(c.folio)} · ${esc(c.cliente.nombre)}${f ? ` · firmado el ${esc(f.fecha)} a las ${esc(f.hora)}` : ''}`,
-      cuerpo: `${f ? `<div class="ds-alert ds-alert--success cf-alerta" role="status"><span class="ds-alert__icon" aria-hidden="true">${ic('check', 20)}</span><div class="ds-alert__body-wrap"><p class="ds-alert__title">El contrato quedó firmado</p><p class="ds-alert__body">La firma ya está en el contrato y en el ticket de empeño. Entrégale una copia al cliente.</p></div></div>` : ''}
+      cuerpo: `${navHTML(recibo, contratos, c)}${f ? `<div class="ds-alert ds-alert--success cf-alerta" role="status"><span class="ds-alert__icon" aria-hidden="true">${ic('check', 20)}</span><div class="ds-alert__body-wrap"><p class="ds-alert__title">El contrato quedó firmado</p><p class="ds-alert__body">La firma ya está en el contrato y en el ticket de empeño. Entrégale una copia al cliente.</p></div></div>` : ''}
         <div class="cf-doc cf-doc--ver" tabindex="0" aria-label="Contrato ${esc(c.folio)}">${contratoHTML(c, f)}</div>`,
       pie: `<button type="button" class="ds-btn ds-btn--md ds-btn--secondary cf-btn-ico" data-cf="correo">${ic('correo', 20)}Enviar por correo</button>
         <button type="button" class="ds-btn ds-btn--md ds-btn--secondary cf-btn-ico" data-cf="pdf">${ic('descargar', 20)}Descargar PDF</button>
@@ -562,6 +599,7 @@
       if (a === 'correo') toast('success', 'Contrato enviado', c.cliente.correo ? 'Se envió a ' + c.cliente.correo : 'Se envió al correo del cliente.');
       if (a === 'listo') cerrar();
       if (a === 'siguiente') firmar({ recibo, folio: siguiente, alCambiar });
+      if (a === 'ir' && t.dataset.folio) irA(recibo, t.dataset.folio, alCambiar);
     });
     box.focus();
   }
