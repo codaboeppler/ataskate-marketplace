@@ -370,18 +370,19 @@
   .cot-km__ctl { flex: 1 1 100%; }
 }
 
-/* 2026-10-22: placas del alto y ancho del Input del DS, alineadas con NIV y número de motor */
-.cot-placa { flex-direction: row; align-items: center; gap: 8px; width: 100%; height: 44px; padding: 0 20px 0 8px; border: 1px solid var(--ats-neutral-300); border-radius: 100px; box-shadow: none; }
-.cot-placa::before, .cot-placa::after { display: none; }
-.cot-placa__top { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; height: 28px; padding: 0 8px; border-radius: 100px; letter-spacing: 1px; font-size: 11px; }
-.cot-placa__in { padding: 0; text-align: left; font: 700 16px/24px var(--font-family-sans, inherit); letter-spacing: 1.5px; }
-.cot-placa:hover:not(.is-error) { border-color: var(--ats-primary-300); }
-.cot-placa:focus-within { border-color: var(--ats-primary-400); box-shadow: none; }
-.cot-placa.is-error { border-color: var(--ats-error-red-200); }
-.cot-placas { min-width: 0; }
+/* 2026-10-22: la placa conserva su diseño y ocupa el ancho de su columna, alineada con NIV y número de motor */
+.cot-placa { width: 100%; }
 
 /* Personaliza la oferta y Dato clave: Alert del DS */
 .cot-aviso { margin-top: 4px; }
 .cot-aviso .ds-alert__icon .cot-ico, .cot-aviso .ds-alert__icon svg { width: 16px; height: 16px; }
 .cot-aviso .ds-alert__close .cot-ico, .cot-aviso .ds-alert__close svg { width: 16px; height: 16px; }
 .cot-aviso .ds-alert__title, .cot-aviso .ds-alert__body { margin: 0; }
+
+/* títulos de bloque del modo guiado (Datos generales, Especificaciones, Uso, Identificación, Lo que entrega el cliente):
+   textoSemiBold del DS (src/design-system/Typography: Nunito 600, 16px/19.2px, 0.3px, #2A2C2F) */
+.cot-grupo__t { font-size: 16px; line-height: 19.2px; font-weight: 600; letter-spacing: 0.3px; color: #2A2C2F; }
+.cot-grupo { gap: 12px; }
+
+.cot-ficha-v { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1100px) { .cot-ficha-v { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

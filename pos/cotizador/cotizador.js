@@ -84,10 +84,10 @@
   // 3 lista, 4 casilla) son las mismas para todos los modelos, en el orden en que se capturan
   const AUTO = [
     { id: 23, tipo: 3, nombre: 'Año', valores: Array.from({ length: 15 }, (_, i) => String(2026 - i)), obl: true },
-    { id: 24, tipo: 1, nombre: 'Versión', obl: false },
+    { id: 24, tipo: 1, nombre: 'Versión', obl: true },
     { id: 25, tipo: 3, nombre: 'Transmisión', valores: ['Automática', 'Manual'], obl: true },
     { id: 26, tipo: 3, nombre: 'Combustible', valores: ['Gasolina', 'Diésel', 'Híbrido', 'Eléctrico'], obl: true },
-    { id: 27, tipo: 3, nombre: 'Color', valores: ['Blanco', 'Negro', 'Gris', 'Plata', 'Rojo', 'Azul', 'Otro'], obl: false },
+    { id: 27, tipo: 3, nombre: 'Color', valores: ['Blanco', 'Negro', 'Gris', 'Plata', 'Rojo', 'Azul', 'Otro'], obl: true },
     { id: 28, tipo: 2, nombre: 'Kilometraje (km)', obl: true },
     { id: 29, tipo: 1, nombre: 'Número de serie (NIV)', obl: true },
     { id: 30, tipo: 1, nombre: 'Placas', obl: true },
@@ -100,6 +100,28 @@
     { id: 37, tipo: 4, nombre: 'Duplicado de llaves', obl: false },
     { id: 38, tipo: 4, nombre: 'Llanta de refacción y herramienta', obl: false },
   ];
+  // versiones por modelo: el valor de la propiedad "Versión" cambia las características de abajo (transmisión y combustible
+  // disponibles y la ficha técnica). En producto saldrían del catálogo del artículo, como valores de sus propiedades dinámicas.
+  const V = (nombre, trans, comb, motor, potencia, traccion, rinde) => ({ nombre, trans, comb, motor, potencia, traccion, rinde });
+  const VERSIONES = {
+    'Nissan Versa': [V('Sense', ['Manual', 'Automática'], ['Gasolina'], '1.6 L, 4 cilindros', '118 hp', 'Delantera', '17.6 km/l'),
+      V('Advance', ['Manual', 'Automática'], ['Gasolina'], '1.6 L, 4 cilindros', '118 hp', 'Delantera', '17.4 km/l'),
+      V('Exclusive', ['Automática'], ['Gasolina'], '1.6 L, 4 cilindros', '118 hp', 'Delantera', '17.0 km/l')],
+    'Nissan Sentra': [V('Sense', ['Manual', 'Automática'], ['Gasolina'], '2.0 L, 4 cilindros', '149 hp', 'Delantera', '15.0 km/l'),
+      V('Advance', ['Automática'], ['Gasolina'], '2.0 L, 4 cilindros', '149 hp', 'Delantera', '14.8 km/l'),
+      V('Exclusive', ['Automática'], ['Gasolina'], '2.0 L, 4 cilindros', '149 hp', 'Delantera', '14.6 km/l')],
+    'Nissan March': [V('Sense', ['Manual'], ['Gasolina'], '1.6 L, 4 cilindros', '106 hp', 'Delantera', '16.5 km/l'),
+      V('Advance', ['Manual', 'Automática'], ['Gasolina'], '1.6 L, 4 cilindros', '106 hp', 'Delantera', '16.0 km/l')],
+    'Toyota Corolla': [V('Base', ['Automática'], ['Gasolina'], '2.0 L, 4 cilindros', '169 hp', 'Delantera', '15.5 km/l'),
+      V('Híbrido', ['Automática'], ['Híbrido'], '1.8 L + motor eléctrico', '138 hp', 'Delantera', '24.0 km/l')],
+    'Tesla Model 3': [V('Standard Range Plus', ['Automática'], ['Eléctrico'], 'Eléctrico, 1 motor', '283 hp', 'Trasera', '448 km'),
+      V('Long Range', ['Automática'], ['Eléctrico'], 'Eléctrico, 2 motores', '346 hp', 'Integral (AWD)', '629 km'),
+      V('Performance', ['Automática'], ['Eléctrico'], 'Eléctrico, 2 motores', '510 hp', 'Integral (AWD)', '528 km')],
+    'Tesla Model S': [V('Long Range', ['Automática'], ['Eléctrico'], 'Eléctrico, 2 motores', '670 hp', 'Integral (AWD)', '634 km'),
+      V('Plaid', ['Automática'], ['Eléctrico'], 'Eléctrico, 3 motores', '1,020 hp', 'Integral (AWD)', '600 km')],
+  };
+  // modelos sin ficha en el catálogo: tres versiones genéricas sin restricciones
+  const versionesDe = (nombre) => VERSIONES[nombre] || ['Base', 'Media', 'Tope de gama'].map((n) => V(n, ['Automática', 'Manual'], ['Gasolina'], null, null, null, null));
   const CATALOGO = [
     { id: 501, nombre: 'Anillo de oro', ruta: ['Joyas y relojes', 'Joyería', 'Oro'], tipo: 'oro' },
     { id: 502, nombre: 'Cadena de oro', ruta: ['Joyas y relojes', 'Joyería', 'Oro'], tipo: 'oro' },
@@ -111,7 +133,7 @@
     { id: 604, nombre: 'Taladro Bosch', ruta: ['Herramientas', 'Eléctricas', 'Taladros'], tipo: 'general', marcas: ['Bosch', 'DeWalt', 'Makita'] },
     { id: 605, nombre: 'Bicicleta de montaña', ruta: ['Deportes', 'Ciclismo', 'Bicicletas'], tipo: 'general', sinProps: true },
     ...[['Nissan', 'Versa'], ['Nissan', 'Sentra'], ['Nissan', 'March'], ['Chevrolet', 'Aveo'], ['Volkswagen', 'Jetta'], ['Volkswagen', 'Vento'],
-      ['Toyota', 'Corolla'], ['Honda', 'Civic'], ['Mazda', 'Mazda 3'], ['Kia', 'Rio']].map(([m, n], i) => (
+      ['Toyota', 'Corolla'], ['Honda', 'Civic'], ['Mazda', 'Mazda 3'], ['Kia', 'Rio'], ['Tesla', 'Model 3'], ['Tesla', 'Model S']].map(([m, n], i) => (
       { id: 701 + i, nombre: m === 'Mazda' ? n : m + ' ' + n, ruta: ['Vehículos', 'Autos', m], tipo: 'general', props: AUTO, alias: 'auto carro coche vehiculo' })),
   ];
   const ESTADOS = [{ id: 1, nombre: 'Excelente', pct: 70 }, { id: 2, nombre: 'Bueno', pct: 60 }, { id: 3, nombre: 'Regular', pct: 45 }];
@@ -143,7 +165,7 @@
       return CATALOGO.filter((c) => sinAcentos(c.nombre + ' ' + c.ruta.join(' ') + ' ' + (c.alias || '')).includes(t));
     },
     async estados() { return ESTADOS; },          // GetStatesConservationByArticle
-    propiedades(c) { return c.sinProps ? [] : c.props ? c.props.map((x) => ({ ...x })) : c.tipo === 'general' ? props.general(c.marcas) : props[c.tipo]; },   // GetArticleProperties
+    propiedades(c) { return c.sinProps ? [] : c.props ? c.props.map((x) => (x.id === 24 ? { ...x, tipo: 3, valores: versionesDe(c.nombre).map((v) => v.nombre) } : { ...x })) : c.tipo === 'general' ? props.general(c.marcas) : props[c.tipo]; },   // GetArticleProperties
     // GetPledgeAppraisal: avalúo del metal = peso neto × precio por gramo del metal fino × pureza
     avaluoMetal(tipo, pureza, pesoNeto) {
       const fr = tipo === 'oro' ? Number(String(pureza).replace('K', '')) / 24 : Number(pureza);
@@ -399,20 +421,40 @@
   }
   /* placas: dibujo de una placa que se llena mientras se escribe */
   const placaHTML = (v, id, err) => `<div class="cot-placa${v ? '' : ' is-vacio'}${err ? ' is-error' : ''}">
-      <span class="cot-placa__top" aria-hidden="true">MX</span>
-      <input class="cot-placa__in" id="${id}" value="${esc(v)}" autocomplete="off" spellcheck="false" maxlength="9" placeholder="ABC-123-D" data-mayus data-placa${err ? ` aria-invalid="true" aria-describedby="${id}E"` : ''} /></div>`;
+      <span class="cot-placa__top" aria-hidden="true">MÉXICO</span>
+      <input class="cot-placa__in" id="${id}" value="${esc(v)}" autocomplete="off" spellcheck="false" maxlength="9" placeholder="ABC-123-D" data-mayus data-placa${err ? ` aria-invalid="true" aria-describedby="${id}E"` : ''} />
+      <span class="cot-placa__pie" aria-hidden="true">Transporte privado</span></div>`;
 
+  const P_VERSION = 24, P_TRANS = 25, P_COMB = 26;
+  const versionSel = (a) => { const n = a.valores[P_VERSION]; return n ? versionesDe(a.nombre).find((v) => v.nombre === n) || null : null; };
+  function aplicarVersion(a) {
+    const v = versionSel(a); if (!v) return;
+    [[P_TRANS, v.trans], [P_COMB, v.comb]].forEach(([pid, ops]) => {
+      if (ops.length === 1) a.valores[pid] = ops[0];
+      else if (!ops.includes(a.valores[pid])) a.valores[pid] = '';
+    });
+  }
+  // opciones de un campo según la versión elegida (las demás no aplican a esa versión)
+  const opcionesSegunVersion = (a, p) => {
+    const v = versionSel(a);
+    if (!v || (p.id !== P_TRANS && p.id !== P_COMB)) return p.valores;
+    const ops = p.id === P_TRANS ? v.trans : v.comb;
+    return p.valores.filter((x) => ops.includes(x));
+  };
   function htmlCampoGuiado(a, p) {
     const v = a.valores[p.id] || '';
     const err = p.obl && !v && ver('p' + p.id) ? T.obligatorio : '';
     const id = 'cotProp' + p.id;
     const etq = `${esc(p.tipo === 2 ? sinUnidad(p.nombre) : p.nombre)}${p.obl ? '' : `<span class="ds-label__optional">${T.opcional}</span>`}`;
+    if (p.id === P_VERSION) return selectDS(id, etq, p.valores.map((x) => [x, x]), v, err);   // SelectionInput del DS, en Datos generales
     if (p.tipo === 3 && p.valores.length <= 4) {
-      // DS ChoiceChip (ds-chip--choice / ds-chip--on): una opción por grupo
+      // DS ChoiceChip (ds-chip--choice / ds-chip--on): una opción por grupo; solo las opciones de la versión elegida
+      const ops = opcionesSegunVersion(a, p), ver = versionSel(a);
       const ancho = p.valores.join('').length > 18;
+      const nota = ver && ops.length < p.valores.length ? `<p class="ds-helper" id="${id}V">Según la versión ${esc(ver.nombre)}</p>` : '';
       return `<div class="ds-field${ancho ? ' cot-campo--ancho' : ''}"><span class="ds-label" id="${id}L">${etq}</span>
-        <div class="cot-chips" role="radiogroup" aria-labelledby="${id}L"${err ? ` aria-describedby="${id}E"` : ''}>${p.valores.map((x, i) =>
-          `<button type="button" class="ds-chip ds-chip--choice${x === v ? ' ds-chip--on' : ''}" role="radio" aria-checked="${x === v}" id="${id}R${i}" data-prop="${p.id}" data-v="${esc(x)}" tabindex="${x === v || (!v && i === 0) ? 0 : -1}">${iconoOpcion(x)}${esc(x)}</button>`).join('')}</div>${ayuda(err, id + 'E')}</div>`;
+        <div class="cot-chips" role="radiogroup" aria-labelledby="${id}L"${err ? ` aria-describedby="${id}E"` : nota ? ` aria-describedby="${id}V"` : ''}>${ops.map((x, i) =>
+          `<button type="button" class="ds-chip ds-chip--choice${x === v ? ' ds-chip--on' : ''}" role="radio" aria-checked="${x === v}" id="${id}R${i}" data-prop="${p.id}" data-v="${esc(x)}" tabindex="${x === v || (!v && i === 0) ? 0 : -1}">${iconoOpcion(x)}${esc(x)}</button>`).join('')}</div>${err ? ayuda(err, id + 'E') : nota}</div>`;
     }
     if (p.tipo === 3) return selectDS(id, etq, p.valores.map((x) => [x, x]), v, err);
     if (p.tipo === 2 && unidadDe(p.nombre) === 'km') {
@@ -441,11 +483,14 @@
     const ps = propsGuiadas(a), datos = ps.filter((p) => p.tipo !== 4), docs = ps.filter((p) => p.tipo === 4);
     // bloques por tipo de dato (sin metadatos nuevos): identificadores (serie, NIV, placas, motor), opciones de un toque, números y el resto
     const ident = datos.filter((p) => p.tipo === 1 && esMayus(p.nombre));
-    const opciones = datos.filter((p) => p.tipo === 3 && p.valores.length <= 4);
+    const opciones = datos.filter((p) => p.tipo === 3 && p.valores.length <= 4 && p.id !== P_VERSION);
     const numeros = datos.filter((p) => p.tipo === 2);
     const generales = datos.filter((p) => !ident.includes(p) && !opciones.includes(p) && !numeros.includes(p));
     const bloque = (titulo, ps2, cls) => (ps2.length ? `<section class="cot-grupo"><h3 class="cot-grupo__t">${titulo}</h3><div class="cot-guiado${cls ? ' ' + cls : ''}">${ps2.map((p) => htmlCampoGuiado(a, p)).join('')}</div></section>` : '');
-    return `${bloque('Datos generales', generales)}
+    const ver = versionSel(a);
+    const ficha = ver && ver.motor ? `<section class="cot-grupo"><h3 class="cot-grupo__t">Ficha de la versión ${esc(ver.nombre)}</h3>
+        <div class="cot-guiado cot-ficha-v">${soloLectura('Motor', ver.motor)}${soloLectura('Potencia', ver.potencia)}${soloLectura('Tracción', ver.traccion)}${soloLectura(ver.comb[0] === 'Eléctrico' ? 'Autonomía' : 'Rendimiento', ver.rinde)}</div></section>` : '';
+    return `${bloque('Datos generales', generales)}${ficha}
       ${bloque('Especificaciones', opciones)}
       ${bloque(numeros.some((p) => unidadDe(p.nombre) === 'km') ? 'Uso' : 'Medidas', numeros, 'cot-guiado--uno')}
       ${bloque('Identificación', ident)}
@@ -945,7 +990,7 @@
     if (t.dataset.placa !== undefined) { const pl = t.closest('.cot-placa'); if (pl) pl.classList.toggle('is-vacio', !t.value); }
     if (t.dataset.odo) { const nn = Number(t.value.replace(/[^0-9]/g, '')) || 0; pintarKm(t.dataset.odo, t.value ? nn : null, 'in'); }
     if (t.dataset.odoRango && a) { const pid = t.dataset.odoRango; a.valores[pid] = t.value; st.sucios.add(a.id + ':p' + pid); pintarKm(pid, Number(t.value), 'rango'); clearTimeout(t._r); t._r = setTimeout(() => actualizarArt(a, t.id), 250); return; }
-    if (t.id.startsWith('cotProp') && t.type !== 'checkbox') { const pid = t.id.slice(7); a.valores[pid] = t.dataset.miles !== undefined ? t.value.replace(/[^0-9]/g, '') : t.value; st.sucios.add(a.id + ':p' + pid); if (t.tagName === 'SELECT') actualizarArt(a, t.id); else { clearTimeout(t._r); t._r = setTimeout(() => actualizarArt(a, t.id), 300); } return; }
+    if (t.id.startsWith('cotProp') && t.type !== 'checkbox') { const pid = t.id.slice(7); a.valores[pid] = t.dataset.miles !== undefined ? t.value.replace(/[^0-9]/g, '') : t.value; if (Number(pid) === P_VERSION) aplicarVersion(a); st.sucios.add(a.id + ':p' + pid); if (t.tagName === 'SELECT') actualizarArt(a, t.id); else { clearTimeout(t._r); t._r = setTimeout(() => actualizarArt(a, t.id), 300); } return; }
     if (t.id === 'cotEstado') { a.estado = t.value; st.sucios.add(a.id + ':estado'); actualizarArt(a, t.id); return; }
     if (t.id === 'cotAvaluo' || t.id === 'cotPrestamo') {
       const k = t.id === 'cotAvaluo' ? 'avaluo' : 'prestamo'; a[k] = num(t.value); st.sucios.add(a.id + ':' + k);
@@ -1007,11 +1052,11 @@
     const c2 = nuevoContrato('00002'); c2.articulos.push(listo(601, { 11: 'Samsung', 12: 'true', 14: 'UN55', 15: 'SN12345' }, 2, 6000, 3000));
     st.contratos = [c1, c2]; seleccionarArticulo(c1.articulos[0].id);
   }
-  function ejemploAuto() {
+  function ejemploAuto(cid = 701) {
     reiniciar();
-    const cat = catDe(701);
-    const a = { id: 'ej-701-' + Math.random().toString(36).slice(2, 6), catId: 701, nombre: cat.nombre, ruta: cat.ruta, tipo: cat.tipo, props: SRV.propiedades(cat),
-      valores: { 23: '2020', 25: 'Automática', 28: '45000', 32: 'true', 33: 'true', 37: 'true', 34: 'false', 35: 'false', 36: 'false', 38: 'false' },
+    const cat = catDe(cid);
+    const a = { id: 'ej-' + cid + '-' + Math.random().toString(36).slice(2, 6), catId: cid, nombre: cat.nombre, ruta: cat.ruta, tipo: cat.tipo, props: SRV.propiedades(cat),
+      valores: { 23: '2020', 24: 'Advance', 25: 'Automática', 26: 'Gasolina', 28: '45000', 32: 'true', 33: 'true', 37: 'true', 34: 'false', 35: 'false', 36: 'false', 38: 'false' },
       estados: ESTADOS, estado: '', avaluo: null, prestamo: null, venta: null, terminos: 0, notasAbiertas: false };
     const c1 = nuevoContrato('00001'); c1.articulos.push(a);
     st.contratos = [c1]; seleccionarArticulo(a.id);
@@ -1036,6 +1081,7 @@
   if (borrador) { Object.assign(st, borrador); asegurarSeleccion(); }
   else if (params.get('paso') === '2') { ejemplo(); st.paso = 2; st.selContrato = '00001'; }
   else if (params.get('ejemplo') === 'auto') ejemploAuto();
+  else if (params.get('ejemplo') === 'tesla') { ejemploAuto(711); const a = artSel(); if (a) { a.valores[23] = '2022'; a.valores[24] = 'Long Range'; a.valores[28] = '32000'; aplicarVersion(a); seleccionarArticulo(a.id); } }
   else if (params.get('ejemplo')) ejemplo();
   pintar();
 })();
