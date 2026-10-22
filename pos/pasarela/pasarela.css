@@ -573,3 +573,6 @@
   .rc-hero .rc-anim { grid-row: 1 / 3; }
   .rc-hero .rc-hero__acciones .ds-btn { height: auto; }
 }
+
+/* Ver perfil: Button secondary sm del DS (es un link a Clientes) */
+.rc-cli__btn { flex: none; white-space: nowrap; text-decoration: none; }

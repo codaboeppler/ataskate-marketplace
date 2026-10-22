@@ -409,7 +409,7 @@
             <div class="rc-cli">
               <span class="ds-avatar" aria-hidden="true">${esc(iniciales(cli ? cli.nombre : 'Venta público'))}</span>
               <span class="rc-cli__txt"><b>${esc(cli ? cli.nombre : 'Venta al público')}</b><small>${cli ? 'Buen cliente · Cuenta Marketplace' : 'Sin cliente asignado'}</small></span>
-              ${cli ? `<a class="rc-cli__link" href="../clientes/">Ver perfil</a>` : ''}
+              ${cli ? `<a class="ds-btn ds-btn--secondary ds-btn--sm rc-cli__btn" href="../clientes/">Ver perfil</a>` : ''}
             </div>
             <div class="rc-bloque" aria-labelledby="tCobro">
               <h2 class="rc-bloque__t" id="tCobro">Resumen del cobro</h2>
