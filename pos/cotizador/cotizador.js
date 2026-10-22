@@ -29,6 +29,7 @@
     back: P('M16 22 6 12 16 2l1.775 1.775L9.55 12l8.225 8.225L16 22Z'),
     search: P('M19.6 21 13.3 14.7q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5t1.888-4.612T9.5 3t4.613 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3-1.4 1.4ZM9.5 14q1.875 0 3.188-1.312T14 9.5t-1.312-3.187T9.5 5 6.313 6.313 5 9.5t1.313 3.188T9.5 14Z'),
     upload: P('M11 16V7.85l-2.6 2.6L7 9l5-5 5 5-1.4 1.45-2.6-2.6V16h-2Zm-5 4q-.825 0-1.412-.587T4 18v-3h2v3h12v-3h2v3q0 .825-.587 1.413T18 20H6Z'),
+    check: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     sparkle: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.77 21C15.893 16.351 17.256 14.901 21 13.636 17.066 12.308 15.84 10.696 14.77 6.273 13.646 10.922 12.282 12.371 8.538 13.636 12.468 14.963 13.701 16.586 14.769 21M6.461 11.182C6.973 8.762 7.963 7.67 9.922 7.091 7.963 6.512 6.973 5.42 6.462 3 5.972 5.315 5.047 6.485 3 7.09 4.959 7.67 5.949 8.762 6.461 11.182Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     personAdd: P('M18 14v-3h-3V9h3V6h2v3h3v2h-3v3h-2Zm-9-2q-1.65 0-2.825-1.175T5 8t1.175-2.825T9 4t2.825 1.175T13 8t-1.175 2.825T9 12Zm-8 8v-2.8q0-.85.438-1.562T2.6 14.55q1.55-.775 3.15-1.163T9 13t3.25.388 3.15 1.162q.725.375 1.163 1.088T17 17.2V20H1Zm2-2h12v-.8q0-.275-.137-.5t-.363-.35q-1.35-.675-2.725-1.012T9 15t-2.775.338T3.5 16.35q-.225.125-.363.35T3 17.2v.8Zm6-8q.825 0 1.413-.588T11 8t-.587-1.412T9 6t-1.412.588T7 8t.588 1.413T9 10Z'),
     ok: P('M10.6 16.6l7.05-7.05-1.4-1.4-5.65 5.65-2.85-2.85-1.4 1.4 4.25 4.25ZM12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20Z'),
@@ -276,8 +277,9 @@
       <div class="ds-field-wrap${err ? ' ds-field-wrap--error' : ''}"><input class="ds-input" id="${id}" value="${esc(valor == null ? '' : valor)}" ${attrs}${err ? ` aria-invalid="true" aria-describedby="${id}E"` : ''} /></div>${ayuda(err, id + 'E')}</div>`;
   const soloLectura = (label, valor) => `<div class="cot-ro"><span class="cot-ro__l">${esc(label)}</span><span class="cot-ro__v">${esc(valor)}</span></div>`;
   const interruptor = (id, checked, labelledby) => `<label class="ds-switch cot-switch"><input type="checkbox" id="${id}"${checked ? ' checked' : ''}${labelledby ? ` aria-labelledby="${labelledby}"` : ''} /><span class="ds-switch__track"><span class="ds-switch__thumb">${ICO.x}${ICO.check}</span></span></label>`;
-  const oferta = () => `<div class="cot-oferta"><span class="cot-oferta__t">${ico('sparkle', 24)}<span><b>${T.ofertaT}</b>${T.ofertaD}</span></span>
-      <button class="cot-oferta__cta" type="button" data-vincular>${ico('personAdd', 20)}${T.vincula}</button></div>`;
+  const oferta = () => `<div class="ds-alert ds-alert--info cot-aviso" role="status"><span class="ds-alert__icon" aria-hidden="true">${ico('sparkle', 16)}</span>
+      <div class="ds-alert__body-wrap"><p class="ds-alert__title">${T.ofertaT}</p><p class="ds-alert__body">${T.ofertaD.replace(/^\.\s*/, '')}</p></div>
+      <div class="ds-alert__actions"><button class="ds-alert__action" type="button" data-vincular>${T.vincula}</button></div></div>`;
 
   /* ========== izquierda: Listado de artículos ========== */
   function htmlFila(a, soloLeer, seleccionada) {
@@ -397,9 +399,8 @@
   }
   /* placas: dibujo de una placa que se llena mientras se escribe */
   const placaHTML = (v, id, err) => `<div class="cot-placa${v ? '' : ' is-vacio'}${err ? ' is-error' : ''}">
-      <span class="cot-placa__top" aria-hidden="true">MÉXICO</span>
-      <input class="cot-placa__in" id="${id}" value="${esc(v)}" autocomplete="off" spellcheck="false" maxlength="9" placeholder="ABC-123-D" data-mayus data-placa${err ? ` aria-invalid="true" aria-describedby="${id}E"` : ''} />
-      <span class="cot-placa__pie" aria-hidden="true">Transporte privado</span></div>`;
+      <span class="cot-placa__top" aria-hidden="true">MX</span>
+      <input class="cot-placa__in" id="${id}" value="${esc(v)}" autocomplete="off" spellcheck="false" maxlength="9" placeholder="ABC-123-D" data-mayus data-placa${err ? ` aria-invalid="true" aria-describedby="${id}E"` : ''} /></div>`;
 
   function htmlCampoGuiado(a, p) {
     const v = a.valores[p.id] || '';
@@ -415,7 +416,11 @@
     }
     if (p.tipo === 3) return selectDS(id, etq, p.valores.map((x) => [x, x]), v, err);
     if (p.tipo === 2 && unidadDe(p.nombre) === 'km') {
-      return `<div class="ds-field cot-km"><label class="ds-label" for="${id}">${etq}</label>${odometroHTML(a, p, id, err)}${ayuda(err, id + 'E')}</div>`;
+      // DS Input con addon "km"; debajo, el uso por año (ayuda del DS)
+      const enFoco = document.activeElement && document.activeElement.id === id;
+      return `<div class="ds-field"><label class="ds-label" for="${id}">${etq}</label>
+        <div class="ds-field-wrap${err ? ' ds-field-wrap--error' : ''}"><input class="ds-input" id="${id}" value="${esc(enFoco ? v : miles(v))}" inputmode="numeric" maxlength="7" autocomplete="off" placeholder="Ej. 45,000" data-num data-miles data-odo="${p.id}"${err ? ` aria-invalid="true" aria-describedby="${id}E"` : ` aria-describedby="cotOdo${p.id}U"`} /><span class="ds-field-addon ds-field-addon--right" aria-hidden="true">km</span></div>
+        ${err ? ayuda(err, id + 'E') : `<p class="ds-helper cot-odo__uso" id="cotOdo${p.id}U">${usoHTML(a, num(v))}</p>`}</div>`;
     }
     if (p.tipo === 2) {
       // DS Input con addon derecho para la unidad
@@ -480,7 +485,9 @@
     const pre = `<div class="cot-sec">${seccion('pre', T.pre, T.preSub, pOk, st.secPre)}
       ${st.secPre ? `<div class="cot-grid3">${fila1.join('')}</div>
         <div class="cot-grid3">${soloLectura(T.venta, money(venta))}${soloLectura(T.maxPct, e ? e.pct + '%' : '-')}
-          ${st.dato ? `<div class="cot-dato" role="note"><p><b>Dato clave: </b> Estos artículos cuentan con ${a.terminos} plazos específicos.</p><button class="ds-btn ds-btn--tertiary cot-iconbtn" type="button" id="cotDatoX" aria-label="Cerrar dato clave">${ico('close', 20)}</button></div>` : ''}</div>` : ''}</div>`;
+          </div>${st.dato ? `<div class="ds-alert ds-alert--success cot-aviso" role="status"><span class="ds-alert__icon" aria-hidden="true">${ico('check', 16)}</span>
+            <div class="ds-alert__body-wrap"><p class="ds-alert__title">Dato clave</p><p class="ds-alert__body">Estos artículos cuentan con ${a.terminos} plazos específicos.</p></div>
+            <div class="ds-alert__actions"><button class="ds-alert__close" type="button" id="cotDatoX" aria-label="Cerrar dato clave">${ico('close', 16)}</button></div></div>` : ''}` : ''}</div>`;
     return `<form class="cot-eval" id="cotEval" novalidate>${car}<hr class="cot-line" />${pre}<hr class="cot-line" />${st.cliente ? '' : oferta()}</form>`;
   }
 
@@ -873,11 +880,11 @@
   // panel derecho
   // kilometraje: actualiza casillas, slider y texto de ayuda sin repintar todo (para no perder el foco al arrastrar)
   function pintarKm(pid, n, desde) {
-    const o = $('cotOdo' + pid); if (!o) return;
-    o.querySelector('.cot-odo__dig').innerHTML = odoDigitos(n); o.classList.toggle('is-vacio', n == null);
+    const o = $('cotOdo' + pid);
+    if (o) { o.querySelector('.cot-odo__dig').innerHTML = odoDigitos(n); o.classList.toggle('is-vacio', n == null); }
     const r = $('cotOdoR' + pid); if (r && desde !== 'rango') { r.value = Math.min(n || 0, KM_MAX); }
     if (r) { r.style.setProperty('--p', Math.min(100, ((n || 0) / KM_MAX) * 100) + '%'); r.setAttribute('aria-valuetext', (n || 0).toLocaleString('es-MX') + ' km'); }
-    const inp = $('cotProp' + pid); if (inp && desde !== 'in') inp.value = n == null ? '' : String(n);
+    const inp = $('cotProp' + pid); if (o && inp && desde !== 'in') inp.value = n == null ? '' : String(n);
     const a = artSel(); const u = $('cotOdo' + pid + 'U'); if (a && u) u.innerHTML = usoHTML(a, n);
   }
   der.addEventListener('click', (e) => {
@@ -903,7 +910,7 @@
     if (el) { el.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); el.focus({ preventScroll: true }); }
   });
   // al salir del kilometraje se ve con separador de miles
-  der.addEventListener('focusout', (e) => { const t = e.target; if (t.dataset && t.dataset.miles !== undefined && t.dataset.odo === undefined && t.value) t.value = miles(t.value); });
+  der.addEventListener('focusout', (e) => { const t = e.target; if (t.dataset && t.dataset.miles !== undefined && t.value) t.value = miles(t.value); });
   der.addEventListener('focusin', (e) => { const t = e.target; if (t.dataset && t.dataset.miles !== undefined && t.value) t.value = t.value.replace(/[^0-9]/g, ''); if (t.dataset && t.dataset.odo && !t._sel && !refocando) { t._sel = true; requestAnimationFrame(() => { try { t.select(); } catch (er) { /* */ } }); } });
   der.addEventListener('focusout', (e) => { if (e.target.dataset && e.target.dataset.odo) e.target._sel = false; });
   der.addEventListener('click', (e) => {

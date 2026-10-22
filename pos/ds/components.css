@@ -425,25 +425,25 @@
   background: var(--color-purple-50);
 }
 
-/* 4. Checked — filled navy with white check */
+/* 4. Checked — como el Checkbox del DS (checkbox.styles.ts): fondo #E5E5FF, borde #ACACFF y palomita navy #0d166b */
 .ds-check input:checked + .ds-check__wrap .ds-check__box {
-  background: var(--color-purple-900);         /* navy filled */
-  border-color: var(--color-purple-900);
+  background: #E5E5FF;
+  border-color: #ACACFF;
 }
 .ds-check input:checked + .ds-check__wrap .ds-check__box::after {
   content: '';
   position: absolute;
   top: 50%; left: 50%;
   width: 10px; height: 5px;
-  border-left: 2px solid var(--color-base-white);
-  border-bottom: 2px solid var(--color-base-white);
+  border-left: 2px solid #0d166b;
+  border-bottom: 2px solid #0d166b;
   transform: translate(-50%, -70%) rotate(-45deg);
 }
 
-/* 5. Checked hover — slight lift via purple-500 */
+/* 5. Checked hover — en el DS solo cambia el borde a #5a5aff */
 .ds-check:hover input:checked:not(:disabled) + .ds-check__wrap .ds-check__box {
-  background: var(--color-purple-700);
-  border-color: var(--color-purple-700);
+  background: #E5E5FF;
+  border-color: #5a5aff;
 }
 
 /* 6. Disabled unchecked */
