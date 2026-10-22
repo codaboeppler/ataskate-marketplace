@@ -441,6 +441,8 @@
     const ops = p.id === P_TRANS ? v.trans : v.comb;
     return p.valores.filter((x) => ops.includes(x));
   };
+  // ejemplo de formato en los campos de texto del auto
+  const ejemploDe = (n) => (esNiv(n) ? 'Ej. 3N1CN8AE5LL812345' : /placa/i.test(n) ? 'Ej. ABC-123-D' : /motor/i.test(n) ? 'Ej. HR16-123456' : /versi[oó]n/i.test(n) ? '' : '');
   function htmlCampoGuiado(a, p) {
     const v = a.valores[p.id] || '';
     const err = p.obl && !v && ver('p' + p.id) ? T.obligatorio : '';
@@ -460,9 +462,10 @@
     if (p.tipo === 2 && unidadDe(p.nombre) === 'km') {
       // DS Input con addon "km"; debajo, el uso por año (ayuda del DS)
       const enFoco = document.activeElement && document.activeElement.id === id;
-      return `<div class="ds-field"><label class="ds-label" for="${id}">${etq}</label>
+      // el input ocupa una columna y el uso por año queda a su lado, en las otras dos
+      return `<div class="cot-km3"><div class="ds-field"><label class="ds-label" for="${id}">${etq}</label>
         <div class="ds-field-wrap${err ? ' ds-field-wrap--error' : ''}"><input class="ds-input" id="${id}" value="${esc(enFoco ? v : miles(v))}" inputmode="numeric" maxlength="7" autocomplete="off" placeholder="Ej. 45,000" data-num data-miles data-odo="${p.id}"${err ? ` aria-invalid="true" aria-describedby="${id}E"` : ` aria-describedby="cotOdo${p.id}U"`} /><span class="ds-field-addon ds-field-addon--right" aria-hidden="true">km</span></div>
-        ${err ? ayuda(err, id + 'E') : `<p class="ds-helper cot-odo__uso" id="cotOdo${p.id}U">${usoHTML(a, num(v))}</p>`}</div>`;
+        ${ayuda(err, id + 'E')}</div><p class="ds-helper cot-odo__uso cot-km3__uso" id="cotOdo${p.id}U">${usoHTML(a, num(v))}</p></div>`;
     }
     if (p.tipo === 2) {
       // DS Input con addon derecho para la unidad
@@ -470,13 +473,10 @@
       return `<div class="ds-field"><label class="ds-label" for="${id}">${etq}</label>
         <div class="ds-field-wrap${err ? ' ds-field-wrap--error' : ''}"><input class="ds-input" id="${id}" value="${esc(document.activeElement && document.activeElement.id === id ? v : miles(v))}" inputmode="numeric" data-num data-miles${err ? ` aria-invalid="true" aria-describedby="${id}E"` : ''} />${u ? `<span class="ds-field-addon ds-field-addon--right" aria-hidden="true">${esc(u)}</span>` : ''}</div>${ayuda(err, id + 'E')}</div>`;
     }
-    if (/placa/i.test(p.nombre)) {
-      return `<div class="ds-field cot-placas"><label class="ds-label" for="${id}">${etq}</label>${placaHTML(v, id, err)}${ayuda(err, id + 'E')}</div>`;
-    }
     const niv = esNiv(p.nombre);
     const largo = String(v).length;
     return `<div class="ds-field"><label class="ds-label" for="${id}">${etq}</label>
-      <div class="ds-field-wrap${err ? ' ds-field-wrap--error' : ''}"><input class="ds-input${esMayus(p.nombre) ? ' cot-mayus' : ''}" id="${id}" value="${esc(v)}" autocomplete="off" spellcheck="false"${esMayus(p.nombre) ? ' data-mayus' : ''}${niv ? ' maxlength="17"' : ''}${err ? ` aria-invalid="true" aria-describedby="${id}E"` : niv ? ` aria-describedby="${id}H"` : ''} /></div>
+      <div class="ds-field-wrap${err ? ' ds-field-wrap--error' : ''}"><input class="ds-input${esMayus(p.nombre) ? ' cot-mayus' : ''}" id="${id}" value="${esc(v)}" autocomplete="off" spellcheck="false"${ejemploDe(p.nombre) ? ` placeholder="${ejemploDe(p.nombre)}"` : ''}${esMayus(p.nombre) ? ' data-mayus' : ''}${niv ? ' maxlength="17"' : /placa/i.test(p.nombre) ? ' maxlength="9"' : ''}${err ? ` aria-invalid="true" aria-describedby="${id}E"` : niv ? ` aria-describedby="${id}H"` : ''} /></div>
       ${err ? ayuda(err, id + 'E') : niv ? `<p class="ds-helper" id="${id}H">${largo === 17 ? 'NIV completo · 17 caracteres' : `${largo} de 17 caracteres`}</p>` : ''}</div>`;
   }
   function htmlGuiado(a) {
@@ -487,10 +487,7 @@
     const numeros = datos.filter((p) => p.tipo === 2);
     const generales = datos.filter((p) => !ident.includes(p) && !opciones.includes(p) && !numeros.includes(p));
     const bloque = (titulo, ps2, cls) => (ps2.length ? `<section class="cot-grupo"><h3 class="cot-grupo__t">${titulo}</h3><div class="cot-guiado${cls ? ' ' + cls : ''}">${ps2.map((p) => htmlCampoGuiado(a, p)).join('')}</div></section>` : '');
-    const ver = versionSel(a);
-    const ficha = ver && ver.motor ? `<section class="cot-grupo"><h3 class="cot-grupo__t">Ficha de la versión ${esc(ver.nombre)}</h3>
-        <div class="cot-guiado cot-ficha-v">${soloLectura('Motor', ver.motor)}${soloLectura('Potencia', ver.potencia)}${soloLectura('Tracción', ver.traccion)}${soloLectura(ver.comb[0] === 'Eléctrico' ? 'Autonomía' : 'Rendimiento', ver.rinde)}</div></section>` : '';
-    return `${bloque('Datos generales', generales)}${ficha}
+    return `${bloque('Datos generales', generales)}
       ${bloque('Especificaciones', opciones)}
       ${bloque(numeros.some((p) => unidadDe(p.nombre) === 'km') ? 'Uso' : 'Medidas', numeros, 'cot-guiado--uno')}
       ${bloque('Identificación', ident)}
@@ -1028,7 +1025,14 @@
   // HU-CE-608-F: al abrir el selector de nueva fecha se contrae la sección de plazos
   der.addEventListener('mousedown', (e) => { if (e.target.id === 'cotFecha' && st.secPlazos) { st.secPlazos = false; requestAnimationFrame(() => pintar('cotFecha')); } });
   der.addEventListener('submit', (e) => e.preventDefault());
-  der.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.closest('#cotEval') && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'BUTTON') e.preventDefault(); });
+  der.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' || !e.target.closest('#cotEval') || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') return;
+    e.preventDefault();
+    // Enter pasa al siguiente campo por llenar (inputs, selects del DS y chips), como en un formulario de captura
+    const campos = [...e.target.closest('#cotEval').querySelectorAll('input.ds-input:not([disabled]), button.ds-selin, .cot-chips .ds-chip[tabindex="0"], input[type="checkbox"]')];
+    const sig = campos[campos.indexOf(e.target) + 1];
+    if (sig) sig.focus();
+  });
 
   $('cotBar').addEventListener('click', (e) => {
     const t = e.target.closest('button'); if (!t) return;

@@ -20,3 +20,9 @@
 .ds-selin__lista [role="option"][aria-selected="true"] { background: var(--ats-primary-100); font-weight: 500; }
 .ds-selin__lista [role="option"].is-placeholder { color: var(--ats-neutral-400); }
 .ds-selin__lista [role="option"][aria-disabled="true"] { color: var(--ats-neutral-400); cursor: not-allowed; background: transparent; }
+/* scroll de la lista como el de los dropdowns del DS (SearchFieldV2: 8px, thumb neutral300 en píldora), sin las flechas del navegador */
+.ds-selin__lista { scrollbar-width: thin; scrollbar-color: var(--ats-neutral-300) transparent; }
+.ds-selin__lista::-webkit-scrollbar { width: 8px; }
+.ds-selin__lista::-webkit-scrollbar-track { background: transparent; }
+.ds-selin__lista::-webkit-scrollbar-thumb { background: var(--ats-neutral-300); border-radius: 100px; }
+.ds-selin__lista::-webkit-scrollbar-button { display: none; height: 0; }

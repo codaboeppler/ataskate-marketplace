@@ -386,3 +386,9 @@
 
 .cot-ficha-v { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 @media (max-width: 1100px) { .cot-ficha-v { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* kilometraje: el input en una columna (como los demás campos) y el uso por año en las otras dos */
+.cot-km3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 16px; align-items: end; }
+.cot-km3__uso { grid-column: span 2; display: flex; align-items: center; gap: 8px; margin: 0 0 12px; }
+@media (max-width: 1100px) { .cot-km3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .cot-km3__uso { grid-column: span 1; } }
+@media (max-width: 600px) { .cot-km3 { grid-template-columns: minmax(0, 1fr); } .cot-km3__uso { margin: -4px 0 0; } }

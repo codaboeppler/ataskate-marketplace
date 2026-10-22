@@ -55,7 +55,8 @@
     pop = { sel, btn, ul, colocar };
     const lis = [...ul.children].filter((li) => li.getAttribute('aria-disabled') !== 'true');
     const ini = lis.find((li) => li.getAttribute('aria-selected') === 'true') || (enfoque === 'ultimo' ? lis[lis.length - 1] : lis.find((li) => !li.classList.contains('is-placeholder')) || lis[0]);
-    if (ini) { ini.focus({ preventScroll: true }); ini.scrollIntoView({ block: 'nearest' }); }
+    // como SelectionDropdown del DS: al abrir, la opción elegida queda centrada en la lista
+    if (ini) { ini.focus({ preventScroll: true }); ul.scrollTop = ini.offsetTop - (ul.clientHeight - ini.offsetHeight) / 2; }
     const elegir = (li) => {
       const o = ops[+li.dataset.i]; if (!o || o.disabled) return;
       const id = sel.id, cambio = sel.value !== o.value;
